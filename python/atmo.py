@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 import numpy as np
 import os, io, csv, math, pathlib
-import pandas as pd
 
 @dataclass
 class Atmosphere1D:
@@ -158,56 +157,53 @@ def ciddor_n_air(wavelength_nm: float | np.ndarray,
     scale = (p / 101325.0) * (288.15 / T)
     return 1.0 + n_minus_1_std * scale
 
-# --- ASTM E490 AM0 太阳光谱加载（自动识别单位；必要时从µm→nm） ---
+# --- ASTM E490 AM0 太阳光谱加载（numpy-only CSV 读取） ---
 def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
     """
-    返回 (λ_nm, E_AM0_W_m2_nm)。优先读取本地 CSV/TXT。
-    若 path 为空，抛错并给出官方下载源（见 fetch 脚本）。
-    支持常见格式：两列/多列，自动识别 λ 单位（nm 或 µm），自动挑选辐照度列。
-    官方数据：NREL “2000 ASTM Standard Extraterrestrial Spectrum Reference E-490-00”.
+    返回 (λ_nm, E_AM0_W_m2_nm)。使用 numpy 读取 CSV 文件。
+    假定格式：第一列波长，第二列辐照度，可有表头。
+    自动识别 λ 单位（µm → nm），转换辐照度单位（W/m²/µm → W/m²/nm）。
+    官方数据：NREL "2000 ASTM Standard Extraterrestrial Spectrum Reference E-490-00".
     """
     if path is None or not os.path.exists(path):
         raise FileNotFoundError(
             "未找到 AM0 数据文件。请先下载 NREL 官方文件，再传入路径。\n"
             "下载源见 https://www.nrel.gov/grid/solar-resource/spectra-astm-e490 （Data Files 部分）。"
         )
-    # 读入
-    txt = pathlib.Path(path).read_text(encoding="utf-8", errors="ignore")
-    # 去掉注释行
-    lines = [ln for ln in txt.splitlines() if ln.strip() and not ln.strip().startswith(("#","!","//","%"))]
-    # 用空白分隔或逗号都支持
-    sample = lines[0].replace(",", " ").split()
-    # 找出两列或多列：第一列波长，后一列中选一个“irradiance-like”的
-    data = np.genfromtxt(io.StringIO("\n".join(lines)))
-    if data.ndim == 1:
-        data = data[None, :]
-    # 选择列
-    lam_col = 0
-    # heuristic: 优先找单位匹配的列
-    if data.shape[1] < 2:
-        raise ValueError("AM0 文件列数不足：至少需要波长与辐照度两列。")
-    # 辐照度列：取数值波动最大的非第一列
-    ir_cols = [i for i in range(1, data.shape[1])]
-    irr_col = max(ir_cols, key=lambda i: np.nanstd(data[:, i]))
-    lam = data[:, lam_col].astype(float)
-    E = data[:, irr_col].astype(float)
+    
+    # 使用 numpy 读取 CSV，自动处理表头
+    try:
+        # 尝试直接读取，跳过第一行（表头）
+        data = np.genfromtxt(path, delimiter=',', skip_header=1)
+        if data.ndim == 1:
+            data = data[None, :]  # 确保是 2D
+        if data.shape[1] < 2:
+            raise ValueError("AM0 文件列数不足：至少需要波长与辐照度两列。")
+        
+        lam = data[:, 0]  # 第一列：波长
+        E = data[:, 1]    # 第二列：辐照度
+        
+    except Exception as e:
+        raise ValueError(f"读取 AM0 文件失败：{e}")
 
-    # 单位处理：判断 λ 是否在 [0.1, 10] 范围（µm），若是则转换为 nm 并把 E 从 W/m^2/µm 转为 W/m^2/nm
+    # 单位处理：判断 λ 是否在 [0.1, 10] 范围（µm），若是则转换
     lam_min, lam_max = np.nanmin(lam), np.nanmax(lam)
     if 0.1 <= lam_min <= 10.0 and lam_max <= 1e3:
-        # 认为是 µm
+        # 认为是 µm，转换为 nm
         lam_nm = lam * 1e3
-        # 如果 E 看起来像 W/m^2/µm → 除以 1000 变成 /nm
-        # （无法完全自动判断，按常见 NREL/ASTM 文件默认 /µm 处理）
+        # E 从 W/m²/µm 转为 W/m²/nm（除以 1000）
         E_W_m2_nm = E / 1000.0
     else:
-        # 认为是 nm
+        # 认为已经是 nm
         lam_nm = lam
         E_W_m2_nm = E
-    # 去 NaN/排序
-    ok = np.isfinite(lam_nm) & np.isfinite(E_W_m2_nm)
-    lam_nm = lam_nm[ok]; E_W_m2_nm = E_W_m2_nm[ok]
+    
+    # 清理 NaN 值并排序
+    ok = np.isfinite(lam_nm) & np.isfinite(E_W_m2_nm) & (E_W_m2_nm > 0)
+    lam_nm = lam_nm[ok]
+    E_W_m2_nm = E_W_m2_nm[ok]
     idx = np.argsort(lam_nm)
+    
     return lam_nm[idx], E_W_m2_nm[idx]
 
 # --- CIE 1931 2° CMFs 加载（官方 CSV） ---
@@ -222,32 +218,30 @@ def load_cie_1931_2deg(path: str | None = None) -> tuple[np.ndarray, np.ndarray,
             "未找到 CIE 1931 2° CMFs 文件。请从 CIE 官方开放数据集下载 CSV：\n"
             "https://cie.co.at/datatable/cie-1931-colour-matching-functions-2-degree-observer"
         )
-    df = pd.read_csv(path)
-    # 尝试匹配列名（不同分发版本可能不同）
-    cols = [c.lower() for c in df.columns]
-    # 找波长列
-    w_idx = np.argmin([abs("wavelength" in c or "lambda" in c or c.strip()=="nm") == False for c in cols])  # fallback
-    # 更稳妥：优先找包含 'wavelength' / 'nm'
-    w_candidates = [i for i,c in enumerate(cols) if ("wavelength" in c) or (c.strip()=="nm")]
-    w_col = w_candidates[0] if w_candidates else 0
-    # 找三条 CMFs（取后三列或名字含 xbar/ybar/zbar）
-    def find_col(keys, default):
-        for i,c in enumerate(cols):
-            if any(k in c for k in keys): return i
-        return default
-    x_col = find_col(["x_bar","xbar","x 2"], 1)
-    y_col = find_col(["y_bar","ybar","y 2"], 2)
-    z_col = find_col(["z_bar","zbar","z 2"], 3)
+    # 使用 numpy 读取 CSV（无表头，4列：λ, x̄, ȳ, z̄）
+    try:
+        data = np.genfromtxt(path, delimiter=',')
+        if data.ndim == 1:
+            data = data[None, :]  # 确保是 2D
+        if data.shape[1] < 4:
+            raise ValueError("CIE CMFs 文件列数不足：需要波长、x̄、ȳ、z̄ 四列。")
+        
+        lam_nm = data[:, 0]  # 第一列：波长 [nm]  
+        xbar = data[:, 1]    # 第二列：x̄(λ)
+        ybar = data[:, 2]    # 第三列：ȳ(λ)
+        zbar = data[:, 3]    # 第四列：z̄(λ)
+        
+    except Exception as e:
+        raise ValueError(f"读取 CIE CMFs 文件失败：{e}")
 
-    lam_nm = df.iloc[:, w_col].to_numpy(float)
-    xbar = df.iloc[:, x_col].to_numpy(float)
-    ybar = df.iloc[:, y_col].to_numpy(float)
-    zbar = df.iloc[:, z_col].to_numpy(float)
-
-    # 清理与排序
+    # 清理 NaN 值并排序
     ok = np.isfinite(lam_nm) & np.isfinite(xbar) & np.isfinite(ybar) & np.isfinite(zbar)
-    lam_nm = lam_nm[ok]; xbar=xbar[ok]; ybar=ybar[ok]; zbar=zbar[ok]
+    lam_nm = lam_nm[ok]
+    xbar = xbar[ok] 
+    ybar = ybar[ok]
+    zbar = zbar[ok]
     idx = np.argsort(lam_nm)
+    
     return lam_nm[idx], xbar[idx], ybar[idx], zbar[idx]
 
 def rayleigh_sigma_bodhaine(lam_nm: np.ndarray) -> np.ndarray:

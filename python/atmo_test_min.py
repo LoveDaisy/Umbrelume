@@ -1,6 +1,7 @@
 # selftest_min.py
 import numpy as np
-from atmo import us_standard_atmosphere_1976, rayleigh_sigma_bodhaine
+from atmo import us_standard_atmosphere_1976, rayleigh_sigma_bodhaine, load_astm_e490, load_cie_1931_2deg
+import os
 
 def approx(a, b, rtol=0.02, atol=0.0):
     return abs(a - b) <= (atol + rtol * abs(b))
@@ -49,6 +50,82 @@ def main():
     print("Rayleigh sigma checks passed.")
     print(f"  σ_R(450, 550, 650 nm) = {s450:.3e}, {s550:.3e}, {s650:.3e} m^2")
     print(f"  ratio σ(450)/σ(650)   = {ratio:.3f} (expected ~{expect:.3f})")
+
+    # ---- 3) ASTM E490 AM0 Solar Spectrum Loading ----
+    data_path = "../data/e490_00a_amo.csv"
+    if os.path.exists(data_path):
+        try:
+            lam_nm, E_AM0 = load_astm_e490(data_path)
+            
+            # Basic sanity checks on loaded data
+            assert len(lam_nm) > 1000, f"Too few data points: {len(lam_nm)}"
+            assert len(lam_nm) == len(E_AM0), "Wavelength and irradiance arrays length mismatch"
+            
+            # Wavelength range should cover UV to far IR (ASTM E490 covers 119.5 nm to 1000 µm)
+            assert 100 <= np.min(lam_nm) <= 200, f"Minimum wavelength unexpected: {np.min(lam_nm):.1f} nm"
+            assert 500000 <= np.max(lam_nm) <= 1500000, f"Maximum wavelength unexpected: {np.max(lam_nm):.1f} nm"
+            
+            # Solar constant integration check (rough): total should be ~1360-1370 W/m²
+            total_irradiance = np.trapezoid(E_AM0, lam_nm)
+            assert 1300 <= total_irradiance <= 1400, f"Solar constant off: {total_irradiance:.1f} W/m²"
+            
+            # Peak should be somewhere in visible range (solar spectrum can vary)
+            vis_mask = (lam_nm >= 400) & (lam_nm <= 700)
+            if np.any(vis_mask):
+                peak_idx = np.argmax(E_AM0[vis_mask])
+                peak_wavelength = lam_nm[vis_mask][peak_idx]
+                assert 400 <= peak_wavelength <= 600, f"Visible peak at unexpected λ: {peak_wavelength:.1f} nm"
+            
+            print("ASTM E490 loading checks passed.")
+            print(f"  Data points: {len(lam_nm)}")
+            print(f"  λ range: {np.min(lam_nm):.1f} - {np.max(lam_nm):.1f} nm")
+            print(f"  Solar constant: {total_irradiance:.1f} W/m²")
+            print(f"  Visible peak: ~{peak_wavelength:.1f} nm")
+            
+        except Exception as e:
+            print(f"ASTM E490 loading test failed: {e}")
+    else:
+        print("ASTM E490 data file not found, skipping solar spectrum test")
+
+    # ---- 4) CIE 1931 2° Color Matching Functions Loading ----
+    cie_path = "../data/CIE_xyz_1931_2deg.csv"
+    if os.path.exists(cie_path):
+        try:
+            lam_nm, xbar, ybar, zbar = load_cie_1931_2deg(cie_path)
+            
+            # Basic sanity checks on loaded CIE data
+            assert len(lam_nm) > 300, f"Too few CIE data points: {len(lam_nm)}"
+            assert len(lam_nm) == len(xbar) == len(ybar) == len(zbar), "CIE CMF arrays length mismatch"
+            
+            # Wavelength range should cover visible spectrum (360-830 nm for CIE 1931)
+            assert 350 <= np.min(lam_nm) <= 370, f"CIE minimum wavelength unexpected: {np.min(lam_nm):.1f} nm"
+            assert 820 <= np.max(lam_nm) <= 840, f"CIE maximum wavelength unexpected: {np.max(lam_nm):.1f} nm"
+            
+            # Y CMF should peak around 555 nm (photopic peak)
+            y_peak_idx = np.argmax(ybar)
+            y_peak_wavelength = lam_nm[y_peak_idx]
+            assert 550 <= y_peak_wavelength <= 560, f"Y peak at unexpected λ: {y_peak_wavelength:.1f} nm"
+            
+            # CMFs should be non-negative and have reasonable magnitudes  
+            assert np.all(xbar >= 0) and np.all(ybar >= 0) and np.all(zbar >= 0), "CMFs should be non-negative"
+            assert 1.0 <= np.max(ybar) <= 2.0, f"Y peak value unexpected: {np.max(ybar):.3f}"
+            
+            # X and Z should have peaks in blue/red regions
+            x_peak_wavelength = lam_nm[np.argmax(xbar)]
+            z_peak_wavelength = lam_nm[np.argmax(zbar)]
+            assert 590 <= x_peak_wavelength <= 610, f"X peak at unexpected λ: {x_peak_wavelength:.1f} nm" 
+            assert 440 <= z_peak_wavelength <= 460, f"Z peak at unexpected λ: {z_peak_wavelength:.1f} nm"
+            
+            print("CIE 1931 2° CMFs loading checks passed.")
+            print(f"  Data points: {len(lam_nm)}")
+            print(f"  λ range: {np.min(lam_nm):.1f} - {np.max(lam_nm):.1f} nm")
+            print(f"  Y peak: {y_peak_wavelength:.1f} nm (value: {np.max(ybar):.3f})")
+            print(f"  X peak: {x_peak_wavelength:.1f} nm, Z peak: {z_peak_wavelength:.1f} nm")
+            
+        except Exception as e:
+            print(f"CIE 1931 2° CMFs loading test failed: {e}")
+    else:
+        print("CIE 1931 2° CMFs data file not found, skipping color matching functions test")
 
 if __name__ == "__main__":
     main()
