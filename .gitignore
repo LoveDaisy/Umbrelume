@@ -3,3 +3,7 @@ CLAUDE.md
 .claude/
 .cursor/
 .vscode/
+
+# python
+*.pyc
+__pycache__/
