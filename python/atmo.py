@@ -3,6 +3,8 @@
 # ──────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 import numpy as np
+import os, io, csv, math, pathlib
+import pandas as pd
 
 @dataclass
 class Atmosphere1D:
@@ -130,19 +132,123 @@ def us_standard_atmosphere_1976(z_grid_km: np.ndarray) -> Atmosphere1D:
         o3_number_density=o3_number_density,
     )
 
-def ciddor_n_air(wavelength_nm: float, T: np.ndarray, p: np.ndarray) -> np.ndarray:
-    """Refractive index of air n(λ, T, p) at standard CO2 / dry air.
-    TODO: implement or call a known param (Ciddor/Edlén)."""
-    raise NotImplementedError
+# --- Ciddor 1996 折射率（干空气；按密度线性缩放），λ 输入 nm ---
+def ciddor_n_air(wavelength_nm: float | np.ndarray,
+                 T: np.ndarray,  # [K]
+                 p: np.ndarray,  # [Pa]
+                 co2_ppm: float = 450.0) -> np.ndarray:
+    """
+    n(λ, T, p) for dry air using Ciddor (1996) standard-air dispersion with density scaling.
+    - Step 1: standard dry air (15 °C, 101325 Pa, ~450 ppm CO2):
+        n_std - 1 = 0.05792105/(238.0185 - 1/λ^2) + 0.00167917/(57.362 - 1/λ^2)
+        (λ in µm; result is absolute refractivity, not ×1e-6)
+    - Step 2: scale by number density ~ p/T (ideal-gas) to get n(λ,T,p):
+        n - 1 ≈ (n_std - 1) * (p/101325) * (288.15/T)
+      NOTE: This omits humidity/compressibility corrections; for our月食折射用途误差在 ppm 量级。
+    References: Ciddor 1996; NIST EMT toolbox notes; refractiveindex.info Ciddor page. 
+    """
+    lam_nm = np.asarray(wavelength_nm, dtype=float)
+    lam_um = lam_nm * 1e-3
+    s2 = 1.0 / (lam_um**2)                      # [µm^-2]
+    # Ciddor standard-air dispersion (dry air, 15 °C, 101325 Pa, ~450 ppm CO2)
+    n_minus_1_std = (0.05792105 / (238.0185 - s2)) + (0.00167917 / (57.362 - s2))
+    # density scaling to T,p
+    T = np.asarray(T, dtype=float)
+    p = np.asarray(p, dtype=float)
+    scale = (p / 101325.0) * (288.15 / T)
+    return 1.0 + n_minus_1_std * scale
 
-def load_astm_e490() -> tuple[np.ndarray, np.ndarray]:
-    """Return (lam_nm, AM0_solar_W_m2_nm).
-    TODO: load from file / resource; unit consistency check."""
-    raise NotImplementedError
+# --- ASTM E490 AM0 太阳光谱加载（自动识别单位；必要时从µm→nm） ---
+def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """
+    返回 (λ_nm, E_AM0_W_m2_nm)。优先读取本地 CSV/TXT。
+    若 path 为空，抛错并给出官方下载源（见 fetch 脚本）。
+    支持常见格式：两列/多列，自动识别 λ 单位（nm 或 µm），自动挑选辐照度列。
+    官方数据：NREL “2000 ASTM Standard Extraterrestrial Spectrum Reference E-490-00”.
+    """
+    if path is None or not os.path.exists(path):
+        raise FileNotFoundError(
+            "未找到 AM0 数据文件。请先下载 NREL 官方文件，再传入路径。\n"
+            "下载源见 https://www.nrel.gov/grid/solar-resource/spectra-astm-e490 （Data Files 部分）。"
+        )
+    # 读入
+    txt = pathlib.Path(path).read_text(encoding="utf-8", errors="ignore")
+    # 去掉注释行
+    lines = [ln for ln in txt.splitlines() if ln.strip() and not ln.strip().startswith(("#","!","//","%"))]
+    # 用空白分隔或逗号都支持
+    sample = lines[0].replace(",", " ").split()
+    # 找出两列或多列：第一列波长，后一列中选一个“irradiance-like”的
+    data = np.genfromtxt(io.StringIO("\n".join(lines)))
+    if data.ndim == 1:
+        data = data[None, :]
+    # 选择列
+    lam_col = 0
+    # heuristic: 优先找单位匹配的列
+    if data.shape[1] < 2:
+        raise ValueError("AM0 文件列数不足：至少需要波长与辐照度两列。")
+    # 辐照度列：取数值波动最大的非第一列
+    ir_cols = [i for i in range(1, data.shape[1])]
+    irr_col = max(ir_cols, key=lambda i: np.nanstd(data[:, i]))
+    lam = data[:, lam_col].astype(float)
+    E = data[:, irr_col].astype(float)
 
-def load_cie_1931_2deg() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Return CIE 1931 2° CMFs sampled to your λ grid (interpolate if needed)."""
-    raise NotImplementedError
+    # 单位处理：判断 λ 是否在 [0.1, 10] 范围（µm），若是则转换为 nm 并把 E 从 W/m^2/µm 转为 W/m^2/nm
+    lam_min, lam_max = np.nanmin(lam), np.nanmax(lam)
+    if 0.1 <= lam_min <= 10.0 and lam_max <= 1e3:
+        # 认为是 µm
+        lam_nm = lam * 1e3
+        # 如果 E 看起来像 W/m^2/µm → 除以 1000 变成 /nm
+        # （无法完全自动判断，按常见 NREL/ASTM 文件默认 /µm 处理）
+        E_W_m2_nm = E / 1000.0
+    else:
+        # 认为是 nm
+        lam_nm = lam
+        E_W_m2_nm = E
+    # 去 NaN/排序
+    ok = np.isfinite(lam_nm) & np.isfinite(E_W_m2_nm)
+    lam_nm = lam_nm[ok]; E_W_m2_nm = E_W_m2_nm[ok]
+    idx = np.argsort(lam_nm)
+    return lam_nm[idx], E_W_m2_nm[idx]
+
+# --- CIE 1931 2° CMFs 加载（官方 CSV） ---
+def load_cie_1931_2deg(path: str | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    返回 (λ_nm, x̄, ȳ, z̄)，来自 CIE 官方开放数据集 CSV。
+    如果未提供本地路径，则报错并提示去 CIE 下载。
+    官方数据集：CIE_xyz_1931_2deg.csv（1 nm 采样，CIE 018:2019 表 6）。
+    """
+    if path is None or not os.path.exists(path):
+        raise FileNotFoundError(
+            "未找到 CIE 1931 2° CMFs 文件。请从 CIE 官方开放数据集下载 CSV：\n"
+            "https://cie.co.at/datatable/cie-1931-colour-matching-functions-2-degree-observer"
+        )
+    df = pd.read_csv(path)
+    # 尝试匹配列名（不同分发版本可能不同）
+    cols = [c.lower() for c in df.columns]
+    # 找波长列
+    w_idx = np.argmin([abs("wavelength" in c or "lambda" in c or c.strip()=="nm") == False for c in cols])  # fallback
+    # 更稳妥：优先找包含 'wavelength' / 'nm'
+    w_candidates = [i for i,c in enumerate(cols) if ("wavelength" in c) or (c.strip()=="nm")]
+    w_col = w_candidates[0] if w_candidates else 0
+    # 找三条 CMFs（取后三列或名字含 xbar/ybar/zbar）
+    def find_col(keys, default):
+        for i,c in enumerate(cols):
+            if any(k in c for k in keys): return i
+        return default
+    x_col = find_col(["x_bar","xbar","x 2"], 1)
+    y_col = find_col(["y_bar","ybar","y 2"], 2)
+    z_col = find_col(["z_bar","zbar","z 2"], 3)
+
+    lam_nm = df.iloc[:, w_col].to_numpy(float)
+    xbar = df.iloc[:, x_col].to_numpy(float)
+    ybar = df.iloc[:, y_col].to_numpy(float)
+    zbar = df.iloc[:, z_col].to_numpy(float)
+
+    # 清理与排序
+    ok = np.isfinite(lam_nm) & np.isfinite(xbar) & np.isfinite(ybar) & np.isfinite(zbar)
+    lam_nm = lam_nm[ok]; xbar=xbar[ok]; ybar=ybar[ok]; zbar=zbar[ok]
+    idx = np.argsort(lam_nm)
+    return lam_nm[idx], xbar[idx], ybar[idx], zbar[idx]
 
 def rayleigh_sigma_bodhaine(lam_nm: np.ndarray) -> np.ndarray:
     """
