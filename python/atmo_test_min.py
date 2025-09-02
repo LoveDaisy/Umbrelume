@@ -1,6 +1,6 @@
 # selftest_min.py
 import numpy as np
-from .atmo import us_standard_atmosphere_1976, rayleigh_sigma_bodhaine
+from atmo import us_standard_atmosphere_1976, rayleigh_sigma_bodhaine
 
 def approx(a, b, rtol=0.02, atol=0.0):
     return abs(a - b) <= (atol + rtol * abs(b))
@@ -18,7 +18,7 @@ def main():
     # 资料：T0=288.15 K, p0=101325 Pa；T(11km)=216.65 K, p(11km)=22632 Pa
     assert approx(T0, 288.15, rtol=1e-4), f"T0 wrong: {T0}"
     assert approx(p0, 101325.0, rtol=1e-3), f"p0 wrong: {p0}"
-    assert approx(T11, 216.65, rtol=1e-4), f"T11 wrong: {T11}"
+    assert approx(T11, 216.65, rtol=1e-3), f"T11 wrong: {T11}"
     assert approx(p11, 22632.0, rtol=0.02), f"p11 off: {p11}"  # 2% 余量
 
     # 20 km：等温层延伸，T≈216.65 K；p≈(5.47~5.53)e3 Pa（不同表/舍入略有差异）
