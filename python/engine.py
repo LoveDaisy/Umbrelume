@@ -1,71 +1,124 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# engine.py —— 直达项 + 散射项（按 r 逐点）
+# engine.py —— 月食颜色引擎: 直达折射 + 单次散射 (含降级近似)
 # ──────────────────────────────────────────────────────────────────────────────
+from __future__ import annotations
+from dataclasses import dataclass
 import numpy as np
+
 from atmo import Atmosphere1D, SpectralData
-from raytrace import build_alpha_table, invert_h_from_alpha, default_solar_disk_samples
-from transmit import refracted_tangent_path, optical_depth_along_path, beer_transmittance
-from scatter import (rayleigh_beta, hg_phase, rayleigh_phase,
-                     scattering_angle_to_pixel, incoming_path_segment_to_cell,
-                     outgoing_path_segment_to_pixel)
+from raytrace import build_alpha_table, invert_h_from_alpha, default_solar_disk_samples, AlphaTable
 from color import spectrum_to_XYZ, XYZ_to_sRGB_D65
+from transmit import refracted_tangent_path, optical_depth_along_path, PathSegment
+from scatter import single_cell_scatter_spectrum
+
+# -------------------- 配置与数据类 --------------------
+
+
+@dataclass
+class EngineOptions:
+    use_solar_disk: bool = False   # False=点太阳；True=有限太阳盘 (需要 K>1 的采样)
+    lunar_albedo: float = 1.0      # 先当常数 (后续可接 ROLO)
+    hg_g: float = 0.0              # 气溶胶 HG 参数；0 表示不用 HG（仅瑞利）
+    use_aerosol: bool = False      # 先只做瑞利散射
+
+# -------------------- 直达折射项 --------------------
 
 
 def direct_term_spectrum(r_rad: float, atmo: Atmosphere1D, spec: SpectralData,
-                         alpha_table, solar_samples, use_aerosol=False) -> np.ndarray:
-    """直达折射项: ⟨E⊙·T_dir⟩_solar_disk  → 返回 Ein_dir(λ)"""
+                         alpha_table: AlphaTable,
+                         solar_samples,  # list of SolarDiskSample
+                         opt: EngineOptions) -> np.ndarray:
+    """
+    Ein_dir(λ) = ⟨ E⊙(λ) · T_dir(λ; h*(r,u)) ⟩_太阳盘
+    使用 refracted_tangent_path + optical_depth_along_path 计算真实切向折射路径。
+    """
     acc = np.zeros_like(spec.lam, dtype=float)
     wsum = 0.0
     for u in solar_samples:
-        r_eff = r_rad - u.delta_alpha_rad
+        r_eff = r_rad - getattr(u, "delta_alpha_rad", 0.0)
         h_star = invert_h_from_alpha(alpha_table, r_eff)
         if h_star is None:
             continue
         seg = refracted_tangent_path(atmo, h_star)
-        tau = optical_depth_along_path(seg, spec)         # dict of components
-        T = beer_transmittance(tau)                       # np.ndarray over λ
-        acc += u.weight * spec.Esun_AM0 * T
-        wsum += u.weight
-    return acc/wsum if wsum > 0 else acc
+        tau = optical_depth_along_path(seg, spec)    # {'R','O3',('aer')}
+        T = np.exp(-sum(tau.values()))
+        acc += getattr(u, "weight", 1.0) * spec.Esun_AM0 * T
+        wsum += getattr(u, "weight", 1.0)
+    return acc / wsum if wsum > 0 else acc
+
+# -------------------- 单次散射项 (瑞利起步)  --------------------
 
 
 def scattered_term_spectrum(r_rad: float, atmo: Atmosphere1D, spec: SpectralData,
-                            solar_samples, phi_grid: np.ndarray, z_grid: np.ndarray,
-                            use_aerosol=False) -> np.ndarray:
-    """单次散射体积分: φ \times z 上累积  → 返回 Ein_sca(λ)"""
+                            solar_samples,
+                            phi_grid: np.ndarray, z_grid: np.ndarray,
+                            opt: EngineOptions) -> np.ndarray:
+    """
+    Ein_sca(λ) = ∬ β_sca · Jλ · P(Θ) · T_out  dz dφ
+    采用 scatter.single_cell_scatter_spectrum() 基于真实斜程路径的单元贡献，
+    （当前版本按点太阳；如需太阳盘平均，可在此处对 solar_samples 做显式平均）
+    """
     acc = np.zeros_like(spec.lam, dtype=float)
-    dphi = float(phi_grid[1] - phi_grid[0])
-    dz = float(z_grid[1] - z_grid[0])
+    dphi = float(phi_grid[1] - phi_grid[0]) if len(phi_grid) > 1 else 2*np.pi
+    dz = float(z_grid[1] - z_grid[0]) if len(z_grid) > 1 else 1.0
+
     for phi in phi_grid:
         for z in z_grid:
-            # 入射源项 Jλ (太阳盘平均)
-            J = np.zeros_like(spec.lam, dtype=float)
-            wsum = 0.0
-            for u in solar_samples:
-                seg_in = incoming_path_segment_to_cell(z, phi, u)
-                tau_in = optical_depth_along_path(seg_in, spec)
-                T_in = beer_transmittance(tau_in)
-                J += u.weight * spec.Esun_AM0 * T_in
-                wsum += u.weight
-            if wsum == 0:
-                continue
-            J /= wsum
-
-            # 体散射系数 β 和相函数 P(θ)
-            N_air = np.interp(z, atmo.z, atmo.air_number_density)
-            beta_R = rayleigh_beta(N_air, spec.sigma_R)               # [1/m] vs λ
-            theta = scattering_angle_to_pixel(z, phi, r_rad)
-            P = rayleigh_phase(theta)                                 # start with Rayleigh only
-
-            # 出射消光
-            seg_out = outgoing_path_segment_to_pixel(z, phi, r_rad)
-            tau_out = optical_depth_along_path(seg_out, spec)
-            T_out = beer_transmittance(tau_out)
-
-            acc += beta_R * J * P * T_out * dz * dphi
+            # 当前按点太阳：single_cell_scatter_spectrum 内部用入/出真实斜程
+            contrib = single_cell_scatter_spectrum(
+                atmo, spec,
+                z_km=float(z), phi_rad=float(phi), r_rad=float(r_rad),
+                use_hg=(opt.hg_g != 0.0), hg_g=opt.hg_g,
+                sun_zenith_offset_rad=0.0
+            )
+            acc += contrib * dz * dphi
     return acc
 
+# -------------------- 顶层: 把谱 → 颜色条 --------------------
 
-def spectrum_to_srgb(Llam: np.ndarray, spec: SpectralData) -> tuple[float, float, float]:
-    X, Y, Z = spectrum_to_XYZ(spec.lam, Llam, spec.cie_x, spec.cie_y, spec.cie_z)
-    return XYZ_to_sRGB_D65(X, Y, Z)
+
+def compute_strip(r_arcmin: np.ndarray,
+                  atmo: Atmosphere1D, spec: SpectralData,
+                  alpha_table: AlphaTable,
+                  solar_samples=None,
+                  options: EngineOptions | None = None,
+                  phi_bins: int = 720,
+                  z_min_km: float = 10.0, z_max_km: float = 40.0, dz_km: float = 1.0):
+    """
+    计算一条 r→颜色的径向条带. 
+    返回 dict:
+      {
+        "r_arcmin": r_arcmin,
+        "rgb": [(r,g,b), ...],
+        "XYZ": [(X,Y,Z), ...],
+        "L_spectra": [ Lλ(r_i), ... ]  # 可选: 用于画色度/亮度剖面
+      }
+    """
+    opt = options or EngineOptions()
+    if solar_samples is None:
+        solar_samples = default_solar_disk_samples(K=1 if not opt.use_solar_disk else 21)
+
+    phi_grid = np.linspace(0.0, 2*np.pi, phi_bins, endpoint=False)
+    z_grid = np.arange(z_min_km, z_max_km + 1e-9, dz_km)
+
+    rgb_list, XYZ_list, Lspec_list = [], [], []
+    for r_am in r_arcmin:
+        r_rad = np.deg2rad(r_am / 60.0)
+
+        Ein_dir = direct_term_spectrum(r_rad, atmo, spec, alpha_table, solar_samples, opt)
+        Ein_sca = scattered_term_spectrum(r_rad, atmo, spec, solar_samples, phi_grid, z_grid, opt)
+
+        Llam = (Ein_dir + Ein_sca) * opt.lunar_albedo
+        X, Y, Z = spectrum_to_XYZ(spec.lam, Llam, spec.cie_x, spec.cie_y, spec.cie_z)
+        rgb = XYZ_to_sRGB_D65(X, Y, Z)
+
+        rgb_list.append(rgb)
+        XYZ_list.append((X, Y, Z))
+        Lspec_list.append(Llam)
+
+    return {
+        "r_arcmin": np.asarray(r_arcmin, float),
+        "rgb": np.array(rgb_list, float),
+        "XYZ": np.array(XYZ_list, float),
+        "L_spectra": Lspec_list,
+    }
