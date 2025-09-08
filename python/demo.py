@@ -29,7 +29,7 @@ from atmo import (
     Atmosphere1D, SpectralData,
     us_standard_atmosphere_1976,
     rayleigh_sigma_bodhaine,
-    load_astm_e490, load_cie_1931_2deg,
+    load_astm_e490, load_cie_1931_2deg, load_chappuis,
     ciddor_n_air,
 )
 
@@ -53,6 +53,7 @@ os.makedirs(OUT_DIR, exist_ok=True)
 # 你之前用 fetch_data.py 下载的默认文件名（可按需修改）
 AM0_PATH = os.path.join(DATA_DIR, "e490_00a_amo.csv")
 CIE_PATH = os.path.join(DATA_DIR, "CIE_xyz_1931_2deg.csv")
+O3_PATH = os.path.join(DATA_DIR, "SerdyuchenkoGorshelevVersionJuly2013.csv")
 
 # -------------------- O3：轻量混合比与 Chappuis 近似（仅 demo 用） --------------------
 
@@ -147,6 +148,7 @@ def main():
     x_i = np.interp(lam, lam_cie, xbar)
     y_i = np.interp(lam, lam_cie, ybar)
     z_i = np.interp(lam, lam_cie, zbar)
+    _, sigma_O3 = load_chappuis(O3_PATH, temp_K=293.0, lam_nm=lam, clip_zero=True)
 
     # 3) 大气：USSA76（0–80 km, 0.5 km）
     z_km = np.arange(0.0, 80.0 + 1e-9, 0.5)
@@ -159,7 +161,6 @@ def main():
 
     # 4) 光学截面：Rayleigh 用 Bodhaine；O3 用 Chappuis 近似（可替换为正式表）
     sigma_R = rayleigh_sigma_bodhaine(lam)
-    sigma_O3 = sigma_O3_chappuis_fallback(lam)
 
     spec = SpectralData(
         lam=lam.astype(float),

@@ -2,6 +2,7 @@
 # atmo.py  —— 大气与常数、数据接口（已实现 USSA76 与 Bodhaine σ_R）
 # ──────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
+from typing import Optional, Sequence, Tuple
 import numpy as np
 import os
 import io
@@ -215,6 +216,90 @@ def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
     idx = np.argsort(lam_nm)
 
     return lam_nm[idx], E_W_m2_nm[idx]
+
+
+def load_chappuis(path: str,
+                  temp_K: float = 293.0,
+                  lam_nm: Optional[Sequence[float]] = None,
+                  lam_min: Optional[float] = None,
+                  lam_max: Optional[float] = None,
+                  clip_zero: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    读取 Serdyuchenko–Gorshelev 可见(含扩展) O3 截面表。
+    参数
+    ----
+    path      : CSV 文件路径；应含列 ['vac','k293','k283',...,'k193']。
+    temp_K    : 选择最接近该温度的列（单位 K）。
+    lam_nm    : 若给定，则把截面插值到这根 λ 轴并返回；否则返回原始 λ。
+    lam_min/max: 若不插值，也可用这两个值裁剪原始 λ 范围（单位 nm，真空波长）。
+    clip_zero : 是否把少量负截面裁为 0（推荐 True）。
+    返回
+    ----
+    (λ_nm, sigma_m2): 波长（nm，真空）与截面（m²/分子）
+    """
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"未找到 O3 截面数据文件: {path}")
+    
+    # 读取 CSV 头部以确定列索引
+    try:
+        with open(path, 'r') as f:
+            header = f.readline().strip().split(',')
+    except Exception as e:
+        raise ValueError(f"读取 CSV 头部失败: {e}")
+    
+    if "vac" not in header:
+        raise ValueError("CSV 缺少 'vac' 列（真空波长 nm）")
+
+    # 选择与 temp_K 最接近的温度列
+    available = np.array([293, 283, 273, 263, 253, 243, 233, 223, 213, 203, 193], dtype=float)
+    idx = int(np.argmin(np.abs(available - float(temp_K))))
+    col = f"k{int(available[idx])}"
+    if col not in header:
+        raise ValueError(f"未找到温度列 '{col}'；可用列有: {header}")
+
+    # 确定列索引
+    vac_idx = header.index("vac")
+    temp_idx = header.index(col)
+    
+    # 使用 numpy 读取数据
+    try:
+        data = np.genfromtxt(path, delimiter=',', skip_header=1)
+        if data.ndim == 1:
+            data = data[None, :]
+    except Exception as e:
+        raise ValueError(f"读取 CSV 数据失败: {e}")
+
+    lam = data[:, vac_idx].astype(float)                # 真空波长 [nm]
+    sigma_cm2 = data[:, temp_idx].astype(float)         # [cm^2 / molecule]
+    sigma_m2 = sigma_cm2 * 1e-4                         # → [m^2 / molecule]
+
+    # 清理 NaN 值
+    ok = np.isfinite(lam) & np.isfinite(sigma_m2)
+    lam = lam[ok]
+    sigma_m2 = sigma_m2[ok]
+
+    if clip_zero:
+        sigma_m2 = np.maximum(sigma_m2, 0.0)
+
+    # 排序以确保单调性
+    idx_sort = np.argsort(lam)
+    lam = lam[idx_sort]
+    sigma_m2 = sigma_m2[idx_sort]
+
+    # 若不指定 lam_nm，则可先按范围裁剪
+    if lam_nm is None and (lam_min is not None or lam_max is not None):
+        lo = -np.inf if lam_min is None else float(lam_min)
+        hi = np.inf if lam_max is None else float(lam_max)
+        m = (lam >= lo) & (lam <= hi)
+        lam, sigma_m2 = lam[m], sigma_m2[m]
+
+    # 插值到指定 λ 轴
+    if lam_nm is not None:
+        lamq = np.asarray(lam_nm, dtype=float)
+        sigq = np.interp(lamq, lam, sigma_m2, left=0.0, right=0.0)
+        return lamq, sigq
+    else:
+        return lam, sigma_m2
 
 
 def load_cie_1931_2deg(path: str | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
