@@ -197,6 +197,7 @@ def main():
         lunar_albedo=1.0,
         hg_g=0.0,                # 仅瑞利；要看前向偏置可设 0.6–0.8
         use_aerosol=False,
+        r_scale_arcmin=57.0,
     )
 
     # 7) 计算颜色条（engine 返回 dict）

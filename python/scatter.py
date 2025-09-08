@@ -11,6 +11,53 @@ from transmit import PathSegment, optical_depth_along_path
 # 地球几何半径 (用于斜程几何)
 RE_KM = 6371.0
 
+
+@dataclass
+class Sightline:
+    z_mid_km: np.ndarray   # 每个穿越层的中点高度
+    ds_half_m: np.ndarray  # 该层在“靠近月球这一侧”的半程弦长（用于积分权重）
+    N_air_m3: np.ndarray
+    O3_m3: np.ndarray
+
+
+def build_sightline_segments(atmo, r_rad: float, z_top_km: float | None = None) -> Sightline:
+    """
+    给定像素角半径 r（相对于地影轴），在直线光路近似下构造“从最近端顶界到最近端顶界”的视线。
+    我们只取**靠近月球这一侧**的半程（closest approach -> 近端顶界），
+    因为远侧到月球的透过要再穿过整条路径，贡献极小；这样也避免双计数。
+    """
+    z = np.asarray(atmo.z, float)
+    if z_top_km is None:
+        z_top_km = float(z.max())
+
+    r_top = (RE_KM + z_top_km) * 1000.0
+    # 直线光路的冲量参数 b：在顶界半径 r_top 处入射天顶角 ~ (90° - r)，sin(ζ_top)=cos r
+    b = r_top * np.cos(float(r_rad))
+    b = max(0.0, min(b, r_top*(1.0 - 1e-12)))
+
+    # 只保留被视线穿过的壳层：r >= b
+    z_edges = z[(RE_KM + z) * 1000.0 >= b]
+    if z_edges[0] > 0.0:
+        z_edges = np.concatenate([[0.0], z_edges])
+    if z_edges[-1] < z_top_km - 1e-9:
+        z_edges = np.concatenate([z_edges, [z_top_km]])
+
+    r_edges = (RE_KM + z_edges) * 1000.0
+    # s(r) = sqrt(r^2 - b^2)；弦长在半程上的层权重 = Δs
+    s_edges = np.sqrt(np.maximum(r_edges*r_edges - b*b, 0.0))
+    ds_half = np.diff(s_edges)                      # 只取“近端半程”：closest→近端顶界
+    z_mid = 0.5 * (z_edges[:-1] + z_edges[1:])
+
+    N_air = np.interp(z_mid, atmo.z, atmo.air_number_density)
+    O3 = np.interp(z_mid, atmo.z, atmo.o3_number_density)
+
+    return Sightline(
+        z_mid_km=z_mid.astype(float),
+        ds_half_m=ds_half.astype(float),
+        N_air_m3=N_air.astype(float),
+        O3_m3=O3.astype(float),
+    )
+
 # -------------------- 相函数 --------------------
 
 
