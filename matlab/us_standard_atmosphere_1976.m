@@ -33,7 +33,7 @@ function atom = us_standard_atmosphere_1976(z_grid_km)
 %   - COESA / NOAA “U.S. Standard Atmosphere, 1976” formulas & layer limits.
 %   - Quick lookup of layer table / lapse rates (cross-check).
 
-z = z_grid_km;
+z = z_grid_km(:)';  % row vector
 
 % Constants
 Re_km = 6356.766;
