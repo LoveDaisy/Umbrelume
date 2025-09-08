@@ -3,7 +3,12 @@
 # ──────────────────────────────────────────────────────────────────────────────
 from dataclasses import dataclass
 import numpy as np
-import os, io, csv, math, pathlib
+import os
+import io
+import csv
+import math
+import pathlib
+
 
 @dataclass
 class Atmosphere1D:
@@ -13,11 +18,13 @@ class Atmosphere1D:
     air_number_density: np.ndarray  # [m^-3] from p, T (dry air)
     o3_number_density: np.ndarray   # [m^-3] ozone profile (here: zeros placeholder)
 
+
 @dataclass
 class AerosolProfile:
     beta_ext: callable    # beta_ext(λ, z) -> [1/m]
     ssa: callable         # single-scattering albedo ssa(λ, z) -> [0..1]
     g: callable           # HG parameter g(λ, z) -> [0..1)
+
 
 @dataclass
 class SpectralData:
@@ -28,6 +35,7 @@ class SpectralData:
     cie_x: np.ndarray               # CIE 1931 2° CMFs
     cie_y: np.ndarray
     cie_z: np.ndarray
+
 
 def us_standard_atmosphere_1976(z_grid_km: np.ndarray) -> Atmosphere1D:
     """
@@ -131,7 +139,7 @@ def us_standard_atmosphere_1976(z_grid_km: np.ndarray) -> Atmosphere1D:
         o3_number_density=o3_number_density,
     )
 
-# --- Ciddor 1996 折射率（干空气；按密度线性缩放），λ 输入 nm ---
+
 def ciddor_n_air(wavelength_nm: float | np.ndarray,
                  T: np.ndarray,  # [K]
                  p: np.ndarray,  # [Pa]
@@ -146,6 +154,7 @@ def ciddor_n_air(wavelength_nm: float | np.ndarray,
       NOTE: This omits humidity/compressibility corrections; for our月食折射用途误差在 ppm 量级。
     References: Ciddor 1996; NIST EMT toolbox notes; refractiveindex.info Ciddor page. 
     """
+    # --- Ciddor 1996 折射率（干空气；按密度线性缩放），λ 输入 nm ---
     lam_nm = np.asarray(wavelength_nm, dtype=float)
     lam_um = lam_nm * 1e-3
     s2 = 1.0 / (lam_um**2)                      # [µm^-2]
@@ -157,7 +166,7 @@ def ciddor_n_air(wavelength_nm: float | np.ndarray,
     scale = (p / 101325.0) * (288.15 / T)
     return 1.0 + n_minus_1_std * scale
 
-# --- ASTM E490 AM0 太阳光谱加载（numpy-only CSV 读取） ---
+
 def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
     """
     返回 (λ_nm, E_AM0_W_m2_nm)。使用 numpy 读取 CSV 文件。
@@ -165,12 +174,13 @@ def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
     自动识别 λ 单位（µm → nm），转换辐照度单位（W/m²/µm → W/m²/nm）。
     官方数据：NREL "2000 ASTM Standard Extraterrestrial Spectrum Reference E-490-00".
     """
+    # --- ASTM E490 AM0 太阳光谱加载（numpy-only CSV 读取） ---
     if path is None or not os.path.exists(path):
         raise FileNotFoundError(
             "未找到 AM0 数据文件。请先下载 NREL 官方文件，再传入路径。\n"
             "下载源见 https://www.nrel.gov/grid/solar-resource/spectra-astm-e490 （Data Files 部分）。"
         )
-    
+
     # 使用 numpy 读取 CSV，自动处理表头
     try:
         # 尝试直接读取，跳过第一行（表头）
@@ -179,10 +189,10 @@ def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
             data = data[None, :]  # 确保是 2D
         if data.shape[1] < 2:
             raise ValueError("AM0 文件列数不足：至少需要波长与辐照度两列。")
-        
+
         lam = data[:, 0]  # 第一列：波长
         E = data[:, 1]    # 第二列：辐照度
-        
+
     except Exception as e:
         raise ValueError(f"读取 AM0 文件失败：{e}")
 
@@ -197,22 +207,23 @@ def load_astm_e490(path: str | None = None) -> tuple[np.ndarray, np.ndarray]:
         # 认为已经是 nm
         lam_nm = lam
         E_W_m2_nm = E
-    
+
     # 清理 NaN 值并排序
     ok = np.isfinite(lam_nm) & np.isfinite(E_W_m2_nm) & (E_W_m2_nm > 0)
     lam_nm = lam_nm[ok]
     E_W_m2_nm = E_W_m2_nm[ok]
     idx = np.argsort(lam_nm)
-    
+
     return lam_nm[idx], E_W_m2_nm[idx]
 
-# --- CIE 1931 2° CMFs 加载（官方 CSV） ---
+
 def load_cie_1931_2deg(path: str | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     返回 (λ_nm, x̄, ȳ, z̄)，来自 CIE 官方开放数据集 CSV。
     如果未提供本地路径，则报错并提示去 CIE 下载。
     官方数据集：CIE_xyz_1931_2deg.csv（1 nm 采样，CIE 018:2019 表 6）。
     """
+    # --- CIE 1931 2° CMFs 加载（官方 CSV） ---
     if path is None or not os.path.exists(path):
         raise FileNotFoundError(
             "未找到 CIE 1931 2° CMFs 文件。请从 CIE 官方开放数据集下载 CSV：\n"
@@ -225,24 +236,25 @@ def load_cie_1931_2deg(path: str | None = None) -> tuple[np.ndarray, np.ndarray,
             data = data[None, :]  # 确保是 2D
         if data.shape[1] < 4:
             raise ValueError("CIE CMFs 文件列数不足：需要波长、x̄、ȳ、z̄ 四列。")
-        
-        lam_nm = data[:, 0]  # 第一列：波长 [nm]  
+
+        lam_nm = data[:, 0]  # 第一列：波长 [nm]
         xbar = data[:, 1]    # 第二列：x̄(λ)
         ybar = data[:, 2]    # 第三列：ȳ(λ)
         zbar = data[:, 3]    # 第四列：z̄(λ)
-        
+
     except Exception as e:
         raise ValueError(f"读取 CIE CMFs 文件失败：{e}")
 
     # 清理 NaN 值并排序
     ok = np.isfinite(lam_nm) & np.isfinite(xbar) & np.isfinite(ybar) & np.isfinite(zbar)
     lam_nm = lam_nm[ok]
-    xbar = xbar[ok] 
+    xbar = xbar[ok]
     ybar = ybar[ok]
     zbar = zbar[ok]
     idx = np.argsort(lam_nm)
-    
+
     return lam_nm[idx], xbar[idx], ybar[idx], zbar[idx]
+
 
 def rayleigh_sigma_bodhaine(lam_nm: np.ndarray) -> np.ndarray:
     """

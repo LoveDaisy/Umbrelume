@@ -7,6 +7,7 @@ from atmo import (us_standard_atmosphere_1976, load_astm_e490, load_cie_1931_2de
 from raytrace import build_alpha_table, default_solar_disk_samples
 from engine import direct_term_spectrum, scattered_term_spectrum, spectrum_to_srgb
 
+
 def main():
     # λ网格与光谱数据
     lam, Esun = load_astm_e490()                     # ASTM E490 AM0  :contentReference[oaicite:0]{index=0}
@@ -27,7 +28,7 @@ def main():
 
     # 计算直达项 + 散射项（单次瑞利）
     phi_grid = np.linspace(0.0, 2*np.pi, 720, endpoint=False)
-    z_scat   = np.arange(10.0, 40.1, 1.0)
+    z_scat = np.arange(10.0, 40.1, 1.0)
 
     rgb_strip = []
     for r in r_rad:
@@ -38,6 +39,7 @@ def main():
 
     # TODO: 保存/显示 r→sRGB（例如保存为 PNG 条形图）
     # TODO: 输出 Y 亮度与 (x,y) 色度随 r 的曲线
+
 
 if __name__ == "__main__":
     main()
