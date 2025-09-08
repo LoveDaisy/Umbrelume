@@ -187,12 +187,12 @@ def main():
         print("[raytrace] 未检测到内置实现，使用 fallback α(h) 。")
 
     # 6) 径向采样与散射网格
-    r_arcmin = np.linspace(0.0, 60.0, 241)
+    r_arcmin = np.linspace(0.0, 70.0, 241)
     phi_bins = 360              # φ 方向的积分分辨率
     z_min, z_max, dz = 8.0, 55.0, 1.0
 
     opt = EngineOptions(
-        use_solar_disk=False,    # 点太阳；后续可打开有限太阳盘
+        use_solar_disk=True,   # 打开太阳盘样本（默认 K=21）
         lunar_albedo=1.0,
         hg_g=0.0,                # 仅瑞利；要看前向偏置可设 0.6–0.8
         use_aerosol=False,

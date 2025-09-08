@@ -10,7 +10,8 @@ from raytrace import build_alpha_table, invert_h_from_alpha, default_solar_disk_
 from raytrace import invert_h_from_alpha  # ensure available
 from color import spectrum_to_XYZ, XYZ_to_sRGB_D65
 from transmit import refracted_tangent_path, optical_depth_along_path, PathSegment
-from scatter import single_cell_scatter_spectrum
+from scatter import (incoming_path_segment_to_cell, outgoing_path_segment_to_pixel,
+                     rayleigh_phase, hg_phase)
 
 # -------------------- 配置与数据类 --------------------
 
@@ -74,9 +75,8 @@ def scattered_term_spectrum(r_rad: float, atmo: Atmosphere1D, spec: SpectralData
                             phi_grid: np.ndarray, z_grid: np.ndarray,
                             opt: EngineOptions) -> np.ndarray:
     """
-    Ein_sca(λ) = ∬ β_sca · Jλ · P(Θ) · T_out  dz dφ
-    采用 scatter.single_cell_scatter_spectrum() 基于真实斜程路径的单元贡献，
-    （当前版本按点太阳；如需太阳盘平均，可在此处对 solar_samples 做显式平均）
+    Ein_sca(λ) = ∬ β_sca · ⟨E⊙(λ)·T_in(λ)⟩_太阳盘 · P(Θ) · T_out(λ)  dz dφ
+    这里显式对太阳盘样本求平均（入射真实斜程），出射也走真实斜程。
     """
     acc = np.zeros_like(spec.lam, dtype=float)
     dphi = float(phi_grid[1] - phi_grid[0]) if len(phi_grid) > 1 else 2*np.pi
@@ -84,14 +84,32 @@ def scattered_term_spectrum(r_rad: float, atmo: Atmosphere1D, spec: SpectralData
 
     for phi in phi_grid:
         for z in z_grid:
-            # 当前按点太阳：single_cell_scatter_spectrum 内部用入/出真实斜程
-            contrib = single_cell_scatter_spectrum(
-                atmo, spec,
-                z_km=float(z), phi_rad=float(phi), r_rad=float(r_rad),
-                use_hg=(opt.hg_g != 0.0), hg_g=opt.hg_g,
-                sun_zenith_offset_rad=0.0
-            )
-            acc += contrib * dz * dphi
+            # 1) 入射：太阳盘平均（每个样本一条“顶→体元”的真实斜程）
+            J = np.zeros_like(spec.lam); wsum = 0.0
+            for u in solar_samples:
+                seg_in = incoming_path_segment_to_cell(atmo, float(z), float(phi),
+                                                       sun_zenith_offset_rad=getattr(u, "delta_alpha_rad", 0.0))
+                tau_in = optical_depth_along_path(seg_in, spec)
+                T_in = np.exp(-sum(tau_in.values()))
+                J += getattr(u, "weight", 1.0) * (spec.Esun_AM0 * T_in)
+                wsum += getattr(u, "weight", 1.0)
+            if wsum > 0:
+                J /= wsum
+
+            # 2) 体散射系数（瑞利）
+            Nz = float(np.interp(z, atmo.z, atmo.air_number_density))
+            beta_R = Nz * spec.sigma_R
+
+            # 3) 相函数（小角近似：θ≈r）
+            theta = float(r_rad)
+            P = (hg_phase(theta, opt.hg_g) if opt.hg_g != 0.0 else rayleigh_phase(theta))
+
+            # 4) 出射：体元→像素方向的真实斜程
+            seg_out = outgoing_path_segment_to_pixel(atmo, float(z), float(phi), float(r_rad))
+            tau_out = optical_depth_along_path(seg_out, spec)
+            T_out = np.exp(-sum(tau_out.values()))
+
+            acc += beta_R * J * P * T_out * dz * dphi
     return acc
 
 # -------------------- 顶层: 把谱 → 颜色条 --------------------
