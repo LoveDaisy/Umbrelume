@@ -75,41 +75,60 @@ def scattered_term_spectrum(r_rad: float, atmo: Atmosphere1D, spec: SpectralData
                             phi_grid: np.ndarray, z_grid: np.ndarray,
                             opt: EngineOptions) -> np.ndarray:
     """
-    Ein_sca(λ) = ∬ β_sca · ⟨E⊙(λ)·T_in(λ)⟩_太阳盘 · P(Θ) · T_out(λ)  dz dφ
-    这里显式对太阳盘样本求平均（入射真实斜程），出射也走真实斜程。
+    Ein_sca(λ) = ∫_z ∫_φ β_R(z,λ) · ⟨E⊙(λ)·T_in(z,λ)⟩ · P(Θ≈r) · T_out(z,λ;r)  dφ dz
+               ≈ 2π · ∫_z β_R(z,λ) · J(z,λ) · P(r) · T_out(z,λ;r)  dz
+    这里对太阳盘求平均，去掉 φ 循环（几何近似下与 φ 无关），实现矢量化。
     """
-    acc = np.zeros_like(spec.lam, dtype=float)
-    dphi = float(phi_grid[1] - phi_grid[0]) if len(phi_grid) > 1 else 2*np.pi
+    lam = spec.lam
+    Nz = len(z_grid)
+    Nlam = len(lam)
     dz = float(z_grid[1] - z_grid[0]) if len(z_grid) > 1 else 1.0
 
-    for phi in phi_grid:
-        for z in z_grid:
-            # 1) 入射：太阳盘平均（每个样本一条“顶→体元”的真实斜程）
-            J = np.zeros_like(spec.lam); wsum = 0.0
-            for u in solar_samples:
-                seg_in = incoming_path_segment_to_cell(atmo, float(z), float(phi),
-                                                       sun_zenith_offset_rad=getattr(u, "delta_alpha_rad", 0.0))
+    # --- 预计算：J(z,λ) 与 β_R(z,λ)（与 r 无关，整条色带可复用）
+    # 缓存命中就直接用，避免重复建路径
+    cache = getattr(scattered_term_spectrum, "_cache", {})
+    key_J = ("J", tuple(np.round(z_grid, 6)), id(spec))
+    key_B = ("B", tuple(np.round(z_grid, 6)), id(spec), id(atmo))
+    if key_J in cache and key_B in cache:
+        Jz = cache[key_J]
+        beta = cache[key_B]
+    else:
+        # 体散射系数 β_R(z,λ)
+        N_air_z = np.interp(z_grid, atmo.z, atmo.air_number_density)[:, None]   # (Nz,1)
+        beta = N_air_z * spec.sigma_R[None, :]                                  # (Nz,Nlam)
+        # 入射 J(z,λ) = ⟨E⊙ · T_in⟩_太阳盘
+        Jz = np.zeros((Nz, Nlam), dtype=float)
+        wsum = 0.0
+        weights = [getattr(u, "weight", 1.0) for u in solar_samples]
+        wsum = float(np.sum(weights)) if len(weights) > 0 else 1.0
+        for k, u in enumerate(solar_samples):
+            delta = getattr(u, "delta_alpha_rad", 0.0)
+            acc = np.zeros((Nz, Nlam), dtype=float)
+            for i, z in enumerate(z_grid):
+                seg_in = incoming_path_segment_to_cell(atmo, float(z), 0.0, sun_zenith_offset_rad=delta)
                 tau_in = optical_depth_along_path(seg_in, spec)
                 T_in = np.exp(-sum(tau_in.values()))
-                J += getattr(u, "weight", 1.0) * (spec.Esun_AM0 * T_in)
-                wsum += getattr(u, "weight", 1.0)
-            if wsum > 0:
-                J /= wsum
+                acc[i, :] = spec.Esun_AM0 * T_in
+            Jz += weights[k] * acc
+        Jz /= wsum
+        cache[key_J] = Jz
+        cache[key_B] = beta
+        scattered_term_spectrum._cache = cache
 
-            # 2) 体散射系数（瑞利）
-            Nz = float(np.interp(z, atmo.z, atmo.air_number_density))
-            beta_R = Nz * spec.sigma_R
+    # 出射 T_out(z,λ; r) 只随 r 变：为当前 r 逐 z 计算一次，矢量装入矩阵
+    Tout = np.zeros((Nz, Nlam), dtype=float)
+    for i, z in enumerate(z_grid):
+        seg_out = outgoing_path_segment_to_pixel(atmo, float(z), 0.0, float(r_rad))
+        tau_out = optical_depth_along_path(seg_out, spec)
+        Tout[i, :] = np.exp(-sum(tau_out.values()))
 
-            # 3) 相函数（小角近似：θ≈r）
-            theta = float(r_rad)
-            P = (hg_phase(theta, opt.hg_g) if opt.hg_g != 0.0 else rayleigh_phase(theta))
+    # 相函数（θ≈r）
+    theta = float(r_rad)
+    P = (hg_phase(theta, opt.hg_g) if opt.hg_g != 0.0 else rayleigh_phase(theta))
 
-            # 4) 出射：体元→像素方向的真实斜程
-            seg_out = outgoing_path_segment_to_pixel(atmo, float(z), float(phi), float(r_rad))
-            tau_out = optical_depth_along_path(seg_out, spec)
-            T_out = np.exp(-sum(tau_out.values()))
-
-            acc += beta_R * J * P * T_out * dz * dphi
+    # φ 积分给常数 2π；z 用等步长积分（dz 单位沿用你的网格，做相对量即可）
+    integrand = beta * Jz * P * Tout         # (Nz,Nlam)
+    acc = (2.0*np.pi) * np.sum(integrand, axis=0) * dz
     return acc
 
 # -------------------- 顶层: 把谱 → 颜色条 --------------------
@@ -136,7 +155,8 @@ def compute_strip(r_arcmin: np.ndarray,
     if solar_samples is None:
         solar_samples = default_solar_disk_samples(K=1 if not opt.use_solar_disk else 21)
 
-    phi_grid = np.linspace(0.0, 2*np.pi, phi_bins, endpoint=False)
+    # 在当前几何近似下，散射项与 φ 无关；phi_grid 仅保留以兼容原参数
+    phi_grid = np.array([0.0])
     z_grid = np.arange(z_min_km, z_max_km + 1e-9, dz_km)
 
     # 把“最大 r（弧分）”换成弧度，供 r→α 映射使用
