@@ -1,4 +1,4 @@
-function atom = us_standard_atmosphere_1976(z_grid_km)
+function atmo = us_standard_atmosphere_1976(z_grid_km)
 % Build COESA 'U.S. Standard Atmosphere 1976' (0–86 km) on a geometric altitude grid.
 % 
 % Implements the layer-wise geopotential formulation:
@@ -98,9 +98,9 @@ air_number_density = p ./ (kB * T);
 % Placeholder ozone number density (all zeros; plug real profile later)
 o3_number_density = nan(size(air_number_density));
 
-atom.z = z;
-atom.T = T;
-atom.p = p;
-atom.air_air_number_density = air_number_density;
-atom.o3_number_density = o3_number_density;
+atmo.z = z;
+atmo.T = T;
+atmo.p = p;
+atmo.air_number_density = air_number_density;
+atmo.o3_number_density = o3_number_density;
 end
