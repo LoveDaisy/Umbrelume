@@ -1,4 +1,4 @@
-function [func_n_r, func_dn_dr] = create_func_n(wavelength_nm, z_grid_km)
+function nr_func = create_nr_func(wavelength_nm, z_grid_km)
 wavelength_nm = wavelength_nm(:);   % Column [mx1]
 z_grid_km = z_grid_km(:)';          % Row    [nx1]
 
@@ -9,6 +9,9 @@ n = ciddor_n_air(wavelength_nm, atmo.T, atmo.p);
 pp_n_r = pchip(z_grid_km + EARTH_R_km, n);
 func_dn_dr = @(r) helper_dn(pp_n_r, r, length(wavelength_nm), max(z_grid_km)+EARTH_R_km);
 func_n_r = @(r) helper_n(pp_n_r, r, length(wavelength_nm), max(z_grid_km)+EARTH_R_km);
+
+nr_func.n_r = func_n_r;
+nr_func.dn_dr = func_dn_dr;
 end
 
 function n = helper_n(pp, r, wl_len, r_max)
