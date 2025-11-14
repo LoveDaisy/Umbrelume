@@ -1,4 +1,13 @@
 function df = ray_curve_ode(s, f, func_n_r, func_dn_dr)
+% RAY_CURVE_ODE ODE function for ray curve computation in 2D.
+%   Inputs:
+%       s:              Arc-length parameter (not used, but required by ODE solver)
+%       f:              [4 x 1] state vector [x; y; tx; ty]
+%       func_n_r:      Function handle of refractive index n(r)
+%       func_dn_dr:    Function handle of dn/dr(r)
+%   Outputs:
+%       df:             [4 x 1] derivative of state vector
+
 x = f(1); y = f(2); tx = f(3); ty = f(4);
 
 r  = sqrt(x^2 + y^2);

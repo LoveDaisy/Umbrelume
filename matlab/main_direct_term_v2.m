@@ -1,6 +1,6 @@
 clear; close all; clc;
 
-b_km = Constants.EARTH_R_km + linspace(0, 100, 121)';
+b_km = Constants.EARTH_R_km + linspace(0, 100, 101)';
 spec_wl_nm = (400:5:780)';
 moon_y_arcmin = linspace(0, 80, 241)';
 

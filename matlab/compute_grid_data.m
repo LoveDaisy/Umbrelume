@@ -19,16 +19,14 @@ wavelength_grid_nm = wavelength_grid_nm(:);  % [K x 1]
 z_max = max(b_grid_km) - Constants.EARTH_R_km;
 z_grid_km = (0:.1:z_max)';
 atmo = us_standard_atmosphere_1976(z_grid_km);
-atmo.o3_number_density = (ozone_vmr_profile_simple(z_grid_km)' * 1e-6) .* atmo.air_number_density; % Simplified o3 profile
-
-% Refractive index functions
-nr_func = create_nr_func(mean(wavelength_grid_nm), z_grid_km);
+atmo.o3_number_density = (ozone_vmr_profile_simple(z_grid_km)' * 1.1 * 1e-6) .* atmo.air_number_density; % Simplified o3 profile
 
 % Curve arc-length parameter grid
-s_grid_km = [linspace(0, 500, 11), linspace(600, 1500, 11), linspace(2000, 1.0 * Constants.EARTH_R_km, 7)]';
+s_grid_km = [linspace(0, 500, 11), linspace(600, 1500, 11), linspace(2000, 1.0 * Constants.EARTH_R_km, 7)]';    % [S x 1]
 
 % Integrate and get the raypath
-raypath_store = compute_raypath(b_grid_km, s_grid_km, nr_func);
+nr_func = create_nr_func(mean(wavelength_grid_nm), atmo);
+raypath_store = compute_raypath(b_grid_km, s_grid_km, nr_func); % [B x S x 6]
 
 % Solve raypath at r = EARTH_SUN_DIST_km and r = EARTH_MOON_DIST_km
 sun_sol = solve_raypath(raypath_store, Constants.EARTH_SUN_DIST_km);   % [x, y, r, theta] at sun position
@@ -67,31 +65,6 @@ grid_data.wavelength_grid_nm = wavelength_grid_nm;
 grid_data.geo_jacob_grid = geo_jacob_grid;
 grid_data.beta_arcmin_grid = beta_grid_arcmin;
 grid_data.tau_grid = tau_grid;
-end
-
-function raypath_store = compute_raypath(b_grid_km, s_grid_km, nr_func)
-% COMPUTE_RAYPATH Compute the raypath for given b and s values.
-%   Inputs:
-%       b_grid_km:          [B x 1] array of b values in kilometers
-%       s_grid_km:          [S x 1] array of s values in kilometers
-%       nr_func:            A struct contains two functions:
-%           - n_r:          Function handle of n(r)
-%           - dn_dr:        Function handle of dn/dr(r)
-%   Outputs:
-%       raypath_store:      [B x S x 6] array of raypath data
-
-% Initialize raypath store
-raypath_store = nan(length(b_grid_km), length(s_grid_km), 6);
-
-% Compute raypath for each b and s
-for i = 1:length(b_grid_km)
-    % Solve ray curve ODE
-    tmp_sol = ode45(@(s,f) ray_curve_ode(s, f, nr_func.n_r, nr_func.dn_dr), [0, max(s_grid_km)], [b_grid_km(i); 0; 0; 1]);
-    raypath_store(i, :, [1,2,5,6]) = interp1(tmp_sol.x', tmp_sol.y', s_grid_km, 'pchip');
-end
-[tmp_theta, tmp_r] = cart2pol(raypath_store(:,:,1), raypath_store(:,:,2));
-raypath_store(:,:,3) = tmp_r;        % r
-raypath_store(:,:,4) = tmp_theta;    % theta
 end
 
 function sol = solve_raypath(raypath_store, target_r)
