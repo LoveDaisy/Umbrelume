@@ -13,7 +13,7 @@ E_sun = read_astm_e490_data(spec_wl_nm);
 [sun_r_theta_arcmin, w] = generate_sun_half_disk_sample(SUN_R_arcmin, 91);
 
 % Compute grid data
-grid_data = compute_grid_data(b_km, spec_wl_nm);
+grid_data = compute_grid_data(spec_wl_nm, b_km);
 
 % Compute attenuation factors
 [transit_factor, geo_factor] = compute_attenuation_factors(sun_r_theta_arcmin, moon_y_arcmin, grid_data);

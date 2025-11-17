@@ -1,8 +1,8 @@
-function grid_data = compute_grid_data(b_grid_km, wavelength_grid_nm)
+function grid_data = compute_grid_data(wavelength_grid_nm, b_grid_km)
 % COMPUTE_GRID_DATA Precompute the grid data for attenuation factor computation.
 %   Inputs:
-%       b_grid_km:                 [B x 1] array of b values in kilometers
 %       wavelength_grid_nm:        [K x 1] array of wavelength grid in nanometers
+%       b_grid_km:                 [B x 1] array of b values in kilometers
 %   Outputs:
 %       grid_data:                 Struct containing b grid data with fields:
 %          - b_grid_km:                 [B x 1] array of b values in kilometers
@@ -22,11 +22,11 @@ atmo = us_standard_atmosphere_1976(z_grid_km);
 atmo.o3_number_density = (ozone_vmr_profile_simple(z_grid_km)' * 1.1 * 1e-6) .* atmo.air_number_density; % Simplified o3 profile
 
 % Curve arc-length parameter grid
-s_grid_km = [linspace(0, 500, 11), linspace(600, 1500, 11), linspace(2000, 1.0 * Constants.EARTH_R_km, 7)]';    % [S x 1]
+s_grid_km = [linspace(0, 500, 11), linspace(600, 1500, 11), [1800, 2300, 2800]]';    % [S x 1]
 
 % Integrate and get the raypath
 nr_func = create_nr_func(mean(wavelength_grid_nm), atmo);
-raypath_store = compute_raypath(b_grid_km, s_grid_km, nr_func); % [B x S x 6]
+raypath_store = compute_raypath(nr_func, b_grid_km, s_grid_km); % [B x S x 6]
 
 % Solve raypath at r = EARTH_SUN_DIST_km and r = EARTH_MOON_DIST_km
 sun_sol = solve_raypath(raypath_store, Constants.EARTH_SUN_DIST_km);   % [x, y, r, theta] at sun position
