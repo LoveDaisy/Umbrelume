@@ -18,10 +18,10 @@ grid_data = compute_grid_data(b_km, spec_wl_nm);
 % Compute attenuation factors
 [transit_factor, geo_factor] = compute_attenuation_factors(sun_r_theta_arcmin, moon_y_arcmin, grid_data);
 
+%%
 % Get the spectrum
 spec = squeeze(sum(transit_factor .* geo_factor .* w, 1))' .* E_sun;
 
-%%
 figure(1); clf;
 subplot(2,1,1);
 rgb_color = spec_to_rgb([spec_wl_nm, spec], 'Mixed', true, 'Y', 2^18);

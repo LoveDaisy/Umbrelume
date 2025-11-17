@@ -31,8 +31,8 @@ raypath_store = compute_raypath(b_grid_km, s_grid_km, nr_func); % [B x S x 6]
 % Solve raypath at r = EARTH_SUN_DIST_km and r = EARTH_MOON_DIST_km
 sun_sol = solve_raypath(raypath_store, Constants.EARTH_SUN_DIST_km);   % [x, y, r, theta] at sun position
 moon_sol = solve_raypath(raypath_store, Constants.EARTH_MOON_DIST_km); % [x, y, r, theta] at moon position
-moon_sol(:,2) = -moon_sol(:,2);
-moon_sol(:,4) = -moon_sol(:,4);
+sun_sol(:,1) = -sun_sol(:,1);
+sun_sol(:,4) = mod(pi - sun_sol(:,4), 2*pi);
 
 % Compute geometric Jacobian
 geo_jacob_grid = compute_geometric_jacobian(b_grid_km, raypath_store, sun_sol); % [B x 1]
@@ -70,10 +70,10 @@ end
 function sol = solve_raypath(raypath_store, target_r)
 % SOLVE_RAYPATH Solve the raypath to find the position where r = target_r
 %   Inputs:
-%       raypath_store:      [S x 6] array of raypath data along s
+%       raypath_store:      [B x S x 6] array of raypath data along s
 %       target_r:           [1 x 1] target r value
 %   Outputs:
-%       sol:                [S x 4] array of [x, y, r, theta] at target r
+%       sol:                [B x S x 4] array of [x, y, r, theta] at target r
 
 % Basically we need to find the intersection of a circle with radius target_r,
 % and the tangent line at the end of the raypath.
@@ -82,7 +82,7 @@ coef_c = squeeze(raypath_store(:, end, 3).^2 - target_r.^2);
 sol_s = (-coef_b + sqrt(coef_b.^2 - 4*coef_c)) / 2;
 sol_xy = squeeze(raypath_store(:, end, 1:2) + sol_s .* raypath_store(:, end, 5:6));
 [sol_theta, sol_r] = cart2pol(sol_xy(:,1), sol_xy(:,2));
-sol = [sol_xy, sol_r, sol_theta];   % [x, y, r, theta]
+sol = [sol_xy, sol_r, mod(sol_theta, 2*pi)];   % [x, y, r, theta]
 end
 
 function geo_jacob = compute_geometric_jacobian(b_grid_km, raypath_store, sun_sol)
@@ -95,14 +95,14 @@ function geo_jacob = compute_geometric_jacobian(b_grid_km, raypath_store, sun_so
 %       geo_jacob:          [B x 1] array of geometric Jacobian values
 
 % Emit -> Exit angle from sun
-ray_angle = squeeze(atan2d(raypath_store(:,end,6), raypath_store(:,end,5)));
-sun_theta = atan2d(sun_sol(:,2), sun_sol(:,1));
-sun_emit_arcmin = (ray_angle - sun_theta)*60;
-sun_exit_arcmin = (180 - ray_angle - sun_theta)*60;
+ray_angle = squeeze(atan2(raypath_store(:,end,6), raypath_store(:,end,5)));
+sun_theta = sun_sol(:,4);
+sun_emit = pi - ray_angle - sun_theta;
+sun_exit = pi - ray_angle + sun_theta;
 
 % Geometric Jacobian
 % TODO: should do some smooth?
-emit_fun = pchip(b_grid_km, sun_emit_arcmin);
-exit_fun = pchip(b_grid_km, sun_exit_arcmin);
-geo_jacob = fnval(fnder(exit_fun, 1), b_grid_km) ./ fnval(fnder(emit_fun, 1), b_grid_km);  % [B x 1]
+emit_fun = pchip(b_grid_km, sun_emit);
+exit_fun = pchip(b_grid_km, sun_exit);
+geo_jacob = abs(fnval(fnder(exit_fun, 1), b_grid_km) ./ fnval(fnder(emit_fun, 1), b_grid_km));  % [B x 1]
 end

@@ -15,7 +15,7 @@ raypath_store = nan(length(b_grid_km), length(s_grid_km), 6);
 % Compute raypath for each b and s
 for i = 1:length(b_grid_km)
     % Solve ray curve ODE
-    tmp_sol = ode45(@(s,f) ray_curve_ode(s, f, nr_func.n_r, nr_func.dn_dr), [0, max(s_grid_km)], [b_grid_km(i); 0; 0; 1]);
+    tmp_sol = ode45(@(s,f) ray_curve_ode(s, f, nr_func.n_r, nr_func.dn_dr), [0, max(s_grid_km)], [0; b_grid_km(i); 1; 0]);
     raypath_store(i, :, [1,2,5,6]) = interp1(tmp_sol.x', tmp_sol.y', s_grid_km, 'pchip');
 end
 [tmp_theta, tmp_r] = cart2pol(raypath_store(:,:,1), raypath_store(:,:,2));
