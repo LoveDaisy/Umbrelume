@@ -16,10 +16,7 @@ b_grid_km = b_grid_km(:);       % [B x 1]
 wavelength_grid_nm = wavelength_grid_nm(:);  % [K x 1]
 
 % Atmosphere model
-z_max = max(b_grid_km) - Constants.EARTH_R_km;
-z_grid_km = (0:.1:z_max)';
-atmo = us_standard_atmosphere_1976(z_grid_km);
-atmo.o3_number_density = (ozone_vmr_profile_simple(z_grid_km)' * 1.1 * 1e-6) .* atmo.air_number_density; % Simplified o3 profile
+atmo = generate_atmosphere_model();
 
 % Curve arc-length parameter grid
 s_grid_km = [linspace(0, 500, 11), linspace(600, 1500, 11), [1800, 2300, 2800]]';    % [S x 1]
@@ -48,9 +45,9 @@ sigma_o3_grid = read_chappuis_data(wavelength_grid_nm, atmo.T);
 raypath_kappa_sct_air = nan(length(b_grid_km), length(s_grid_km), length(wavelength_grid_nm));
 raypath_kappa_abs_o3 = nan(length(b_grid_km), length(s_grid_km), length(wavelength_grid_nm));
 for i = 1:length(wavelength_grid_nm)
-    raypath_kappa_sct_air(:,:,i) = interp1(z_grid_km, atmo.air_number_density .* sigma_rayleigh_grid(i,:), ...
+    raypath_kappa_sct_air(:,:,i) = interp1(atmo.z, atmo.air_number_density .* sigma_rayleigh_grid(i,:), ...
         raypath_store(:,:,3)-Constants.EARTH_R_km, 'linear', nan);
-    raypath_kappa_abs_o3(:,:,i) = interp1(z_grid_km, atmo.o3_number_density .* sigma_o3_grid(i,:), ...
+    raypath_kappa_abs_o3(:,:,i) = interp1(atmo.z, atmo.o3_number_density .* sigma_o3_grid(i,:), ...
         raypath_store(:,:,3)-Constants.EARTH_R_km, 'linear', nan);
 end
 raypath_kappa_sct_air(isnan(raypath_kappa_sct_air)) = 0;
@@ -65,24 +62,6 @@ grid_data.wavelength_grid_nm = wavelength_grid_nm;
 grid_data.geo_jacob_grid = geo_jacob_grid;
 grid_data.beta_arcmin_grid = beta_grid_arcmin;
 grid_data.tau_grid = tau_grid;
-end
-
-function sol = solve_raypath(raypath_store, target_r)
-% SOLVE_RAYPATH Solve the raypath to find the position where r = target_r
-%   Inputs:
-%       raypath_store:      [B x S x 6] array of raypath data along s
-%       target_r:           [1 x 1] target r value
-%   Outputs:
-%       sol:                [B x S x 4] array of [x, y, r, theta] at target r
-
-% Basically we need to find the intersection of a circle with radius target_r,
-% and the tangent line at the end of the raypath.
-coef_b = 2 * dot(raypath_store(:, end, 1:2), raypath_store(:, end, 5:6), 3);
-coef_c = squeeze(raypath_store(:, end, 3).^2 - target_r.^2);
-sol_s = (-coef_b + sqrt(coef_b.^2 - 4*coef_c)) / 2;
-sol_xy = squeeze(raypath_store(:, end, 1:2) + sol_s .* raypath_store(:, end, 5:6));
-[sol_theta, sol_r] = cart2pol(sol_xy(:,1), sol_xy(:,2));
-sol = [sol_xy, sol_r, mod(sol_theta, 2*pi)];   % [x, y, r, theta]
 end
 
 function geo_jacob = compute_geometric_jacobian(b_grid_km, raypath_store, sun_sol)
