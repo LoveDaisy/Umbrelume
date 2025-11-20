@@ -3,16 +3,16 @@ function nr_func = create_nr_func(wavelength_nm, atmo)
 %   Inputs:
 %       wavelength_nm:      [L x 1] array of wavelength grid in nanometers
 %       atmo:               Struct containing atmospheric profile with fields:
-%           - z:                [N x 1] array of altitude in kilometers
-%           - T:                [N x 1] array of temperature in Kelvin
-%           - p:                [N x 1] array of pressure in Pascal
+%           - z:                [B x 1] array of altitude in kilometers
+%           - T:                [B x 1] array of temperature in Kelvin
+%           - p:                [B x 1] array of pressure in Pascal
 %   Outputs:
 %       nr_func:            A struct contains two functions:
 %           - n_r:          Function handle of n(r)
 %           - dn_dr:        Function handle of dn/dr(r)
 
 wavelength_nm = wavelength_nm(:);               % [L x 1]
-b_grid_km = Constants.EARTH_R_km + atmo.z(:);   % [N x 1]
+b_grid_km = Constants.EARTH_R_km + atmo.z(:);   % [B x 1]
 
 L = length(wavelength_nm);
 r_range = [min(b_grid_km), max(b_grid_km)];

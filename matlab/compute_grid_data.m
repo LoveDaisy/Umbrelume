@@ -1,19 +1,19 @@
 function grid_data = compute_grid_data(wavelength_grid_nm, b_grid_km)
 % COMPUTE_GRID_DATA Precompute the grid data for attenuation factor computation.
 %   Inputs:
-%       wavelength_grid_nm:        [K x 1] array of wavelength grid in nanometers
+%       wavelength_grid_nm:        [L x 1] array of wavelength grid in nanometers
 %       b_grid_km:                 [B x 1] array of b values in kilometers
 %   Outputs:
 %       grid_data:                 Struct containing b grid data with fields:
 %          - b_grid_km:                 [B x 1] array of b values in kilometers
-%          - wavelength_grid_nm:        [K x 1] array of wavelength grid in nanometers
+%          - wavelength_grid_nm:        [L x 1] array of wavelength grid in nanometers
 %          - geo_jacob_grid:            [B x 1] array of geometric Jacobian values
 %          - beta_grid_arcmin:          [B x 1] array of beta angles in arcminutes
 %          - tau_grid:                  [B x K] array of optical depths
 
 % Make sure inputs are column vectors
 b_grid_km = b_grid_km(:);       % [B x 1]
-wavelength_grid_nm = wavelength_grid_nm(:);  % [K x 1]
+wavelength_grid_nm = wavelength_grid_nm(:);  % [L x 1]
 
 % Atmosphere model
 atmo = generate_atmosphere_model();
