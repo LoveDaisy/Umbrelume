@@ -8,7 +8,7 @@
 未解决的残差；[ROADMAP](docs/ROADMAP.md)记录已完成里程碑与从粗到精的后续方向。
 现有观测仍不能验证绿松石带、完整可见颜色或某次月食的绝对亮度。
 已开始[多事件参照](docs/MULTI_EVENT_OBSERVATIONS.md)：新增 1990 年整月面实测亮度的固定模型比较、
-2011 年 12 月光谱读数及更多来源的使用条件，暂不继续针对单次月食调参。
+2011 年 12 月完整曝光平均的光谱比较及更多来源的使用条件，暂不继续针对单次月食调参。
 
 ## 运行
 
@@ -72,6 +72,9 @@ uv run python -m validation.compare_observations --out outputs/observations2011
 
 # 新增事件的明视觉亮度比较；2007 年外推值明确仅作背景
 uv run python -m validation.multiple_events --out outputs/multiple-events
+
+# 2011 年 12 月：独立星历、1800 秒曝光平均与位置敏感性
+uv run python -m validation.compare_dec2011 --out outputs/dec2011
 ```
 
 [本轮对照图](figures/round2/comparison.png)、[本轮分析](docs/ROUND2.md)、
@@ -80,7 +83,8 @@ uv run python -m validation.multiple_events --out outputs/multiple-events
 
 [新增事件对照图](figures/multiple_events/comparison.png)显示：1990 年整月面明视觉亮度下，
 固定默认值的预测／实测约为 1.57，分子模型约为 1.90。这是中性月面与近似观测口径下的比较，
-尚不能把剩余偏差唯一归于真实大气。2011 年 12 月 光谱需恢复半小时曝光内的采样轨迹后再评分。
+尚不能把剩余偏差唯一归于真实大气。[2011 年 12 月完整对照](docs/DECEMBER2011.md)已落实轨迹和时间积分，
+默认模型仍偏亮约 41%–94%；它揭示了绝对亮度改善与光谱形状改善并不总是一致。
 完整资料状态、限制和下一步见[多事件说明](docs/MULTI_EVENT_OBSERVATIONS.md)。
 
 ## 数值验证与物理契约

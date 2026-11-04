@@ -33,7 +33,10 @@
     "end_utc": "2011-12-10T14:38:25Z",
     "exposure_s": 1800,
     "mean_local_airmass": 1.13,
-    "local_airmass_range": [1.10, 1.16]
+    "local_airmass_range": [
+      1.1,
+      1.16
+    ]
   },
   "bright_B2": {
     "start_utc": "2011-12-10T18:10:24Z",
@@ -41,16 +44,21 @@
     "mean_local_airmass": 1.17
   },
   "reduction": "Bias, flat, extraction and background correction; 77 echelle orders combined. Same-region U1/B2 cancels solar spectrum, lunar spectral albedo and instrument response under stable observing conditions. Local telluric absorption is assumed to cancel at a mean-airmass difference of 0.04; the authors explicitly note water-vapour variability as an exception. No absolute flux calibration was applied.",
-  "geometry_status": "Not yet a model-validation input: a documented time-averaged shadow-coordinate trajectory is required; a single angle is not supplied in the numerical table",
+  "geometry_status": "Completed conditional model comparison: DE441/high-precision lunar-site geometry over full U1 exposure, independently checked against Fig.1; exact fibre location remains unknown.",
   "geometric_context": "Paper Sec. 3.2 and Figs. 1, 5, 6 show a moving near-Tycho footprint; the low-tangent-point trajectory is near 156 E, 67 S at midpoint. The paper's single effective tangent altitude is a fitted/model-derived quantity, not an independently measured lunar shadow coordinate.",
   "readout_definition": "Median neutral-black stroke pixel across seven native image columns (about +/-0.62 nm); vertical allowance is full stroke/bin excursion from that median plus 2 pixels, converted to log10 units using 375 pixels per decade. This allowance describes figure readout only, NOT observational error, a confidence interval, or an independent-exposure count.",
   "missing_information": [
     "Original reduced numerical spectrum and exposure-level calibration products",
     "Pointwise observational uncertainties and spectrophotometric systematic uncertainty",
     "Exact fibre coordinates and any tracking error during U1/B2",
-    "A model-coordinate trajectory integrated over the full 1800 s U1 window",
     "A full-width visible filter response or full spectrum suitable for an observed colorimetric integral"
   ],
   "independence": "Distinct lunar eclipse from the June 2011 reference, but these seven readouts come from one integrated December exposure and are not independent atmospheric realizations",
-  "number_of_curve_readouts": 7
+  "number_of_curve_readouts": 7,
+  "geometry_products": {
+    "trajectory": "geometry.json",
+    "independent_figure_readout": "figure1_geometry.json",
+    "comparison": "validation/results/dec2011/comparison.json",
+    "documentation": "docs/DECEMBER2011.md"
+  }
 }

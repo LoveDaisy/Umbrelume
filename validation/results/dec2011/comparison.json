@@ -1,0 +1,852 @@
+{
+  "event": "2011-12-10",
+  "scope": "Independent event; fixed atmosphere; conditional near-Tycho continuum comparison, not exact fibre reconstruction or complete color validation",
+  "normalization": "Fig15 already(U1/B2)/300; no repeated exposure correction, fitted scale, geometry shift or atmospheric fit",
+  "profiles": {
+    "molecular": null,
+    "fixed_opac": {
+      "aod550": 0.013,
+      "bottom_m": 2000.0,
+      "top_m": 12000.0,
+      "scale_height_m": 8000.0,
+      "angstrom_visible": 1.58,
+      "angstrom_blue": 1.21,
+      "break_nm": 500.0
+    }
+  },
+  "geometry": {
+    "source": "JPL Horizons DE441; ICRF vectors; lunar MEAN_ME high-precision site orientation",
+    "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+    "manual": "https://ssd.jpl.nasa.gov/horizons/manual.html",
+    "recorded_utc": "2026-11-04T06:07:30.312210+00:00",
+    "nominal_site": {
+      "longitude_deg_east": -11.22,
+      "latitude_deg_north": -43.3,
+      "altitude_km": 0.0,
+      "source": "https://planetarynames.wr.usgs.gov/Feature/6163",
+      "scope": "Tycho crater center as nominal near-Tycho fibre location, not a measured exact pointing"
+    },
+    "epoch_contract": {
+      "observed_start_utc": "2011-12-10T14:08:25+00:00",
+      "observed_end_utc": "2011-12-10T14:38:25+00:00",
+      "exposure_s": 1800,
+      "reflection_epoch_shift_s": -1.32,
+      "scope": "Approximate Moon-to-ground downleg; 396000km/c about1.32s. Site-dependent correction <=0.022s. Earth/Sun vectors use LT (not LT+S) to retain physical ray coordinates."
+    },
+    "vector_construction": "At lunar reflection epoch t, e=Earth(t-LT_E)-site(t), s=Sun(t-LT_S)-site(t). Sunward u=(s-e)/|s-e|; rho=|e cross u|, D=e dot u, S=|s-e|. No apparent-sky stellar aberration rotation applied.",
+    "independent_figure_check": {
+      "source": "Yan Fig.1, native raster on PDF page2",
+      "plot_start_end_radius_m": [
+        3764481.718415581,
+        3668833.569386239
+      ],
+      "ephemeris_start_end_radius_m": [
+        3764352.7334638196,
+        3700444.527281827
+      ],
+      "absolute_endpoint_difference_m": [
+        128.9849517615512,
+        31610.957895587664
+      ],
+      "schematic_reading_allowance_m": 150000.0,
+      "scope": "Cross-check, not an observational pointing confidence interval; no atmosphere-derived tangent heights used"
+    },
+    "spatial_sensitivity_radial_offsets_m": [
+      -150000.0,
+      0.0,
+      150000.0
+    ],
+    "bright_reference": {
+      "mid_observed_utc": "2011-12-10T18:10:27+00:00",
+      "reflection_utc": "2011-12-10T18:10:25.680000+00:00",
+      "shadow_radius_m": 12780843.183183441,
+      "receiver_axial_distance_m": 395373432.4786312,
+      "sun_earth_distance_m": 147318410588.8912,
+      "sun_site_distance_m": 147713784574.2971
+    },
+    "requests": {
+      "u1_earth_lt": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'399'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 14:08:23.680'",
+          "STOP_TIME": "'2011-12-10 14:38:23.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'LT'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "0d0d4c362c2785085ac28774d254af4152c8154965a55ef4d07b8ec532249c8b",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+        "row_count": 31
+      },
+      "u1_sun_lt": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'10'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 14:08:23.680'",
+          "STOP_TIME": "'2011-12-10 14:38:23.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'LT'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "856e8885369a60a22704f5c4e8d4212a5a51a55544815ffac65a1a3aaf1fd834",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+        "row_count": 31
+      },
+      "u1_earth_none": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27NONE%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'399'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 14:08:23.680'",
+          "STOP_TIME": "'2011-12-10 14:38:23.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'NONE'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "68ec98841a04a3a3570c22b7301ceccb0b40eeeef668d4ec31f5988dc7bc40ce",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+        "row_count": 31
+      },
+      "u1_sun_none": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27NONE%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'10'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 14:08:23.680'",
+          "STOP_TIME": "'2011-12-10 14:38:23.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'NONE'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "52c6daf6c31466c78ef52b668d7474cbddd86138ed04f1e05571146dd6f0723f",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+        "row_count": 31
+      },
+      "b2_earth_lt": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+18%3A10%3A25.680%27&STOP_TIME=%272011-12-10+18%3A11%3A25.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'399'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 18:10:25.680'",
+          "STOP_TIME": "'2011-12-10 18:11:25.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'LT'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "4cf212e241691649434c77cf49697a81d9a1a0a8be1322d0f9d0f3aaf8b41404",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 18:10:25.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 18:11:25.6800",
+        "row_count": 2
+      },
+      "b2_sun_lt": {
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+18%3A10%3A25.680%27&STOP_TIME=%272011-12-10+18%3A11%3A25.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'10'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'VECTORS'",
+          "CENTER": "'coord@301'",
+          "COORD_TYPE": "'GEODETIC'",
+          "SITE_COORD": "'-11.22,-43.3,0'",
+          "START_TIME": "'2011-12-10 18:10:25.680'",
+          "STOP_TIME": "'2011-12-10 18:11:25.680'",
+          "STEP_SIZE": "'1m'",
+          "TIME_TYPE": "'UT'",
+          "REF_PLANE": "'FRAME'",
+          "REF_SYSTEM": "'ICRF'",
+          "VEC_CORR": "'LT'",
+          "VEC_TABLE": "'2'",
+          "OUT_UNITS": "'KM-S'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "c6a5df3a1f591f687d7fa653066f02c27aecaba8e2b13424ef303d0a19f51a4b",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "first_calendar_utc": "A.D. 2011-Dec-10 18:10:25.6800",
+        "last_calendar_utc": "A.D. 2011-Dec-10 18:11:25.6800",
+        "row_count": 2
+      }
+    },
+    "records": [
+      {
+        "observed_utc": "2011-12-10T14:08:25+00:00",
+        "reflection_utc": "2011-12-10T14:08:23.680000+00:00",
+        "seconds_since_start": 0,
+        "shadow_radius_m": 3764352.7334638196,
+        "receiver_axial_distance_m": 396054445.8861208,
+        "sun_earth_distance_m": 147321442091.01212,
+        "sun_site_distance_m": 147717496584.8626,
+        "solar_flux_relative_to_b2": 0.9999497423932633,
+        "simultaneous_geometry_radius_m": 3778636.4834034983
+      },
+      {
+        "observed_utc": "2011-12-10T14:09:25+00:00",
+        "reflection_utc": "2011-12-10T14:09:23.680000+00:00",
+        "seconds_since_start": 60,
+        "shadow_radius_m": 3750728.8044524225,
+        "receiver_axial_distance_m": 396052555.4153602,
+        "sun_earth_distance_m": 147321429514.4196,
+        "sun_site_distance_m": 147717482117.45276,
+        "solar_flux_relative_to_b2": 0.9999499382628821,
+        "simultaneous_geometry_radius_m": 3764486.2545274138
+      },
+      {
+        "observed_utc": "2011-12-10T14:10:25+00:00",
+        "reflection_utc": "2011-12-10T14:10:23.680000+00:00",
+        "seconds_since_start": 120,
+        "shadow_radius_m": 3737853.095325629,
+        "receiver_axial_distance_m": 396050657.29090506,
+        "sun_earth_distance_m": 147321416938.25372,
+        "sun_site_distance_m": 147717467642.83606,
+        "solar_flux_relative_to_b2": 0.99995013423013,
+        "simultaneous_geometry_radius_m": 3751077.7144826623
+      },
+      {
+        "observed_utc": "2011-12-10T14:11:25+00:00",
+        "reflection_utc": "2011-12-10T14:11:23.680000+00:00",
+        "seconds_since_start": 180,
+        "shadow_radius_m": 3725733.366701153,
+        "receiver_axial_distance_m": 396048751.51271516,
+        "sun_earth_distance_m": 147321404362.5145,
+        "sun_site_distance_m": 147717453161.01248,
+        "solar_flux_relative_to_b2": 0.9999503302950069,
+        "simultaneous_geometry_radius_m": 3738418.847203358
+      },
+      {
+        "observed_utc": "2011-12-10T14:12:25+00:00",
+        "reflection_utc": "2011-12-10T14:12:23.680000+00:00",
+        "seconds_since_start": 240,
+        "shadow_radius_m": 3714377.021987808,
+        "receiver_axial_distance_m": 396046838.08068,
+        "sun_earth_distance_m": 147321391787.2019,
+        "sun_site_distance_m": 147717438671.98184,
+        "solar_flux_relative_to_b2": 0.9999505264575157,
+        "simultaneous_geometry_radius_m": 3726517.295837275
+      },
+      {
+        "observed_utc": "2011-12-10T14:13:25+00:00",
+        "reflection_utc": "2011-12-10T14:13:23.680000+00:00",
+        "seconds_since_start": 300,
+        "shadow_radius_m": 3703791.086324543,
+        "receiver_axial_distance_m": 396044916.9946424,
+        "sun_earth_distance_m": 147321379212.3161,
+        "sun_site_distance_m": 147717424175.7442,
+        "solar_flux_relative_to_b2": 0.9999507227176557,
+        "simultaneous_geometry_radius_m": 3715380.3413676373
+      },
+      {
+        "observed_utc": "2011-12-10T14:14:25+00:00",
+        "reflection_utc": "2011-12-10T14:14:23.680000+00:00",
+        "seconds_since_start": 360,
+        "shadow_radius_m": 3693982.1862129527,
+        "receiver_axial_distance_m": 396042988.25458163,
+        "sun_earth_distance_m": 147321366637.8569,
+        "sun_site_distance_m": 147717409672.29935,
+        "solar_flux_relative_to_b2": 0.9999509190754298,
+        "simultaneous_geometry_radius_m": 3705014.8818965084
+      },
+      {
+        "observed_utc": "2011-12-10T14:15:25+00:00",
+        "reflection_utc": "2011-12-10T14:15:23.680000+00:00",
+        "seconds_since_start": 420,
+        "shadow_radius_m": 3684956.5298837516,
+        "receiver_axial_distance_m": 396041051.8603842,
+        "sun_earth_distance_m": 147321354063.82434,
+        "sun_site_distance_m": 147717395161.6472,
+        "solar_flux_relative_to_b2": 0.9999511155308392,
+        "simultaneous_geometry_radius_m": 3695427.412520585
+      },
+      {
+        "observed_utc": "2011-12-10T14:16:25+00:00",
+        "reflection_utc": "2011-12-10T14:16:23.680000+00:00",
+        "seconds_since_start": 480,
+        "shadow_radius_m": 3676719.8885131576,
+        "receiver_axial_distance_m": 396039107.8119495,
+        "sun_earth_distance_m": 147321341490.21857,
+        "sun_site_distance_m": 147717380643.78775,
+        "solar_flux_relative_to_b2": 0.9999513120838838,
+        "simultaneous_geometry_radius_m": 3686624.006057139
+      },
+      {
+        "observed_utc": "2011-12-10T14:17:25+00:00",
+        "reflection_utc": "2011-12-10T14:17:23.680000+00:00",
+        "seconds_since_start": 540,
+        "shadow_radius_m": 3669277.5785715263,
+        "receiver_axial_distance_m": 396037156.10914767,
+        "sun_earth_distance_m": 147321328917.03946,
+        "sun_site_distance_m": 147717366118.72076,
+        "solar_flux_relative_to_b2": 0.9999515087345673,
+        "simultaneous_geometry_radius_m": 3678610.2945923056
+      },
+      {
+        "observed_utc": "2011-12-10T14:18:25+00:00",
+        "reflection_utc": "2011-12-10T14:18:23.680000+00:00",
+        "seconds_since_start": 600,
+        "shadow_radius_m": 3662634.44508887,
+        "receiver_axial_distance_m": 396035196.7519312,
+        "sun_earth_distance_m": 147321316344.28702,
+        "sun_site_distance_m": 147717351586.44626,
+        "solar_flux_relative_to_b2": 0.9999517054828895,
+        "simultaneous_geometry_radius_m": 3671391.4521641945
+      },
+      {
+        "observed_utc": "2011-12-10T14:19:25+00:00",
+        "reflection_utc": "2011-12-10T14:19:23.680000+00:00",
+        "seconds_since_start": 660,
+        "shadow_radius_m": 3656794.8464535656,
+        "receiver_axial_distance_m": 396033229.74017245,
+        "sun_earth_distance_m": 147321303771.96127,
+        "sun_site_distance_m": 147717337046.96408,
+        "solar_flux_relative_to_b2": 0.999951902328852,
+        "simultaneous_geometry_radius_m": 3664972.1785888327
+      },
+      {
+        "observed_utc": "2011-12-10T14:20:25+00:00",
+        "reflection_utc": "2011-12-10T14:20:23.680000+00:00",
+        "seconds_since_start": 720,
+        "shadow_radius_m": 3651762.6402965183,
+        "receiver_axial_distance_m": 396031255.07381505,
+        "sun_earth_distance_m": 147321291200.06216,
+        "sun_site_distance_m": 147717322500.2741,
+        "solar_flux_relative_to_b2": 0.9999520992724574,
+        "simultaneous_geometry_radius_m": 3659356.6845050445
+      },
+      {
+        "observed_utc": "2011-12-10T14:21:25+00:00",
+        "reflection_utc": "2011-12-10T14:21:23.680000+00:00",
+        "seconds_since_start": 780,
+        "shadow_radius_m": 3647541.171036067,
+        "receiver_axial_distance_m": 396029272.75271535,
+        "sun_earth_distance_m": 147321278628.5898,
+        "sun_site_distance_m": 147717307946.3764,
+        "solar_flux_relative_to_b2": 0.9999522963137044,
+        "simultaneous_geometry_radius_m": 3654548.677869476
+      },
+      {
+        "observed_utc": "2011-12-10T14:22:25+00:00",
+        "reflection_utc": "2011-12-10T14:22:23.680000+00:00",
+        "seconds_since_start": 840,
+        "shadow_radius_m": 3644133.258913289,
+        "receiver_axial_distance_m": 396027282.77681834,
+        "sun_earth_distance_m": 147321266057.54422,
+        "sun_site_distance_m": 147717293385.27078,
+        "solar_flux_relative_to_b2": 0.9999524934525957,
+        "simultaneous_geometry_radius_m": 3650551.35191978
+      },
+      {
+        "observed_utc": "2011-12-10T14:23:25+00:00",
+        "reflection_utc": "2011-12-10T14:23:23.680000+00:00",
+        "seconds_since_start": 900,
+        "shadow_radius_m": 3641541.190881493,
+        "receiver_axial_distance_m": 396025285.1459885,
+        "sun_earth_distance_m": 147321253486.92526,
+        "sun_site_distance_m": 147717278816.95706,
+        "solar_flux_relative_to_b2": 0.9999526906891338,
+        "simultaneous_geometry_radius_m": 3647367.3746733624
+      },
+      {
+        "observed_utc": "2011-12-10T14:24:25+00:00",
+        "reflection_utc": "2011-12-10T14:24:23.680000+00:00",
+        "seconds_since_start": 960,
+        "shadow_radius_m": 3639766.7119749696,
+        "receiver_axial_distance_m": 396023279.8601877,
+        "sun_earth_distance_m": 147321240916.73306,
+        "sun_site_distance_m": 147717264241.43533,
+        "solar_flux_relative_to_b2": 0.9999528880233177,
+        "simultaneous_geometry_radius_m": 3644998.880124513
+      },
+      {
+        "observed_utc": "2011-12-10T14:25:25+00:00",
+        "reflection_utc": "2011-12-10T14:25:23.680000+00:00",
+        "seconds_since_start": 1020,
+        "shadow_radius_m": 3638811.0210856013,
+        "receiver_axial_distance_m": 396021266.9192537,
+        "sun_earth_distance_m": 147321228346.96747,
+        "sun_site_distance_m": 147717249658.70526,
+        "solar_flux_relative_to_b2": 0.9999530854551517,
+        "simultaneous_geometry_radius_m": 3643447.4611366913
+      },
+      {
+        "observed_utc": "2011-12-10T14:26:25+00:00",
+        "reflection_utc": "2011-12-10T14:26:23.680000+00:00",
+        "seconds_since_start": 1080,
+        "shadow_radius_m": 3638674.765781658,
+        "receiver_axial_distance_m": 396019246.3231436,
+        "sun_earth_distance_m": 147321215777.6287,
+        "sun_site_distance_m": 147717235068.76703,
+        "solar_flux_relative_to_b2": 0.999953282984634,
+        "simultaneous_geometry_radius_m": 3642714.1641206634
+      },
+      {
+        "observed_utc": "2011-12-10T14:27:25+00:00",
+        "reflection_utc": "2011-12-10T14:27:23.680000+00:00",
+        "seconds_since_start": 1140,
+        "shadow_radius_m": 3639358.0404811734,
+        "receiver_axial_distance_m": 396017218.07173645,
+        "sun_earth_distance_m": 147321203208.7166,
+        "sun_site_distance_m": 147717220471.6204,
+        "solar_flux_relative_to_b2": 0.9999534806117675,
+        "simultaneous_geometry_radius_m": 3642799.485513193
+      },
+      {
+        "observed_utc": "2011-12-10T14:28:25+00:00",
+        "reflection_utc": "2011-12-10T14:28:23.680000+00:00",
+        "seconds_since_start": 1200,
+        "shadow_radius_m": 3640860.3860829426,
+        "receiver_axial_distance_m": 396015182.1649425,
+        "sun_earth_distance_m": 147321190640.23126,
+        "sun_site_distance_m": 147717205867.26523,
+        "solar_flux_relative_to_b2": 0.999953678336554,
+        "simultaneous_geometry_radius_m": 3643703.370118037
+      },
+      {
+        "observed_utc": "2011-12-10T14:29:25+00:00",
+        "reflection_utc": "2011-12-10T14:29:23.680000+00:00",
+        "seconds_since_start": 1260,
+        "shadow_radius_m": 3643180.7915435494,
+        "receiver_axial_distance_m": 396013138.6026835,
+        "sun_earth_distance_m": 147321178072.17258,
+        "sun_site_distance_m": 147717191255.70154,
+        "solar_flux_relative_to_b2": 0.9999538761589938,
+        "simultaneous_geometry_radius_m": 3645425.2112873187
+      },
+      {
+        "observed_utc": "2011-12-10T14:30:25+00:00",
+        "reflection_utc": "2011-12-10T14:30:23.680000+00:00",
+        "seconds_since_start": 1320,
+        "shadow_radius_m": 3646317.6972819283,
+        "receiver_axial_distance_m": 396011087.38485754,
+        "sun_earth_distance_m": 147321165504.54062,
+        "sun_site_distance_m": 147717176636.92914,
+        "solar_flux_relative_to_b2": 0.9999540740790892,
+        "simultaneous_geometry_radius_m": 3647963.852971311
+      },
+      {
+        "observed_utc": "2011-12-10T14:31:25+00:00",
+        "reflection_utc": "2011-12-10T14:31:23.680000+00:00",
+        "seconds_since_start": 1380,
+        "shadow_radius_m": 3650269.000286976,
+        "receiver_axial_distance_m": 396009028.51134497,
+        "sun_earth_distance_m": 147321152937.33548,
+        "sun_site_distance_m": 147717162010.94812,
+        "solar_flux_relative_to_b2": 0.9999542720968393,
+        "simultaneous_geometry_radius_m": 3651317.5936002824
+      },
+      {
+        "observed_utc": "2011-12-10T14:32:25+00:00",
+        "reflection_utc": "2011-12-10T14:32:23.680000+00:00",
+        "seconds_since_start": 1440,
+        "shadow_radius_m": 3655032.0614349153,
+        "receiver_axial_distance_m": 396006961.982096,
+        "sun_earth_distance_m": 147321140370.55698,
+        "sun_site_distance_m": 147717147377.75815,
+        "solar_flux_relative_to_b2": 0.9999544702122484,
+        "simultaneous_geometry_radius_m": 3655484.1917639915
+      },
+      {
+        "observed_utc": "2011-12-10T14:33:25+00:00",
+        "reflection_utc": "2011-12-10T14:33:23.680000+00:00",
+        "seconds_since_start": 1500,
+        "shadow_radius_m": 3660603.713966745,
+        "receiver_axial_distance_m": 396004887.79696375,
+        "sun_earth_distance_m": 147321127804.2053,
+        "sun_site_distance_m": 147717132737.35928,
+        "solar_flux_relative_to_b2": 0.9999546684253161,
+        "simultaneous_geometry_radius_m": 3660460.873685416
+      },
+      {
+        "observed_utc": "2011-12-10T14:34:25+00:00",
+        "reflection_utc": "2011-12-10T14:34:23.680000+00:00",
+        "seconds_since_start": 1560,
+        "shadow_radius_m": 3666980.2740648454,
+        "receiver_axial_distance_m": 396002805.955917,
+        "sun_earth_distance_m": 147321115238.2804,
+        "sun_site_distance_m": 147717118089.75146,
+        "solar_flux_relative_to_b2": 0.9999548667360432,
+        "simultaneous_geometry_radius_m": 3666244.342371961
+      },
+      {
+        "observed_utc": "2011-12-10T14:35:25+00:00",
+        "reflection_utc": "2011-12-10T14:35:23.680000+00:00",
+        "seconds_since_start": 1620,
+        "shadow_radius_m": 3674157.5526873465,
+        "receiver_axial_distance_m": 396000716.4588371,
+        "sun_earth_distance_m": 147321102672.78204,
+        "sun_site_distance_m": 147717103434.93442,
+        "solar_flux_relative_to_b2": 0.9999550651444333,
+        "simultaneous_geometry_radius_m": 3672830.7884240826
+      },
+      {
+        "observed_utc": "2011-12-10T14:36:25+00:00",
+        "reflection_utc": "2011-12-10T14:36:23.680000+00:00",
+        "seconds_since_start": 1680,
+        "shadow_radius_m": 3682130.869366841,
+        "receiver_axial_distance_m": 395998619.3055767,
+        "sun_earth_distance_m": 147321090107.71054,
+        "sun_site_distance_m": 147717088772.90823,
+        "solar_flux_relative_to_b2": 0.9999552636504858,
+        "simultaneous_geometry_radius_m": 3680215.9023638726
+      },
+      {
+        "observed_utc": "2011-12-10T14:37:25+00:00",
+        "reflection_utc": "2011-12-10T14:37:23.680000+00:00",
+        "seconds_since_start": 1740,
+        "shadow_radius_m": 3690895.0668135816,
+        "receiver_axial_distance_m": 395996514.4961341,
+        "sun_earth_distance_m": 147321077543.06592,
+        "sun_site_distance_m": 147717074103.67285,
+        "solar_flux_relative_to_b2": 0.9999554622542011,
+        "simultaneous_geometry_radius_m": 3688394.8884926434
+      },
+      {
+        "observed_utc": "2011-12-10T14:38:25+00:00",
+        "reflection_utc": "2011-12-10T14:38:23.680000+00:00",
+        "seconds_since_start": 1800,
+        "shadow_radius_m": 3700444.527281827,
+        "receiver_axial_distance_m": 395994402.03034985,
+        "sun_earth_distance_m": 147321064978.8479,
+        "sun_site_distance_m": 147717059427.22797,
+        "solar_flux_relative_to_b2": 0.9999556609555835,
+        "simultaneous_geometry_radius_m": 3697362.480055437
+      }
+    ]
+  },
+  "temporal_method": "Simpson integration of linear spectral irradiance on31samples across1800s; solar flux scaled to B2 source-site range",
+  "numerical_checks": {
+    "molecular": {
+      "max_relative_change_time120s_to60s": 3.2431958094658597e-06,
+      "max_relative_change_height100m_to50m": 1.060153167686817e-05,
+      "midpoint_to_exposure_average_ratio": [
+        0.9384950557601217,
+        0.9587639171890934,
+        0.9732400647774019,
+        0.9831813388917322,
+        0.986070240998626,
+        0.9882412164383954,
+        0.9905196447584327
+      ],
+      "simultaneous_radius_only_to_retarded_ratio": [
+        1.0121918034749484,
+        1.008081725850917,
+        1.005212545700113,
+        1.0032714524825865,
+        1.0027120756425314,
+        1.0022935747193367,
+        1.0018555907326847
+      ],
+      "max_relative_change_axial_distance_plus_minus150km": 0.0019004812339886712,
+      "bright_reference_geometric_transmission": 1.0
+    },
+    "fixed_opac": {
+      "max_relative_change_time120s_to60s": 3.325632447870319e-06,
+      "max_relative_change_height100m_to50m": 1.9261090053790397e-05,
+      "midpoint_to_exposure_average_ratio": [
+        0.9368226782379001,
+        0.9559317336429972,
+        0.9695777270513657,
+        0.9791269234108025,
+        0.9821536415235682,
+        0.9845239778017393,
+        0.9870014315656636
+      ],
+      "simultaneous_radius_only_to_retarded_ratio": [
+        1.0125224653804652,
+        1.0086341646013954,
+        1.0059196492643079,
+        1.00404818039759,
+        1.003460013485265,
+        1.0030017475813093,
+        1.0025243378500284
+      ],
+      "max_relative_change_axial_distance_plus_minus150km": 0.001954121757846483,
+      "bright_reference_geometric_transmission": 1.0
+    }
+  },
+  "descriptive_diagnostics": {
+    "molecular": {
+      "model_to_observed_min_max": [
+        1.5632026041817055,
+        1.9907753147467098
+      ],
+      "readout_rms_ln_model_to_observed": 0.5646393626203302,
+      "450_to750_transmission_ratio_model_over_observed": 1.2735235403403302,
+      "500_to750_transmission_ratio_model_over_observed": 1.1460278428601909,
+      "450_to750_shape_ratio_in_same_offset_probes": [
+        0.989397939147993,
+        1.2735235403403302,
+        1.649560226096307
+      ],
+      "smallest_model_to_observed_across_radial_probes": 1.4727632337651928
+    },
+    "fixed_opac": {
+      "model_to_observed_min_max": [
+        1.4120183778066149,
+        1.9430923662584687
+      ],
+      "readout_rms_ln_model_to_observed": 0.4863941695643107,
+      "450_to750_transmission_ratio_model_over_observed": 1.3761098274632995,
+      "500_to750_transmission_ratio_model_over_observed": 1.202573248177952,
+      "450_to750_shape_ratio_in_same_offset_probes": [
+        1.078222547192296,
+        1.3761098274632995,
+        1.7654564788855838
+      ],
+      "smallest_model_to_observed_across_radial_probes": 1.3301815584575085
+    }
+  },
+  "radial_probe_cases": {
+    "molecular": {
+      "-150000": [
+        0.00016414905535591857,
+        0.00032220548839953316,
+        0.0003365885202834779,
+        0.00033006512296121656,
+        0.0009892065928175904,
+        0.0020112718938816595,
+        0.0027114445020643405
+      ],
+      "0": [
+        0.00022030393118543338,
+        0.00039193174296041626,
+        0.0003816967381063995,
+        0.00035673085994436944,
+        0.0010541183767562448,
+        0.0021205467973035436,
+        0.002827148384041754
+      ],
+      "150000": [
+        0.0003006519632606147,
+        0.00048380896441614066,
+        0.00043846342455267616,
+        0.00038991297244444595,
+        0.001135578386470117,
+        0.002259775889659786,
+        0.0029787167052748617
+      ]
+    },
+    "fixed_opac": {
+      "-150000": [
+        0.00015871549642810102,
+        0.0003007919978004979,
+        0.0003033124342109522,
+        0.00028997041916229284,
+        0.0008704297452144917,
+        0.0017775986778948785,
+        0.0024057154417573856
+      ],
+      "0": [
+        0.00021502722269670644,
+        0.0003714940717493881,
+        0.00035059423791400964,
+        0.000319980936411589,
+        0.0009463188620138941,
+        0.001910090246346612,
+        0.0025537223801792006
+      ],
+      "150000": [
+        0.00029556266987473015,
+        0.0004644536797340821,
+        0.0004096317541232546,
+        0.0003565084829428075,
+        0.0010385318498336918,
+        0.002071719504420058,
+        0.0027360617723753383
+      ]
+    }
+  },
+  "diagnostic_scope": "Correlated graph readouts, not independent exposures; RMSlog ratio is descriptive, not chi-square. Pairwise ratios diagnose continuum shape, not full observed color.",
+  "sensitivity_scope": "+/-150km radial displacement is a chosen sensitivity tied to the schematic reading scale, not a confidence interval or complete pointing/systematic uncertainty",
+  "limitations": [
+    "Exact fibre coordinates and tracking are not published; nominal Tycho center independently agrees with Fig1",
+    "No exposure-level observational uncertainties or covariance",
+    "Same-region lunar albedo and spectrograph response cancellation follow the paper; lunar BRDF and solar limb variation not modeled",
+    "Local airmass mismatch0.04 and time-varying atmosphere assumed small, not independently removed here",
+    "Current model omits NO2, O2/CIA and H2O lines; selected continuum points avoid dominant O2 bands but residual weak features remain",
+    "Seven sparse continuum readouts do not define a reliable measured color or turquoise-fringe width"
+  ],
+  "production_module_sha256": {
+    "aerosol.py": "bc1ea10ece29c229184188d95b1626f9ac735b1a420a71a8aea268d50933242c",
+    "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+    "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
+    "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+    "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e"
+  },
+  "records": [
+    {
+      "wavelength_nm": 450.0,
+      "observed_curve_ratio": 0.00011066237839776664,
+      "graph_readout_log10_halfwidth": 0.021333333333333333,
+      "molecular_prediction": 0.00022030393118543338,
+      "molecular_model_to_observed": 1.9907753147467098,
+      "molecular_radial_probe_min": 0.00016414905535591857,
+      "molecular_radial_probe_max": 0.0003006519632606147,
+      "fixed_opac_prediction": 0.00021502722269670644,
+      "fixed_opac_model_to_observed": 1.9430923662584687,
+      "fixed_opac_radial_probe_min": 0.00015871549642810102,
+      "fixed_opac_radial_probe_max": 0.00029556266987473015
+    },
+    {
+      "wavelength_nm": 500.0,
+      "observed_curve_ratio": 0.00021877616239495518,
+      "graph_readout_log10_halfwidth": 0.016,
+      "molecular_prediction": 0.00039193174296041626,
+      "molecular_model_to_observed": 1.7914737084237926,
+      "molecular_radial_probe_min": 0.00032220548839953316,
+      "molecular_radial_probe_max": 0.00048380896441614066,
+      "fixed_opac_prediction": 0.0003714940717493881,
+      "fixed_opac_model_to_observed": 1.6980555270858635,
+      "fixed_opac_radial_probe_min": 0.0003007919978004979,
+      "fixed_opac_radial_probe_max": 0.0004644536797340821
+    },
+    {
+      "wavelength_nm": 550.0,
+      "observed_curve_ratio": 0.00021216154368926846,
+      "graph_readout_log10_halfwidth": 0.013333333333333334,
+      "molecular_prediction": 0.0003816967381063995,
+      "molecular_model_to_observed": 1.7990854113761168,
+      "molecular_radial_probe_min": 0.0003365885202834779,
+      "molecular_radial_probe_max": 0.00043846342455267616,
+      "fixed_opac_prediction": 0.00035059423791400964,
+      "fixed_opac_model_to_observed": 1.6524872124209726,
+      "fixed_opac_radial_probe_min": 0.0003033124342109522,
+      "fixed_opac_radial_probe_max": 0.0004096317541232546
+    },
+    {
+      "wavelength_nm": 600.0,
+      "observed_curve_ratio": 0.0001911319687804927,
+      "graph_readout_log10_halfwidth": 0.010666666666666666,
+      "molecular_prediction": 0.00035673085994436944,
+      "molecular_model_to_observed": 1.8664112666262564,
+      "molecular_radial_probe_min": 0.00033006512296121656,
+      "molecular_radial_probe_max": 0.00038991297244444595,
+      "fixed_opac_prediction": 0.000319980936411589,
+      "fixed_opac_model_to_observed": 1.6741361398263737,
+      "fixed_opac_radial_probe_min": 0.00028997041916229284,
+      "fixed_opac_radial_probe_max": 0.0003565084829428075
+    },
+    {
+      "wavelength_nm": 650.0,
+      "observed_curve_ratio": 0.0006290232043798832,
+      "graph_readout_log10_halfwidth": 0.016,
+      "molecular_prediction": 0.0010541183767562448,
+      "molecular_model_to_observed": 1.6758020521602823,
+      "molecular_radial_probe_min": 0.0009892065928175904,
+      "molecular_radial_probe_max": 0.001135578386470117,
+      "fixed_opac_prediction": 0.0009463188620138941,
+      "fixed_opac_model_to_observed": 1.5044259979992534,
+      "fixed_opac_radial_probe_min": 0.0008704297452144917,
+      "fixed_opac_radial_probe_max": 0.0010385318498336918
+    },
+    {
+      "wavelength_nm": 700.0,
+      "observed_curve_ratio": 0.0013304544179780914,
+      "graph_readout_log10_halfwidth": 0.013333333333333334,
+      "molecular_prediction": 0.0021205467973035436,
+      "molecular_model_to_observed": 1.593851520690326,
+      "molecular_radial_probe_min": 0.0020112718938816595,
+      "molecular_radial_probe_max": 0.002259775889659786,
+      "fixed_opac_prediction": 0.001910090246346612,
+      "fixed_opac_model_to_observed": 1.4356675587949872,
+      "fixed_opac_radial_probe_min": 0.0017775986778948785,
+      "fixed_opac_radial_probe_max": 0.002071719504420058
+    },
+    {
+      "wavelength_nm": 750.0,
+      "observed_curve_ratio": 0.0018085617158510876,
+      "graph_readout_log10_halfwidth": 0.010666666666666666,
+      "molecular_prediction": 0.002827148384041754,
+      "molecular_model_to_observed": 1.5632026041817055,
+      "molecular_radial_probe_min": 0.0027114445020643405,
+      "molecular_radial_probe_max": 0.0029787167052748617,
+      "fixed_opac_prediction": 0.0025537223801792006,
+      "fixed_opac_model_to_observed": 1.4120183778066149,
+      "fixed_opac_radial_probe_min": 0.0024057154417573856,
+      "fixed_opac_radial_probe_max": 0.0027360617723753383
+    }
+  ]
+}
