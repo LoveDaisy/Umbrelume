@@ -1,0 +1,35 @@
+{
+  "pass": true,
+  "checks": {
+    "height_100m_vs_50m": {
+      "pass": true,
+      "max_relative_photopic_irradiance_difference": 0.0007900911418854406,
+      "photopic_worst_radius_m": 2040000.0,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.0007674163322084482,
+      "color_worst_radius_m": 2040000.0,
+      "photopic_tolerance": 0.01,
+      "color_tolerance": 0.02
+    },
+    "height_50m_vs_25m": {
+      "pass": true,
+      "max_relative_photopic_irradiance_difference": 0.0002327976027227674,
+      "photopic_worst_radius_m": 2040000.0,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.00022744487268511193,
+      "color_worst_radius_m": 2040000.0,
+      "photopic_tolerance": 0.01,
+      "color_tolerance": 0.02
+    },
+    "spectrum_5nm_vs_2p5nm": {
+      "pass": true,
+      "max_relative_photopic_irradiance_difference": 0.004000952539193525,
+      "photopic_worst_radius_m": 0.0,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.017565112411547457,
+      "color_worst_radius_m": 0.0,
+      "photopic_tolerance": 0.01,
+      "color_tolerance": 0.02
+    }
+  },
+  "radius_count": 631,
+  "height_spacing_note": "Above 60 km the table uses 500 m spacing in all runs.",
+  "scope": "Numerical resolution at sampled receiver radii; excludes physical-model error, finite-angle error and screen-pixel interpolation error."
+}

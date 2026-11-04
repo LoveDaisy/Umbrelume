@@ -1,0 +1,26 @@
+# First-version baseline
+
+`baseline/` contains the report figures and metadata produced by:
+
+```bash
+uv sync
+uv run lunar-eclipse simulate --out outputs/baseline
+```
+
+The committed PNGs and `report.json` are copied unchanged from that output.
+All numerical arrays can be regenerated into ignored `outputs/baseline/`.
+
+Conditions: spherical standard dry atmosphere, Gaussian 300 DU ozone profile,
+uniform finite solar disk, mean Earth–Sun and Earth–Moon distances; 550 nm
+achromatic refracted paths with wavelength-dependent molecular and ozone
+extinction. No aerosol/cloud attenuation or light scattered into the receiver.
+
+`ozone_comparison.png` changes absorption only, under the same exposure and
+solar-white adaptation. The cold gray-blue outer edge is present with ozone
+and absent without it. A distinct observed turquoise band has not yet been
+established. `moon_chromaticity.png` removes brightness and must not be read
+as a photometric image. All disk images are neutral shadow-plane screens.
+
+The default offset 2860 km puts the entire lunar screen just inside the
+geometrical umbra (radius approximately 4599.7 km), with its outer edge at
+4597.4 km. `moon_exposures.png` shows the substantial effect of global exposure.
