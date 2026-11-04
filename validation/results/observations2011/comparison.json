@@ -1,0 +1,288 @@
+{
+  "comparison_status": "Provisional observed-curve comparison; substantial inner-umbra overprediction",
+  "source": {
+    "paper": "Ugolnikov, Maslov & Korotkiy (2011), arXiv:1106.6178v2",
+    "url": "https://arxiv.org/pdf/1106.6178v2",
+    "source_pdf_sha256": "366b6bd302937530f52d8fc3768be26ebb75657dba5072a3bd07d0733b67c043",
+    "source_pdf_bytes": 240981,
+    "figure": 2,
+    "page_one_based": 4,
+    "pymupdf_version": "2.1",
+    "axes": {
+      "x_zero_pt": 135.0,
+      "x_0p8_deg_pt": 506.4,
+      "y_1e_minus5_pt": 289.32,
+      "y_1e_minus2_pt": 61.08
+    },
+    "observed_solid_path_indices_zero_based": {
+      "503": 228,
+      "677": 229
+    },
+    "source_status": "Digitized published observed curves, NOT original exposures or a released numerical table",
+    "measurement": "Same lunar surface element's in-eclipse brightness divided by fully out-of-eclipse brightness",
+    "direction": "Western umbra, 30 degrees north of equator, as labeled in Fig. 2",
+    "readout_definition": "Half PDF stroke thickness plus 1 PDF point vertically; 1 point horizontally. Graph readout allowance only, NOT observational uncertainty or a confidence interval.",
+    "missing_information": [
+      "Filter response curves and FWHM",
+      "Pointwise measurement uncertainties",
+      "Original CCD data and reduction products",
+      "Exact time attached to each curve coordinate"
+    ],
+    "excluded": "867 nm is outside the present 380\u2013780 nm baseline range",
+    "number_of_curve_readouts": 18,
+    "independence": "Readouts sample smoothed published curves and are not statistically independent exposures"
+  },
+  "geometry": {
+    "source": "JPL Horizons DE441, geocentric observer, quantity20 apparent range",
+    "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+    "recorded_utc": "2026-11-04T03:13:31.674466+00:00",
+    "adopted_time_utc": "2011-Jun-15 19:30",
+    "moon_distance_m": 374394876.7789723,
+    "sun_distance_m": 151955452087.65973,
+    "moon": {
+      "target": "301",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'301'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'OBSERVER'",
+        "CENTER": "'500@399'",
+        "START_TIME": "'2011-06-15 19:20'",
+        "STOP_TIME": "'2011-06-15 19:40'",
+        "STEP_SIZE": "'10m'",
+        "QUANTITIES": "'20'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "8452e359bacdcff9a78320dd3f8b05a44eb32e6235b732d2bbc4f399d17e62fe",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "ranges": [
+        {
+          "utc": "2011-Jun-15 19:20",
+          "distance_au": 0.00250249914387,
+          "distance_m": 374368543.351525
+        },
+        {
+          "utc": "2011-Jun-15 19:30",
+          "distance_au": 0.00250267517196,
+          "distance_m": 374394876.7789723
+        },
+        {
+          "utc": "2011-Jun-15 19:40",
+          "distance_au": 0.00250285147279,
+          "distance_m": 374421251.00774294
+        }
+      ]
+    },
+    "sun": {
+      "target": "10",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'10'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'OBSERVER'",
+        "CENTER": "'500@399'",
+        "START_TIME": "'2011-06-15 19:20'",
+        "STOP_TIME": "'2011-06-15 19:40'",
+        "STEP_SIZE": "'10m'",
+        "QUANTITIES": "'20'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "210225803f4bd520ef844cc53926e199aa8f04c3906dd07662ce08816fcd0a5e",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "ranges": [
+        {
+          "utc": "2011-Jun-15 19:20",
+          "distance_au": 1.01575881355331,
+          "distance_m": 151955355652.33347
+        },
+        {
+          "utc": "2011-Jun-15 19:30",
+          "distance_au": 1.01575945818365,
+          "distance_m": 151955452087.65973
+        },
+        {
+          "utc": "2011-Jun-15 19:40",
+          "distance_au": 1.015760102667,
+          "distance_m": 151955548500.99658
+        }
+      ]
+    },
+    "approximation": "One representative geocentric range for the first15minutes of totality; no per-readout timing, topocentric or lunar-surface depth reconstruction"
+  },
+  "production_module_sha256": {
+    "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+    "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e",
+    "rays.py": "43e67f2bc7be06fc02a2c8078a5e38978907bb74915665c301d749aa834419e1",
+    "transport.py": "dc44159b1164a35a054a75bdb8001176eeb119c4c71b1b564ba79606c7045e7c"
+  },
+  "predicted_observable": "E_lambda/F_lambda at stated effective wavelength, monochromatic proxy for unknown bandpass",
+  "fixed_baseline": {
+    "ozone_du": 300,
+    "density_scale": 1,
+    "ray_height_step_m": 100,
+    "refraction_reference_nm": 550,
+    "aerosols": false,
+    "in_scattered_light": false,
+    "solar_disk": "uniform",
+    "atmosphere": "US1976 + Gaussian ozone"
+  },
+  "fitted_parameters": [],
+  "bands": [
+    {
+      "effective_wavelength_nm": 503.0,
+      "angle_range_deg": [
+        0.4,
+        0.575
+      ],
+      "number_of_curve_readouts": 8,
+      "median_model_to_observed_ratio": 1.7224257590468377,
+      "range_model_to_observed_ratio": [
+        1.1543750559169386,
+        4.071841772297395
+      ],
+      "innermost_readout": {
+        "wavelength_nm": 503.0,
+        "shadow_angle_deg": 0.4,
+        "observed_relative_brightness": 2.2395599317377506e-05,
+        "graph_readout_angle_halfwidth_deg": 0.0021540118470651593,
+        "graph_readout_log10_halfwidth": 0.026793376443628378,
+        "pdf_center_x_pt": 320.7,
+        "pdf_center_y_pt": 262.6796226305747,
+        "pdf_stroke_y_min_pt": 261.6411825507435,
+        "pdf_stroke_y_max_pt": 263.718062710406,
+        "receiver_radius_m": 2613811.785766697,
+        "model_event_300du": 9.119133681613275e-05,
+        "model_mean_geometry_300du": 0.00011126730447180945,
+        "model_event_250du": 9.73105099681558e-05,
+        "model_event_300du_50m": 9.11816219867138e-05,
+        "model_to_observed_ratio": 4.071841772297395,
+        "model_log10_residual": 0.60979089340698
+      },
+      "outermost_readout": {
+        "wavelength_nm": 503.0,
+        "shadow_angle_deg": 0.575,
+        "observed_relative_brightness": 0.00029668812551239055,
+        "graph_readout_angle_halfwidth_deg": 0.0021540118470651593,
+        "graph_readout_log10_halfwidth": 0.02286538132369418,
+        "pdf_center_x_pt": 401.94374999999997,
+        "pdf_center_y_pt": 177.30740347011806,
+        "pdf_stroke_y_min_pt": 176.5678052590114,
+        "pdf_stroke_y_max_pt": 178.0470016812247,
+        "receiver_radius_m": 3757419.5414743414,
+        "model_event_300du": 0.0003424893714782575,
+        "model_mean_geometry_300du": 0.00043652009952540715,
+        "model_event_250du": 0.00036833449153944283,
+        "model_event_300du_50m": 0.00034248662356600127,
+        "model_to_observed_ratio": 1.1543750559169386,
+        "model_log10_residual": 0.06234693382116971
+      }
+    },
+    {
+      "effective_wavelength_nm": 677.0,
+      "angle_range_deg": [
+        0.15,
+        0.575
+      ],
+      "number_of_curve_readouts": 10,
+      "median_model_to_observed_ratio": 2.551092312403081,
+      "range_model_to_observed_ratio": [
+        1.092092126411941,
+        7.098170594384539
+      ],
+      "innermost_readout": {
+        "wavelength_nm": 677.0,
+        "shadow_angle_deg": 0.15,
+        "observed_relative_brightness": 0.00016295224548537658,
+        "graph_readout_angle_halfwidth_deg": 0.0021540118470651593,
+        "graph_readout_log10_halfwidth": 0.020588292387184008,
+        "pdf_center_x_pt": 204.6375,
+        "pdf_center_y_pt": 197.10644861540294,
+        "pdf_stroke_y_min_pt": 196.54009133058597,
+        "pdf_stroke_y_max_pt": 197.67280590021988,
+        "receiver_radius_m": 980165.7346764305,
+        "model_event_300du": 0.0011566628371932307,
+        "model_mean_geometry_300du": 0.0012422091604076613,
+        "model_event_250du": 0.001219663267329113,
+        "model_event_300du_50m": 0.001156661624437075,
+        "model_to_observed_ratio": 7.098170594384539,
+        "model_log10_residual": 0.8511464327841212
+      },
+      "outermost_readout": {
+        "wavelength_nm": 677.0,
+        "shadow_angle_deg": 0.575,
+        "observed_relative_brightness": 0.0014603301447523647,
+        "graph_readout_angle_halfwidth_deg": 0.0021540118470651593,
+        "graph_readout_log10_halfwidth": 0.022163013565121945,
+        "pdf_center_x_pt": 401.94374999999997,
+        "pdf_center_y_pt": 124.64856410136314,
+        "pdf_stroke_y_min_pt": 123.96240202932866,
+        "pdf_stroke_y_max_pt": 125.33472617339761,
+        "receiver_radius_m": 3757419.5414743414,
+        "model_event_300du": 0.0015948150530460676,
+        "model_mean_geometry_300du": 0.0017164461101857955,
+        "model_event_250du": 0.0017095304083763348,
+        "model_event_300du_50m": 0.0015947966255643606,
+        "model_to_observed_ratio": 1.092092126411941,
+        "model_log10_residual": 0.038259276010403416
+      }
+    }
+  ],
+  "paired_transmission_colors": [
+    {
+      "shadow_angle_deg": 0.4,
+      "observed_T503_over_T677": 0.04441274209501014,
+      "model_T503_over_T677": 0.07851682468205602,
+      "model_to_observed_color_ratio": 1.7678895960553076
+    },
+    {
+      "shadow_angle_deg": 0.45,
+      "observed_T503_over_T677": 0.08529313567959566,
+      "model_T503_over_T677": 0.10449724578068799,
+      "model_to_observed_color_ratio": 1.2251542278060068
+    },
+    {
+      "shadow_angle_deg": 0.5,
+      "observed_T503_over_T677": 0.13896514107356503,
+      "model_T503_over_T677": 0.13862420925934735,
+      "model_to_observed_color_ratio": 0.9975466378720315
+    },
+    {
+      "shadow_angle_deg": 0.55,
+      "observed_T503_over_T677": 0.18404564368945336,
+      "model_T503_over_T677": 0.18509420709518906,
+      "model_to_observed_color_ratio": 1.005697300869044
+    },
+    {
+      "shadow_angle_deg": 0.575,
+      "observed_T503_over_T677": 0.20316510384896655,
+      "model_T503_over_T677": 0.2147517800412713,
+      "model_to_observed_color_ratio": 1.0570308383319524
+    }
+  ],
+  "numerical_and_geometry_sensitivity": {
+    "max_relative_prediction_change_height100_to50m": 0.00012181422904888883,
+    "max_relative_prediction_change_1920_to1940": 0.0011453024747012375,
+    "max_relative_prediction_change_300du_to250du": 0.0754625463255465,
+    "max_relative_prediction_change_mean_to_event_geometry": 0.2745507915801675
+  },
+  "interpretation": "The fixed clean-atmosphere model is close in scale at the outermost sampled western points but increasingly overbright inward. This motivates investigating additional low-altitude extinction; it does not uniquely identify aerosols.",
+  "limitations": [
+    "Readouts from smoothed published curves, not independent original measurements",
+    "No instrumental response curves or original pointwise uncertainties were released with this paper",
+    "Monochromatic effective-wavelength comparison, not a filter-integrated prediction",
+    "Representative geocentric plane distance; no topocentric or lunar-surface reconstruction",
+    "Paper's atmospheric comparison used an equatorial temperature profile, not US1976",
+    "Two spectral bands do not validate full visible color or the turquoise fringe",
+    "Spherical atmosphere cannot predict east-west weather-dependent asymmetry"
+  ]
+}

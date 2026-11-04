@@ -1,0 +1,32 @@
+{
+  "paper": "Ugolnikov, Maslov & Korotkiy (2011), arXiv:1106.6178v2",
+  "url": "https://arxiv.org/pdf/1106.6178v2",
+  "source_pdf_sha256": "366b6bd302937530f52d8fc3768be26ebb75657dba5072a3bd07d0733b67c043",
+  "source_pdf_bytes": 240981,
+  "figure": 2,
+  "page_one_based": 4,
+  "pymupdf_version": "2.1",
+  "axes": {
+    "x_zero_pt": 135.0,
+    "x_0p8_deg_pt": 506.4,
+    "y_1e_minus5_pt": 289.32,
+    "y_1e_minus2_pt": 61.08
+  },
+  "observed_solid_path_indices_zero_based": {
+    "503": 228,
+    "677": 229
+  },
+  "source_status": "Digitized published observed curves, NOT original exposures or a released numerical table",
+  "measurement": "Same lunar surface element's in-eclipse brightness divided by fully out-of-eclipse brightness",
+  "direction": "Western umbra, 30 degrees north of equator, as labeled in Fig. 2",
+  "readout_definition": "Half PDF stroke thickness plus 1 PDF point vertically; 1 point horizontally. Graph readout allowance only, NOT observational uncertainty or a confidence interval.",
+  "missing_information": [
+    "Filter response curves and FWHM",
+    "Pointwise measurement uncertainties",
+    "Original CCD data and reduction products",
+    "Exact time attached to each curve coordinate"
+  ],
+  "excluded": "867 nm is outside the present 380\u2013780 nm baseline range",
+  "number_of_curve_readouts": 18,
+  "independence": "Readouts sample smoothed published curves and are not statistically independent exposures"
+}

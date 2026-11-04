@@ -25,3 +25,12 @@ These checks validate the numerical implementation and selected resolutions
 of the declared idealized model. They do not validate real eclipse brightness,
 the true ozone profile, atmospheric aerosols, solar limb darkening, gray
 refraction, small-angle propagation, lunar reflectance or visual adaptation.
+
+## Observational reference
+
+The [June 2011 comparison](observations2011/comparison.json) is separate from
+the numerical pass/fail checks above. It compares the unchanged model with
+explicitly digitized published 503/677 nm observed curves, without fitting.
+It shows substantial inner-umbra overprediction. Unknown bandpasses and
+pointwise observational uncertainties preclude a formal statistical verdict.
+See [the analysis and source inventory](../../docs/OBSERVATIONAL_VALIDATION.md).

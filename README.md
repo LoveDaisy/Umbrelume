@@ -5,7 +5,7 @@
 
 当前模型已跑通：红褐色本影、臭氧造成的浅蓝灰色外缘，以及向半影和正常阳光的过渡。
 **目前的冷色外缘尚不能称为已经复现了明显的绿松石带。** 模型采用理想晴空大气，
-绝对亮度和颜色尚未经对应月食的观测校准。
+尚未经过观测校准。首轮公开观测对照显示，本影内部明显偏亮，见下方观测对照。
 
 ## 运行
 
@@ -64,6 +64,20 @@ uv run python -m validation.check_convergence --out outputs/validation/convergen
 独立的笛卡尔光线 ODE 核验路径偏折和沿程柱量；整个接收平面的能量亏损与入射端遮挡/消光
 预算核对；无大气极限与几何圆盘遮挡核对。分辨率检查分别提高路径表和光谱采样。
 这些检查验证声明模型的数值实现，**不等同于观测验证**。
+
+## 观测对照
+
+已将 2011-06-15 月食的公开 503／677 nm 观测曲线与固定首版模型比较。
+在最外侧采样点 0.575°，模型约高 9%–15%；越向本影内部，偏亮增大，部分位置达到 4–7 倍。
+当前还不能称为定量上足够接近，下一步优先研究缺少的低层消光。
+
+[对照图](figures/observations2011/comparison.png)、[结论与资料目录](docs/OBSERVATIONAL_VALIDATION.md)、
+[来源和提取说明](validation/observations/ugolnikov2011/README.md)。使用的是明确标记的论文曲线
+数字化读数，未找到原始数值表；未知滤镜响应和逐点误差限制了判断。这组数据没有覆盖绿松石带本身。
+
+```bash
+uv run python -m validation.compare_observations --out outputs/observations2011
+```
 
 ## 首版范围
 

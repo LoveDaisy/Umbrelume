@@ -137,7 +137,11 @@ colorimetry does not account for mesopic/scotopic vision during dark totality.
 
 The baseline produces a red/brown umbra and a pale cool edge that disappears
 when ozone is removed. It does not yet establish the observed turquoise band's
-width, saturation or absolute brightness. Useful next comparisons are matched
-ozone height profiles, background aerosol extinction and solar limb darkening,
-followed by wavelength-dependent refraction and diffuse illumination. Each
-should be compared using raw spectra and common display settings.
+width, saturation or absolute brightness. The first [observational comparison](OBSERVATIONAL_VALIDATION.md)
+now shows substantial inner-umbra overprediction against June 2011 published
+503/677 nm photometry. It motivates investigating additional low-altitude
+extinction, with background aerosols as one candidate, alongside matched
+atmospheric profiles and solar limb darkening. The digitized curves and unknown
+filter responses are explicitly provisional; the production physics is unchanged.
+Wavelength-dependent refraction and diffuse illumination remain further increments.
+Each should be compared using raw spectra and common display settings.

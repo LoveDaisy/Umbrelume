@@ -1,0 +1,87 @@
+{
+  "source": "JPL Horizons DE441, geocentric observer, quantity20 apparent range",
+  "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "recorded_utc": "2026-11-04T03:13:31.674466+00:00",
+  "adopted_time_utc": "2011-Jun-15 19:30",
+  "moon_distance_m": 374394876.7789723,
+  "sun_distance_m": 151955452087.65973,
+  "moon": {
+    "target": "301",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+    "parameters": {
+      "format": "json",
+      "COMMAND": "'301'",
+      "OBJ_DATA": "'NO'",
+      "MAKE_EPHEM": "'YES'",
+      "EPHEM_TYPE": "'OBSERVER'",
+      "CENTER": "'500@399'",
+      "START_TIME": "'2011-06-15 19:20'",
+      "STOP_TIME": "'2011-06-15 19:40'",
+      "STEP_SIZE": "'10m'",
+      "QUANTITIES": "'20'",
+      "CSV_FORMAT": "'YES'"
+    },
+    "response_sha256": "8452e359bacdcff9a78320dd3f8b05a44eb32e6235b732d2bbc4f399d17e62fe",
+    "api_signature": {
+      "version": "1.2",
+      "source": "NASA/JPL Horizons API"
+    },
+    "ranges": [
+      {
+        "utc": "2011-Jun-15 19:20",
+        "distance_au": 0.00250249914387,
+        "distance_m": 374368543.351525
+      },
+      {
+        "utc": "2011-Jun-15 19:30",
+        "distance_au": 0.00250267517196,
+        "distance_m": 374394876.7789723
+      },
+      {
+        "utc": "2011-Jun-15 19:40",
+        "distance_au": 0.00250285147279,
+        "distance_m": 374421251.00774294
+      }
+    ]
+  },
+  "sun": {
+    "target": "10",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+    "parameters": {
+      "format": "json",
+      "COMMAND": "'10'",
+      "OBJ_DATA": "'NO'",
+      "MAKE_EPHEM": "'YES'",
+      "EPHEM_TYPE": "'OBSERVER'",
+      "CENTER": "'500@399'",
+      "START_TIME": "'2011-06-15 19:20'",
+      "STOP_TIME": "'2011-06-15 19:40'",
+      "STEP_SIZE": "'10m'",
+      "QUANTITIES": "'20'",
+      "CSV_FORMAT": "'YES'"
+    },
+    "response_sha256": "210225803f4bd520ef844cc53926e199aa8f04c3906dd07662ce08816fcd0a5e",
+    "api_signature": {
+      "version": "1.2",
+      "source": "NASA/JPL Horizons API"
+    },
+    "ranges": [
+      {
+        "utc": "2011-Jun-15 19:20",
+        "distance_au": 1.01575881355331,
+        "distance_m": 151955355652.33347
+      },
+      {
+        "utc": "2011-Jun-15 19:30",
+        "distance_au": 1.01575945818365,
+        "distance_m": 151955452087.65973
+      },
+      {
+        "utc": "2011-Jun-15 19:40",
+        "distance_au": 1.015760102667,
+        "distance_m": 151955548500.99658
+      }
+    ]
+  },
+  "approximation": "One representative geocentric range for the first15minutes of totality; no per-readout timing, topocentric or lunar-surface depth reconstruction"
+}
