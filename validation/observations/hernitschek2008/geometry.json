@@ -1,0 +1,120 @@
+{
+  "source": "JPL Horizons DE441, geocentric observer, quantity20 apparent range",
+  "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "recorded_utc": "2026-11-04T05:40:55.948820+00:00",
+  "approximation": "Greatest-eclipse epoch substitutes for unpublished photometric-minimum epoch; geocentric ranges approximate the axis-normal receiver plane; no topocentric surface reconstruction.",
+  "events": [
+    {
+      "event_date": "1990-02-09",
+      "adopted_time_utc": "1990-02-09T19:11:05Z",
+      "moon_distance_m": 384865541.5485038,
+      "sun_distance_m": 147609644201.70285,
+      "moon": {
+        "target": "301",
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%271990-02-09+19%3A11%3A05%27&STOP_TIME=%271990-02-09+19%3A12%3A05%27&STEP_SIZE=%271m%27&TIME_DIGITS=%27SECONDS%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'301'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'OBSERVER'",
+          "CENTER": "'500@399'",
+          "START_TIME": "'1990-02-09 19:11:05'",
+          "STOP_TIME": "'1990-02-09 19:12:05'",
+          "STEP_SIZE": "'1m'",
+          "TIME_DIGITS": "'SECONDS'",
+          "QUANTITIES": "'20'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "340e3808236591a105b63947762eb0cd7cfb83fa639373120231823644fbcdcd",
+        "api_signature": {
+          "version": "1.2",
+          "source": "NASA/JPL Horizons API"
+        },
+        "utc": "1990-Feb-09 19:11:05",
+        "distance_m": 384865541.5485038
+      },
+      "sun": {
+        "target": "10",
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%271990-02-09+19%3A11%3A05%27&STOP_TIME=%271990-02-09+19%3A12%3A05%27&STEP_SIZE=%271m%27&TIME_DIGITS=%27SECONDS%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'10'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'OBSERVER'",
+          "CENTER": "'500@399'",
+          "START_TIME": "'1990-02-09 19:11:05'",
+          "STOP_TIME": "'1990-02-09 19:12:05'",
+          "STEP_SIZE": "'1m'",
+          "TIME_DIGITS": "'SECONDS'",
+          "QUANTITIES": "'20'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "582f7d36e375ae3e8d885dffe95897b83216c8182b7ac783ab9592482e80eeb8",
+        "api_signature": {
+          "source": "NASA/JPL Horizons API",
+          "version": "1.2"
+        },
+        "utc": "1990-Feb-09 19:11:05",
+        "distance_m": 147609644201.70285
+      }
+    },
+    {
+      "event_date": "2007-03-03",
+      "adopted_time_utc": "2007-03-03T23:20:56Z",
+      "moon_distance_m": 402205480.19690084,
+      "sun_distance_m": 148309789633.23126,
+      "moon": {
+        "target": "301",
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272007-03-03+23%3A20%3A56%27&STOP_TIME=%272007-03-03+23%3A21%3A56%27&STEP_SIZE=%271m%27&TIME_DIGITS=%27SECONDS%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'301'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'OBSERVER'",
+          "CENTER": "'500@399'",
+          "START_TIME": "'2007-03-03 23:20:56'",
+          "STOP_TIME": "'2007-03-03 23:21:56'",
+          "STEP_SIZE": "'1m'",
+          "TIME_DIGITS": "'SECONDS'",
+          "QUANTITIES": "'20'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "f3e633833e288a32bb0188d159470371db97029f2f215e2a7dcf7cff2c64eb78",
+        "api_signature": {
+          "source": "NASA/JPL Horizons API",
+          "version": "1.2"
+        },
+        "utc": "2007-Mar-03 23:20:56",
+        "distance_m": 402205480.19690084
+      },
+      "sun": {
+        "target": "10",
+        "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272007-03-03+23%3A20%3A56%27&STOP_TIME=%272007-03-03+23%3A21%3A56%27&STEP_SIZE=%271m%27&TIME_DIGITS=%27SECONDS%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+        "parameters": {
+          "format": "json",
+          "COMMAND": "'10'",
+          "OBJ_DATA": "'NO'",
+          "MAKE_EPHEM": "'YES'",
+          "EPHEM_TYPE": "'OBSERVER'",
+          "CENTER": "'500@399'",
+          "START_TIME": "'2007-03-03 23:20:56'",
+          "STOP_TIME": "'2007-03-03 23:21:56'",
+          "STEP_SIZE": "'1m'",
+          "TIME_DIGITS": "'SECONDS'",
+          "QUANTITIES": "'20'",
+          "CSV_FORMAT": "'YES'"
+        },
+        "response_sha256": "382efb62930c9c47930284f3b129e51e15d8a6e8e257240a2f3d75cd82b76282",
+        "api_signature": {
+          "source": "NASA/JPL Horizons API",
+          "version": "1.2"
+        },
+        "utc": "2007-Mar-03 23:20:56",
+        "distance_m": 148309789633.23126
+      }
+    }
+  ]
+}
