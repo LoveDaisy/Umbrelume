@@ -1,0 +1,52 @@
+{
+  "paper": "Hernitschek, Schmidt & Vollmer (2008), Applied Optics 47 H62–H71",
+  "doi": "10.1364/AO.47.000H62",
+  "url": "https://opg.optica.org/ao/abstract.cfm?uri=ao-47-34-h62",
+  "source_status": "Published numerical Tables 1 and 2 in primary publisher HTML; no graph digitization",
+  "source_html_sha256": "749c0b9351c4881ebc53a75592883a1a5c8d8f57aff75f64584323aba1d099ec",
+  "source_html_bytes": 128691,
+  "source_html_cache": "outputs/sources/hernitschek2008.html (ignored)",
+  "retrieved_date": "2026-11-04",
+  "tables": [
+    1,
+    2
+  ],
+  "author_uploaded_fulltext_url": "https://www.researchgate.net/publication/23501144_Lunar_eclipse_photometry_absolute_luminance_measurements_and_modeling",
+  "fulltext_access": "Read public author-uploaded HTML transcription; no PDF downloaded or hash claimed",
+  "contract_locations": {
+    "instrument_aperture_and_unit_air_mass": "Section 3, Eqs. 4–6",
+    "standardization": "Section 3, Eqs. 9–10",
+    "baseline_and_extrapolation": "Section 4 and Table 2 footnotes"
+  },
+  "quantity": "Photopic lunar luminance standardized to unit air mass and standard solar distance; brightness magnitudes also standardized to lunar distance",
+  "response": {
+    "nominal": "V(lambda) photopic sensitivity",
+    "wavelength_min_nm": 380,
+    "wavelength_max_nm": 780,
+    "actual_instrument_response_available": false
+  },
+  "reported_errors": "Transcribed printed plus/minus values; confidence level, covariance and complete systematic-error model unavailable; not assumed independent Gaussian 1-sigma",
+  "minimum_epoch": "Greatest-eclipse time is event geometry, not a published exposure timestamp or independently verified photometric-minimum time",
+  "geometry": "Table 1 explicitly labels eclipse parameters geocentric; instrument solid-angle correction used topocentric lunar size",
+  "minimum_2007": "Extrapolation across cloud gap using scaled 1990 light-curve shape; not an independent observed minimum",
+  "baseline_2007": "Table 2 footnote b warns probable low-altitude extra-aerosol underestimate",
+  "comparison_limitations": [
+    "1990 whole disk; 2007 central one-third-degree aperture before extrapolation",
+    "Unit air mass retains observer atmospheric extinction; V(lambda)-only above-atmosphere comparison is a proxy",
+    "Uniform spectrally neutral lunar screen omits albedo structure and eclipse opposition-phase response",
+    "No raw exposures, full response curves or uncertainty covariance supplied here"
+  ],
+  "apertures": {
+    "1990-02-09": {
+      "instrument": "Minolta CS-100",
+      "field_diameter_arcmin": 60,
+      "measurement": "Whole Moon with topocentric lunar-solid-angle correction"
+    },
+    "2007-03-03": {
+      "instrument": "Minolta LS-110",
+      "field_diameter_arcmin": 20,
+      "field_radius_arcmin": 10,
+      "measurement": "Centered lunar subaperture before minimum extrapolation"
+    }
+  }
+}

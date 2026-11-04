@@ -1,0 +1,56 @@
+{
+  "paper": "Yan et al. (2015), International Journal of Astrobiology 14, 255; accepted manuscript arXiv:1405.4780v1 (2014)",
+  "doi": "10.1017/S1473550414000172",
+  "url": "https://arxiv.org/pdf/1405.4780v1",
+  "source_pdf_sha256": "bf6771ce3b4a01ecd80e195d2f1ca82897f10bf78ee51a8690295249024b2105",
+  "source_pdf_bytes": 2695296,
+  "figure": 15,
+  "page_one_based": 11,
+  "pymupdf_version": "2.1",
+  "source_status": "Seven native-raster readouts of the observed black curve; not an author-released numerical table, not original exposures, not model samples",
+  "figure_image": {
+    "xref": 273,
+    "width_pixel": 4096,
+    "height_pixel": 2037,
+    "color_space": "RGB",
+    "black_pixel_definition": "Each of R, G, B is less than 80 (8-bit channels); colored model and residual curves are excluded",
+    "x_400_nm_pixel": 359.5,
+    "x_1000_nm_pixel": 3736.5,
+    "y_1e_minus2_pixel": 365.5,
+    "y_1e_minus3_pixel": 740.5,
+    "y_1e_minus4_pixel": 1115.5,
+    "y_1e_minus5_pixel": 1490.5,
+    "origin": "Top left of native embedded image"
+  },
+  "event": "2011-12-10",
+  "measurement": "Same near-Tycho lunar region's umbral count spectrum U1 divided by bright-Moon count spectrum B2, divided by exposure-time ratio 1800/6=300",
+  "normalization": "Fig. 15 already includes exposure-time correction and is approximately lunar-surface E_lambda/F_lambda. Do NOT divide these points by 300 again. Sec. 5.3 gives this normalization explicitly; Fig. 3 uses a different count-ratio scale.",
+  "measurement_units": "dimensionless",
+  "spectrograph": "HRS at the Xinglong 2.16 m telescope, R approximately 45000, original coverage 430-1000 nm",
+  "lunar_target": "Same region near Tycho crater throughout; exact fibre selenographic coordinate not tabulated",
+  "umbra_U1": {
+    "start_utc": "2011-12-10T14:08:25Z",
+    "end_utc": "2011-12-10T14:38:25Z",
+    "exposure_s": 1800,
+    "mean_local_airmass": 1.13,
+    "local_airmass_range": [1.10, 1.16]
+  },
+  "bright_B2": {
+    "start_utc": "2011-12-10T18:10:24Z",
+    "exposure_s": 6,
+    "mean_local_airmass": 1.17
+  },
+  "reduction": "Bias, flat, extraction and background correction; 77 echelle orders combined. Same-region U1/B2 cancels solar spectrum, lunar spectral albedo and instrument response under stable observing conditions. Local telluric absorption is assumed to cancel at a mean-airmass difference of 0.04; the authors explicitly note water-vapour variability as an exception. No absolute flux calibration was applied.",
+  "geometry_status": "Not yet a model-validation input: a documented time-averaged shadow-coordinate trajectory is required; a single angle is not supplied in the numerical table",
+  "geometric_context": "Paper Sec. 3.2 and Figs. 1, 5, 6 show a moving near-Tycho footprint; the low-tangent-point trajectory is near 156 E, 67 S at midpoint. The paper's single effective tangent altitude is a fitted/model-derived quantity, not an independently measured lunar shadow coordinate.",
+  "readout_definition": "Median neutral-black stroke pixel across seven native image columns (about +/-0.62 nm); vertical allowance is full stroke/bin excursion from that median plus 2 pixels, converted to log10 units using 375 pixels per decade. This allowance describes figure readout only, NOT observational error, a confidence interval, or an independent-exposure count.",
+  "missing_information": [
+    "Original reduced numerical spectrum and exposure-level calibration products",
+    "Pointwise observational uncertainties and spectrophotometric systematic uncertainty",
+    "Exact fibre coordinates and any tracking error during U1/B2",
+    "A model-coordinate trajectory integrated over the full 1800 s U1 window",
+    "A full-width visible filter response or full spectrum suitable for an observed colorimetric integral"
+  ],
+  "independence": "Distinct lunar eclipse from the June 2011 reference, but these seven readouts come from one integrated December exposure and are not independent atmospheric realizations",
+  "number_of_curve_readouts": 7
+}
