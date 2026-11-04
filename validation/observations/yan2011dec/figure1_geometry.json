@@ -1,0 +1,55 @@
+{
+  "source": "Yan et al. arXiv1405.4780v1, PDF page2 Figure1, embedded raster xref87",
+  "image_dimensions_px": [
+    935,
+    630
+  ],
+  "pixel_origin": "upper left",
+  "orientation": "north up; east left; plotted ecliptic tilts slightly downward to right",
+  "shadow_center_px": [
+    459.0,
+    328.0
+  ],
+  "shadow_center_readout_allowance_px": 1.0,
+  "observed_black_trace_mask": "max(R,G,B)<90 within x435:495,y412:426 (half-open pixel windows)",
+  "black_stroke_bbox_px": [
+    445,
+    419,
+    485,
+    420
+  ],
+  "trace_start_utc": "2011-12-10T14:08:25Z",
+  "trace_end_utc": "2011-12-10T14:38:25Z",
+  "trace_start_px": [
+    484.0,
+    420.0
+  ],
+  "trace_end_px": [
+    446.0,
+    420.0
+  ],
+  "trace_endpoint_readout_allowance_px": 2.0,
+  "time_labels": "14:08UT at right and14:38UT at left; paper Table1 supplies seconds and1800s exposure",
+  "moon_scale_reference": "isolated eastern/leftmost lunar disk; approximate circular limb, not umbral radius",
+  "isolated_lunar_limb_circle_fit_px": [
+    213.078725684865,
+    392.8820383503476,
+    43.51091860785072
+  ],
+  "limb_fit_method": "radial grayscale minima in42-48px annulus around roughcenter214.3,391.5; reject sampled minima outside42.5-47.5px and145-245gray; soft-L1 circle fit",
+  "limb_fit_count": 193,
+  "limb_fit_median_absolute_residual_px": 0.26889538041513106,
+  "adopted_moon_radius_px": 44.0,
+  "moon_radius_readout_allowance_px": 1.5,
+  "calibration_warning": "Figure is a schematic, not calibrated astrometry. Allowances are practical graph-readout bounds, not observational uncertainties. Primary physical trajectory should use ephemeris and near-Tycho position with spatial sensitivity, and use this figure only as independent consistency check.",
+  "excluded_inputs": [
+    "No use of fitted effective tangent altitude",
+    "No use of modeled tangent lat/lon to infer target geometry",
+    "No use of empirical umbral radius to alter Earth radius"
+  ],
+  "source_pdf_sha256": "bf6771ce3b4a01ecd80e195d2f1ca82897f10bf78ee51a8690295249024b2105",
+  "trace_start_radius_moon_radii": 2.1667328873118343,
+  "trace_end_radius_moon_radii": 2.1116804244193847,
+  "minimum_trace_radius_moon_radii": 2.090909090909091,
+  "maximum_trace_radius_moon_radii": 2.1667328873118343
+}

@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import json
 from pathlib import Path
 from urllib.request import urlopen
 
@@ -88,12 +89,37 @@ def main():
     parser.add_argument("--out", type=Path,
                         default=Path("validation/observations/yan2011dec/points.csv"))
     parser.add_argument("--qa", type=Path)
+    parser.add_argument("--geometry-qa", type=Path,
+                        help="Validate Fig.1 readout anchors and render their independent geometry overlay")
     args = parser.parse_args()
     if not args.pdf.exists():
         args.pdf.parent.mkdir(parents=True, exist_ok=True)
         with urlopen(URL, timeout=60) as response:
             args.pdf.write_bytes(response.read())
     extract(args.pdf, args.out, args.qa)
+    if args.geometry_qa:
+        import matplotlib.pyplot as plt
+        metadata_path = Path(__file__).resolve().parents[1]/"validation/observations/yan2011dec/figure1_geometry.json"
+        metadata = json.loads(metadata_path.read_text())
+        document = pymupdf.open(args.pdf)
+        pixmap = pymupdf.Pixmap(document, 87)
+        if (pixmap.width,pixmap.height,pixmap.n)!=(935,630,3):
+            raise ValueError("Unexpected Fig.1 native image")
+        rgb = np.frombuffer(pixmap.samples,dtype=np.uint8).reshape(630,935,3)
+        # Independently recorded native-black stroke bounds, before overlays.
+        yy,xx = np.where(rgb[412:426,435:495].max(axis=2)<90)
+        bbox = [int(xx.min()+435),int(yy.min()+412),int(xx.max()+435),int(yy.max()+412)]
+        if bbox!=metadata["black_stroke_bbox_px"]:
+            raise ValueError("Fig.1 fibre trace differs from audited pixels")
+        fig,ax = plt.subplots(figsize=(9.35,6.3))
+        ax.imshow(rgb)
+        for key in ["shadow_center_px","trace_start_px","trace_end_px"]:
+            ax.plot(*metadata[key],"o",mfc="none",mec="magenta",ms=9)
+        cx,cy,unused_radius = metadata["isolated_lunar_limb_circle_fit_px"]
+        ax.add_patch(plt.Circle((cx,cy),metadata["adopted_moon_radius_px"],fill=False,color="cyan",lw=.7))
+        ax.set_axis_off();args.geometry_qa.parent.mkdir(parents=True,exist_ok=True)
+        fig.savefig(args.geometry_qa,dpi=160,bbox_inches="tight");plt.close(fig)
+        print("Validated Fig.1 trace and wrote",args.geometry_qa)
 
 
 if __name__ == "__main__":

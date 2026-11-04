@@ -1,0 +1,582 @@
+{
+  "source": "JPL Horizons DE441; ICRF vectors; lunar MEAN_ME high-precision site orientation",
+  "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "manual": "https://ssd.jpl.nasa.gov/horizons/manual.html",
+  "recorded_utc": "2026-11-04T06:07:30.312210+00:00",
+  "nominal_site": {
+    "longitude_deg_east": -11.22,
+    "latitude_deg_north": -43.3,
+    "altitude_km": 0.0,
+    "source": "https://planetarynames.wr.usgs.gov/Feature/6163",
+    "scope": "Tycho crater center as nominal near-Tycho fibre location, not a measured exact pointing"
+  },
+  "epoch_contract": {
+    "observed_start_utc": "2011-12-10T14:08:25+00:00",
+    "observed_end_utc": "2011-12-10T14:38:25+00:00",
+    "exposure_s": 1800,
+    "reflection_epoch_shift_s": -1.32,
+    "scope": "Approximate Moon-to-ground downleg; 396000km/c about1.32s. Site-dependent correction <=0.022s. Earth/Sun vectors use LT (not LT+S) to retain physical ray coordinates."
+  },
+  "vector_construction": "At lunar reflection epoch t, e=Earth(t-LT_E)-site(t), s=Sun(t-LT_S)-site(t). Sunward u=(s-e)/|s-e|; rho=|e cross u|, D=e dot u, S=|s-e|. No apparent-sky stellar aberration rotation applied.",
+  "independent_figure_check": {
+    "source": "Yan Fig.1, native raster on PDF page2",
+    "plot_start_end_radius_m": [
+      3764481.718415581,
+      3668833.569386239
+    ],
+    "ephemeris_start_end_radius_m": [
+      3764352.7334638196,
+      3700444.527281827
+    ],
+    "absolute_endpoint_difference_m": [
+      128.9849517615512,
+      31610.957895587664
+    ],
+    "schematic_reading_allowance_m": 150000.0,
+    "scope": "Cross-check, not an observational pointing confidence interval; no atmosphere-derived tangent heights used"
+  },
+  "spatial_sensitivity_radial_offsets_m": [
+    -150000.0,
+    0.0,
+    150000.0
+  ],
+  "bright_reference": {
+    "mid_observed_utc": "2011-12-10T18:10:27+00:00",
+    "reflection_utc": "2011-12-10T18:10:25.680000+00:00",
+    "shadow_radius_m": 12780843.183183441,
+    "receiver_axial_distance_m": 395373432.4786312,
+    "sun_earth_distance_m": 147318410588.8912,
+    "sun_site_distance_m": 147713784574.2971
+  },
+  "requests": {
+    "u1_earth_lt": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'399'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 14:08:23.680'",
+        "STOP_TIME": "'2011-12-10 14:38:23.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'LT'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "0d0d4c362c2785085ac28774d254af4152c8154965a55ef4d07b8ec532249c8b",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+      "row_count": 31
+    },
+    "u1_sun_lt": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'10'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 14:08:23.680'",
+        "STOP_TIME": "'2011-12-10 14:38:23.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'LT'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "856e8885369a60a22704f5c4e8d4212a5a51a55544815ffac65a1a3aaf1fd834",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+      "row_count": 31
+    },
+    "u1_earth_none": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27NONE%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'399'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 14:08:23.680'",
+        "STOP_TIME": "'2011-12-10 14:38:23.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'NONE'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "68ec98841a04a3a3570c22b7301ceccb0b40eeeef668d4ec31f5988dc7bc40ce",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+      "row_count": 31
+    },
+    "u1_sun_none": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+14%3A08%3A23.680%27&STOP_TIME=%272011-12-10+14%3A38%3A23.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27NONE%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'10'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 14:08:23.680'",
+        "STOP_TIME": "'2011-12-10 14:38:23.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'NONE'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "52c6daf6c31466c78ef52b668d7474cbddd86138ed04f1e05571146dd6f0723f",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 14:08:23.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 14:38:23.6800",
+      "row_count": 31
+    },
+    "b2_earth_lt": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+18%3A10%3A25.680%27&STOP_TIME=%272011-12-10+18%3A11%3A25.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'399'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 18:10:25.680'",
+        "STOP_TIME": "'2011-12-10 18:11:25.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'LT'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "4cf212e241691649434c77cf49697a81d9a1a0a8be1322d0f9d0f3aaf8b41404",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 18:10:25.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 18:11:25.6800",
+      "row_count": 2
+    },
+    "b2_sun_lt": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-11.22%2C-43.3%2C0%27&START_TIME=%272011-12-10+18%3A10%3A25.680%27&STOP_TIME=%272011-12-10+18%3A11%3A25.680%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&REF_PLANE=%27FRAME%27&REF_SYSTEM=%27ICRF%27&VEC_CORR=%27LT%27&VEC_TABLE=%272%27&OUT_UNITS=%27KM-S%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'10'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'coord@301'",
+        "COORD_TYPE": "'GEODETIC'",
+        "SITE_COORD": "'-11.22,-43.3,0'",
+        "START_TIME": "'2011-12-10 18:10:25.680'",
+        "STOP_TIME": "'2011-12-10 18:11:25.680'",
+        "STEP_SIZE": "'1m'",
+        "TIME_TYPE": "'UT'",
+        "REF_PLANE": "'FRAME'",
+        "REF_SYSTEM": "'ICRF'",
+        "VEC_CORR": "'LT'",
+        "VEC_TABLE": "'2'",
+        "OUT_UNITS": "'KM-S'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "c6a5df3a1f591f687d7fa653066f02c27aecaba8e2b13424ef303d0a19f51a4b",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "first_calendar_utc": "A.D. 2011-Dec-10 18:10:25.6800",
+      "last_calendar_utc": "A.D. 2011-Dec-10 18:11:25.6800",
+      "row_count": 2
+    }
+  },
+  "records": [
+    {
+      "observed_utc": "2011-12-10T14:08:25+00:00",
+      "reflection_utc": "2011-12-10T14:08:23.680000+00:00",
+      "seconds_since_start": 0,
+      "shadow_radius_m": 3764352.7334638196,
+      "receiver_axial_distance_m": 396054445.8861208,
+      "sun_earth_distance_m": 147321442091.01212,
+      "sun_site_distance_m": 147717496584.8626,
+      "solar_flux_relative_to_b2": 0.9999497423932633,
+      "simultaneous_geometry_radius_m": 3778636.4834034983
+    },
+    {
+      "observed_utc": "2011-12-10T14:09:25+00:00",
+      "reflection_utc": "2011-12-10T14:09:23.680000+00:00",
+      "seconds_since_start": 60,
+      "shadow_radius_m": 3750728.8044524225,
+      "receiver_axial_distance_m": 396052555.4153602,
+      "sun_earth_distance_m": 147321429514.4196,
+      "sun_site_distance_m": 147717482117.45276,
+      "solar_flux_relative_to_b2": 0.9999499382628821,
+      "simultaneous_geometry_radius_m": 3764486.2545274138
+    },
+    {
+      "observed_utc": "2011-12-10T14:10:25+00:00",
+      "reflection_utc": "2011-12-10T14:10:23.680000+00:00",
+      "seconds_since_start": 120,
+      "shadow_radius_m": 3737853.095325629,
+      "receiver_axial_distance_m": 396050657.29090506,
+      "sun_earth_distance_m": 147321416938.25372,
+      "sun_site_distance_m": 147717467642.83606,
+      "solar_flux_relative_to_b2": 0.99995013423013,
+      "simultaneous_geometry_radius_m": 3751077.7144826623
+    },
+    {
+      "observed_utc": "2011-12-10T14:11:25+00:00",
+      "reflection_utc": "2011-12-10T14:11:23.680000+00:00",
+      "seconds_since_start": 180,
+      "shadow_radius_m": 3725733.366701153,
+      "receiver_axial_distance_m": 396048751.51271516,
+      "sun_earth_distance_m": 147321404362.5145,
+      "sun_site_distance_m": 147717453161.01248,
+      "solar_flux_relative_to_b2": 0.9999503302950069,
+      "simultaneous_geometry_radius_m": 3738418.847203358
+    },
+    {
+      "observed_utc": "2011-12-10T14:12:25+00:00",
+      "reflection_utc": "2011-12-10T14:12:23.680000+00:00",
+      "seconds_since_start": 240,
+      "shadow_radius_m": 3714377.021987808,
+      "receiver_axial_distance_m": 396046838.08068,
+      "sun_earth_distance_m": 147321391787.2019,
+      "sun_site_distance_m": 147717438671.98184,
+      "solar_flux_relative_to_b2": 0.9999505264575157,
+      "simultaneous_geometry_radius_m": 3726517.295837275
+    },
+    {
+      "observed_utc": "2011-12-10T14:13:25+00:00",
+      "reflection_utc": "2011-12-10T14:13:23.680000+00:00",
+      "seconds_since_start": 300,
+      "shadow_radius_m": 3703791.086324543,
+      "receiver_axial_distance_m": 396044916.9946424,
+      "sun_earth_distance_m": 147321379212.3161,
+      "sun_site_distance_m": 147717424175.7442,
+      "solar_flux_relative_to_b2": 0.9999507227176557,
+      "simultaneous_geometry_radius_m": 3715380.3413676373
+    },
+    {
+      "observed_utc": "2011-12-10T14:14:25+00:00",
+      "reflection_utc": "2011-12-10T14:14:23.680000+00:00",
+      "seconds_since_start": 360,
+      "shadow_radius_m": 3693982.1862129527,
+      "receiver_axial_distance_m": 396042988.25458163,
+      "sun_earth_distance_m": 147321366637.8569,
+      "sun_site_distance_m": 147717409672.29935,
+      "solar_flux_relative_to_b2": 0.9999509190754298,
+      "simultaneous_geometry_radius_m": 3705014.8818965084
+    },
+    {
+      "observed_utc": "2011-12-10T14:15:25+00:00",
+      "reflection_utc": "2011-12-10T14:15:23.680000+00:00",
+      "seconds_since_start": 420,
+      "shadow_radius_m": 3684956.5298837516,
+      "receiver_axial_distance_m": 396041051.8603842,
+      "sun_earth_distance_m": 147321354063.82434,
+      "sun_site_distance_m": 147717395161.6472,
+      "solar_flux_relative_to_b2": 0.9999511155308392,
+      "simultaneous_geometry_radius_m": 3695427.412520585
+    },
+    {
+      "observed_utc": "2011-12-10T14:16:25+00:00",
+      "reflection_utc": "2011-12-10T14:16:23.680000+00:00",
+      "seconds_since_start": 480,
+      "shadow_radius_m": 3676719.8885131576,
+      "receiver_axial_distance_m": 396039107.8119495,
+      "sun_earth_distance_m": 147321341490.21857,
+      "sun_site_distance_m": 147717380643.78775,
+      "solar_flux_relative_to_b2": 0.9999513120838838,
+      "simultaneous_geometry_radius_m": 3686624.006057139
+    },
+    {
+      "observed_utc": "2011-12-10T14:17:25+00:00",
+      "reflection_utc": "2011-12-10T14:17:23.680000+00:00",
+      "seconds_since_start": 540,
+      "shadow_radius_m": 3669277.5785715263,
+      "receiver_axial_distance_m": 396037156.10914767,
+      "sun_earth_distance_m": 147321328917.03946,
+      "sun_site_distance_m": 147717366118.72076,
+      "solar_flux_relative_to_b2": 0.9999515087345673,
+      "simultaneous_geometry_radius_m": 3678610.2945923056
+    },
+    {
+      "observed_utc": "2011-12-10T14:18:25+00:00",
+      "reflection_utc": "2011-12-10T14:18:23.680000+00:00",
+      "seconds_since_start": 600,
+      "shadow_radius_m": 3662634.44508887,
+      "receiver_axial_distance_m": 396035196.7519312,
+      "sun_earth_distance_m": 147321316344.28702,
+      "sun_site_distance_m": 147717351586.44626,
+      "solar_flux_relative_to_b2": 0.9999517054828895,
+      "simultaneous_geometry_radius_m": 3671391.4521641945
+    },
+    {
+      "observed_utc": "2011-12-10T14:19:25+00:00",
+      "reflection_utc": "2011-12-10T14:19:23.680000+00:00",
+      "seconds_since_start": 660,
+      "shadow_radius_m": 3656794.8464535656,
+      "receiver_axial_distance_m": 396033229.74017245,
+      "sun_earth_distance_m": 147321303771.96127,
+      "sun_site_distance_m": 147717337046.96408,
+      "solar_flux_relative_to_b2": 0.999951902328852,
+      "simultaneous_geometry_radius_m": 3664972.1785888327
+    },
+    {
+      "observed_utc": "2011-12-10T14:20:25+00:00",
+      "reflection_utc": "2011-12-10T14:20:23.680000+00:00",
+      "seconds_since_start": 720,
+      "shadow_radius_m": 3651762.6402965183,
+      "receiver_axial_distance_m": 396031255.07381505,
+      "sun_earth_distance_m": 147321291200.06216,
+      "sun_site_distance_m": 147717322500.2741,
+      "solar_flux_relative_to_b2": 0.9999520992724574,
+      "simultaneous_geometry_radius_m": 3659356.6845050445
+    },
+    {
+      "observed_utc": "2011-12-10T14:21:25+00:00",
+      "reflection_utc": "2011-12-10T14:21:23.680000+00:00",
+      "seconds_since_start": 780,
+      "shadow_radius_m": 3647541.171036067,
+      "receiver_axial_distance_m": 396029272.75271535,
+      "sun_earth_distance_m": 147321278628.5898,
+      "sun_site_distance_m": 147717307946.3764,
+      "solar_flux_relative_to_b2": 0.9999522963137044,
+      "simultaneous_geometry_radius_m": 3654548.677869476
+    },
+    {
+      "observed_utc": "2011-12-10T14:22:25+00:00",
+      "reflection_utc": "2011-12-10T14:22:23.680000+00:00",
+      "seconds_since_start": 840,
+      "shadow_radius_m": 3644133.258913289,
+      "receiver_axial_distance_m": 396027282.77681834,
+      "sun_earth_distance_m": 147321266057.54422,
+      "sun_site_distance_m": 147717293385.27078,
+      "solar_flux_relative_to_b2": 0.9999524934525957,
+      "simultaneous_geometry_radius_m": 3650551.35191978
+    },
+    {
+      "observed_utc": "2011-12-10T14:23:25+00:00",
+      "reflection_utc": "2011-12-10T14:23:23.680000+00:00",
+      "seconds_since_start": 900,
+      "shadow_radius_m": 3641541.190881493,
+      "receiver_axial_distance_m": 396025285.1459885,
+      "sun_earth_distance_m": 147321253486.92526,
+      "sun_site_distance_m": 147717278816.95706,
+      "solar_flux_relative_to_b2": 0.9999526906891338,
+      "simultaneous_geometry_radius_m": 3647367.3746733624
+    },
+    {
+      "observed_utc": "2011-12-10T14:24:25+00:00",
+      "reflection_utc": "2011-12-10T14:24:23.680000+00:00",
+      "seconds_since_start": 960,
+      "shadow_radius_m": 3639766.7119749696,
+      "receiver_axial_distance_m": 396023279.8601877,
+      "sun_earth_distance_m": 147321240916.73306,
+      "sun_site_distance_m": 147717264241.43533,
+      "solar_flux_relative_to_b2": 0.9999528880233177,
+      "simultaneous_geometry_radius_m": 3644998.880124513
+    },
+    {
+      "observed_utc": "2011-12-10T14:25:25+00:00",
+      "reflection_utc": "2011-12-10T14:25:23.680000+00:00",
+      "seconds_since_start": 1020,
+      "shadow_radius_m": 3638811.0210856013,
+      "receiver_axial_distance_m": 396021266.9192537,
+      "sun_earth_distance_m": 147321228346.96747,
+      "sun_site_distance_m": 147717249658.70526,
+      "solar_flux_relative_to_b2": 0.9999530854551517,
+      "simultaneous_geometry_radius_m": 3643447.4611366913
+    },
+    {
+      "observed_utc": "2011-12-10T14:26:25+00:00",
+      "reflection_utc": "2011-12-10T14:26:23.680000+00:00",
+      "seconds_since_start": 1080,
+      "shadow_radius_m": 3638674.765781658,
+      "receiver_axial_distance_m": 396019246.3231436,
+      "sun_earth_distance_m": 147321215777.6287,
+      "sun_site_distance_m": 147717235068.76703,
+      "solar_flux_relative_to_b2": 0.999953282984634,
+      "simultaneous_geometry_radius_m": 3642714.1641206634
+    },
+    {
+      "observed_utc": "2011-12-10T14:27:25+00:00",
+      "reflection_utc": "2011-12-10T14:27:23.680000+00:00",
+      "seconds_since_start": 1140,
+      "shadow_radius_m": 3639358.0404811734,
+      "receiver_axial_distance_m": 396017218.07173645,
+      "sun_earth_distance_m": 147321203208.7166,
+      "sun_site_distance_m": 147717220471.6204,
+      "solar_flux_relative_to_b2": 0.9999534806117675,
+      "simultaneous_geometry_radius_m": 3642799.485513193
+    },
+    {
+      "observed_utc": "2011-12-10T14:28:25+00:00",
+      "reflection_utc": "2011-12-10T14:28:23.680000+00:00",
+      "seconds_since_start": 1200,
+      "shadow_radius_m": 3640860.3860829426,
+      "receiver_axial_distance_m": 396015182.1649425,
+      "sun_earth_distance_m": 147321190640.23126,
+      "sun_site_distance_m": 147717205867.26523,
+      "solar_flux_relative_to_b2": 0.999953678336554,
+      "simultaneous_geometry_radius_m": 3643703.370118037
+    },
+    {
+      "observed_utc": "2011-12-10T14:29:25+00:00",
+      "reflection_utc": "2011-12-10T14:29:23.680000+00:00",
+      "seconds_since_start": 1260,
+      "shadow_radius_m": 3643180.7915435494,
+      "receiver_axial_distance_m": 396013138.6026835,
+      "sun_earth_distance_m": 147321178072.17258,
+      "sun_site_distance_m": 147717191255.70154,
+      "solar_flux_relative_to_b2": 0.9999538761589938,
+      "simultaneous_geometry_radius_m": 3645425.2112873187
+    },
+    {
+      "observed_utc": "2011-12-10T14:30:25+00:00",
+      "reflection_utc": "2011-12-10T14:30:23.680000+00:00",
+      "seconds_since_start": 1320,
+      "shadow_radius_m": 3646317.6972819283,
+      "receiver_axial_distance_m": 396011087.38485754,
+      "sun_earth_distance_m": 147321165504.54062,
+      "sun_site_distance_m": 147717176636.92914,
+      "solar_flux_relative_to_b2": 0.9999540740790892,
+      "simultaneous_geometry_radius_m": 3647963.852971311
+    },
+    {
+      "observed_utc": "2011-12-10T14:31:25+00:00",
+      "reflection_utc": "2011-12-10T14:31:23.680000+00:00",
+      "seconds_since_start": 1380,
+      "shadow_radius_m": 3650269.000286976,
+      "receiver_axial_distance_m": 396009028.51134497,
+      "sun_earth_distance_m": 147321152937.33548,
+      "sun_site_distance_m": 147717162010.94812,
+      "solar_flux_relative_to_b2": 0.9999542720968393,
+      "simultaneous_geometry_radius_m": 3651317.5936002824
+    },
+    {
+      "observed_utc": "2011-12-10T14:32:25+00:00",
+      "reflection_utc": "2011-12-10T14:32:23.680000+00:00",
+      "seconds_since_start": 1440,
+      "shadow_radius_m": 3655032.0614349153,
+      "receiver_axial_distance_m": 396006961.982096,
+      "sun_earth_distance_m": 147321140370.55698,
+      "sun_site_distance_m": 147717147377.75815,
+      "solar_flux_relative_to_b2": 0.9999544702122484,
+      "simultaneous_geometry_radius_m": 3655484.1917639915
+    },
+    {
+      "observed_utc": "2011-12-10T14:33:25+00:00",
+      "reflection_utc": "2011-12-10T14:33:23.680000+00:00",
+      "seconds_since_start": 1500,
+      "shadow_radius_m": 3660603.713966745,
+      "receiver_axial_distance_m": 396004887.79696375,
+      "sun_earth_distance_m": 147321127804.2053,
+      "sun_site_distance_m": 147717132737.35928,
+      "solar_flux_relative_to_b2": 0.9999546684253161,
+      "simultaneous_geometry_radius_m": 3660460.873685416
+    },
+    {
+      "observed_utc": "2011-12-10T14:34:25+00:00",
+      "reflection_utc": "2011-12-10T14:34:23.680000+00:00",
+      "seconds_since_start": 1560,
+      "shadow_radius_m": 3666980.2740648454,
+      "receiver_axial_distance_m": 396002805.955917,
+      "sun_earth_distance_m": 147321115238.2804,
+      "sun_site_distance_m": 147717118089.75146,
+      "solar_flux_relative_to_b2": 0.9999548667360432,
+      "simultaneous_geometry_radius_m": 3666244.342371961
+    },
+    {
+      "observed_utc": "2011-12-10T14:35:25+00:00",
+      "reflection_utc": "2011-12-10T14:35:23.680000+00:00",
+      "seconds_since_start": 1620,
+      "shadow_radius_m": 3674157.5526873465,
+      "receiver_axial_distance_m": 396000716.4588371,
+      "sun_earth_distance_m": 147321102672.78204,
+      "sun_site_distance_m": 147717103434.93442,
+      "solar_flux_relative_to_b2": 0.9999550651444333,
+      "simultaneous_geometry_radius_m": 3672830.7884240826
+    },
+    {
+      "observed_utc": "2011-12-10T14:36:25+00:00",
+      "reflection_utc": "2011-12-10T14:36:23.680000+00:00",
+      "seconds_since_start": 1680,
+      "shadow_radius_m": 3682130.869366841,
+      "receiver_axial_distance_m": 395998619.3055767,
+      "sun_earth_distance_m": 147321090107.71054,
+      "sun_site_distance_m": 147717088772.90823,
+      "solar_flux_relative_to_b2": 0.9999552636504858,
+      "simultaneous_geometry_radius_m": 3680215.9023638726
+    },
+    {
+      "observed_utc": "2011-12-10T14:37:25+00:00",
+      "reflection_utc": "2011-12-10T14:37:23.680000+00:00",
+      "seconds_since_start": 1740,
+      "shadow_radius_m": 3690895.0668135816,
+      "receiver_axial_distance_m": 395996514.4961341,
+      "sun_earth_distance_m": 147321077543.06592,
+      "sun_site_distance_m": 147717074103.67285,
+      "solar_flux_relative_to_b2": 0.9999554622542011,
+      "simultaneous_geometry_radius_m": 3688394.8884926434
+    },
+    {
+      "observed_utc": "2011-12-10T14:38:25+00:00",
+      "reflection_utc": "2011-12-10T14:38:23.680000+00:00",
+      "seconds_since_start": 1800,
+      "shadow_radius_m": 3700444.527281827,
+      "receiver_axial_distance_m": 395994402.03034985,
+      "sun_earth_distance_m": 147321064978.8479,
+      "sun_site_distance_m": 147717059427.22797,
+      "solar_flux_relative_to_b2": 0.9999556609555835,
+      "simultaneous_geometry_radius_m": 3697362.480055437
+    }
+  ]
+}
