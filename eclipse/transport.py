@@ -12,6 +12,7 @@ import numpy as np
 from numpy.polynomial.legendre import leggauss
 
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
+from .aerosol import AerosolProfile
 from .rays import RayTable, build_ray_table
 from .spectra import ozone_cross_section, rayleigh_cross_section, solar_irradiance
 
@@ -95,6 +96,37 @@ def signed_landing_radius(table: RayTable, geometry: Geometry) -> np.ndarray:
     return geometry.magnification*table.impact_m - geometry.moon_distance_m*table.bending_rad
 
 
+def receiver_quadrature(table: RayTable, radius_m: float, geometry: Geometry,
+                        integration_order: int = 8) -> tuple[np.ndarray, np.ndarray]:
+    """Return incident b samples and conserved finite-source area weights.
+
+    Shared by transport and altitude-contribution diagnostics; no extinction
+    or wavelength weighting is applied here. Every landing branch is retained.
+    """
+    b = table.impact_m
+    landing = signed_landing_radius(table, geometry)
+    a, m, r = geometry.solar_blur_m, geometry.magnification, radius_m
+    nodes, weights = leggauss(integration_order)
+    target = np.unique(np.array([r+a, r-a, -r+a, -r-a, 0.0]))
+    roots = []
+    for boundary in target:
+        crossing = ((landing[:-1] - boundary) * (landing[1:] - boundary)) < 0
+        roots.extend(b[:-1][crossing] + (boundary - landing[:-1][crossing])
+                     / np.diff(landing)[crossing] * np.diff(b)[crossing])
+    edges = np.unique(np.concatenate((b, roots)))
+    mid = (edges[1:]+edges[:-1])/2
+    ymid = np.interp(mid, b, landing)
+    support = ring_fraction(r, np.abs(ymid), a) > 0
+    lo, hi = edges[:-1][support], edges[1:][support]
+    if not len(lo):
+        return np.empty(0), np.empty(0)
+    bb = ((hi+lo)[:, None]/2 + (hi-lo)[:, None]/2*nodes).ravel()
+    db = ((hi-lo)[:, None]/2 * np.broadcast_to(weights, (len(lo), len(weights)))).ravel()
+    yy = np.interp(bb, b, landing)
+    area = 2*m*m*bb*db/a**2 * ring_fraction(r, np.abs(yy), a)
+    return bb, area
+
+
 def transmission_profile(
     table: RayTable,
     radius_m,
@@ -102,6 +134,7 @@ def transmission_profile(
     *,
     geometry: Geometry = Geometry(),
     ozone: bool = True,
+    aerosol: bool = True,
     extinction: bool = True,
     integration_order: int = 8,
 ) -> np.ndarray:
@@ -123,39 +156,21 @@ def transmission_profile(
     b = table.impact_m
     if geometry.moon_distance_m <= EARTH_RADIUS_M + table.altitude_m[-1]:
         raise ValueError("Receiver must be outside the modeled atmosphere")
-    landing = signed_landing_radius(table, geometry)
     a, m = geometry.solar_blur_m, geometry.magnification
     outer = 1 - circle_overlap(radius, a, m*b[-1])/(np.pi*a*a)
     result = np.repeat(outer[:, None], len(wl), axis=1)
     sigma_air = rayleigh_cross_section(wl) if extinction else np.zeros_like(wl)
     sigma_o3 = ozone_cross_section(wl) if extinction and ozone else np.zeros_like(wl)
-    nodes, weights = leggauss(integration_order)
     for i, r in enumerate(radius):
-        # Split at every support/containment boundary, especially the step at
-        # r=0. Otherwise an arbitrary sampling phase biases central brightness.
-        target = np.unique(np.array([r+a, r-a, -r+a, -r-a, 0.0]))
-        roots = []
-        # A sharp standard-atmosphere lapse-rate transition can make the
-        # landing map locally turn back. Invert EACH table segment, retaining
-        # every branch; a single global inverse would silently lose rays.
-        for boundary in target:
-            crossing = ((landing[:-1] - boundary) * (landing[1:] - boundary)) < 0
-            roots.extend(b[:-1][crossing] + (boundary - landing[:-1][crossing])
-                         / np.diff(landing)[crossing] * np.diff(b)[crossing])
-        edges = np.unique(np.concatenate((b, roots)))
-        mid = (edges[1:]+edges[:-1])/2
-        ymid = np.interp(mid, b, landing)
-        support = ring_fraction(r, np.abs(ymid), a) > 0
-        lo, hi = edges[:-1][support], edges[1:][support]
-        if not len(lo):
+        bb, area = receiver_quadrature(table, float(r), geometry, integration_order)
+        if not len(bb):
             continue
-        bb = ((hi+lo)[:, None]/2 + (hi-lo)[:, None]/2*nodes).ravel()
-        db = ((hi-lo)[:, None]/2 * np.broadcast_to(weights, (len(lo), len(weights)))).ravel()
-        yy = np.interp(bb, b, landing)
-        area = 2*m*m*bb*db/a**2 * ring_fraction(r, np.abs(yy), a)
         air = np.interp(bb, b, table.air_column_m2)
         o3 = np.interp(bb, b, table.ozone_column_m2)
         tau = air[:, None]*sigma_air + o3[:, None]*sigma_o3
+        if extinction and aerosol and table.aerosol_tau550 is not None:
+            tau += (np.interp(bb, b, table.aerosol_tau550)[:, None]
+                    * table.aerosol_profile.spectral_factor(wl))
         result[i] += area @ np.exp(-tau)
     return result
 
@@ -180,6 +195,7 @@ def simulate(
     height_step_m: float = 100.0,
     quadrature_order: int = 48,
     integration_order: int = 8,
+    aerosol_profile: AerosolProfile | None = AerosolProfile.opac_free_troposphere(),
 ) -> EclipseResult:
     """Precompute forward rays once, then integrate ozone on/off at all receivers."""
     radius = np.asarray(np.arange(0, 9_000_001, 20_000) if radius_m is None else radius_m,
@@ -187,7 +203,7 @@ def simulate(
     wl = np.asarray(np.arange(380, 781, 5) if wavelength_nm is None else wavelength_nm,
                     dtype=float)
     table = build_ray_table(atmosphere or Atmosphere(), height_step_m=height_step_m,
-                            quadrature_order=quadrature_order)
+                            quadrature_order=quadrature_order, aerosol_profile=aerosol_profile)
     reference = solar_irradiance(wl)*(AU_M/(geometry.sun_distance_m + geometry.moon_distance_m))**2
     on = transmission_profile(table, radius, wl, geometry=geometry,
                                integration_order=integration_order)

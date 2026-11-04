@@ -1,0 +1,16 @@
+[
+  {
+    "file_name": "opac1998.pdf",
+    "url": "https://lweb.cfa.harvard.edu/HITRAN/HITRAN2012/Aerosols/papers/hess_opac_1998.pdf",
+    "location": "Tables3,5; printedpages840,843",
+    "bytes": 121916,
+    "sha256": "68a20ba9488db1e0f65a9976d4ee46e6c879f89054fcff583ba67bb5d68d425c"
+  },
+  {
+    "file_name": "hestroffer1998.pdf",
+    "url": "https://www.physics.hmc.edu/faculty/esin/a101/labs/limbdark.pdf",
+    "location": "Table2; printedpage340",
+    "bytes": 183240,
+    "sha256": "10fa1d8e1089b93ed725192b76c4bace4402f23bdde6a689f24277b397796093"
+  }
+]

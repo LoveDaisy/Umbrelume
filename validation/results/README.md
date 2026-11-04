@@ -34,3 +34,16 @@ explicitly digitized published 503/677 nm observed curves, without fitting.
 It shows substantial inner-umbra overprediction. Unknown bandpasses and
 pointwise observational uncertainties preclude a formal statistical verdict.
 See [the analysis and source inventory](../../docs/OBSERVATIONAL_VALIDATION.md).
+
+## Round 2: aerosol extinction
+
+`round2/` contains the new analysis, molecular-ray checks, independent aerosol
+checks and convergence results with explicit aerosol configuration. The default
+uses the fixed OPAC free-tropospheric prior; same-event 677 nm AOD calibration
+and withheld 503 nm checks are reported separately. Numerical closure is not
+observational/profile validation. Read [ROUND2.md](../../docs/ROUND2.md) for the
+selection evidence and remaining mismatch.
+
+The original numerical snapshot above is molecular-only. Reproduce that medium
+with `validation.check_convergence --aerosol none`; current convergence defaults
+to `opac-ft`. Historical JSON files are retained with their original conditions.

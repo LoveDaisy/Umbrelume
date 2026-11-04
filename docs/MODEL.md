@@ -1,4 +1,10 @@
-# First-version physical and numerical contract
+# Physical and numerical contract
+
+Current default: v0.2, with the fixed OPAC free-tropospheric aerosol component.
+`--aerosol none` reproduces the molecular-only first-version medium. Historical
+figures and observational snapshots retain their original parameters. See
+[ROUND2.md](ROUND2.md) for the selected increment and [ROADMAP.md](ROADMAP.md)
+for implemented milestones and deferred physics.
 
 ## Quantity being computed
 
@@ -33,7 +39,21 @@ Refractivity is `(n_550-1) N_air/N_reference`. The reference density and Edlén
 refractivity refer to dry air at 288.15 K and 101325 Pa. **This ray geometry is
 achromatic**; extinction retains its wavelength dependence:
 
-`T_lambda(b) = exp[-sigma_R(lambda) C_air(b) - sigma_O3(lambda) C_O3(b)]`.
+`T_lambda(b) = exp[-sigma_R(lambda) C_air(b) - sigma_O3(lambda) C_O3(b) - tau_a(lambda,b)]`.
+
+The aerosol term is the full path integral of the prescribed extinction
+coefficient, `tau_a = integral beta550(h(s)) ds * f(lambda)`, on exactly the same
+curved gas ray. It adds no refractivity or in-scattered light. The default
+2–12 km exponential component and continuous broken power law are defined in
+[physics/AEROSOL.md](physics/AEROSOL.md). Its independent literature AOD550 is
+0.013; a separately calibrated value is not silently substituted.
+
+The molecular integrals retain their own layer divisions. Aerosol integration
+also splits at both support boundaries. Tangent-height nodes resolve the
+square-root column structure near a sharp aerosol cutoff. A zero AOD restores
+the original table exactly; `aerosol=False` on `transmission_profile` provides
+a counterfactual on the identical sampled ray table. `extinction=False`
+disables molecular, ozone and aerosol attenuation together.
 
 An opaque spherical surface blocks any ray whose turning point is below sea
 level. Thus the admitted interval starts at `b_ground = n(R) R`, rather than R.
@@ -95,7 +115,7 @@ landing map or globally inverting it would lose physical ray branches.
 
 ## Numerical checks and their scope
 
-1. **Geometric eclipse:** zero air/ozone recovers circle-overlap occultation
+1. **Geometric eclipse:** zero air/ozone/aerosol recovers circle-overlap occultation
    with projected Earth radius mR, umbra radius `mR-a` and penumbra radius `mR+a`.
 2. **Independent ray equation:** a Cartesian path-length ODE integrates
    `du/ds = grad(log n) - u (u dot grad(log n))`, plus both molecular columns.
@@ -108,6 +128,10 @@ landing map or globally inverting it would lose physical ray branches.
    lossless refracting atmospheres are checked.
 4. **Resolution:** ray-table height spacing and spectral sampling are separately
    refined; photopic irradiance and normalized linear RGB differences are saved.
+5. **Aerosol paths:** a straight spherical exponential atmosphere has an exact
+   modified-Bessel optical-depth solution. A separate Cartesian ODE accumulates
+   aerosol extinction on curved rays and splits its support boundaries. Global
+   energy closure also includes aerosol attenuation.
 
 The independent ray solver shares the declared molecular medium with production
 code, but uses a different equation, parameterization and integrator. It validates
@@ -135,13 +159,14 @@ colorimetry does not account for mesopic/scotopic vision during dark totality.
 - Spectral inputs, atmospheric standard, refractivity and optical approximations:
   [data provenance](../eclipse/data/SOURCES.md).
 
-The baseline produces a red/brown umbra and a pale cool edge that disappears
+The molecular baseline produces a red/brown umbra and a pale cool edge that disappears
 when ozone is removed. It does not yet establish the observed turquoise band's
 width, saturation or absolute brightness. The first [observational comparison](OBSERVATIONAL_VALIDATION.md)
-now shows substantial inner-umbra overprediction against June 2011 published
-503/677 nm photometry. It motivates investigating additional low-altitude
-extinction, with background aerosols as one candidate, alongside matched
-atmospheric profiles and solar limb darkening. The digitized curves and unknown
-filter responses are explicitly provisional; the production physics is unchanged.
-Wavelength-dependent refraction and diffuse illumination remain further increments.
-Each should be compared using raw spectra and common display settings.
+showed substantial inner-umbra overprediction against June 2011 published
+503/677 nm photometry. [Round 2](ROUND2.md) selected aerosol extinction after
+altitude attribution and source/density probes. The independent fixed prior
+improves the prediction while retaining a substantial inner residual. A separate
+red-band AOD calibration is checked on withheld blue readouts and explicitly
+does not constitute independent event validation. Unknown filter responses and
+observational uncertainties remain. Future increments and their entry conditions
+are maintained in [ROADMAP.md](ROADMAP.md).
