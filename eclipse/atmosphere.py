@@ -60,7 +60,10 @@ def _state(altitude_m):
     """Untruncated hydrostatic temperature, pressure, and d(log N)/dz."""
     altitude = _altitudes(altitude_m)
     geopotential = _GEOPOTENTIAL_RADIUS_M * altitude / (_GEOPOTENTIAL_RADIUS_M + altitude)
-    layer = np.minimum(np.searchsorted(_H_BASE, geopotential, side="right") - 1, 7)
+    # Select layers in the public geometric coordinate. Converting an exact
+    # layer boundary to geopotential and back can round just below it, giving
+    # the wrong one-sided density gradient at the ray's turning point.
+    layer = np.minimum(np.searchsorted(LAYER_BOUNDARIES_M, altitude, side="right") - 1, 7)
     dh = geopotential - _H_BASE[layer]
     lapse = _LAPSE[layer]
     temperature = _T_BASE[layer] + lapse * dh

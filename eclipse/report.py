@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .color import display_rgb, finish_display, linear_display_rgb, spectrum_to_xyz
+from .color import finish_display, linear_display_rgb, spectrum_to_xyz
 
 
 _ON = "#ad502e"
@@ -83,7 +83,7 @@ def _json_value(value):
 
 
 def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
-                 irradiance_no_ozone, output_dir, *, moon_offset_m=4200000.0,
+                 irradiance_no_ozone, output_dir, *, moon_offset_m=2860000.0,
                  moon_radius_m=1737400.0, exposure_stops=8.0, metadata=None) -> list[Path]:
     """Write plots, common-exposure disk images, diagnostics and report.json.
 
@@ -96,6 +96,9 @@ def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
     )
     if not np.isfinite(moon_offset_m) or not np.isfinite(moon_radius_m) or moon_radius_m <= 0:
         raise ValueError("moon offset must be finite and moon radius must be positive")
+    # Validate before creating output files; derived exposure panels remain
+    # within the same supported range at the extreme user setting.
+    finish_display(np.zeros(3), exposure_stops)
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
     relative_y = spectrum_to_xyz(spectra, wl)[:, 1] / spectrum_to_xyz(reference, wl)[1]
@@ -123,10 +126,15 @@ def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
         ax.legend(frameon=False, loc="lower right")
         ax.set_title("Across Earth's shadow at the Moon's distance", loc="left", fontsize=16, pad=14)
         extent = [radius[0] / 1e3, radius[-1] / 1e3, 0, 1]
+        strip_radius = np.linspace(radius[0], radius[-1], max(1200, len(radius)))
+        def strip_colors(linear, exposure=0):
+            uniform = np.stack([np.interp(strip_radius, radius, linear[:, j])
+                                for j in range(3)], axis=-1)
+            return finish_display(uniform, exposure)
         strips = [
-            (finish_display(rgb_linear, exposure_stops), f"Ozone / {exposure_stops:+g} EV"),
-            (finish_display(off_linear, exposure_stops), f"No ozone / {exposure_stops:+g} EV"),
-            (finish_display(diagnostic_linear), "Ozone / equal Y*"),
+            (strip_colors(rgb_linear, exposure_stops), f"Ozone / {exposure_stops:+g} EV"),
+            (strip_colors(off_linear, exposure_stops), f"No ozone / {exposure_stops:+g} EV"),
+            (strip_colors(diagnostic_linear), "Ozone / equal Y*"),
         ]
         for ax, (strip, label) in zip(axes[1:], strips):
             ax.imshow(strip[None, :, :], extent=extent, aspect="auto", origin="lower")
@@ -184,7 +192,7 @@ def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
                  fontsize=9, color="#68727b")
         files.append(_save(fig, out / "ozone_comparison.png"))
 
-        exposures = [0.0, exposure_stops, exposure_stops + 4.0]
+        exposures = [0.0, exposure_stops, min(exposure_stops + 4.0, 100.0)]
         fig, axes = plt.subplots(1, 3, figsize=(13.8, 5.1))
         for ax, exposure in zip(axes, exposures):
             image = _disk_image(radius, rgb_linear, moon_offset_m, moon_radius_m, exposure)

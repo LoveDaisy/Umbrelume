@@ -43,6 +43,13 @@ def test_layer_density_continuity_and_monotonicity():
     assert np.all(np.diff(atmosphere.number_density(np.linspace(0, 120000, 1000))) < 0)
 
 
+def test_exact_layer_boundaries_use_upper_side_density_gradient():
+    atmosphere = Atmosphere()
+    boundaries = LAYER_BOUNDARIES_M[1:]
+    np.testing.assert_allclose(atmosphere.density_gradient(boundaries),
+                               atmosphere.density_gradient(boundaries + 1e-4), rtol=5e-8)
+
+
 @pytest.mark.parametrize("column,centre,width", [(300.0,25000.0,8000.0),
                                                (420.0,10000.0,15000.0),
                                                (0.0,25000.0,8000.0)])

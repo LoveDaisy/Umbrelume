@@ -1,0 +1,232 @@
+{
+  "pass": true,
+  "checks": {
+    "cartesian_rays": {
+      "pass": true,
+      "tropopause_landing_drop_m": -25312.884820721112,
+      "rays": [
+        {
+          "altitude_m": 5000.0,
+          "bending_rad": 0.011956737490633432,
+          "air_column_m2": 9.037037067892315e+30,
+          "ozone_column_m2": 2.2976970709405387e+24,
+          "max_invariant_relative_error": 6.1877170054458475e-12,
+          "max_direction_norm_error": 4.440892098500626e-16,
+          "accepted_steps": 466,
+          "signed_landing_m": 1797281.2392783621,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 0.011956737426235431,
+              "cartesian_ode": 0.011956737490633432,
+              "relative_difference": 5.385917378752936e-09
+            },
+            "air_column_m2": {
+              "radial_quadrature": 9.037037066429126e+30,
+              "cartesian_ode": 9.037037067892315e+30,
+              "relative_difference": 1.619102629746294e-10
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 2.2976970695052277e+24,
+              "cartesian_ode": 2.2976970709405387e+24,
+              "relative_difference": 6.246737571657945e-10
+            }
+          },
+          "pass": true
+        },
+        {
+          "altitude_m": 11000.0,
+          "bending_rad": 0.0067214307521770884,
+          "air_column_m2": 3.9719933399279647e+30,
+          "ozone_column_m2": 2.8260440060016124e+24,
+          "max_invariant_relative_error": 2.4649171592727726e-12,
+          "max_direction_norm_error": 4.440892098500626e-16,
+          "accepted_steps": 453,
+          "signed_landing_m": 3815210.2939590714,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 0.006721430690756232,
+              "cartesian_ode": 0.0067214307521770884,
+              "relative_difference": 9.138062750935205e-09
+            },
+            "air_column_m2": {
+              "radial_quadrature": 3.971993340133886e+30,
+              "cartesian_ode": 3.9719933399279647e+30,
+              "relative_difference": 5.184341844710616e-11
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 2.82604400580872e+24,
+              "cartesian_ode": 2.8260440060016124e+24,
+              "relative_difference": 6.825529030862754e-11
+            }
+          },
+          "pass": true
+        },
+        {
+          "altitude_m": 11019.067832000108,
+          "bending_rad": 0.006787327528289842,
+          "air_column_m2": 3.963786597624226e+30,
+          "ozone_column_m2": 2.828352639307465e+24,
+          "max_invariant_relative_error": 9.93116699987695e-12,
+          "max_direction_norm_error": 8.881784197001252e-16,
+          "accepted_steps": 440,
+          "signed_landing_m": 3789897.4091383503,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 0.0067873276964880045,
+              "cartesian_ode": 0.006787327528289842,
+              "relative_difference": 2.4781206198198902e-08
+            },
+            "air_column_m2": {
+              "radial_quadrature": 3.963786598009238e+30,
+              "cartesian_ode": 3.963786597624226e+30,
+              "relative_difference": 9.713252424603525e-11
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 2.828352639112085e+24,
+              "cartesian_ode": 2.828352639307465e+24,
+              "relative_difference": 6.907896477059694e-11
+            }
+          },
+          "pass": true
+        },
+        {
+          "altitude_m": 15000.0,
+          "bending_rad": 0.0035717052364155053,
+          "air_column_m2": 2.086664603631013e+30,
+          "ozone_column_m2": 3.174939450134472e+24,
+          "max_invariant_relative_error": 1.9617640845126516e-12,
+          "max_direction_norm_error": 4.440892098500626e-16,
+          "accepted_steps": 430,
+          "signed_landing_m": 5029728.478553879,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 0.00357170520832047,
+              "cartesian_ode": 0.0035717052364155053,
+              "relative_difference": 7.866000517608995e-09
+            },
+            "air_column_m2": {
+              "radial_quadrature": 2.086664603743144e+30,
+              "cartesian_ode": 2.086664603631013e+30,
+              "relative_difference": 5.373701483790683e-11
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 3.1749394501078404e+24,
+              "cartesian_ode": 3.174939450134472e+24,
+              "relative_difference": 8.388068017950445e-12
+            }
+          },
+          "pass": true
+        },
+        {
+          "altitude_m": 25000.0,
+          "bending_rad": 0.0007233798945065089,
+          "air_column_m2": 4.273631551307474e+29,
+          "ozone_column_m2": 2.786011880379168e+24,
+          "max_invariant_relative_error": 7.390754674929667e-13,
+          "max_direction_norm_error": 8.881784197001252e-16,
+          "accepted_steps": 402,
+          "signed_landing_m": 6134425.938576361,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 0.0007233799063277043,
+              "cartesian_ode": 0.0007233798945065089,
+              "relative_difference": 1.6341614506032442e-08
+            },
+            "air_column_m2": {
+              "radial_quadrature": 4.27363155165972e+29,
+              "cartesian_ode": 4.273631551307474e+29,
+              "relative_difference": 8.242317939277655e-11
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 2.786011880502361e+24,
+              "cartesian_ode": 2.786011880379168e+24,
+              "relative_difference": 4.421818466937566e-11
+            }
+          },
+          "pass": true
+        },
+        {
+          "altitude_m": 40000.0,
+          "bending_rad": 6.871047287496954e-05,
+          "air_column_m2": 4.5136353160780135e+28,
+          "ozone_column_m2": 2.6694091268486225e+23,
+          "max_invariant_relative_error": 3.907985046680551e-14,
+          "max_direction_norm_error": 3.3306690738754696e-16,
+          "accepted_steps": 367,
+          "signed_landing_m": 6401066.93777177,
+          "comparisons": {
+            "bending_rad": {
+              "radial_quadrature": 6.871047329200949e-05,
+              "cartesian_ode": 6.871047287496954e-05,
+              "relative_difference": 6.069525326779512e-09
+            },
+            "air_column_m2": {
+              "radial_quadrature": 4.513635315695208e+28,
+              "cartesian_ode": 4.5136353160780135e+28,
+              "relative_difference": 8.481104707414033e-11
+            },
+            "ozone_column_m2": {
+              "radial_quadrature": 2.6694091267977695e+23,
+              "cartesian_ode": 2.6694091268486225e+23,
+              "relative_difference": 1.905031687954306e-11
+            }
+          },
+          "pass": true
+        }
+      ]
+    },
+    "energy_extinction": {
+      "pass": true,
+      "extinction": true,
+      "wavelength_nm": [
+        450.0,
+        550.0,
+        650.0
+      ],
+      "receiver_deficit_m2": [
+        129150056165171.72,
+        129324513959128.89,
+        129161933123610.84
+      ],
+      "pupil_deficit_m2": [
+        129150056269753.83,
+        129324514086167.94,
+        129161933272211.75
+      ],
+      "relative_difference": [
+        8.097720272104425e-10,
+        9.823276636566902e-10,
+        1.1505008057355326e-09
+      ],
+      "radius_samples": 2049,
+      "support_endpoint_m": 8331071.390827254
+    },
+    "energy_transparent": {
+      "pass": true,
+      "extinction": false,
+      "wavelength_nm": [
+        450.0,
+        550.0,
+        650.0
+      ],
+      "receiver_deficit_m2": [
+        128243507465500.61,
+        128243507465500.61,
+        128243507465500.61
+      ],
+      "pupil_deficit_m2": [
+        128243507913024.83,
+        128243507913024.83,
+        128243507913024.83
+      ],
+      "relative_difference": [
+        3.4896442402398975e-09,
+        3.4896442402398975e-09,
+        3.4896442402398975e-09
+      ],
+      "radius_samples": 2049,
+      "support_endpoint_m": 8331071.390827254
+    }
+  },
+  "scope": "Numerical closure of the declared model; not observational validation."
+}
