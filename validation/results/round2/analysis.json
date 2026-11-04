@@ -1,0 +1,635 @@
+{
+  "selected_increment": "Free-tropospheric aerosol extinction on the existing curved paths",
+  "identification_scope": "Largest tested omitted effect with the required altitude dependence; not a unique retrieval of the real2011aerosol/cloud profile",
+  "fixed_prior": {
+    "aod550": 0.013,
+    "bottom_m": 2000.0,
+    "top_m": 12000.0,
+    "scale_height_m": 8000.0,
+    "angstrom_visible": 1.58,
+    "angstrom_blue": 1.21,
+    "break_nm": 500.0
+  },
+  "prior_source": "Hess,Koepke&Schult1998 OPAC Tables3,5; independent climatological/model prior, not measured2011profile",
+  "source_url": "https://lweb.cfa.harvard.edu/HITRAN/HITRAN2012/Aerosols/papers/hess_opac_1998.pdf",
+  "calibration": {
+    "aod550": 0.0397063711977875,
+    "bounds": [
+      0.0,
+      0.1
+    ],
+    "objective_mean_squared_ln_ratio": 0.012773087333844076,
+    "fitted_parameters": [
+      "aod550"
+    ],
+    "fit_band_nm": 677,
+    "fit_readout_count": 10,
+    "withheld_band_nm": 503,
+    "withheld_readout_count": 8,
+    "default_uses_calibration": false,
+    "scope": "Same-event cross-band check, not independent observational validation. Effective AOD can absorb unmodeled source/profile/cloud effects."
+  },
+  "geometry": {
+    "source": "JPL Horizons DE441, geocentric observer, quantity20 apparent range",
+    "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+    "recorded_utc": "2026-11-04T03:13:31.674466+00:00",
+    "adopted_time_utc": "2011-Jun-15 19:30",
+    "moon_distance_m": 374394876.7789723,
+    "sun_distance_m": 151955452087.65973,
+    "moon": {
+      "target": "301",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'301'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'OBSERVER'",
+        "CENTER": "'500@399'",
+        "START_TIME": "'2011-06-15 19:20'",
+        "STOP_TIME": "'2011-06-15 19:40'",
+        "STEP_SIZE": "'10m'",
+        "QUANTITIES": "'20'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "8452e359bacdcff9a78320dd3f8b05a44eb32e6235b732d2bbc4f399d17e62fe",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "ranges": [
+        {
+          "utc": "2011-Jun-15 19:20",
+          "distance_au": 0.00250249914387,
+          "distance_m": 374368543.351525
+        },
+        {
+          "utc": "2011-Jun-15 19:30",
+          "distance_au": 0.00250267517196,
+          "distance_m": 374394876.7789723
+        },
+        {
+          "utc": "2011-Jun-15 19:40",
+          "distance_au": 0.00250285147279,
+          "distance_m": 374421251.00774294
+        }
+      ]
+    },
+    "sun": {
+      "target": "10",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272011-06-15+19%3A20%27&STOP_TIME=%272011-06-15+19%3A40%27&STEP_SIZE=%2710m%27&QUANTITIES=%2720%27&CSV_FORMAT=%27YES%27",
+      "parameters": {
+        "format": "json",
+        "COMMAND": "'10'",
+        "OBJ_DATA": "'NO'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'OBSERVER'",
+        "CENTER": "'500@399'",
+        "START_TIME": "'2011-06-15 19:20'",
+        "STOP_TIME": "'2011-06-15 19:40'",
+        "STEP_SIZE": "'10m'",
+        "QUANTITIES": "'20'",
+        "CSV_FORMAT": "'YES'"
+      },
+      "response_sha256": "210225803f4bd520ef844cc53926e199aa8f04c3906dd07662ce08816fcd0a5e",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "ranges": [
+        {
+          "utc": "2011-Jun-15 19:20",
+          "distance_au": 1.01575881355331,
+          "distance_m": 151955355652.33347
+        },
+        {
+          "utc": "2011-Jun-15 19:30",
+          "distance_au": 1.01575945818365,
+          "distance_m": 151955452087.65973
+        },
+        {
+          "utc": "2011-Jun-15 19:40",
+          "distance_au": 1.015760102667,
+          "distance_m": 151955548500.99658
+        }
+      ]
+    },
+    "approximation": "One representative geocentric range for the first15minutes of totality; no per-readout timing, topocentric or lunar-surface depth reconstruction"
+  },
+  "descriptive_scores": {
+    "molecular": {
+      "all_readouts_rms_ln_ratio": 1.0199076656386148,
+      "503nm_rms_ln_ratio": 0.7707098417400441,
+      "677nm_rms_ln_ratio": 1.1820262414376275
+    },
+    "fixed_opac": {
+      "all_readouts_rms_ln_ratio": 0.6998187766047149,
+      "503nm_rms_ln_ratio": 0.5851595938155456,
+      "677nm_rms_ln_ratio": 0.7794959755969472
+    },
+    "red_calibrated": {
+      "all_readouts_rms_ln_ratio": 0.21080996019553466,
+      "503nm_rms_ln_ratio": 0.289871573800177,
+      "677nm_rms_ln_ratio": 0.11301808410092651
+    },
+    "limb_darkened_diagnostic": {
+      "all_readouts_rms_ln_ratio": 0.9979517672721817,
+      "503nm_rms_ln_ratio": 0.7196137845220113,
+      "677nm_rms_ln_ratio": 1.1740352271306573
+    },
+    "density_proxy": {
+      "all_readouts_rms_ln_ratio": 1.0054145574089217,
+      "503nm_rms_ln_ratio": 0.7728264771495705,
+      "677nm_rms_ln_ratio": 1.1583335301297584
+    }
+  },
+  "score_scope": "RMS natural-log ratio of correlated published-curve readouts; not chi-square or statistical errors",
+  "limb_darkening_diagnostic": {
+    "source": "Hestroffer&Magnan1998 A&A333338 Table2 Neckel-Labs fits",
+    "url": "https://www.physics.hmc.edu/faculty/esin/a101/labs/limbdark.pdf",
+    "tabulated_rows_nm_alpha": [
+      [
+        492.905,
+        0.57
+      ],
+      [
+        519.93,
+        0.538
+      ],
+      [
+        669.4,
+        0.407
+      ],
+      [
+        700.875,
+        0.386
+      ]
+    ],
+    "normalization": "I(mu)=mu**alpha; full-disk average2/(alpha+2); equal integrated flux",
+    "method": "Normalized positive mixture of uniform disks, t=mu\u00b2~Beta(alpha/2,2)",
+    "independent_ring_kernel_check": {
+      "pass": true,
+      "max_absolute_difference": 6.106226635438361e-15,
+      "cases": [
+        {
+          "alpha": 0.5580466234967622,
+          "receiver_radius": 0.0,
+          "ring_radius": 0.8,
+          "direct_angular": 0.9617817111370146,
+          "positive_disk_mixture": 0.9617817111370146,
+          "absolute_difference": 0.0
+        },
+        {
+          "alpha": 0.5580466234967622,
+          "receiver_radius": 0.2,
+          "ring_radius": 0.3,
+          "direct_angular": 1.2290932899899851,
+          "positive_disk_mixture": 1.2290932899899853,
+          "absolute_difference": 2.220446049250313e-16
+        },
+        {
+          "alpha": 0.5580466234967622,
+          "receiver_radius": 0.6,
+          "ring_radius": 0.6,
+          "direct_angular": 0.6699518257252876,
+          "positive_disk_mixture": 0.6699518257252814,
+          "absolute_difference": 6.106226635438361e-15
+        },
+        {
+          "alpha": 0.5580466234967622,
+          "receiver_radius": 0.9,
+          "ring_radius": 0.6,
+          "direct_angular": 0.47605311451390564,
+          "positive_disk_mixture": 0.4760531145139025,
+          "absolute_difference": 3.164135620181696e-15
+        },
+        {
+          "alpha": 0.5580466234967622,
+          "receiver_radius": 1.4,
+          "ring_radius": 0.8,
+          "direct_angular": 0.23928247507817899,
+          "positive_disk_mixture": 0.23928247507817765,
+          "absolute_difference": 1.3322676295501878e-15
+        },
+        {
+          "alpha": 0.4019293089753773,
+          "receiver_radius": 0.0,
+          "ring_radius": 0.8,
+          "direct_angular": 0.9780537245572704,
+          "positive_disk_mixture": 0.9780537245572704,
+          "absolute_difference": 0.0
+        },
+        {
+          "alpha": 0.4019293089753773,
+          "receiver_radius": 0.2,
+          "ring_radius": 0.3,
+          "direct_angular": 1.1669222171995643,
+          "positive_disk_mixture": 1.1669222171995643,
+          "absolute_difference": 0.0
+        },
+        {
+          "alpha": 0.4019293089753773,
+          "receiver_radius": 0.6,
+          "ring_radius": 0.6,
+          "direct_angular": 0.6581176669016144,
+          "positive_disk_mixture": 0.6581176669016147,
+          "absolute_difference": 2.220446049250313e-16
+        },
+        {
+          "alpha": 0.4019293089753773,
+          "receiver_radius": 0.9,
+          "ring_radius": 0.6,
+          "direct_angular": 0.46914529271982847,
+          "positive_disk_mixture": 0.46914529271982836,
+          "absolute_difference": 1.1102230246251565e-16
+        },
+        {
+          "alpha": 0.4019293089753773,
+          "receiver_radius": 1.4,
+          "ring_radius": 0.8,
+          "direct_angular": 0.2417578816185575,
+          "positive_disk_mixture": 0.24175788161855744,
+          "absolute_difference": 5.551115123125783e-17
+        }
+      ]
+    },
+    "max_relative_difference_order64_to128": 1.714692851351174e-05,
+    "limitation": "Fit calibrated mainly within solar r<=0.9; extreme limb extrapolated. Diagnostic only."
+  },
+  "density_proxy_scope": "Uniform density_scale=.9605 is a sensitivity proxy, not a tropical temperature profile",
+  "fixed_prior_height100_to50m_max_relative_change": 0.0004184762063519365,
+  "production_module_sha256": {
+    "aerosol.py": "bc1ea10ece29c229184188d95b1626f9ac735b1a420a71a8aea268d50933242c",
+    "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+    "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
+    "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+    "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e"
+  },
+  "observational_limitations": [
+    "Unknown filter responses and measurement uncertainties",
+    "Digitized smoothed curves, not independent exposures",
+    "Only two visible bands, no direct turquoise-fringe validation"
+  ],
+  "records": [
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.4,
+      "observed_curve_brightness": 2.2395599317377506e-05,
+      "molecular_prediction": 9.119133681613275e-05,
+      "molecular_model_to_observed": 4.071841772297395,
+      "fixed_opac_prediction": 6.686705900272956e-05,
+      "fixed_opac_model_to_observed": 2.985723134939512,
+      "red_calibrated_prediction": 3.926948363015682e-05,
+      "red_calibrated_model_to_observed": 1.753446428186733,
+      "limb_darkened_diagnostic_prediction": 8.475434629498333e-05,
+      "limb_darkened_diagnostic_model_to_observed": 3.7844196573573967,
+      "density_proxy_prediction": 9.070138068973066e-05,
+      "density_proxy_model_to_observed": 4.049964432938947,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        7011.685220636537,
+        10006.793534282933,
+        11672.798988206674
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.425,
+      "observed_curve_brightness": 3.517134084983978e-05,
+      "molecular_prediction": 0.00010900181494564925,
+      "molecular_model_to_observed": 3.0991657500639698,
+      "fixed_opac_prediction": 8.405891603749526e-05,
+      "fixed_opac_model_to_observed": 2.3899832649649517,
+      "red_calibrated_prediction": 5.513992860668474e-05,
+      "red_calibrated_model_to_observed": 1.567751677199305,
+      "limb_darkened_diagnostic_prediction": 0.00010243943661347081,
+      "limb_darkened_diagnostic_model_to_observed": 2.912582635129689,
+      "density_proxy_prediction": 0.00010919365996080689,
+      "density_proxy_model_to_observed": 3.10462033355502,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        7375.549530535981,
+        10429.643157327833,
+        12136.02011384011
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.45,
+      "observed_curve_brightness": 5.480557987002692e-05,
+      "molecular_prediction": 0.00013010299255721756,
+      "molecular_model_to_observed": 2.3739004835960267,
+      "fixed_opac_prediction": 0.00010500225098004665,
+      "fixed_opac_model_to_observed": 1.9159043883681668,
+      "red_calibrated_prediction": 7.541083994911768e-05,
+      "red_calibrated_model_to_observed": 1.375970113407371,
+      "limb_darkened_diagnostic_prediction": 0.000123011822279238,
+      "limb_darkened_diagnostic_model_to_observed": 2.2445127406910794,
+      "density_proxy_prediction": 0.000130821146728531,
+      "density_proxy_model_to_observed": 2.387004152474571,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        7744.3162709112175,
+        10861.52343347562,
+        12643.896169388656
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.475,
+      "observed_curve_brightness": 8.254321339274286e-05,
+      "molecular_prediction": 0.0001556584375268429,
+      "molecular_model_to_observed": 1.8857811699941436,
+      "fixed_opac_prediction": 0.0001307419128507376,
+      "fixed_opac_model_to_observed": 1.5839208031393692,
+      "red_calibrated_prediction": 0.000100946285267694,
+      "red_calibrated_model_to_observed": 1.2229507565617639,
+      "limb_darkened_diagnostic_prediction": 0.00014750079781712276,
+      "limb_darkened_diagnostic_model_to_observed": 1.7869524550166218,
+      "density_proxy_prediction": 0.00015681830239475954,
+      "density_proxy_model_to_observed": 1.8998327778761628,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        8127.638276122239,
+        11311.751955573971,
+        13206.78310478478
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.5,
+      "observed_curve_brightness": 0.00012004713504037645,
+      "molecular_prediction": 0.00018716192861575122,
+      "molecular_model_to_observed": 1.5590703480995318,
+      "fixed_opac_prediction": 0.00016270579228704472,
+      "fixed_opac_model_to_observed": 1.3553492320522313,
+      "red_calibrated_prediction": 0.00013307745882539638,
+      "red_calibrated_model_to_observed": 1.1085433965636693,
+      "limb_darkened_diagnostic_prediction": 0.00017723408920701758,
+      "limb_darkened_diagnostic_model_to_observed": 1.4763708367334794,
+      "density_proxy_prediction": 0.00018871744457476985,
+      "density_proxy_model_to_observed": 1.5720278914719368,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        8528.149157071703,
+        11805.618884908516,
+        13822.009772742262
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.525,
+      "observed_curve_brightness": 0.0001670957527566597,
+      "molecular_prediction": 0.00022664627313639235,
+      "molecular_model_to_observed": 1.356385601652339,
+      "fixed_opac_prediction": 0.00020288517927613526,
+      "fixed_opac_model_to_observed": 1.214185135941758,
+      "red_calibrated_prediction": 0.0001737366218994347,
+      "red_calibrated_model_to_observed": 1.0397428961132604,
+      "limb_darkened_diagnostic_prediction": 0.0002140038781166412,
+      "limb_darkened_diagnostic_model_to_observed": 1.280726018382367,
+      "density_proxy_prediction": 0.00022856876209914248,
+      "density_proxy_model_to_observed": 1.3678909148098184,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        8951.467165077078,
+        12344.584941728423,
+        14514.566273694307
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.55,
+      "observed_curve_brightness": 0.0002265270944013534,
+      "molecular_prediction": 0.00027699251133174126,
+      "molecular_model_to_observed": 1.2227787235065792,
+      "fixed_opac_prediction": 0.00025413324649787195,
+      "fixed_opac_model_to_observed": 1.121866888239015,
+      "red_calibrated_prediction": 0.00022573904388834676,
+      "red_calibrated_model_to_observed": 0.9965211644324965,
+      "limb_darkened_diagnostic_prediction": 0.0002603194096747607,
+      "limb_darkened_diagnostic_model_to_observed": 1.1491756002199682,
+      "density_proxy_prediction": 0.00027926731087094057,
+      "density_proxy_model_to_observed": 1.2328207873277346,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        9408.463895617177,
+        12949.949681954862,
+        15301.688675744994
+      ]
+    },
+    {
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.575,
+      "observed_curve_brightness": 0.00029668812551239055,
+      "molecular_prediction": 0.0003424893714782575,
+      "molecular_model_to_observed": 1.1543750559169386,
+      "fixed_opac_prediction": 0.00032071921291457667,
+      "fixed_opac_model_to_observed": 1.0809978065710706,
+      "red_calibrated_prediction": 0.00029332937456562054,
+      "red_calibrated_model_to_observed": 0.9886791864656891,
+      "limb_darkened_diagnostic_prediction": 0.0003198510723353717,
+      "limb_darkened_diagnostic_model_to_observed": 1.0780717016664483,
+      "density_proxy_prediction": 0.00034509784770362024,
+      "density_proxy_model_to_observed": 1.1631670364549456,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        9901.168239619392,
+        13632.819695101845,
+        16204.554965427074
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.15,
+      "observed_curve_brightness": 0.00016295224548537658,
+      "molecular_prediction": 0.0011566628371932307,
+      "molecular_model_to_observed": 7.098170594384539,
+      "fixed_opac_prediction": 0.0006123977974141888,
+      "fixed_opac_model_to_observed": 3.7581427343334504,
+      "red_calibrated_prediction": 0.00017379850306669498,
+      "red_calibrated_model_to_observed": 1.066560958083218,
+      "limb_darkened_diagnostic_prediction": 0.0011779447646473732,
+      "limb_darkened_diagnostic_model_to_observed": 7.2287728293568225,
+      "density_proxy_prediction": 0.0010896113789430695,
+      "density_proxy_model_to_observed": 6.686691402732783,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        880.3039204662877,
+        3121.3462277640556,
+        5750.9301100591265
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.2,
+      "observed_curve_brightness": 0.000166161222256567,
+      "molecular_prediction": 0.001147537439858219,
+      "molecular_model_to_observed": 6.906168745474946,
+      "fixed_opac_prediction": 0.0006312321647306879,
+      "fixed_opac_model_to_observed": 3.7989138269337714,
+      "red_calibrated_prediction": 0.00019606329774651604,
+      "red_calibrated_model_to_observed": 1.1799582061558123,
+      "limb_darkened_diagnostic_prediction": 0.0011386031143113826,
+      "limb_darkened_diagnostic_model_to_observed": 6.852399728700135,
+      "density_proxy_prediction": 0.001099110424920676,
+      "density_proxy_model_to_observed": 6.614722797498182,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        1008.5512231364204,
+        3657.7201518133343,
+        6586.2337047925585
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.25,
+      "observed_curve_brightness": 0.00022811576005218954,
+      "molecular_prediction": 0.001100649568578534,
+      "molecular_model_to_observed": 4.824960661756652,
+      "fixed_opac_prediction": 0.0006377023523757263,
+      "fixed_opac_model_to_observed": 2.7955208014993325,
+      "red_calibrated_prediction": 0.00022364012940682683,
+      "red_calibrated_model_to_observed": 0.9803800024849718,
+      "limb_darkened_diagnostic_prediction": 0.0010615534047383,
+      "limb_darkened_diagnostic_model_to_observed": 4.65357327567123,
+      "density_proxy_prediction": 0.0010647532105765225,
+      "density_proxy_model_to_observed": 4.667600389963948,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        1270.9265075456287,
+        4605.771870709372,
+        7554.058007505088
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.3,
+      "observed_curve_brightness": 0.00029949173882330525,
+      "molecular_prediction": 0.001011562419095794,
+      "molecular_model_to_observed": 3.377597068520804,
+      "fixed_opac_prediction": 0.0006317318040261017,
+      "fixed_opac_model_to_observed": 2.1093463429347286,
+      "red_calibrated_prediction": 0.0002615358960027373,
+      "red_calibrated_model_to_observed": 0.873265810370278,
+      "limb_darkened_diagnostic_prediction": 0.0009906059891940954,
+      "limb_darkened_diagnostic_model_to_observed": 3.307623753116393,
+      "density_proxy_prediction": 0.000985863905298589,
+      "density_proxy_model_to_observed": 3.2917899811594835,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        2729.5848777842857,
+        5929.159128140663,
+        8701.92998241586
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.35,
+      "observed_curve_brightness": 0.0003875860635511011,
+      "molecular_prediction": 0.0010848390020000314,
+      "molecular_model_to_observed": 2.7989628730729668,
+      "fixed_opac_prediction": 0.0007392372892679603,
+      "fixed_opac_model_to_observed": 1.9072855264582955,
+      "red_calibrated_prediction": 0.00036718121846715773,
+      "red_calibrated_model_to_observed": 0.9473540279106214,
+      "limb_darkened_diagnostic_prediction": 0.0010610490723661928,
+      "limb_darkened_diagnostic_model_to_observed": 2.7375831386834664,
+      "density_proxy_prediction": 0.0010612146017090773,
+      "density_proxy_model_to_observed": 2.738010216327507,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        3805.125914812368,
+        7106.719050939113,
+        10102.950944237115
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.4,
+      "observed_curve_brightness": 0.0005042606752239623,
+      "molecular_prediction": 0.001161424155719498,
+      "molecular_model_to_observed": 2.3032217517331945,
+      "fixed_opac_prediction": 0.0008487790595929198,
+      "fixed_opac_model_to_observed": 1.6832148555227773,
+      "red_calibrated_prediction": 0.00048605048802733775,
+      "red_calibrated_model_to_observed": 0.9638873541179139,
+      "limb_darkened_diagnostic_prediction": 0.0011517649866938642,
+      "limb_darkened_diagnostic_model_to_observed": 2.2840666410925645,
+      "density_proxy_prediction": 0.0011691910981367205,
+      "density_proxy_model_to_observed": 2.318624385328949,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        4623.800371383794,
+        8067.510370402924,
+        11100.627171286937
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.45,
+      "observed_curve_brightness": 0.0006425555753502195,
+      "molecular_prediction": 0.001245037527881541,
+      "molecular_model_to_observed": 1.937633997188405,
+      "fixed_opac_prediction": 0.0009707032774689179,
+      "fixed_opac_model_to_observed": 1.5106915490381425,
+      "red_calibrated_prediction": 0.0006349902650582048,
+      "red_calibrated_model_to_observed": 0.9882262164048747,
+      "limb_darkened_diagnostic_prediction": 0.0012425905572795812,
+      "limb_darkened_diagnostic_model_to_observed": 1.933825812035508,
+      "density_proxy_prediction": 0.0012608561687206907,
+      "density_proxy_model_to_observed": 1.9622523204058602,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        5382.7312718704015,
+        8974.596460235205,
+        12031.245489457446
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.5,
+      "observed_curve_brightness": 0.0008638650967642755,
+      "molecular_prediction": 0.0013501388366125595,
+      "molecular_model_to_observed": 1.5629047193476024,
+      "fixed_opac_prediction": 0.0011163524290810777,
+      "fixed_opac_model_to_observed": 1.2922763441450846,
+      "red_calibrated_prediction": 0.0008168951997358471,
+      "red_calibrated_model_to_observed": 0.9456282037503766,
+      "limb_darkened_diagnostic_prediction": 0.0013480708118203603,
+      "limb_darkened_diagnostic_model_to_observed": 1.5605107983523623,
+      "density_proxy_prediction": 0.0013705981596060014,
+      "density_proxy_model_to_observed": 1.5865881892204738,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        6166.295696554498,
+        9929.160108369562,
+        13161.319290846304
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.55,
+      "observed_curve_brightness": 0.0012308201914497932,
+      "molecular_prediction": 0.0014964947616609705,
+      "molecular_model_to_observed": 1.215851650839622,
+      "fixed_opac_prediction": 0.0013034853643375693,
+      "fixed_opac_model_to_observed": 1.059038008469932,
+      "red_calibrated_prediction": 0.0010455804336667407,
+      "red_calibrated_model_to_observed": 0.8494989283813609,
+      "limb_darkened_diagnostic_prediction": 0.0014876862262118984,
+      "limb_darkened_diagnostic_model_to_observed": 1.2086950121118347,
+      "density_proxy_prediction": 0.0015198617214097327,
+      "density_proxy_model_to_observed": 1.234836519556504,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        7011.187251866938,
+        11003.504080131073,
+        14573.99957233771
+      ]
+    },
+    {
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.575,
+      "observed_curve_brightness": 0.0014603301447523647,
+      "molecular_prediction": 0.0015948150530460676,
+      "molecular_model_to_observed": 1.092092126411941,
+      "fixed_opac_prediction": 0.001421887878351557,
+      "fixed_opac_model_to_observed": 0.9736756331854489,
+      "red_calibrated_prediction": 0.0011860156866374612,
+      "red_calibrated_model_to_observed": 0.8121558613984371,
+      "limb_darkened_diagnostic_prediction": 0.0015794538783120927,
+      "limb_darkened_diagnostic_model_to_observed": 1.0815731524736336,
+      "density_proxy_prediction": 0.001619158396806728,
+      "density_proxy_model_to_observed": 1.1087618800619201,
+      "molecular_tangent_height_p10_p50_p90_m": [
+        7462.091953748738,
+        11608.626556397538,
+        15434.889827739984
+      ]
+    }
+  ]
+}

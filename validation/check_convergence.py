@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import asdict
 import json
 from pathlib import Path
 
@@ -9,6 +10,8 @@ import numpy as np
 
 from eclipse.color import linear_display_rgb, spectrum_to_xyz
 from eclipse.transport import simulate
+from eclipse import __version__
+from eclipse.aerosol import AerosolProfile
 
 
 def compare(coarse, fine):
@@ -33,19 +36,21 @@ def compare(coarse, fine):
     }
 
 
-def run_checks():
+def run_checks(aerosol_profile=AerosolProfile.opac_free_troposphere()):
     # Dense sampling around the faint cold edge, plus the entire shadow.
     radius = np.unique(np.r_[np.arange(0, 9_000_001, 20_000),
                              np.arange(4_400_000, 4_800_001, 2_000)])
     wl = np.arange(380, 781, 5)
-    base = simulate(radius, wl, height_step_m=100)
-    fine = simulate(radius, wl, height_step_m=50)
-    finer = simulate(radius, wl, height_step_m=25)
-    spectral = simulate(radius, np.arange(380, 780.1, 2.5), height_step_m=50)
+    base = simulate(radius, wl, height_step_m=100,aerosol_profile=aerosol_profile)
+    fine = simulate(radius, wl, height_step_m=50,aerosol_profile=aerosol_profile)
+    finer = simulate(radius, wl, height_step_m=25,aerosol_profile=aerosol_profile)
+    spectral = simulate(radius, np.arange(380, 780.1, 2.5), height_step_m=50,aerosol_profile=aerosol_profile)
     checks = {"height_100m_vs_50m": compare(base, fine),
               "height_50m_vs_25m": compare(fine, finer),
               "spectrum_5nm_vs_2p5nm": compare(fine, spectral)}
     return {"pass": all(value["pass"] for value in checks.values()),
+            "version":__version__,
+            "aerosol_profile":asdict(aerosol_profile) if aerosol_profile is not None else None,
             "checks": checks,
             "radius_count": len(radius),
             "height_spacing_note": "Above 60 km the table uses 500 m spacing in all runs.",
@@ -56,8 +61,9 @@ def run_checks():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("outputs/validation/convergence.json"))
+    parser.add_argument("--aerosol",choices=["opac-ft","none"],default="opac-ft")
     args = parser.parse_args()
-    result = run_checks()
+    result = run_checks(AerosolProfile.opac_free_troposphere() if args.aerosol=="opac-ft" else None)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2)+"\n")
     print(json.dumps(result, indent=2))

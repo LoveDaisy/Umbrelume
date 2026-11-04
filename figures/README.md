@@ -4,7 +4,7 @@
 
 ```bash
 uv sync
-uv run lunar-eclipse simulate --out outputs/baseline
+uv run lunar-eclipse simulate --aerosol none --out outputs/baseline
 ```
 
 The committed PNGs and `report.json` are copied unchanged from that output.
@@ -36,3 +36,15 @@ uv run python -m validation.compare_observations --out outputs/observations2011
 It compares the unchanged first model with digitized published observed curves,
 not another model's prediction. See [the comparison contract](../docs/OBSERVATIONAL_VALIDATION.md)
 for missing bandpasses, unknown observational uncertainties and interpretation.
+
+## Round 2
+
+`round2/comparison.png` compares the molecular baseline, the independent fixed
+OPAC prior and a separately labeled red-band AOD calibration. The latter is
+never the default; blue observations are withheld from its fit. Generate with
+`uv run python -m validation.round2_analysis --out outputs/round2`.
+
+`round2/render/` contains the new default OPAC-prior visualization, produced by
+`uv run lunar-eclipse simulate --out outputs/current`. Metadata accompanies
+the figures. Original baseline/observations2011 snapshots above are unchanged.
+See [ROUND2.md](../docs/ROUND2.md) and [ROADMAP.md](../docs/ROADMAP.md).

@@ -1,5 +1,10 @@
 # Spectral data and atmosphere provenance
 
+The v0.2 aerosol component has its own [formula and provenance](../../docs/physics/AEROSOL.md).
+It uses fixed OPAC background-model parameters, not a measured 2011 profile.
+The two source exponents approximate OPAC interval slopes; no Mie library or
+humidity evolution is imported from the Sky Color Simulation project.
+
 These three tables were copied without modification from the **Sky Color
 Simulation** project's `skycolor/data/`, source commit
 `96b021eaaf96e0406b5303b90093fc888b76cf95`. This project packages its own copies

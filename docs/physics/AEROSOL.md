@@ -21,7 +21,9 @@ The default is the free-tropospheric component of Hess, Koepke and Schult
 
 These are published background-model/climatology parameters. They are
 **not measurements of the June 2011 eclipse atmosphere** and are not inferred
-from that eclipse's brightness curve. The OPAC mixing-layer, transported-dust
+from that eclipse's brightness curve. The free-troposphere optical values refer
+to the paper's 50% relative-humidity case; no humidity growth is simulated.
+The OPAC mixing-layer, transported-dust
 and stratospheric components are separate; none is silently added here.
 
 ## Definition and units

@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "created_utc": "2026-11-04T03:47:14.110273+00:00",
+  "model": "Finite-distance paraxial annular transport with spherical refracted ray tables",
+  "atmosphere": {
+    "ozone_du": 300.0,
+    "density_scale": 1.0,
+    "top_m": 120000.0,
+    "ozone_center_m": 25000.0,
+    "ozone_width_m": 8000.0
+  },
+  "aerosol": {
+    "aod550": 0.013,
+    "bottom_m": 2000.0,
+    "top_m": 12000.0,
+    "scale_height_m": 8000.0,
+    "angstrom_visible": 1.58,
+    "angstrom_blue": 1.21,
+    "break_nm": 500.0
+  },
+  "aerosol_preset": "opac-ft",
+  "aerosol_aod_source": "OPAC literature prior",
+  "geometry": {
+    "moon_distance_m": 384400000.0,
+    "sun_distance_m": 149597870700.0,
+    "sun_radius_m": 695700000.0
+  },
+  "numerics": {
+    "height_step_m": 100.0,
+    "path_quadrature_order": 48,
+    "receiver_integration_order": 8,
+    "radius_count": 451,
+    "wavelength_count": 81,
+    "ray_count": 756,
+    "wavelength_range_nm": [
+      380.0,
+      780.0
+    ],
+    "wavelength_step_nm": 5.0,
+    "radial_step_m": 20000.0
+  },
+  "geometric_umbra_radius_m": 4599731.021637462,
+  "geometric_penumbra_radius_m": 8175010.251865169,
+  "moon_offset_m": 2860000.0,
+  "axis_relative_photopic_irradiance": 4.280088680938667e-05,
+  "axis_dimming_stops": 14.511999785701741,
+  "simulation_seconds": 1.5187756658997387,
+  "approximations": [
+    "Spherical standard dry atmosphere; Gaussian ozone height profile",
+    "Achromatic refracted paths at 550 nm; spectral Rayleigh and ozone extinction",
+    "Uniform solar disk, finite-distance first-order paraxial propagation",
+    "OPAC free-troposphere aerosol extinction only; no boundary layer or stratospheric aerosol preset",
+    "No cloud extinction or scattered light entering receiver",
+    "Neutral shadow-plane lunar screen; no lunar reflectance spectrum or BRDF",
+    "Photopic colorimetry with global solar white; no observer atmosphere or dark adaptation"
+  ]
+}

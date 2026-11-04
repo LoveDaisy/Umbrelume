@@ -15,6 +15,7 @@ from .atmosphere import (
     Atmosphere, EARTH_RADIUS_M, LAYER_BOUNDARIES_M, REFERENCE_NUMBER_DENSITY,
 )
 from .spectra import refractive_index_air
+from .aerosol import AerosolProfile
 
 
 @dataclass(frozen=True)
@@ -26,6 +27,8 @@ class RayTable:
     ozone_column_m2: np.ndarray
     reference_wavelength_nm: float
     refraction: bool
+    aerosol_tau550: np.ndarray | None = None
+    aerosol_profile: AerosolProfile | None = None
 
 
 def build_ray_table(
@@ -35,6 +38,7 @@ def build_ray_table(
     quadrature_order: int = 48,
     reference_wavelength_nm: float = 550.0,
     refraction: bool = True,
+    aerosol_profile: AerosolProfile | None = None,
 ) -> RayTable:
     """Trace all tangent heights once. Columns include both sides of the limb.
 
@@ -55,7 +59,20 @@ def build_ray_table(
         height_step_m, 500.0))) + 1)
     boundaries = np.asarray(LAYER_BOUNDARIES_M)
     boundaries = boundaries[(boundaries > 0) & (boundaries < top)]
-    h = np.unique(np.concatenate((dense, upper, boundaries)))
+    aerosol_edges = np.empty(0)
+    active_aerosol = aerosol_profile is not None and aerosol_profile.aod550 > 0
+    if active_aerosol:
+        if aerosol_profile.top_m > top:
+            raise ValueError("Aerosol layer must lie within the molecular atmosphere")
+        # A sharply truncated layer gives square-root structure in its tangent
+        # optical depth. Resolve both sides of each cutoff without globally
+        # oversampling the otherwise smooth height table.
+        offsets = height_step_m*np.array([0, .0001, .001, .01, .05, .1, .25, .5])
+        aerosol_edges = np.concatenate([edge + sign*offsets
+                                        for edge in [aerosol_profile.bottom_m, aerosol_profile.top_m]
+                                        for sign in [-1, 1]])
+        aerosol_edges = aerosol_edges[(aerosol_edges >= 0) & (aerosol_edges <= top)]
+    h = np.unique(np.concatenate((dense, upper, boundaries, aerosol_edges)))
     radius = EARTH_RADIUS_M + h
     refractivity = (float(refractive_index_air(reference_wavelength_nm)) - 1.0
                     if refraction else 0.0)
@@ -75,8 +92,7 @@ def build_ray_table(
     air = np.zeros_like(h)
     ozone = np.zeros_like(h)
     nodes, weights = leggauss(quadrature_order)
-    layers = np.concatenate(([0.0], boundaries, [top]))
-    for lower, upper_bound in zip(layers[:-1], layers[1:]):
+    def segment(lower, upper_bound):
         mask = h < upper_bound
         ids = np.flatnonzero(mask)
         ht = h[ids, None]
@@ -98,9 +114,26 @@ def build_ray_table(
         denominator = np.sqrt(q_minus_b * (q + b[ids, None]))
         measure = 2 * u * (u1 - u0) / 2 * weights
         path = 2 * q / denominator * measure
+        return ids, altitude, density, n, denominator, measure, path
+
+    layers = np.concatenate(([0.0], boundaries, [top]))
+    for lower, upper_bound in zip(layers[:-1], layers[1:]):
+        ids, altitude, density, n, denominator, measure, path = segment(lower, upper_bound)
         air[ids] += np.sum(density * path, axis=1)
         ozone[ids] += np.sum(atmosphere.ozone_density(altitude) * path, axis=1)
         nprime = coefficient * atmosphere.density_gradient(altitude)
         bending[ids] += np.sum(-2 * b[ids, None] * nprime / n
                                / denominator * measure, axis=1)
-    return RayTable(h, b, bending, air, ozone, reference_wavelength_nm, refraction)
+    aerosol_tau = None
+    if active_aerosol:
+        aerosol_tau = np.zeros_like(h)
+        a_layers = np.unique(np.concatenate(([aerosol_profile.bottom_m],
+            boundaries[(boundaries > aerosol_profile.bottom_m) & (boundaries < aerosol_profile.top_m)],
+            [aerosol_profile.top_m])))
+        # Separate from the molecular integration: adding extinction does not
+        # change the refractive medium or the molecular-column quadrature.
+        for lower, upper_bound in zip(a_layers[:-1], a_layers[1:]):
+            ids, altitude, _, _, _, _, path = segment(lower, upper_bound)
+            aerosol_tau[ids] += np.sum(aerosol_profile.extinction550(altitude)*path, axis=1)
+    return RayTable(h, b, bending, air, ozone, reference_wavelength_nm, refraction,
+                    aerosol_tau, aerosol_profile)

@@ -1,0 +1,113 @@
+{
+  "model_metadata": {
+    "version": "0.2.0",
+    "created_utc": "2026-11-04T03:47:14.110273+00:00",
+    "model": "Finite-distance paraxial annular transport with spherical refracted ray tables",
+    "atmosphere": {
+      "ozone_du": 300.0,
+      "density_scale": 1.0,
+      "top_m": 120000.0,
+      "ozone_center_m": 25000.0,
+      "ozone_width_m": 8000.0
+    },
+    "aerosol": {
+      "aod550": 0.013,
+      "bottom_m": 2000.0,
+      "top_m": 12000.0,
+      "scale_height_m": 8000.0,
+      "angstrom_visible": 1.58,
+      "angstrom_blue": 1.21,
+      "break_nm": 500.0
+    },
+    "aerosol_preset": "opac-ft",
+    "aerosol_aod_source": "OPAC literature prior",
+    "geometry": {
+      "moon_distance_m": 384400000.0,
+      "sun_distance_m": 149597870700.0,
+      "sun_radius_m": 695700000.0
+    },
+    "numerics": {
+      "height_step_m": 100.0,
+      "path_quadrature_order": 48,
+      "receiver_integration_order": 8,
+      "radius_count": 451,
+      "wavelength_count": 81,
+      "ray_count": 756,
+      "wavelength_range_nm": [
+        380.0,
+        780.0
+      ],
+      "wavelength_step_nm": 5.0,
+      "radial_step_m": 20000.0
+    },
+    "geometric_umbra_radius_m": 4599731.021637462,
+    "geometric_penumbra_radius_m": 8175010.251865169,
+    "moon_offset_m": 2860000.0,
+    "axis_relative_photopic_irradiance": 4.280088680938667e-05,
+    "axis_dimming_stops": 14.511999785701741,
+    "simulation_seconds": 1.5187756658997387,
+    "approximations": [
+      "Spherical standard dry atmosphere; Gaussian ozone height profile",
+      "Achromatic refracted paths at 550 nm; spectral Rayleigh and ozone extinction",
+      "Uniform solar disk, finite-distance first-order paraxial propagation",
+      "OPAC free-troposphere aerosol extinction only; no boundary layer or stratospheric aerosol preset",
+      "No cloud extinction or scattered light entering receiver",
+      "Neutral shadow-plane lunar screen; no lunar reflectance spectrum or BRDF",
+      "Photopic colorimetry with global solar white; no observer atmosphere or dark adaptation"
+    ]
+  },
+  "display": {
+    "white_reference": "Uneclipsed solar spectrum, Bradford-adapted to D65",
+    "exposure_stops": 8.0,
+    "luminance_reference": "CIE Y of uneclipsed solar irradiance = 1",
+    "highlights": "Common max-channel compression above linear RGB = 1",
+    "gamut": "Negative linear sRGB channels clipped to zero",
+    "vision": "Photopic CIE 1931; no mesopic or dark-adaptation model",
+    "moon_geometry": "Uniform neutral screen at lunar distance; no lunar BRDF or incidence shading",
+    "diagnostic": "moon_chromaticity.png normalizes CIE Y at each radius; not photometric"
+  },
+  "moon_offset_m": 2860000.0,
+  "moon_radius_m": 1737400.0,
+  "minimum_relative_photopic_irradiance": 4.280088680938667e-05,
+  "axis_relative_photopic_irradiance": 4.280088680938667e-05,
+  "sampled_spectra": [
+    {
+      "radius_m": 0.0,
+      "relative_photopic_irradiance": 4.280088680938667e-05,
+      "relative_photopic_irradiance_no_ozone": 9.8154655423078e-05
+    },
+    {
+      "radius_m": 2000000.0,
+      "relative_photopic_irradiance": 8.666458116129252e-05,
+      "relative_photopic_irradiance_no_ozone": 0.00022229657570473822
+    },
+    {
+      "radius_m": 4000000.0,
+      "relative_photopic_irradiance": 0.0004868091073468308,
+      "relative_photopic_irradiance_no_ozone": 0.0014048182815441046
+    },
+    {
+      "radius_m": 4600000.0,
+      "relative_photopic_irradiance": 0.0017305279582051393,
+      "relative_photopic_irradiance_no_ozone": 0.004079380363938203
+    },
+    {
+      "radius_m": 5200000.0,
+      "relative_photopic_irradiance": 0.11733340602097468,
+      "relative_photopic_irradiance_no_ozone": 0.12080705225399767
+    },
+    {
+      "radius_m": 6500000.0,
+      "relative_photopic_irradiance": 0.5590185879701327,
+      "relative_photopic_irradiance_no_ozone": 0.5621592737735542
+    }
+  ],
+  "files": [
+    "profile.png",
+    "spectra.png",
+    "moon.png",
+    "moon_chromaticity.png",
+    "ozone_comparison.png",
+    "moon_exposures.png"
+  ]
+}

@@ -12,6 +12,7 @@ import numpy as np
 
 from . import __version__
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
+from .aerosol import AerosolProfile
 from .color import spectrum_to_xyz
 from .report import write_report
 from .transport import Geometry, simulate, signed_landing_radius
@@ -35,9 +36,13 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("simulate", help="Compute spectra, ray tables and eclipse figures")
-    run.add_argument("--out", type=Path, default=Path("outputs/baseline"))
+    run.add_argument("--out", type=Path, default=Path("outputs/current"))
     run.add_argument("--ozone-du", type=_nonnegative, default=300.0)
     run.add_argument("--density-scale", type=_nonnegative, default=1.0)
+    run.add_argument("--aerosol", choices=["opac-ft", "none"], default="opac-ft",
+                     help="Fixed literature free-troposphere prior, or molecular-only counterfactual")
+    run.add_argument("--aod550", type=_nonnegative,
+                     help="Override the prior's 550 nm vertical AOD (default 0.013)")
     run.add_argument("--moon-distance-km", type=_positive, default=384400.0)
     run.add_argument("--moon-offset-km", type=_nonnegative, default=2860.0,
                      help="Moon center's distance from the shadow axis")
@@ -58,10 +63,15 @@ def main(argv=None):
                          int(np.ceil(args.radius_max_km/args.radial_step_km))+1)
     wl = np.linspace(380, 780, int(np.ceil(400/args.wavelength_step_nm))+1)
     atmosphere = Atmosphere(ozone_du=args.ozone_du, density_scale=args.density_scale)
+    if args.aerosol == "none" and args.aod550 is not None:
+        parser.error("--aod550 requires --aerosol opac-ft")
+    aerosol_profile = (AerosolProfile.opac_free_troposphere(
+        aod550=.013 if args.aod550 is None else args.aod550)
+        if args.aerosol == "opac-ft" else None)
     geometry = Geometry(moon_distance_m=args.moon_distance_km*1000)
     start = time.perf_counter()
     result = simulate(radius, wl, atmosphere=atmosphere, geometry=geometry,
-                      height_step_m=args.height_step_m)
+                      height_step_m=args.height_step_m, aerosol_profile=aerosol_profile)
     elapsed = time.perf_counter()-start
     relative_y = spectrum_to_xyz(result.irradiance, wl)[:, 1] / spectrum_to_xyz(
         result.reference_irradiance, wl)[1]
@@ -73,6 +83,11 @@ def main(argv=None):
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "model": "Finite-distance paraxial annular transport with spherical refracted ray tables",
         "atmosphere": asdict(atmosphere),
+        "aerosol": asdict(aerosol_profile) if aerosol_profile is not None else None,
+        "aerosol_preset": args.aerosol,
+        "aerosol_aod_source": ("Disabled" if aerosol_profile is None else
+                                "OPAC literature prior" if args.aod550 is None else
+                                "User override; not an independent prior"),
         "geometry": asdict(geometry),
         "numerics": {"height_step_m": args.height_step_m, "path_quadrature_order": 48,
                      "receiver_integration_order": 8, "radius_count": len(radius),
@@ -90,7 +105,9 @@ def main(argv=None):
             "Spherical standard dry atmosphere; Gaussian ozone height profile",
             "Achromatic refracted paths at 550 nm; spectral Rayleigh and ozone extinction",
             "Uniform solar disk, finite-distance first-order paraxial propagation",
-            "No aerosol/cloud extinction and no scattered light entering receiver",
+            ("OPAC free-troposphere aerosol extinction only; no boundary layer or stratospheric aerosol preset"
+             if aerosol_profile is not None else "No aerosol extinction"),
+            "No cloud extinction or scattered light entering receiver",
             "Neutral shadow-plane lunar screen; no lunar reflectance spectrum or BRDF",
             "Photopic colorimetry with global solar white; no observer atmosphere or dark adaptation",
         ],
@@ -105,6 +122,8 @@ def main(argv=None):
                         bending_rad=table.bending_rad,
                         air_column_m2=table.air_column_m2,
                         ozone_column_m2=table.ozone_column_m2,
+                        aerosol_tau550=(table.aerosol_tau550 if table.aerosol_tau550 is not None
+                                         else np.zeros_like(table.altitude_m)),
                         signed_landing_radius_m=signed_landing_radius(table, geometry))
     (args.out/"metadata.json").write_text(json.dumps(metadata, indent=2)+"\n")
     csv = np.column_stack((radius/1000, relative_y, result.irradiance / result.reference_irradiance))
