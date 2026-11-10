@@ -47,7 +47,7 @@ from eclipse.spectra import ozone_cross_section, rayleigh_cross_section
 from eclipse.transport import Geometry, circle_overlap, receiver_quadrature
 
 from .compare_dec2011 import exposure_average
-from .compare_hst2019 import G430L_MAX_NM, UMBRAL_QUANTITATIVE_MIN_NM
+from .compare_hst2019 import BAND_HALFWIDTH_NM, G430L_MAX_NM, SLOPE_BANDS_NM, UMBRAL_QUANTITATIVE_MIN_NM
 from .multiple_events import aperture_quadrature, photopic_response
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -326,6 +326,33 @@ def mv1990_analysis() -> dict:
     return json.loads((RESULTS/"multiple_events/analysis.json").read_text())
 
 
+class BrokenPowerLawSpectral:
+    """Validation-side broken power law allowing negative Angstrom exponents.
+
+    ``eclipse.aerosol.AerosolProfile`` validates its exponents nonnegative;
+    the OPAC mineral-transported type has negative tabulated exponents
+    (extinction decreasing with wavelength). This class mirrors that class's
+    ``spectral_factor`` functional form (500 nm break, 550 nm normalization)
+    without touching the production module.
+    """
+
+    def __init__(self, angstrom_blue: float, angstrom_visible: float,
+                 break_nm: float = 500.0):
+        self.angstrom_blue = float(angstrom_blue)
+        self.angstrom_visible = float(angstrom_visible)
+        self.break_nm = float(break_nm)
+
+    def spectral_factor(self, wavelength_nm) -> np.ndarray:
+        wavelength = np.asarray(wavelength_nm, dtype=float)
+        exponent = np.where(wavelength >= self.break_nm,
+                            self.angstrom_visible, self.angstrom_blue)
+        raw = (wavelength/self.break_nm)**(-exponent)
+        reference_exponent = (self.angstrom_visible if 550.0 >= self.break_nm
+                              else self.angstrom_blue)
+        reference = (550.0/self.break_nm)**(-reference_exponent)
+        return raw/reference
+
+
 def mv1990_record(variant: str) -> dict:
     return next(record for record in mv1990_analysis()["records"]
                 if record["event_date"] == MV1990_EVENT
@@ -564,6 +591,322 @@ def build_correlation(height_stats: dict) -> dict:
     }
 
 
+# --- Discrimination probes (plan Step 5) -------------------------------------
+
+AOD_ROW_BY_CANDIDATE_KIND = {
+    "boundary_layer": "aod550_boundary_layer_only",
+    "layer_total": "tau_0.55um_layer",
+    "background": "aod550",
+}
+# Prior-driven counterfactual probes: the AOD is the literature value, never
+# tuned; verdicts compare the prior-order effect with the committed residual.
+VERDICT_COMPATIBLE = (0.5, 2.0)
+VERDICT_TENSION = (0.1, 10.0)
+
+
+@lru_cache(maxsize=None)
+def prior_rows() -> tuple:
+    return tuple(json.loads(
+        (RESULTS/"extinction_gap_diagnosis/prior_parameters.json").read_text())["parameters"])
+
+
+def prior_row(candidate: str, name: str) -> dict:
+    return next(row for row in prior_rows()
+                if row["candidate"] == candidate and row["name"] == name)
+
+
+def candidate_kind(candidate: str) -> str:
+    if candidate == "stratosphere_background":
+        return "background"
+    if candidate == "mineral_transported":
+        return "layer_total"
+    return "boundary_layer"
+
+
+@lru_cache(maxsize=None)
+def candidate_probe_extra(candidate: str) -> tuple:
+    """Extra extinction column of one literature candidate, on its own grid.
+
+    The tau550 column depends only on the layer geometry (aod, bounds, scale
+    height), so it is traced by the production ``build_ray_table`` with a
+    profile carrying the candidate's geometry; the spectral factor carries
+    the candidate's Angstrom exponents, via ``AerosolProfile`` itself when
+    they are nonnegative and via the validation-side broken power law when
+    they are negative (mineral transported). A zero-AOD candidate restores
+    the baseline exactly (tested).
+    """
+    kind = candidate_kind(candidate)
+    aod = prior_row(candidate, AOD_ROW_BY_CANDIDATE_KIND[kind])["value"]
+    bottom = prior_row(candidate, "layer_bottom_m")["value"]
+    top = prior_row(candidate, "layer_top_m")["value"]
+    scale_height = prior_row(candidate, "scale_height_m")["value"]
+    blue = prior_row(candidate, "angstrom_0.35_to_0.5um")["value"]
+    visible = prior_row(candidate, "angstrom_0.5_to_0.8um")["value"]
+    if blue >= 0 and visible >= 0:
+        profile = AerosolProfile(aod550=aod, bottom_m=bottom, top_m=top,
+                                 scale_height_m=scale_height,
+                                 angstrom_blue=blue, angstrom_visible=visible)
+    else:
+        profile = BrokenPowerLawSpectral(blue, visible)
+    column_profile = AerosolProfile(aod550=aod, bottom_m=bottom, top_m=top,
+                                    scale_height_m=scale_height)
+    table = build_ray_table(Atmosphere(), aerosol_profile=column_profile)
+    return table.impact_m, table.aerosol_tau550, profile
+
+
+def closure_verdict(closure: float) -> str:
+    """Prior-order compatibility: the probe closes `closure` of the log-gap."""
+    if VERDICT_COMPATIBLE[0] <= closure <= VERDICT_COMPATIBLE[1]:
+        return "compatible"
+    if VERDICT_TENSION[0] <= closure <= VERDICT_TENSION[1]:
+        return "tension"
+    return "excluded_leaning"
+
+
+def shape_closed_fraction(base: float, new: float) -> float:
+    """Fraction of the shape disagreement |base-1| closed by the probe."""
+    disagreement = abs(base - 1.)
+    if disagreement <= 0:
+        return 0.0
+    return (disagreement - abs(new - 1.))/disagreement
+
+
+def probe_brightness_factor(candidate: str) -> dict:
+    """Per-readout transmission factors of one candidate against fixed_opac.
+
+    The baseline is the committed prediction itself (zeroth-moment-gated);
+    the factor is probe kernel sum over committed prediction per readout.
+    """
+    extra = candidate_probe_extra(candidate)
+    geometry = june_geometry()
+    june = []
+    for record in june_records():
+        radius = geometry.moon_distance_m*np.tan(np.deg2rad(record["shadow_angle_deg"]))
+        _, _, _, probed = june_kernel("fixed_opac", radius, record["wavelength_nm"], extra)
+        june.append(probed/record["fixed_opac_prediction"])
+    wavelengths, window_rows = hst_window_data()
+    hst = {}
+    for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+        committed = np.array([float(row[f"{dataset}_fixed_opac_prediction"])
+                              for row in window_rows])
+        _, _, sums, _ = hst_kernel("fixed_opac", dataset, wavelengths, extra)
+        hst[dataset] = (sums*hst_comparison()["solar_scale_in_over_out"][dataset])/committed
+    dec = []
+    for record in dec_comparison()["records"]:
+        _, _, _, probed = dec_kernel("fixed_opac", record["wavelength_nm"], extra)
+        dec.append(probed/record["fixed_opac_prediction"])
+    _, _, _, probed = mv1990_kernel("fixed_opac", extra)
+    mv1990 = probed/mv1990_record("fixed_opac")["prediction"]
+    return {"june_2011": june, "hst_2019": hst, "dec_2011": dec,
+            "event_1990_02_09": mv1990}
+
+
+def probe_event_brightness(candidate: str, event: str, factors: dict,
+                           depths: dict) -> dict:
+    """Brightness-axis probe result for one candidate x event."""
+    base_rows = {variant: depths[event][variant] for variant in VARIANTS}
+    fixed = base_rows["fixed_opac"]
+    if event == "june_2011":
+        ratios = np.array([record["fixed_opac_model_to_observed"]
+                           for record in june_records()])
+        factor = np.array(factors["june_2011"])
+    elif event == "hst_2019":
+        ratios = np.concatenate([
+            np.array([float(row[f"{dataset}_fixed_opac_model_to_observed"])
+                      for row in hst_window_data()[1]])
+            for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]])
+        factor = np.concatenate([np.asarray(values) for values
+                                 in factors["hst_2019"].values()])
+    elif event == "dec_2011":
+        ratios = np.array([record["fixed_opac_model_to_observed"]
+                           for record in dec_comparison()["records"]])
+        factor = np.array(factors["dec_2011"])
+    else:
+        ratios = np.array([mv1990_record("fixed_opac")["model_to_observed"]])
+        factor = np.array([factors["event_1990_02_09"]])
+    new_ratios = ratios*factor
+    base_ln = float(np.median(np.log(ratios)))
+    new_ln = float(np.median(np.log(new_ratios)))
+    delta_ln = new_ln - base_ln
+    closure = (base_ln - new_ln)/base_ln if base_ln else 0.0
+    per_readout = -np.log(factor)/np.log(ratios)
+    return {"base_residual_ln_median": base_ln,
+            "probe_delta_ln_median": delta_ln,
+            "new_residual_ln_median": new_ln,
+            "gap_closure_fraction": closure,
+            "verdict": closure_verdict(closure),
+            "max_readout_gap_closure_fraction": float(np.max(per_readout)),
+            "base_p50_height_m_median": fixed["p50_height_m_median"],
+            "base_band_fraction_below_2km_median": fixed["band_fraction_below_2km_median"],
+            "base_band_fraction_over_12km_median": fixed["band_fraction_over_12km_median"]}
+
+
+def probe_event_shape(candidate: str, event: str, factors: dict) -> dict:
+    """Shape-axis probe deltas for one candidate x event (fixed_opac).
+
+    A probe closes shape disagreement when the new metric moves toward unity
+    (perfect observed shape agreement); the closed fraction can go negative
+    when the probe pushes the metric further away.
+    """
+    if event == "june_2011":
+        factor_by_key = {(record["wavelength_nm"], record["shadow_angle_deg"]): factor
+                         for record, factor in zip(june_records(), factors["june_2011"])}
+        metrics = []
+        for item in shape_axis("june_2011", "fixed_opac")["values_by_angle"]:
+            angle = item["shadow_angle_deg"]
+            shape_factor = factor_by_key[503.0, angle]/factor_by_key[677.0, angle]
+            new = item["ratio"]*shape_factor
+            closed = shape_closed_fraction(item["ratio"], new)
+            metrics.append({"shadow_angle_deg": angle, "base_ratio": item["ratio"],
+                            "shape_factor": shape_factor, "new_ratio": new,
+                            "disagreement_closed_fraction": closed,
+                            "verdict": closure_verdict(closed)})
+        median_base = float(np.median([metric["base_ratio"] for metric in metrics]))
+        median_new = float(np.median([metric["new_ratio"] for metric in metrics]))
+        median_closed = shape_closed_fraction(median_base, median_new)
+        return {"metric": "503_over_677_transmission_ratio_model_over_observed",
+                "median_base": median_base, "median_new": median_new,
+                "disagreement_closed_fraction": median_closed,
+                "verdict": closure_verdict(median_closed), "by_angle": metrics}
+    if event == "hst_2019":
+        wavelengths, window_rows = hst_window_data()
+        metrics = {}
+        for dataset, factor_array in factors["hst_2019"].items():
+            observed = np.array([float(row[f"{dataset}_obs_ratio"]) for row in window_rows])
+            committed = np.array([float(row[f"{dataset}_fixed_opac_prediction"])
+                                  for row in window_rows])
+            new_pred = committed*np.asarray(factor_array)
+            metrics[dataset] = {}
+            for num, den in SLOPE_BANDS_NM:
+                num_mask = (wavelengths >= num-BAND_HALFWIDTH_NM) & (wavelengths <= num+BAND_HALFWIDTH_NM)
+                den_mask = (wavelengths >= den-BAND_HALFWIDTH_NM) & (wavelengths <= den+BAND_HALFWIDTH_NM)
+                base_slope = ((np.median(committed[num_mask])/np.median(committed[den_mask]))
+                              /(np.median(observed[num_mask])/np.median(observed[den_mask])))
+                new_slope = ((np.median(new_pred[num_mask])/np.median(new_pred[den_mask]))
+                             /(np.median(observed[num_mask])/np.median(observed[den_mask])))
+                closed = shape_closed_fraction(base_slope, new_slope)
+                metrics[dataset][f"{num:g}_over_{den:g}"] = {
+                    "base_slope": base_slope, "new_slope": new_slope,
+                    "disagreement_closed_fraction": closed,
+                    "verdict": closure_verdict(closed)}
+        return metrics
+    if event == "dec_2011":
+        records = dec_comparison()["records"]
+        index = {record["wavelength_nm"]: position for position, record in enumerate(records)}
+        base_axis = shape_axis("dec_2011", "fixed_opac")
+        metrics = {}
+        for key, blue_index in [("450_to750_transmission_ratio_model_over_observed", index[450.0]),
+                                ("500_to750_transmission_ratio_model_over_observed", index[500.0])]:
+            shape_factor = factors["dec_2011"][blue_index]/factors["dec_2011"][index[750.0]]
+            base = base_axis[key]
+            new = base*shape_factor
+            closed = shape_closed_fraction(base, new)
+            metrics[key] = {"base_ratio": base, "shape_factor": shape_factor,
+                            "new_ratio": new,
+                            "disagreement_closed_fraction": closed,
+                            "verdict": closure_verdict(closed)}
+        return metrics
+    return {}
+
+
+def build_discrimination(height_stats: dict) -> dict:
+    """Prior-driven counterfactual discrimination across the four apertures."""
+    depths = depth_statistics(height_stats)
+    band_fractions = {event: {
+        "band_fraction_below_2km_median": depths[event]["fixed_opac"]["band_fraction_below_2km_median"],
+        "band_fraction_2_to_12km_median": depths[event]["fixed_opac"]["band_fraction_2_to_12km_median"],
+        "band_fraction_over_12km_median": depths[event]["fixed_opac"]["band_fraction_over_12km_median"]}
+        for event in EVENT_ORDER}
+    order = []
+    for row in prior_rows():
+        if row["candidate"] not in order:
+            order.append(row["candidate"])
+    candidates = []
+    for candidate in order:
+        if candidate == "free_troposphere_reference":
+            continue
+        kind = candidate_kind(candidate)
+        aod_row = prior_row(candidate, AOD_ROW_BY_CANDIDATE_KIND[kind])
+        bottom = prior_row(candidate, "layer_bottom_m")["value"]
+        top = prior_row(candidate, "layer_top_m")["value"]
+        factors = probe_brightness_factor(candidate)
+        events = {}
+        for event in EVENT_ORDER:
+            events[event] = {
+                "brightness": probe_event_brightness(candidate, event, factors, depths),
+                "shape": probe_event_shape(candidate, event, factors)}
+        closures = [events[event]["brightness"]["gap_closure_fraction"] for event in EVENT_ORDER]
+        verdict_counts = {}
+        for event in EVENT_ORDER:
+            verdict = events[event]["brightness"]["verdict"]
+            verdict_counts[verdict] = verdict_counts.get(verdict, 0) + 1
+        candidates.append({
+            "candidate": candidate,
+            "action_band_m": [bottom, top],
+            "probe_aod550": aod_row["value"],
+            "probe_aod550_source_location": aod_row["source"]["location"],
+            "events": events,
+            "brightness_verdict_counts": verdict_counts,
+            "min_gap_closure_fraction": min(closures),
+            "max_readout_gap_closure_fraction": max(
+                events[event]["brightness"]["max_readout_gap_closure_fraction"]
+                for event in EVENT_ORDER),
+            # Zero-effect candidates close ~1e-16 (float noise around an
+            # exactly-zero effect); clamped to 0 so the geometric mean of a
+            # null effect is 0, not nan.
+            "geometric_mean_gap_closure_fraction": float(np.exp(np.mean(
+                np.log([max(closure, 0.) for closure in closures])))),
+        })
+    ranked = sorted(candidates, key=lambda item: -item["min_gap_closure_fraction"])
+    return {
+        "scope": "Prior-driven counterfactual discrimination probes for the missing-extinction "
+                 "candidates (plan Step 5). Each candidate's literature AOD550 enters as an extra "
+                 "extinction column (or, for negative-Angstrom mineral transported, a "
+                 "validation-side spectral factor) on top of the committed fixed_opac default, "
+                 "evaluated through the same kernel adapters as the height statistics; a zero-AOD "
+                 "probe restores the baseline exactly (pytest). Fixed priors only: nothing is "
+                 "fitted, nothing becomes a default, and no causal attribution is made - the "
+                 "product ranks prior-order compatibility only, per docs/ROUND2.md discipline.",
+        "variant_scope": "Probes run on the fixed_opac variant only: the candidates are missing "
+                         "components on top of the committed default physics; probing the "
+                         "molecular variant would conflate the free-troposphere candidate with "
+                         "the boundary-layer ones.",
+        "verdict_bands": {
+            "brightness_semantics": "gap_closure_fraction = fraction of the event's committed "
+                                    "log-residual closed by the probe (1 = exactly closes)",
+            "shape_semantics": "disagreement_closed_fraction = movement of the shape metric "
+                               "toward unity; negative = pushed further away",
+            "compatible": "closure in [0.5, 2]: prior-order effect of the residual's order",
+            "tension": "closure in [0.1, 0.5) or (2, 10]: right direction, magnitude off",
+            "excluded_leaning": "closure < 0.1 (negligible at prior level) or > 10 (dominant at "
+                                "prior level); for shape, < 0.1 also covers worsening",
+            "ranking_key": "brightness-axis minimum gap closure across the four events (weakest "
+                           "link), descending; shape verdicts are recorded per event alongside "
+                           "and enter the owner's reading, not this mechanical key",
+            "gloss": {"compatible": "相容", "tension": "张力", "excluded_leaning": "排除倾向"},
+        },
+        "band_fractions_fixed_opac": band_fractions,
+        "candidates": candidates,
+        "not_probed": [{
+            "candidate": "free_troposphere_humidified",
+            "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling "
+                      "needs the per-component OPAC data files, marked unavailable in "
+                      "prior_parameters.json (search trail there); no sourced prior AOD exists, "
+                      "so no probe runs and the candidate carries no verdict.",
+            "direction_support": "The 677 nm same-event calibration direction supports 'more "
+                                 "same-type extinction' (docs/ROUND2.md), but that calibrated "
+                                 "value is not a prior and is excluded from this ranking.",
+        }],
+        "ranking": [item["candidate"] for item in ranked],
+    }
+
+
+def write_discrimination(out: Path, stats: dict) -> dict:
+    discrimination = build_discrimination(stats)
+    (out/"discrimination.json").write_text(json.dumps(discrimination, indent=2)+"\n")
+    return discrimination
+
+
 def build_height_stats() -> dict:
     records = height_records()
     worst = max(record["relative_gap"] for record in records)
@@ -634,11 +977,13 @@ def main() -> None:
     args = parser.parse_args()
     stats = write_height_stats(args.out)
     correlation = write_correlation(args.out, stats)
+    discrimination = write_discrimination(args.out, stats)
     print(json.dumps({"records": len(stats["records"]),
                       "max_relative_gap": max(record["relative_gap"] for record in stats["records"]),
                       "cross_event": {variant: {key: value for key, value in summary.items()
                                                 if key != "pairwise_direction"}
-                                      for variant, summary in correlation["cross_event"].items()}},
+                                      for variant, summary in correlation["cross_event"].items()},
+                      "ranking": discrimination["ranking"]},
                      indent=2))
 
 

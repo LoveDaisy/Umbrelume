@@ -184,6 +184,43 @@ def test_prior_boundary_layer_aod_derivation_consistency():
         assert recorded == pytest.approx(tau - ft_part(top_km) - strat, abs=1e-6)
 
 
+def test_discrimination_product_schema_and_signs():
+    """Probe product structure and sign discipline (plan Step 5)."""
+    product = json.loads((ROOT/"validation/results/extinction_gap_diagnosis"
+                          "/discrimination.json").read_text())
+    expected = {row["candidate"] for row in
+                json.loads(PRIOR_PATH.read_text())["parameters"]}
+    expected.discard("free_troposphere_reference")
+    assert {item["candidate"] for item in product["candidates"]} == expected
+    verdicts = {"compatible", "tension", "excluded_leaning"}
+    for item in product["candidates"]:
+        for event, row in item["events"].items():
+            brightness = row["brightness"]
+            # Median-of-sums float noise is ~1e-16; real deltas are orders larger.
+            assert brightness["probe_delta_ln_median"] <= 1e-9
+            assert brightness["verdict"] in verdicts
+            assert brightness["max_readout_gap_closure_fraction"] >= 0
+            shape = row["shape"]
+            if event == "june_2011":
+                assert shape["verdict"] in verdicts
+                for metric in shape["by_angle"]:
+                    assert metric["verdict"] in verdicts and metric["new_ratio"] > 0
+            elif event == "hst_2019":
+                for dataset_metrics in shape.values():
+                    for metric in dataset_metrics.values():
+                        assert metric["verdict"] in verdicts and metric["new_slope"] > 0
+            elif event == "dec_2011":
+                for metric in shape.values():
+                    assert metric["verdict"] in verdicts and metric["new_ratio"] > 0
+            else:
+                assert shape == {}
+        assert sum(item["brightness_verdict_counts"].values()) == 4
+    assert product["ranking"] == [item["candidate"] for item in
+                                  sorted(product["candidates"],
+                                         key=lambda item: -item["min_gap_closure_fraction"])]
+    assert product["not_probed"][0]["candidate"] == "free_troposphere_humidified"
+
+
 def test_full_scale_probe_zero_aod_restores_committed_moments():
     """Adapter-level zero-value restoration on every aperture's own grid."""
     zero_profile = AerosolProfile(aod550=0.0)
