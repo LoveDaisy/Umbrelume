@@ -1,29 +1,39 @@
 {
   "pass": true,
+  "version": "0.2.0",
+  "aerosol_profile": {
+    "aod550": 0.013,
+    "bottom_m": 2000.0,
+    "top_m": 12000.0,
+    "scale_height_m": 8000.0,
+    "angstrom_visible": 1.58,
+    "angstrom_blue": 1.21,
+    "break_nm": 500.0
+  },
   "checks": {
     "height_100m_vs_50m": {
       "pass": true,
-      "max_relative_photopic_irradiance_difference": 0.0007900911418854406,
+      "max_relative_photopic_irradiance_difference": 0.001061923512434948,
       "photopic_worst_radius_m": 2040000.0,
-      "max_equal_Y_linear_sRGB_channel_difference": 0.0007674163322084482,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.0010005121850675813,
       "color_worst_radius_m": 2040000.0,
       "photopic_tolerance": 0.01,
       "color_tolerance": 0.02
     },
     "height_50m_vs_25m": {
       "pass": true,
-      "max_relative_photopic_irradiance_difference": 0.0002327976027227674,
+      "max_relative_photopic_irradiance_difference": 0.00031327608235232063,
       "photopic_worst_radius_m": 2040000.0,
-      "max_equal_Y_linear_sRGB_channel_difference": 0.00022744487268511193,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.0002969648881996356,
       "color_worst_radius_m": 2040000.0,
       "photopic_tolerance": 0.01,
       "color_tolerance": 0.02
     },
     "spectrum_5nm_vs_2p5nm": {
       "pass": true,
-      "max_relative_photopic_irradiance_difference": 0.004000952539193525,
+      "max_relative_photopic_irradiance_difference": 0.004071110981133552,
       "photopic_worst_radius_m": 0.0,
-      "max_equal_Y_linear_sRGB_channel_difference": 0.017565112411547457,
+      "max_equal_Y_linear_sRGB_channel_difference": 0.01863807591011568,
       "color_worst_radius_m": 0.0,
       "photopic_tolerance": 0.01,
       "color_tolerance": 0.02
