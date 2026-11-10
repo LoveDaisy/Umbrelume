@@ -113,6 +113,29 @@ def test_full_scale_zeroth_moment_gates_and_vacuum_branches():
         assert sum(fractions) == pytest.approx(1., abs=1e-12)
 
 
+def test_correlation_event_level_and_hst_cross_check():
+    """Event-level aggregation and the committed-median cross-check (plan Step 3)."""
+    stats = egd.build_height_stats()
+    correlation = egd.build_correlation(stats)
+    assert set(correlation["event_level"]) == set(egd.EVENT_ORDER)
+    for variant in egd.VARIANTS:
+        for event in egd.EVENT_ORDER:
+            row = correlation["event_level"][event][variant]
+            assert row["residual_readout_count"] >= 1
+            assert row["p50_height_m_median"] > 0
+        assert correlation["event_level"]["event_1990_02_09"][variant]["shape_axis"] is None
+        assert correlation["event_level"]["june_2011"][variant]["shape_axis"]["paired_angle_count"] == 5
+        pairwise = correlation["cross_event"][variant]["pairwise_direction"]
+        assert pairwise["pairs_total"] == 6
+    for check in correlation["hst_consistency_check"].values():
+        assert check["pooled_window_median"] == check["committed_model_to_observed_median"]
+    # Result pins frozen in committed products: the molecular variant's depth
+    # ordering is perfectly rank-consistent (deeper paths carry larger
+    # residuals); any change routes as a finding, not a silent pass.
+    assert correlation["cross_event"]["molecular"]["spearman_rho_residual_ln_vs_p50_median"] == -1.0
+    assert correlation["cross_event"]["molecular"]["pairwise_direction"]["deeper_has_larger_residual_count"] == 6
+
+
 def test_full_scale_probe_zero_aod_restores_committed_moments():
     """Adapter-level zero-value restoration on every aperture's own grid."""
     zero_profile = AerosolProfile(aod550=0.0)

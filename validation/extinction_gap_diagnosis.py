@@ -37,6 +37,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
+from scipy.stats import spearmanr
 
 import eclipse
 from eclipse.aerosol import AerosolProfile
@@ -383,6 +384,186 @@ def height_records() -> list:
             + dec_height_records() + mv1990_height_records())
 
 
+EVENT_ORDER = ("june_2011", "hst_2019", "dec_2011", "event_1990_02_09")
+
+
+def committed_residuals(variant: str) -> dict:
+    """Committed per-readout model/observed values of one variant, per event.
+
+    Read from the committed products only; no model recomputation (plan
+    Step 3). Calibrated variants (red_calibrated etc.) never enter.
+    """
+    return {
+        "june_2011": [record[f"{variant}_model_to_observed"] for record in june_records()],
+        "hst_2019": {dataset: [float(row[f"{dataset}_{variant}_model_to_observed"])
+                               for row in hst_window_data()[1]]
+                     for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]},
+        "dec_2011": [record[f"{variant}_model_to_observed"]
+                     for record in dec_comparison()["records"]],
+        "event_1990_02_09": [mv1990_record(variant)["model_to_observed"]],
+    }
+
+
+@lru_cache(maxsize=None)
+def june_shape_ratios() -> dict:
+    """503/677 model-over-observed transmission ratios per paired angle.
+
+    June 2011 shape-axis metric (plan design point 4), computed from the
+    committed round2 records at the five angles that carry both bands.
+    """
+    ratios = {variant: [] for variant in VARIANTS}
+    for angle in sorted({record["shadow_angle_deg"] for record in june_records()}):
+        bands = {record["wavelength_nm"]: record for record in june_records()
+                 if record["shadow_angle_deg"] == angle}
+        if not {503.0, 677.0} <= bands.keys():
+            continue
+        blue, red = bands[503.0], bands[677.0]
+        observed_ratio = blue["observed_curve_brightness"]/red["observed_curve_brightness"]
+        for variant in VARIANTS:
+            ratios[variant].append({"shadow_angle_deg": angle,
+                                    "ratio": (blue[f"{variant}_prediction"]
+                                              /red[f"{variant}_prediction"])/observed_ratio})
+    return ratios
+
+
+def shape_axis(event: str, variant: str):
+    """Committed shape metrics of one event x variant (plan design point 4)."""
+    if event == "june_2011":
+        ratios = june_shape_ratios()[variant]
+        return {"metric": "503_over_677_transmission_ratio_model_over_observed",
+                "median_over_paired_angles": float(np.median(
+                    [item["ratio"] for item in ratios])),
+                "paired_angle_count": len(ratios), "values_by_angle": ratios}
+    if event == "hst_2019":
+        metrics = hst_comparison()["metrics"][variant]
+        return {dataset: metrics[dataset]["slope_model_vs_observed"]
+                for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]}
+    if event == "dec_2011":
+        diagnostic = dec_comparison()["descriptive_diagnostics"][variant]
+        return {key: diagnostic[key] for key in
+                ["450_to750_transmission_ratio_model_over_observed",
+                 "500_to750_transmission_ratio_model_over_observed"]}
+    return None
+
+
+def depth_statistics(height_stats: dict) -> dict:
+    """Per event x variant medians of the per-readout path-depth statistics."""
+    grouped = {}
+    for record in height_stats["records"]:
+        grouped.setdefault((record["event"], record["variant"]), []).append(record)
+    result = {}
+    for (event, variant), rows in grouped.items():
+        result.setdefault(event, {})[variant] = {
+            "p50_height_m_median": float(np.median(
+                [row["p10_p50_p90_height_m"][1] for row in rows])),
+            "band_fraction_below_2km_median": float(np.median(
+                [row["band_fraction_below_2km"] for row in rows])),
+            "band_fraction_2_to_12km_median": float(np.median(
+                [row["band_fraction_2_to_12km"] for row in rows])),
+            "band_fraction_over_12km_median": float(np.median(
+                [row["band_fraction_over_12km"] for row in rows])),
+            "depth_readout_count": len(rows),
+        }
+    return result
+
+
+def pairwise_direction(depth_p50, depth_below2km, residual_ln):
+    """Pairwise direction consistency of the four events (no significance claims)."""
+    events = EVENT_ORDER
+    pairs = []
+    for i in range(len(events)):
+        for j in range(i+1, len(events)):
+            deeper = events[i] if depth_p50[i] < depth_p50[j] else events[j]
+            larger = events[i] if residual_ln[i] > residual_ln[j] else events[j]
+            pairs.append({"pair": [events[i], events[j]],
+                          "p50_height_m_median": [depth_p50[i], depth_p50[j]],
+                          "residual_ln_ratio_median": [residual_ln[i], residual_ln[j]],
+                          "deeper_by_p50": deeper, "larger_residual": larger,
+                          "deeper_has_larger_residual": bool(deeper == larger),
+                          "more_below2km_has_larger_residual":
+                              bool((depth_below2km[i] < depth_below2km[j])
+                                   == (residual_ln[i] < residual_ln[j]))})
+    return {"pairs_total": len(pairs), "pairs": pairs,
+            "deeper_has_larger_residual_count":
+                int(sum(pair["deeper_has_larger_residual"] for pair in pairs)),
+            "more_below2km_has_larger_residual_count":
+                int(sum(pair["more_below2km_has_larger_residual"] for pair in pairs))}
+
+
+def build_correlation(height_stats: dict) -> dict:
+    """Cross-event correlation of committed residuals vs contribution depth."""
+    residuals = {variant: committed_residuals(variant) for variant in VARIANTS}
+    depths = depth_statistics(height_stats)
+
+    # HST cross-check: pooled per-dataset window medians must reproduce the
+    # committed metric field exactly (plan Step 3; fail loud on any drift).
+    hst_check = {}
+    for variant in VARIANTS:
+        for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+            pooled = float(np.median(residuals[variant]["hst_2019"][dataset]))
+            committed = hst_comparison()["metrics"][variant][dataset]["model_to_observed_median"]
+            if pooled != committed:
+                raise RuntimeError(f"HST consistency check failed for {dataset}/{variant}: "
+                                   f"pooled window median {pooled!r} != committed "
+                                   f"{committed!r}")
+            hst_check[f"{dataset}|{variant}"] = {
+                "pooled_window_median": pooled,
+                "committed_model_to_observed_median": committed}
+
+    def flat(values):
+        if isinstance(values, dict):
+            return [item for sublist in values.values() for item in sublist]
+        return list(values)
+
+    event_level = {}
+    for event in EVENT_ORDER:
+        event_level[event] = {}
+        for variant in VARIANTS:
+            ratios = np.asarray(flat(residuals[variant][event]), dtype=float)
+            event_level[event][variant] = {
+                "residual_ln_ratio_median": float(np.median(np.log(ratios))),
+                "residual_ratio_median": float(np.median(ratios)),
+                "residual_readout_count": len(ratios),
+                **depths[event][variant],
+                "shape_axis": shape_axis(event, variant),
+            }
+
+    cross_event = {}
+    for variant in VARIANTS:
+        p50 = np.array([event_level[event][variant]["p50_height_m_median"]
+                        for event in EVENT_ORDER])
+        below = np.array([event_level[event][variant]["band_fraction_below_2km_median"]
+                          for event in EVENT_ORDER])
+        residual = np.array([event_level[event][variant]["residual_ln_ratio_median"]
+                             for event in EVENT_ORDER])
+        cross_event[variant] = {
+            "spearman_rho_residual_ln_vs_p50_median": float(spearmanr(p50, residual)[0]),
+            "spearman_rho_residual_ln_vs_below2km_median": float(spearmanr(below, residual)[0]),
+            "pairwise_direction": pairwise_direction(p50, below, residual),
+        }
+
+    return {
+        "scope": "Cross-event correlation of committed residual magnitudes against "
+                 "contribution-path depth statistics (height_stats.json records). Brightness "
+                 "and shape axes are kept in separate fields. Residual = event-level median of "
+                 "ln(model/observed) over the aperture's committed quantitative readouts, with "
+                 "ratio medians recorded alongside; only the two committed model variants enter "
+                 "(calibrated variants excluded, discipline). N=4 events per variant: rank "
+                 "orderings only, no significance claims. Negative rho(p50, residual) means "
+                 "deeper contribution paths carry larger model/observed residuals (the issue "
+                 "hypothesis direction); positive rho(below-2 km fraction, residual) is the "
+                 "boundary-layer-relevant depth reading.",
+        "residual_sources": {str(path.relative_to(ROOT)): {
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+            for path in [RESULTS/"round2/analysis.json", RESULTS/"hst2019/comparison.json",
+                         RESULTS/"hst2019/comparison.csv", RESULTS/"dec2011/comparison.json",
+                         RESULTS/"multiple_events/analysis.json"]},
+        "hst_consistency_check": hst_check,
+        "event_level": event_level,
+        "cross_event": cross_event,
+    }
+
+
 def build_height_stats() -> dict:
     records = height_records()
     worst = max(record["relative_gap"] for record in records)
@@ -441,13 +622,23 @@ def write_height_stats(out: Path) -> dict:
     return stats
 
 
+def write_correlation(out: Path, stats: dict) -> dict:
+    correlation = build_correlation(stats)
+    (out/"correlation.json").write_text(json.dumps(correlation, indent=2)+"\n")
+    return correlation
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("outputs/extinction_gap_diagnosis"))
     args = parser.parse_args()
     stats = write_height_stats(args.out)
+    correlation = write_correlation(args.out, stats)
     print(json.dumps({"records": len(stats["records"]),
-                      "max_relative_gap": max(record["relative_gap"] for record in stats["records"])},
+                      "max_relative_gap": max(record["relative_gap"] for record in stats["records"]),
+                      "cross_event": {variant: {key: value for key, value in summary.items()
+                                                if key != "pairwise_direction"}
+                                      for variant, summary in correlation["cross_event"].items()}},
                      indent=2))
 
 
