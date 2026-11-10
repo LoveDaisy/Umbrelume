@@ -141,7 +141,9 @@
 `correlation.json`、`discrimination.json`、`sources.json`、`prior_parameters.json`），
 由 `uv run python -m validation.extinction_gap_diagnosis --out
 validation/results/extinction_gap_diagnosis` 离线再生（byte-identical；
-sources / prior_parameters 为一次性文献产物，命令侧仅做 schema 校验）。
+sources / prior_parameters 为一次性文献产物：命令侧经
+`validate_literature_products` 对 prior_parameters.json（硬依赖）恒做 schema 校验、
+存在的 sources.json 一并校验，在再生产物之前执行）。
 
 ### 机器与口径
 

@@ -25,7 +25,11 @@ baseline exactly.
 
 Command products: ``height_stats``/``correlation``/``discrimination``
 regenerate byte-identically; ``sources``/``prior_parameters`` are one-shot
-literature products that the command only schema-checks when present.
+literature products that the command validates before regenerating - the
+committed ``prior_parameters.json`` is a hard dependency of the
+discrimination step and is always schema-checked, ``sources.json`` is
+schema-checked when present (``validate_literature_products``, shared with
+the pytest gate).
 """
 from __future__ import annotations
 
@@ -1014,6 +1018,39 @@ def write_discrimination(out: Path, stats: dict) -> dict:
     return discrimination
 
 
+def validate_literature_products() -> dict:
+    """Schema gate for the one-shot literature products (plan Step 1 contract).
+
+    The committed ``prior_parameters.json`` is a hard dependency of the
+    discrimination step and is always validated: every numeric row must
+    carry a non-empty source (sha256 + location), so a hand-added unsourced
+    value fails the command, not only pytest. ``sources.json`` is validated
+    when present. Shared implementation for the command path and the pytest
+    gate (single authority).
+    """
+    checked = {}
+    prior = json.loads((RESULTS/"extinction_gap_diagnosis/prior_parameters.json").read_text())
+    for row in prior["parameters"]:
+        value = row.get("value")
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            source = row.get("source") or {}
+            if not (source.get("sha256") and source.get("location")):
+                raise RuntimeError(f"prior_parameters.json numeric row without source: "
+                                   f"{row.get('candidate')}/{row.get('name')}")
+    checked["prior_parameters.json"] = len(prior["parameters"])
+    sources_path = RESULTS/"extinction_gap_diagnosis/sources.json"
+    if sources_path.exists():
+        sources = json.loads(sources_path.read_text())
+        for item in sources:
+            missing = [key for key in ["file_name", "url", "location", "bytes", "sha256"]
+                       if not item.get(key)]
+            if missing:
+                raise RuntimeError(f"sources.json row {item.get('file_name')!r} missing "
+                                   f"fields: {missing}")
+        checked["sources.json"] = len(sources)
+    return checked
+
+
 @lru_cache(maxsize=1)
 def build_height_stats() -> dict:
     records = height_records()
@@ -1084,10 +1121,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("outputs/extinction_gap_diagnosis"))
     args = parser.parse_args()
+    checked = validate_literature_products()
     stats = write_height_stats(args.out)
     correlation = write_correlation(args.out, stats)
     discrimination = write_discrimination(args.out, stats)
-    print(json.dumps({"records": len(stats["records"]),
+    print(json.dumps({"literature_schema_check": checked,
+                      "records": len(stats["records"]),
                       "max_relative_gap": max(record["relative_gap"] for record in stats["records"]),
                       "cross_event": {variant: {key: value for key, value in summary.items()
                                                 if key != "pairwise_direction"}

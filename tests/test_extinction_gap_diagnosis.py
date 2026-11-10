@@ -145,14 +145,18 @@ def test_correlation_event_level_and_hst_cross_check():
 
 
 def test_prior_parameters_schema_every_numeric_row_sourced():
-    """Literature gate: no number without a pinned source (plan Step 4)."""
+    """Literature gate: no number without a pinned source (plan Step 4).
+
+    Delegates to the command-side ``validate_literature_products`` (single
+    authority): the CLI and this test enforce the identical schema walk.
+    """
+    checked = egd.validate_literature_products()
+    assert checked["prior_parameters.json"] >= 40
     prior = json.loads(PRIOR_PATH.read_text())
     rows = prior["parameters"]
-    assert len(rows) >= 40
     for row in rows:
         if isinstance(row["value"], (int, float)) and not isinstance(row["value"], bool):
             assert row["source"], f"{row['candidate']}/{row['name']}: numeric row without source"
-            assert row["source"].get("sha256") and row["source"].get("location")
     sources = json.loads((PRIOR_PATH.parent/"sources.json").read_text())
     opac = next(item for item in sources if item["file_name"] == "opac1998.pdf")
     assert opac["sha256"] == "68a20ba9488db1e0f65a9976d4ee46e6c879f89054fcff583ba67bb5d68d425c"

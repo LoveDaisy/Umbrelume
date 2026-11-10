@@ -136,7 +136,8 @@ uv run python -m validation.compare_dec2011 --out outputs/dec2011
 uv run python -m validation.compare_hst2019 --out outputs/hst2019
 
 # 跨事件消光缺口判别（高度统计 / 相关表 / 判别表可离线再生；
-# sources / prior_parameters 为一次性文献产物，命令侧仅做 schema 校验）
+# sources / prior_parameters 为一次性文献产物：命令侧对 prior_parameters（硬依赖）
+# 恒做 schema 校验、sources.json 存在时校验，再生产物之前执行）
 uv run python -m validation.extinction_gap_diagnosis --out validation/results/extinction_gap_diagnosis
 
 # 可选：重新核对网络来源；结果与固定 SHA 绑定
