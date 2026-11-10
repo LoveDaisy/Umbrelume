@@ -1,0 +1,1010 @@
+{
+  "event": "2019-01-21",
+  "scope": "First spaceborne-receiver independent event; fixed atmosphere; conditional umbral/full-moon comparison at the published mean linear-track positions, not complete color or turquoise-band validation",
+  "normalization": "In-eclipse counts/s divided by the time-weighted average of the twelve full-moon G430L counts/s spectra; no background subtraction, no absolute flux calibration, no re-exposure correction (single exposures and CR-rejected sets are already per second); Sun-site range change within the day verified <0.1% and applied",
+  "wavelength_window_nm": [
+    300.0,
+    569.6413058526922
+  ],
+  "umbral_quantitative_window_nm": [
+    430.0,
+    569.6413058526922
+  ],
+  "umbral_blue_check_window_nm": [
+    300.0,
+    420.0
+  ],
+  "extraction_method": "Per-column median across the filled 52'\" slit of _crj (CR-SPLIT sets) or _flt (single exposures) counts divided by exposure time; DQ exclusion mask (lost data | bad detector | aperture feature | saturation) = 4110; wavelengths from the _sx1/_x1d solutions, audited against the image headers",
+  "literature_correction_convention": {
+    "paper": "Youngblood et al. 2020 Sec. II.2: CalSTIS flt -> L.A.Cosmic -> x2d -> median across the cross-dispersion direction excluding flagged pixels; in-eclipse spectrum divided by an average of out-of-eclipse spectra; no absolute flux calibration for the transmission spectra",
+    "reproduced_here": "Same median extraction on _crj/_flt without x2d rectification (the filled slit spans the full detector height, so rectification cannot change a full-height median); CR handling via the pipeline _crj instead of L.A.Cosmic",
+    "omitted_with_bounds": [
+      "Lommel-Seeliger per-exposure division: F_LS in 0.4975-0.5021 with closely coupled incidence/emission angles, <=1% effect on in/out ratios",
+      "Penumbral-only limb-darkening division: G430L I/I0 0.7-0.79; published penumbral ratios are therefore about 1/0.75 above the raw ratios here"
+    ],
+    "published_cross_check": "No machine-readable published spectrum exists; the paper's umbral statements used here are qualitative anchors, checked where noted: 'no photons <=4200 A' is checked against the blue_end metrics; 'umbral G430L S/N 60-120' and 'Chappuis-band O3 detection >4000 A' are recorded as unchecked anchors (no corresponding mechanical check here)"
+  },
+  "profiles": {
+    "molecular": null,
+    "fixed_opac": {
+      "aod550": 0.013,
+      "bottom_m": 2000.0,
+      "top_m": 12000.0,
+      "scale_height_m": 8000.0,
+      "angstrom_visible": 1.58,
+      "angstrom_blue": 1.21,
+      "break_nm": 500.0
+    }
+  },
+  "grouping": {
+    "umbral_in_eclipse": [
+      "ody902030",
+      "ody902040"
+    ],
+    "penumbral_auxiliary": [
+      "ody9a2010",
+      "ody9a2020"
+    ],
+    "full_moon_out_of_eclipse": [
+      "ody904080",
+      "ody904090",
+      "ody9040a0",
+      "ody9040b0",
+      "ody9040c0",
+      "ody9040d0",
+      "ody9040e0",
+      "ody9040f0",
+      "ody9040g0",
+      "ody9040h0",
+      "ody9040i0",
+      "ody9040j0"
+    ],
+    "ruling": "Plan default A2 confirmed against the archive: umbral (5 G430L exposures in 2 CR-SPLIT sets) and full-moon (12 single G430L exposures) both exist, so the main ratio is umbral/full-moon; penumbral sets are auxiliary and are not part of the headline comparison."
+  },
+  "geometry_subset": {
+    "vector_construction": "At lunar reflection epoch t (mid exposure minus Moon-to-HST downleg), e=Earth(t-LT_E)-site and s=Sun(t-LT_S)-site from the sampled selenographic site; rho=|e x u|, D=e.u, S=|s-e| for sunward u=(s-e)/|s-e|. Site vectors originate at the lunar surface point, so receiver-side (HST) parallax is exact and not an uncertainty term; the downleg only shifts the epoch (Moon-HST range/c, ~1.28 s). Site states come from the Horizons OBSERVER pipeline (astrometric ICRF direction times delta distance; the VECTORS pipeline served time-only rows at retrieval time, including for the previously validated December-2011 request shape), which matches the December 2011 LT convention of applying no apparent-sky stellar aberration.",
+    "longitude_convention": "Table 1 selenographic longitudes read east-positive (IAU/SPICE modern convention, same as Horizons Moon site coordinates); validated by the RA_APER pointing check below.",
+    "epoch_contract": {
+      "observed_span_utc": [
+        "2019-01-21T05:00:00+00:00",
+        "2019-01-21T10:20:00+00:00"
+      ],
+      "reflection_epoch_shift": "mid exposure time minus Moon-to-HST downleg; downleg interpolated linearly from 1-minute Moon-from-HST DE441 ranges",
+      "site_vector_sampling": "Earth/Sun vectors from each selenographic site linearly interpolated at the reflection epoch between 1-minute Horizons samples (Horizons rejects sub-minute steps); interpolation error <~2 km, far below the 150 km probe scale"
+    },
+    "spatial_sensitivity": {
+      "sample_probe_offsets_m": [
+        -150000.0,
+        0.0,
+        150000.0
+      ],
+      "probe_semantics": "Sampled point displaced +/-150 km toward/away from the shadow axis on the lunar surface (rho +/- 150 km), mirroring the December 2011 radial probe scale.",
+      "pointing_small_terms_arcsec": 30.48,
+      "pointing_track_error_max_arcsec": 600.0,
+      "pointing_terms_source": "Youngblood et al. 2020 Sec. II.1: 14\" initial gyro slew, gyro guiding accumulating at 0.001\"/s (16.48\" max orbit 2, 10.72\" max orbit 3), linear-track approximation dominating at up to 10 arcmin.",
+      "pointing_track_error_km_max": 1042.44,
+      "pointing_small_terms_km_max": 52.955952,
+      "scope": "Displacement sensitivity, not a confidence interval; the track-error envelope exceeds the 150 km probe and limits the same-region albedo cancellation premise, see limitations."
+    },
+    "independent_checks": {
+      "mid_time_fits_vs_table1": {
+        "max_abs_diff_s": 0.85,
+        "tolerance_s": 2.0,
+        "per_exposure_abs_diff_s": {
+          "ody902alq": 0.65,
+          "ody902amq": 0.65,
+          "ody902aoq": 0.65,
+          "ody902apq": 0.6,
+          "ody902aqq": 0.6,
+          "ody9a2atq": 0.85,
+          "ody9a2avq": 0.85,
+          "ody9a2axq": 0.85,
+          "ody9a2ayq": 0.0,
+          "ody9a2azq": 0.0,
+          "ody9a2b0q": 0.0,
+          "ody904ccq": 0.75,
+          "ody904cdq": 0.75,
+          "ody904ceq": 0.75,
+          "ody904cfq": 0.75,
+          "ody904cgq": 0.75,
+          "ody904ciq": 0.65,
+          "ody904cjq": 0.65,
+          "ody904ckq": 0.65,
+          "ody904clq": 0.65,
+          "ody904cmq": 0.65,
+          "ody904cnq": 0.65,
+          "ody904coq": 0.65
+        },
+        "scope": "TIME-OBS is the first CR-SPLIT member (or single-exposure) start and mid = TIME-OBS + member exposure/2; later CR-SPLIT members take their Table-1 mid-time offsets from the first member, so their diffs are constructed from Table 1 rather than independently checked - only the four first members and the twelve single exposures carry independent FITS evidence"
+      },
+      "eclipse_angle_table1_vs_horizons": {
+        "max_abs_diff_deg": 0.013404150962423422,
+        "tolerance_deg": 0.1,
+        "scope": "Table 1 evaluates e at the fixed selenographic (0,0) site at observed mid times; Horizons site vectors reproduce the same angle definition."
+      },
+      "pointing_ra_aper_vs_table1": {
+        "max_separation_arcsec": 278.62424323877974,
+        "rms_separation_arcsec": 122.99182495272012,
+        "tolerance_arcsec": 1200.0,
+        "checked_exposure_count": 16,
+        "per_exposure": [
+          {
+            "exposure_name": "ody902alq",
+            "predicted_ra_deg": 122.33393956961541,
+            "predicted_dec_deg": 20.315260716146817,
+            "fits_ra_aper_deg": 122.3559440098,
+            "fits_dec_aper_deg": 20.38985600014,
+            "separation_arcsec": 278.62424323877974,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody902amq",
+            "predicted_ra_deg": 122.19963305637343,
+            "predicted_dec_deg": 20.184734581232792,
+            "fits_ra_aper_deg": 122.3559440098,
+            "fits_dec_aper_deg": 20.38985600014,
+            "separation_arcsec": 907.6750592099836,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody902aoq",
+            "predicted_ra_deg": 122.06489533748474,
+            "predicted_dec_deg": 20.054142343202482,
+            "fits_ra_aper_deg": 122.3559440098,
+            "fits_dec_aper_deg": 20.38985600014,
+            "separation_arcsec": 1557.9792463721012,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody902apq",
+            "predicted_ra_deg": 121.98163138874396,
+            "predicted_dec_deg": 19.903812552647658,
+            "fits_ra_aper_deg": 121.9698074785,
+            "fits_dec_aper_deg": 19.93153653951,
+            "separation_arcsec": 107.5309295514928,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody902aqq",
+            "predicted_ra_deg": 122.01162797310535,
+            "predicted_dec_deg": 19.82943470498105,
+            "fits_ra_aper_deg": 121.9698074785,
+            "fits_dec_aper_deg": 19.93153653951,
+            "separation_arcsec": 393.8914668479704,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody9a2atq",
+            "predicted_ra_deg": 124.60119780645738,
+            "predicted_dec_deg": 20.794091075828764,
+            "fits_ra_aper_deg": 124.6245439152,
+            "fits_dec_aper_deg": 20.8300688445,
+            "separation_arcsec": 151.48405310850202,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody9a2avq",
+            "predicted_ra_deg": 124.51511720237933,
+            "predicted_dec_deg": 20.795938026609104,
+            "fits_ra_aper_deg": 124.6245439152,
+            "fits_dec_aper_deg": 20.8300688445,
+            "separation_arcsec": 388.1887509597208,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody9a2axq",
+            "predicted_ra_deg": 124.48051849536789,
+            "predicted_dec_deg": 20.79627765061792,
+            "fits_ra_aper_deg": 124.6245439152,
+            "fits_dec_aper_deg": 20.8300688445,
+            "separation_arcsec": 499.69043278034724,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody9a2ayq",
+            "predicted_ra_deg": 124.45585859020373,
+            "predicted_dec_deg": 20.79700128277623,
+            "fits_ra_aper_deg": 124.5193636693,
+            "fits_dec_aper_deg": 20.8337022863,
+            "separation_arcsec": 251.2425778110222,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody9a2azq",
+            "predicted_ra_deg": 124.43586655839661,
+            "predicted_dec_deg": 20.79754990348419,
+            "fits_ra_aper_deg": 124.5193636693,
+            "fits_dec_aper_deg": 20.8337022863,
+            "separation_arcsec": 309.64923602938893,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody9a2b0q",
+            "predicted_ra_deg": 124.41515322624579,
+            "predicted_dec_deg": 20.798129996942198,
+            "fits_ra_aper_deg": 124.5193636693,
+            "fits_dec_aper_deg": 20.8337022863,
+            "separation_arcsec": 373.32133141362846,
+            "checked_against_header_pointing": false
+          },
+          {
+            "exposure_name": "ody904ccq",
+            "predicted_ra_deg": 125.37881113080178,
+            "predicted_dec_deg": 19.74012739998905,
+            "fits_ra_aper_deg": 125.3609585908,
+            "fits_dec_aper_deg": 19.76349539303,
+            "separation_arcsec": 103.61352493971545,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cdq",
+            "predicted_ra_deg": 125.34586046139654,
+            "predicted_dec_deg": 19.711597867124592,
+            "fits_ra_aper_deg": 125.3045240037,
+            "fits_dec_aper_deg": 19.70615136259,
+            "separation_arcsec": 141.45910078736566,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904ceq",
+            "predicted_ra_deg": 125.31293210799254,
+            "predicted_dec_deg": 19.6830464369893,
+            "fits_ra_aper_deg": 125.2809395854,
+            "fits_dec_aper_deg": 19.67992239181,
+            "separation_arcsec": 109.02622318775133,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cfq",
+            "predicted_ra_deg": 125.28001319193194,
+            "predicted_dec_deg": 19.654381951697584,
+            "fits_ra_aper_deg": 125.259482776,
+            "fits_dec_aper_deg": 19.65438166268,
+            "separation_arcsec": 69.60342931319704,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cgq",
+            "predicted_ra_deg": 125.24752695875712,
+            "predicted_dec_deg": 19.625513032066564,
+            "fits_ra_aper_deg": 125.2402236693,
+            "fits_dec_aper_deg": 19.6295887583,
+            "separation_arcsec": 28.78455007605098,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904ciq",
+            "predicted_ra_deg": 125.18274764805167,
+            "predicted_dec_deg": 19.52096895495009,
+            "fits_ra_aper_deg": 125.1788719925,
+            "fits_dec_aper_deg": 19.5188470566,
+            "separation_arcsec": 15.208097967040597,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cjq",
+            "predicted_ra_deg": 125.18495128873934,
+            "predicted_dec_deg": 19.504168594809283,
+            "fits_ra_aper_deg": 125.173660165,
+            "fits_dec_aper_deg": 19.49846149314,
+            "separation_arcsec": 43.47704222239458,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904ckq",
+            "predicted_ra_deg": 125.18739576690449,
+            "predicted_dec_deg": 19.48765497546336,
+            "fits_ra_aper_deg": 125.1713657172,
+            "fits_dec_aper_deg": 19.4804959701,
+            "separation_arcsec": 60.19930025239836,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904clq",
+            "predicted_ra_deg": 125.18970448419755,
+            "predicted_dec_deg": 19.471179212626723,
+            "fits_ra_aper_deg": 125.1715973246,
+            "fits_dec_aper_deg": 19.46367692838,
+            "separation_arcsec": 67.1317689225997,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cmq",
+            "predicted_ra_deg": 125.19238071878515,
+            "predicted_dec_deg": 19.454732578009633,
+            "fits_ra_aper_deg": 125.1743689824,
+            "fits_dec_aper_deg": 19.44804300704,
+            "separation_arcsec": 65.71322498086336,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904cnq",
+            "predicted_ra_deg": 125.19444040554248,
+            "predicted_dec_deg": 19.43858690539792,
+            "fits_ra_aper_deg": 125.1796866705,
+            "fits_dec_aper_deg": 19.43362400796,
+            "separation_arcsec": 53.1778591596915,
+            "checked_against_header_pointing": true
+          },
+          {
+            "exposure_name": "ody904coq",
+            "predicted_ra_deg": 125.19704424781179,
+            "predicted_dec_deg": 19.421794991931666,
+            "fits_ra_aper_deg": 125.1875495639,
+            "fits_dec_aper_deg": 19.42045076737,
+            "separation_arcsec": 32.59717904286029,
+            "checked_against_header_pointing": true
+          }
+        ],
+        "scope": "Body frame reconstructed from Horizons sub-observer longitude/latitude and pole direction (no hand-coded east/west sign); residuals judged only for single-exposure sets and first CR-SPLIT members, the only commanded pointings recorded in the headers. Residual scatter is the paper's documented linear-track approximation error; the east-positive Table 1 convention is confirmed by residuals far inside that budget."
+      }
+    },
+    "records": [
+      {
+        "dataset_id": "ody902030",
+        "exposure_name": "ody902alq",
+        "phase": "umbral",
+        "mid_time_utc": "2019-01-21T05:12:20+00:00",
+        "reflection_utc": "2019-01-21T05:12:18.826527+00:00",
+        "downleg_s": 1.1734733809234636,
+        "texp_s": 154.7,
+        "lon_deg": -21.4,
+        "lat_deg": -1.0,
+        "shadow_axis_distance_m": 2323789.0492612487,
+        "receiver_axial_distance_m": 356077226.80245996,
+        "sun_site_distance_m": 147204715352.38998,
+        "eclipse_angle_table1_deg": 0.38,
+        "eclipse_angle_horizons_deg": 0.37872532306947254,
+        "eclipse_angle_abs_diff_deg": 0.001274676930527463,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody902030",
+        "exposure_name": "ody902amq",
+        "phase": "umbral",
+        "mid_time_utc": "2019-01-21T05:15:39+00:00",
+        "reflection_utc": "2019-01-21T05:15:37.823751+00:00",
+        "downleg_s": 1.1762490408753155,
+        "texp_s": 154.7,
+        "lon_deg": -21.3,
+        "lat_deg": -0.8,
+        "shadow_axis_distance_m": 2388885.2262727516,
+        "receiver_axial_distance_m": 356072989.92956257,
+        "sun_site_distance_m": 147204745402.16776,
+        "eclipse_angle_table1_deg": 0.38,
+        "eclipse_angle_horizons_deg": 0.37961061820518416,
+        "eclipse_angle_abs_diff_deg": 0.00038938179481584623,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody902030",
+        "exposure_name": "ody902aoq",
+        "phase": "umbral",
+        "mid_time_utc": "2019-01-21T05:18:58+00:00",
+        "reflection_utc": "2019-01-21T05:18:56.820168+00:00",
+        "downleg_s": 1.1798315074956274,
+        "texp_s": 154.7,
+        "lon_deg": -14.3,
+        "lat_deg": -4.2,
+        "shadow_axis_distance_m": 2312827.2399328686,
+        "receiver_axial_distance_m": 356014459.3167015,
+        "sun_site_distance_m": 147204775456.8042,
+        "eclipse_angle_table1_deg": 0.38,
+        "eclipse_angle_horizons_deg": 0.38329437621961193,
+        "eclipse_angle_abs_diff_deg": 0.0032943762196119275,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody902040",
+        "exposure_name": "ody902apq",
+        "phase": "umbral",
+        "mid_time_utc": "2019-01-21T05:24:00+00:00",
+        "reflection_utc": "2019-01-21T05:23:58.813573+00:00",
+        "downleg_s": 1.1864265988640488,
+        "texp_s": 154.8,
+        "lon_deg": -9.4,
+        "lat_deg": -4.5,
+        "shadow_axis_distance_m": 2381033.863974659,
+        "receiver_axial_distance_m": 355983696.34279996,
+        "sun_site_distance_m": 147204821075.1057,
+        "eclipse_angle_table1_deg": 0.39,
+        "eclipse_angle_horizons_deg": 0.39399924622618854,
+        "eclipse_angle_abs_diff_deg": 0.003999246226188524,
+        "fits_mid_time_abs_diff_s": 0.6
+      },
+      {
+        "dataset_id": "ody902040",
+        "exposure_name": "ody902aqq",
+        "phase": "umbral",
+        "mid_time_utc": "2019-01-21T05:27:19+00:00",
+        "reflection_utc": "2019-01-21T05:27:17.808782+00:00",
+        "downleg_s": 1.1912179258315556,
+        "texp_s": 154.8,
+        "lon_deg": -10.6,
+        "lat_deg": -4.2,
+        "shadow_axis_distance_m": 2489950.896818847,
+        "receiver_axial_distance_m": 355985012.01151884,
+        "sun_site_distance_m": 147204851143.30914,
+        "eclipse_angle_table1_deg": 0.4,
+        "eclipse_angle_horizons_deg": 0.4042758390702766,
+        "eclipse_angle_abs_diff_deg": 0.004275839070276566,
+        "fits_mid_time_abs_diff_s": 0.6
+      },
+      {
+        "dataset_id": "ody9a2010",
+        "exposure_name": "ody9a2atq",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:20:28+00:00",
+        "reflection_utc": "2019-01-21T06:20:26.812423+00:00",
+        "downleg_s": 1.1875765059163996,
+        "texp_s": 48.3,
+        "lon_deg": -7.6,
+        "lat_deg": -16.6,
+        "shadow_axis_distance_m": 4677913.218860512,
+        "receiver_axial_distance_m": 355972471.3569423,
+        "sun_site_distance_m": 147205333685.37988,
+        "eclipse_angle_table1_deg": 0.77,
+        "eclipse_angle_horizons_deg": 0.7657140940834773,
+        "eclipse_angle_abs_diff_deg": 0.00428590591652267,
+        "fits_mid_time_abs_diff_s": 0.85
+      },
+      {
+        "dataset_id": "ody9a2010",
+        "exposure_name": "ody9a2avq",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:22:01+00:00",
+        "reflection_utc": "2019-01-21T06:21:59.814627+00:00",
+        "downleg_s": 1.185373309251844,
+        "texp_s": 48.3,
+        "lon_deg": 4.2,
+        "lat_deg": -20.1,
+        "shadow_axis_distance_m": 4422593.448986583,
+        "receiver_axial_distance_m": 356005174.9550131,
+        "sun_site_distance_m": 147205347779.19614,
+        "eclipse_angle_table1_deg": 0.78,
+        "eclipse_angle_horizons_deg": 0.7790161915437078,
+        "eclipse_angle_abs_diff_deg": 0.0009838084562922012,
+        "fits_mid_time_abs_diff_s": 0.85
+      },
+      {
+        "dataset_id": "ody9a2010",
+        "exposure_name": "ody9a2axq",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:23:34+00:00",
+        "reflection_utc": "2019-01-21T06:23:32.816745+00:00",
+        "downleg_s": 1.1832552775393002,
+        "texp_s": 48.3,
+        "lon_deg": 4.1,
+        "lat_deg": -19.4,
+        "shadow_axis_distance_m": 4521850.460651476,
+        "receiver_axial_distance_m": 355995455.39589727,
+        "sun_site_distance_m": 147205361873.18094,
+        "eclipse_angle_table1_deg": 0.8,
+        "eclipse_angle_horizons_deg": 0.7924231963313172,
+        "eclipse_angle_abs_diff_deg": 0.007576803668682852,
+        "fits_mid_time_abs_diff_s": 0.85
+      },
+      {
+        "dataset_id": "ody9a2020",
+        "exposure_name": "ody9a2ayq",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:24:52+00:00",
+        "reflection_utc": "2019-01-21T06:24:50.818451+00:00",
+        "downleg_s": 1.181548912330404,
+        "texp_s": 20.0,
+        "lon_deg": 2.1,
+        "lat_deg": -17.3,
+        "shadow_axis_distance_m": 4673531.455775433,
+        "receiver_axial_distance_m": 355968464.29655766,
+        "sun_site_distance_m": 147205373692.5877,
+        "eclipse_angle_table1_deg": 0.81,
+        "eclipse_angle_horizons_deg": 0.8037092612642297,
+        "eclipse_angle_abs_diff_deg": 0.0062907387357703515,
+        "fits_mid_time_abs_diff_s": 0.0
+      },
+      {
+        "dataset_id": "ody9a2020",
+        "exposure_name": "ody9a2azq",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:25:56+00:00",
+        "reflection_utc": "2019-01-21T06:25:54.819789+00:00",
+        "downleg_s": 1.1802113077923035,
+        "texp_s": 20.0,
+        "lon_deg": -0.3,
+        "lat_deg": -14.7,
+        "shadow_axis_distance_m": 4831509.478078833,
+        "receiver_axial_distance_m": 355941648.63378716,
+        "sun_site_distance_m": 147205383394.44275,
+        "eclipse_angle_table1_deg": 0.82,
+        "eclipse_angle_horizons_deg": 0.8129813067620344,
+        "eclipse_angle_abs_diff_deg": 0.0070186932379655564,
+        "fits_mid_time_abs_diff_s": 0.0
+      },
+      {
+        "dataset_id": "ody9a2020",
+        "exposure_name": "ody9a2b0q",
+        "phase": "penumbral",
+        "mid_time_utc": "2019-01-21T06:27:00+00:00",
+        "reflection_utc": "2019-01-21T06:26:58.821064+00:00",
+        "downleg_s": 1.1789360149499628,
+        "texp_s": 20.0,
+        "lon_deg": -3.1,
+        "lat_deg": -11.4,
+        "shadow_axis_distance_m": 5012239.4220338445,
+        "receiver_axial_distance_m": 355917041.21286887,
+        "sun_site_distance_m": 147205393094.20926,
+        "eclipse_angle_table1_deg": 0.83,
+        "eclipse_angle_horizons_deg": 0.8223142764202003,
+        "eclipse_angle_abs_diff_deg": 0.007685723579799686,
+        "fits_mid_time_abs_diff_s": 0.0
+      },
+      {
+        "dataset_id": "ody904080",
+        "exposure_name": "ody904ccq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:02:36+00:00",
+        "reflection_utc": "2019-01-21T10:02:34.824282+00:00",
+        "downleg_s": 1.1757179599245027,
+        "texp_s": 0.5,
+        "lon_deg": -15.6,
+        "lat_deg": -3.0,
+        "shadow_axis_distance_m": 18362106.315163717,
+        "receiver_axial_distance_m": 355359476.88718957,
+        "sun_site_distance_m": 147207364745.29303,
+        "eclipse_angle_table1_deg": 2.89,
+        "eclipse_angle_horizons_deg": 2.881925086580877,
+        "eclipse_angle_abs_diff_deg": 0.008074913419123142,
+        "fits_mid_time_abs_diff_s": 0.75
+      },
+      {
+        "dataset_id": "ody904090",
+        "exposure_name": "ody904cdq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:03:21+00:00",
+        "reflection_utc": "2019-01-21T10:03:19.823512+00:00",
+        "downleg_s": 1.1764879166846618,
+        "texp_s": 0.5,
+        "lon_deg": -14.3,
+        "lat_deg": -3.7,
+        "shadow_axis_distance_m": 18365120.650262855,
+        "receiver_axial_distance_m": 355350329.68134797,
+        "sun_site_distance_m": 147207371651.94504,
+        "eclipse_angle_table1_deg": 2.9,
+        "eclipse_angle_horizons_deg": 2.889274467035167,
+        "eclipse_angle_abs_diff_deg": 0.010725532964833029,
+        "fits_mid_time_abs_diff_s": 0.75
+      },
+      {
+        "dataset_id": "ody9040a0",
+        "exposure_name": "ody904ceq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:04:06+00:00",
+        "reflection_utc": "2019-01-21T10:04:04.822707+00:00",
+        "downleg_s": 1.1772932133034346,
+        "texp_s": 0.5,
+        "lon_deg": -12.7,
+        "lat_deg": -4.6,
+        "shadow_axis_distance_m": 18357487.642616447,
+        "receiver_axial_distance_m": 355341394.68952876,
+        "sun_site_distance_m": 147207378543.5972,
+        "eclipse_angle_table1_deg": 2.91,
+        "eclipse_angle_horizons_deg": 2.8965958490375767,
+        "eclipse_angle_abs_diff_deg": 0.013404150962423422,
+        "fits_mid_time_abs_diff_s": 0.75
+      },
+      {
+        "dataset_id": "ody9040b0",
+        "exposure_name": "ody904cfq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:04:51+00:00",
+        "reflection_utc": "2019-01-21T10:04:49.821858+00:00",
+        "downleg_s": 1.1781419542090823,
+        "texp_s": 0.5,
+        "lon_deg": -10.7,
+        "lat_deg": -5.8,
+        "shadow_axis_distance_m": 18335895.78868953,
+        "receiver_axial_distance_m": 355333641.9087228,
+        "sun_site_distance_m": 147207385439.1549,
+        "eclipse_angle_table1_deg": 2.91,
+        "eclipse_angle_horizons_deg": 2.9039378854691758,
+        "eclipse_angle_abs_diff_deg": 0.006062114530824392,
+        "fits_mid_time_abs_diff_s": 0.75
+      },
+      {
+        "dataset_id": "ody9040c0",
+        "exposure_name": "ody904cgq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:05:36+00:00",
+        "reflection_utc": "2019-01-21T10:05:34.820972+00:00",
+        "downleg_s": 1.179027744172014,
+        "texp_s": 0.5,
+        "lon_deg": -8.4,
+        "lat_deg": -7.3,
+        "shadow_axis_distance_m": 18303420.9386825,
+        "receiver_axial_distance_m": 355329148.4121354,
+        "sun_site_distance_m": 147207392341.3897,
+        "eclipse_angle_table1_deg": 2.92,
+        "eclipse_angle_horizons_deg": 2.911278951534596,
+        "eclipse_angle_abs_diff_deg": 0.008721048465404113,
+        "fits_mid_time_abs_diff_s": 0.75
+      },
+      {
+        "dataset_id": "ody9040d0",
+        "exposure_name": "ody904ciq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:09:24+00:00",
+        "reflection_utc": "2019-01-21T10:09:22.816045+00:00",
+        "downleg_s": 1.1839550424651974,
+        "texp_s": 0.7,
+        "lon_deg": -7.3,
+        "lat_deg": -6.1,
+        "shadow_axis_distance_m": 18511604.53428202,
+        "receiver_axial_distance_m": 355308624.2292353,
+        "sun_site_distance_m": 147207427286.2191,
+        "eclipse_angle_table1_deg": 2.96,
+        "eclipse_angle_horizons_deg": 2.9484625702932186,
+        "eclipse_angle_abs_diff_deg": 0.011537429706781399,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040e0",
+        "exposure_name": "ody904cjq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:10:09+00:00",
+        "reflection_utc": "2019-01-21T10:10:07.815001+00:00",
+        "downleg_s": 1.1849985028396872,
+        "texp_s": 0.7,
+        "lon_deg": -8.5,
+        "lat_deg": -5.3,
+        "shadow_axis_distance_m": 18598456.454459697,
+        "receiver_axial_distance_m": 355305941.50076944,
+        "sun_site_distance_m": 147207434193.39554,
+        "eclipse_angle_table1_deg": 2.96,
+        "eclipse_angle_horizons_deg": 2.9557873587852903,
+        "eclipse_angle_abs_diff_deg": 0.004212641214709656,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040f0",
+        "exposure_name": "ody904ckq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:10:54+00:00",
+        "reflection_utc": "2019-01-21T10:10:52.813938+00:00",
+        "downleg_s": 1.18606172219283,
+        "texp_s": 0.7,
+        "lon_deg": -9.3,
+        "lat_deg": -4.8,
+        "shadow_axis_distance_m": 18671068.094829127,
+        "receiver_axial_distance_m": 355303915.0165721,
+        "sun_site_distance_m": 147207441083.5657,
+        "eclipse_angle_table1_deg": 2.97,
+        "eclipse_angle_horizons_deg": 2.963134607075767,
+        "eclipse_angle_abs_diff_deg": 0.006865392924233049,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040g0",
+        "exposure_name": "ody904clq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:11:39+00:00",
+        "reflection_utc": "2019-01-21T10:11:37.812858+00:00",
+        "downleg_s": 1.1871422881513671,
+        "texp_s": 0.7,
+        "lon_deg": -9.6,
+        "lat_deg": -4.7,
+        "shadow_axis_distance_m": 18726259.622478597,
+        "receiver_axial_distance_m": 355301716.50007504,
+        "sun_site_distance_m": 147207447983.30316,
+        "eclipse_angle_table1_deg": 2.98,
+        "eclipse_angle_horizons_deg": 2.9704894719653434,
+        "eclipse_angle_abs_diff_deg": 0.009510528034656573,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040h0",
+        "exposure_name": "ody904cmq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:12:24+00:00",
+        "reflection_utc": "2019-01-21T10:12:22.811766+00:00",
+        "downleg_s": 1.1882336622032206,
+        "texp_s": 0.7,
+        "lon_deg": -9.6,
+        "lat_deg": -4.9,
+        "shadow_axis_distance_m": 18770603.618033245,
+        "receiver_axial_distance_m": 355299376.4111192,
+        "sun_site_distance_m": 147207454891.51453,
+        "eclipse_angle_table1_deg": 2.99,
+        "eclipse_angle_horizons_deg": 2.977842226030049,
+        "eclipse_angle_abs_diff_deg": 0.012157773969950991,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040i0",
+        "exposure_name": "ody904cnq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:13:09+00:00",
+        "reflection_utc": "2019-01-21T10:13:07.810666+00:00",
+        "downleg_s": 1.1893342498751616,
+        "texp_s": 0.7,
+        "lon_deg": -9.1,
+        "lat_deg": -5.4,
+        "shadow_axis_distance_m": 18797706.117742997,
+        "receiver_axial_distance_m": 355296475.4887729,
+        "sun_site_distance_m": 147207461778.2803,
+        "eclipse_angle_table1_deg": 2.99,
+        "eclipse_angle_horizons_deg": 2.985168641740247,
+        "eclipse_angle_abs_diff_deg": 0.004831358259753227,
+        "fits_mid_time_abs_diff_s": 0.65
+      },
+      {
+        "dataset_id": "ody9040j0",
+        "exposure_name": "ody904coq",
+        "phase": "full_moon",
+        "mid_time_utc": "2019-01-21T10:13:54+00:00",
+        "reflection_utc": "2019-01-21T10:13:52.809557+00:00",
+        "downleg_s": 1.1904432041806714,
+        "texp_s": 0.7,
+        "lon_deg": -8.3,
+        "lat_deg": -6.4,
+        "shadow_axis_distance_m": 18812732.810200263,
+        "receiver_axial_distance_m": 355294705.30898935,
+        "sun_site_distance_m": 147207468684.58932,
+        "eclipse_angle_table1_deg": 3.0,
+        "eclipse_angle_horizons_deg": 2.9925175273532023,
+        "eclipse_angle_abs_diff_deg": 0.007482472646797689,
+        "fits_mid_time_abs_diff_s": 0.65
+      }
+    ],
+    "authority": "validation/observations/hst2019/geometry.json is the single authority for this embedded subset; refresh this snapshot by rerunning the comparison after any geometry change"
+  },
+  "solar_scale_in_over_out": {
+    "ody902030": 1.0000364002726925,
+    "ody902040": 1.0000351678580506,
+    "ody9a2010": 1.0000282158395457,
+    "ody9a2020": 1.0000277319510527
+  },
+  "numerical_checks": {
+    "full_moon_geometric_transmission": "verified >= 1-1e-12 for all twelve reference positions",
+    "wavelength_alignment_max_nm": {
+      "ody902030": 1.2692975586837179,
+      "ody902040": 1.2690836763390507,
+      "ody9a2010": 1.255018674599114,
+      "ody9a2020": 1.2554727035750375,
+      "ody904080": 1.2809550836027483,
+      "ody904090": 1.2809267145075296,
+      "ody9040a0": 1.2809137617444435,
+      "ody9040b0": 1.2808982858034028,
+      "ody9040c0": 1.2808903938906155,
+      "ody9040d0": 1.2808680132837367,
+      "ody9040e0": 1.2808528460956836,
+      "ody9040f0": 1.2808183745370911,
+      "ody9040g0": 1.2808692212897768,
+      "ody9040h0": 1.2808729880372312,
+      "ody9040i0": 1.2808566662824319,
+      "ody9040j0": 1.2808442006550536
+    },
+    "min_valid_fraction": {
+      "ody902030": 1.0,
+      "ody902040": 1.0,
+      "ody9a2010": 1.0,
+      "ody9a2020": 1.0,
+      "ody904080": 1.0,
+      "ody904090": 1.0,
+      "ody9040a0": 1.0,
+      "ody9040b0": 1.0,
+      "ody9040c0": 1.0,
+      "ody9040d0": 1.0,
+      "ody9040e0": 1.0,
+      "ody9040f0": 1.0,
+      "ody9040g0": 1.0,
+      "ody9040h0": 1.0,
+      "ody9040i0": 1.0,
+      "ody9040j0": 1.0
+    }
+  },
+  "metrics": {
+    "molecular": {
+      "ody902030": {
+        "model_to_observed_median": 4.047394382599984,
+        "model_to_observed_min": 3.048265448919042,
+        "model_to_observed_max": 7.135135070109272,
+        "slope_model_vs_observed": {
+          "430_over_570": 0.5236937032982233,
+          "500_over_570": 0.5928549102011875
+        },
+        "blue_end_observed_median": 1.0094195253027205e-06,
+        "blue_end_observed_max": 2.45478731425247e-05,
+        "blue_end_model_median": 4.9105978895754565e-09,
+        "blue_end_scope": "Scattered-light upper-limit region only: the observed blue end carries a long-wavelength scattered-light pedestal (observed ratios there exceed the numerically-zero model and peak at the 300 nm grid edge), so these numbers bound contamination, not umbral transmission; the paper likewise reports no photons <=4200 A in the umbral phase",
+        "quantitative_scope": "430-570 nm window; the observed spectrum rises monotonically through this window (Rayleigh-slope region the paper detects), free of the blue-edge scattered-light bump"
+      },
+      "ody902040": {
+        "model_to_observed_median": 4.538037785792078,
+        "model_to_observed_min": 4.025412596509458,
+        "model_to_observed_max": 7.039084231868527,
+        "slope_model_vs_observed": {
+          "430_over_570": 0.9237266041472804,
+          "500_over_570": 0.7292801912180917
+        },
+        "blue_end_observed_median": 6.170602560795841e-07,
+        "blue_end_observed_max": 2.6265220195133462e-05,
+        "blue_end_model_median": 1.0093067846126607e-08,
+        "blue_end_scope": "Scattered-light upper-limit region only: the observed blue end carries a long-wavelength scattered-light pedestal (observed ratios there exceed the numerically-zero model and peak at the 300 nm grid edge), so these numbers bound contamination, not umbral transmission; the paper likewise reports no photons <=4200 A in the umbral phase",
+        "quantitative_scope": "430-570 nm window; the observed spectrum rises monotonically through this window (Rayleigh-slope region the paper detects), free of the blue-edge scattered-light bump"
+      }
+    },
+    "fixed_opac": {
+      "ody902030": {
+        "model_to_observed_median": 2.5803898543192547,
+        "model_to_observed_min": 1.9931529808955337,
+        "model_to_observed_max": 4.505889909796987,
+        "slope_model_vs_observed": {
+          "430_over_570": 0.5436560536385642,
+          "500_over_570": 0.5977664876986659
+        },
+        "blue_end_observed_median": 1.0094195253027205e-06,
+        "blue_end_observed_max": 2.45478731425247e-05,
+        "blue_end_model_median": 3.2759658468847465e-09,
+        "blue_end_scope": "Scattered-light upper-limit region only: the observed blue end carries a long-wavelength scattered-light pedestal (observed ratios there exceed the numerically-zero model and peak at the 300 nm grid edge), so these numbers bound contamination, not umbral transmission; the paper likewise reports no photons <=4200 A in the umbral phase",
+        "quantitative_scope": "430-570 nm window; the observed spectrum rises monotonically through this window (Rayleigh-slope region the paper detects), free of the blue-edge scattered-light bump"
+      },
+      "ody902040": {
+        "model_to_observed_median": 3.030537617863472,
+        "model_to_observed_min": 2.729814432025294,
+        "model_to_observed_max": 4.862010294863925,
+        "slope_model_vs_observed": {
+          "430_over_570": 0.9764455250938486,
+          "500_over_570": 0.7418879089677634
+        },
+        "blue_end_observed_median": 6.170602560795841e-07,
+        "blue_end_observed_max": 2.6265220195133462e-05,
+        "blue_end_model_median": 7.155471927230109e-09,
+        "blue_end_scope": "Scattered-light upper-limit region only: the observed blue end carries a long-wavelength scattered-light pedestal (observed ratios there exceed the numerically-zero model and peak at the 300 nm grid edge), so these numbers bound contamination, not umbral transmission; the paper likewise reports no photons <=4200 A in the umbral phase",
+        "quantitative_scope": "430-570 nm window; the observed spectrum rises monotonically through this window (Rayleigh-slope region the paper detects), free of the blue-edge scattered-light bump"
+      }
+    },
+    "penumbral_auxiliary_fixed_opac_only": {
+      "ody9a2010": {
+        "model_to_observed_median": 1.8739049042485503,
+        "model_to_observed_min": 4.4689517419722665e-19,
+        "model_to_observed_max": 2.9863810185621236,
+        "scope": "Auxiliary only. Two recorded caveats: (1) published penumbral ratios additionally divide by a limb-darkening factor (I/I0 0.7-0.79) not reproduced here, so published figures sit about 1/0.75 above these raw ratios; (2) the model is numerically zero through the Hartley-Huggins-saturated blue end while the observation carries scattered light, so ratios below ~400 nm are meaningless and the min statistics reflect that region. ody9a2020 flattens beyond ~530 nm, consistent with the saturation the paper reports for its e=0.83 deg spectrum above 4500 A; treat its red end as contaminated."
+      },
+      "ody9a2020": {
+        "model_to_observed_median": 1.584880942812278,
+        "model_to_observed_min": 1.3143049081713667,
+        "model_to_observed_max": 2.4151372620742695,
+        "scope": "Auxiliary only. Two recorded caveats: (1) published penumbral ratios additionally divide by a limb-darkening factor (I/I0 0.7-0.79) not reproduced here, so published figures sit about 1/0.75 above these raw ratios; (2) the model is numerically zero through the Hartley-Huggins-saturated blue end while the observation carries scattered light, so ratios below ~400 nm are meaningless and the min statistics reflect that region. ody9a2020 flattens beyond ~530 nm, consistent with the saturation the paper reports for its e=0.83 deg spectrum above 4500 A; treat its red end as contaminated."
+      }
+    }
+  },
+  "probe_cases": {
+    "molecular": {
+      "ody902030": {
+        "-150km": {
+          "window_min": 1.6207017360433257e-06,
+          "window_median": 3.502892763112468e-05,
+          "window_max": 9.535169858717716e-05
+        },
+        "+0km": {
+          "window_min": 2.8989126996827525e-06,
+          "window_median": 4.6894263457829095e-05,
+          "window_max": 0.00010974529897595116
+        },
+        "+150km": {
+          "window_min": 4.859183189628764e-06,
+          "window_median": 6.174094029226743e-05,
+          "window_max": 0.00012607186438774737
+        },
+        "+track_envelope": {
+          "window_min": 3.762694195864434e-05,
+          "window_median": 0.0001873336945614216,
+          "window_max": 0.00024428343388482724
+        },
+        "-track_envelope": {
+          "window_min": 1.0699483781765563e-07,
+          "window_median": 9.409861154102618e-06,
+          "window_max": 5.771179386428129e-05
+        }
+      },
+      "ody902040": {
+        "-150km": {
+          "window_min": 2.374268799877286e-06,
+          "window_median": 4.219230107542778e-05,
+          "window_max": 0.00010414147242868113
+        },
+        "+0km": {
+          "window_min": 4.141604974103492e-06,
+          "window_median": 5.6463779142973424e-05,
+          "window_max": 0.00012032081894793507
+        },
+        "+150km": {
+          "window_min": 6.166048024779619e-06,
+          "window_median": 7.033644921603611e-05,
+          "window_max": 0.00013616481692013116
+        },
+        "+track_envelope": {
+          "window_min": 4.710418823668319e-05,
+          "window_median": 0.00021148518365800707,
+          "window_max": 0.0002626952696225568
+        },
+        "-track_envelope": {
+          "window_min": 1.4125964055342515e-07,
+          "window_median": 1.0651373535824208e-05,
+          "window_max": 6.0176068238294926e-05
+        }
+      }
+    },
+    "fixed_opac": {
+      "ody902030": {
+        "-150km": {
+          "window_min": 9.73244935674227e-07,
+          "window_median": 2.0833167027037196e-05,
+          "window_max": 5.71097689352126e-05
+        },
+        "+0km": {
+          "window_min": 1.9004927952456354e-06,
+          "window_median": 2.9861198246484778e-05,
+          "window_max": 6.930444913616368e-05
+        },
+        "+150km": {
+          "window_min": 3.4256507299933994e-06,
+          "window_median": 4.1830223542736674e-05,
+          "window_max": 8.405235321048128e-05
+        },
+        "+track_envelope": {
+          "window_min": 3.528383129200006e-05,
+          "window_median": 0.0001637525114298213,
+          "window_max": 0.0002042674462458231
+        },
+        "-track_envelope": {
+          "window_min": 4.426856652830217e-08,
+          "window_median": 4.079638490737074e-06,
+          "window_max": 2.7081896632072023e-05
+        }
+      },
+      "ody902040": {
+        "-150km": {
+          "window_min": 1.5156146264875128e-06,
+          "window_median": 2.6249309801953374e-05,
+          "window_max": 6.452384132372623e-05
+        },
+        "+0km": {
+          "window_min": 2.8606741101612834e-06,
+          "window_median": 3.753509476851081e-05,
+          "window_max": 7.86008833245084e-05
+        },
+        "+150km": {
+          "window_min": 4.5053445618529334e-06,
+          "window_median": 4.9107517870116476e-05,
+          "window_max": 9.318590012909956e-05
+        },
+        "+track_envelope": {
+          "window_min": 4.475694368828042e-05,
+          "window_median": 0.00018858847477898545,
+          "window_max": 0.0002242227736437651
+        },
+        "-track_envelope": {
+          "window_min": 6.08632291668669e-08,
+          "window_median": 4.772802579166743e-06,
+          "window_max": 2.8865334369586055e-05
+        }
+      }
+    }
+  },
+  "probe_scope": "+/-150 km sampled displacement mirrors the December 2011 radial probe; the track-error envelope cases (+/-1042 km, Youngblood et al. pointing budget) bracket the same-region premise symmetrically and are recorded, not folded into the headline metrics. Snapshot stores per-case quantitative-window summaries; full-resolution probe curves are regenerable byte-identically via run_analysis",
+  "limitations": [
+    "Pointing wanders within the paper's documented budget (up to 10 arcmin track approximation error), so in/out sampled lunar regions can differ; lunar albedo cancellation is conditional on the published mean linear-track coordinates and degrades within the recorded envelope",
+    "The model treats the solar disk as uniform; the paper's solar center-to-limb residual applies to the umbral branch uncorrected (paper: possible factor <=2 on umbral transmission spectra)",
+    "No background/scattered-light subtraction; STIS CCD long-wavelength scattered light adds a broad pedestal that only partially cancels in the in/out ratio, as in the paper",
+    "G430L ends at 570 nm and the model tables start at 300 nm: no red-end Chappuis core and no 289-300 nm edge; turquoise-band color claims are outside this source's reach",
+    "Auxiliary penumbral branch omits the published limb-darkening division; see its scope field"
+  ],
+  "production_module_sha256": {
+    "aerosol.py": "bc1ea10ece29c229184188d95b1626f9ac735b1a420a71a8aea268d50933242c",
+    "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+    "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
+    "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+    "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e"
+  }
+}

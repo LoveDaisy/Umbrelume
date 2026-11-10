@@ -7,7 +7,13 @@ name = "lunar-eclipse-color"
 version = "0.2.0"
 description = "Spectral lunar-eclipse illumination from refracted atmospheric transmission"
 requires-python = ">=3.12"
-dependencies = ["numpy>=2,<3", "scipy>=1.12,<2", "matplotlib>=3.8,<4", "pillow>=10,<13"]
+dependencies = [
+    "numpy>=2,<3",
+    "scipy>=1.12,<2",
+    "matplotlib>=3.8,<4",
+    "pillow>=10,<13",
+    "astropy>=6,<8",
+]
 
 [project.scripts]
 lunar-eclipse = "eclipse.cli:main"
