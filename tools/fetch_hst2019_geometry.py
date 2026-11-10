@@ -1,17 +1,18 @@
 """Rebuild the 2019-01-21 HST/STIS eclipse geometry from Horizons without fitting.
 
 For every Table-1 sampled selenographic position this script queries Earth and
-Sun vectors from that lunar site (DE441, MEAN_ME high-precision orientation,
+Sun states from that lunar site (DE441, MEAN_ME high-precision orientation,
 light-time corrected) at the reflection epoch and computes the shadow-axis
-distance with the same shadow_coordinates relation used for December 2011.
-The receiver-side parallax never enters as an uncertainty: the vectors
-originate at the lunar surface point itself, and the Moon-to-HST downleg
-(used only to shift the epoch) is insensitive at the few-km level to the HST
-position. The eclipse angle at the (0,0) site and the FITS RA_APER/DEC_APER
-pointing provide independent checks against Table 1 and the east-positive
-longitude convention. No wall-clock field is written: this file is a
-deterministic function of the cached Horizons responses and the pinned
-archive contract (retrieval dates live in source.json).
+distance with the same single shadow_coordinates relation used for December
+2011 (imported from tools.fetch_dec2011_geometry). The receiver-side parallax
+never enters as an uncertainty: the vectors originate at the lunar surface
+point itself, and the Moon-to-HST downleg (used only to shift the epoch) is
+insensitive at the few-km level to the HST position. The eclipse angle at the
+(0,0) site and the FITS RA_APER/DEC_APER pointing provide independent checks
+against Table 1 and the east-positive longitude convention. No wall-clock
+field is written: this file is a deterministic function of the cached Horizons
+responses and the pinned archive contract (retrieval dates live in
+source.json).
 """
 from __future__ import annotations
 
@@ -20,12 +21,19 @@ import csv
 import hashlib
 import json
 import re
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
 import numpy as np
+
+# Single authority for the shadow-axis relation (a56): import from the
+# December 2011 script instead of keeping a second copy. Bootstrap the repo
+# root so direct `python tools/...` execution works alongside pytest imports.
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from tools.fetch_dec2011_geometry import shadow_coordinates
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT/"validation/observations/hst2019"
@@ -41,20 +49,6 @@ SPAN_END = datetime.fromisoformat("2019-01-21T10:20:00+00:00")
 POINTING_TRACK_ERROR_ARCSEC = 600.0
 POINTING_SMALL_TERMS_ARCSEC = 14.0 + 16.48
 SAMPLE_PROBE_OFFSETS_M = [-150_000.0, 0.0, 150_000.0]
-
-
-def shadow_coordinates(earth_from_site, sun_from_site):
-    """Shadow-axis distance, axial distance and Sun distance from site vectors.
-
-    Both input vectors share the lunar site origin and ICRF axes, in metres.
-    r=|e x u| and D=e.u for sunward unit vector u=(s-e)/|s-e|.
-    """
-    e,s = np.asarray(earth_from_site),np.asarray(sun_from_site)
-    source_distance = np.linalg.norm(s-e,axis=-1)
-    sunward = (s-e)/source_distance[...,None]
-    radius = np.linalg.norm(np.cross(e,sunward),axis=-1)
-    axial_distance = np.sum(e*sunward,axis=-1)
-    return radius,axial_distance,source_distance
 
 
 def fmt_time(t: datetime) -> str:
@@ -278,15 +272,6 @@ def observer_at(records: list[dict], epoch: datetime) -> dict:
             continue
         entry[key] = (1-weight)*records[before][key]+weight*records[after][key]
     return entry
-
-
-def sky_tangents(direction: np.ndarray) -> tuple[np.ndarray,np.ndarray]:
-    """Sky east and north tangents perpendicular to a unit direction."""
-    pole = np.array([0.,0.,1.])
-    east = np.cross(pole,direction)
-    east /= np.linalg.norm(east)
-    north = np.cross(direction,east)
-    return east,north
 
 
 def predict_pointing(lon_deg: float, lat_deg: float, sub_lon: float, sub_lat: float,

@@ -9,8 +9,10 @@ import pytest
 from scipy.spatial.transform import Rotation
 
 from tools.fetch_hst2019_geometry import member_mid_times,predict_pointing,shadow_coordinates
+from validation import compare_hst2019
 from validation.compare_hst2019 import (band_median,column_medians,header_wavelength_solution,
-                                        time_weighted_mean,window_mask,wavelength_solution)
+                                        load_products,time_weighted_mean,window_mask,
+                                        wavelength_solution)
 
 DATA = Path(__file__).resolve().parents[1]/"validation/observations/hst2019"
 
@@ -137,6 +139,72 @@ def test_member_mid_times_matches_table_and_rejects_disagreement():
                    "d2":{"time_obs":datetime(2019,1,21,10,0,10,tzinfo=timezone.utc),"exptime_s":2.}}
     with pytest.raises(RuntimeError):
         member_mid_times(_rows(),contract,headers_bad)
+
+
+def _write_synthetic_archive(cache: Path) -> tuple[dict,dict,np.ndarray]:
+    """Minimal _crj/_sx1/_flt/_x1d set exercising load_products' real I/O path."""
+    from astropy.io import fits
+    columns,exptime = 1024,100.0
+    wavelengths_angstrom = 4300.0+2.746*(np.arange(1,columns+1)-519.263)
+    column_values = np.arange(1,columns+1)*0.1
+    sci = np.tile(column_values,(8,1))
+    dq = np.zeros_like(sci,dtype=np.int16)
+    dq[0,5] = 16  # one flagged hot pixel must not move the column median
+    image_header = fits.Header({"CRVAL1":4300.0,"CD1_1":2.746,"CRPIX1":519.263,
+                                "EXPTIME":exptime})
+    def image_dataset(name,exptime_s):
+        header = image_header.copy();header["EXPTIME"] = exptime_s
+        return fits.HDUList([fits.PrimaryHDU(),
+                             fits.ImageHDU(data=sci,name="SCI",header=header),
+                             fits.ImageHDU(data=dq,name="DQ")])
+    def wavelength_dataset():
+        table = np.zeros(1,dtype=[("WAVELENGTH",(float,columns))])
+        table[0]["WAVELENGTH"] = wavelengths_angstrom
+        return fits.HDUList([fits.PrimaryHDU(),fits.BinTableHDU(table)])
+    image_dataset("odyT030",100.0).writeto(cache/"odyT030_crj.fits")
+    wavelength_dataset().writeto(cache/"odyT030_sx1.fits")
+    image_dataset("odyT0f0",0.5).writeto(cache/"odyT0f0_flt.fits")
+    wavelength_dataset().writeto(cache/"odyT0f0_x1d.fits")
+    contract = {"mast_download":{"products":{"odyT030_crj.fits":{},"odyT030_sx1.fits":{},
+                                             "odyT0f0_flt.fits":{},"odyT0f0_x1d.fits":{}}},
+                "cr_split_membership":{"odyT030":["odyT0alq","odyT0amq"]},
+                "grouping":{"full_moon_out_of_eclipse":["odyT0f0"]}}
+    geometry = {"records":[
+        {"dataset_id":"odyT030","exposure_name":"odyT0alq","texp_s":50.,
+         "shadow_axis_distance_m":2.3e6,"receiver_axial_distance_m":3.56e8,
+         "sun_site_distance_m":1.471e11},
+        {"dataset_id":"odyT030","exposure_name":"odyT0amq","texp_s":50.,
+         "shadow_axis_distance_m":2.4e6,"receiver_axial_distance_m":3.56e8,
+         "sun_site_distance_m":1.471e11},
+        {"dataset_id":"odyT0f0","exposure_name":"odyT0ccq","texp_s":0.5,
+         "shadow_axis_distance_m":1.8e7,"receiver_axial_distance_m":3.55e8,
+         "sun_site_distance_m":1.471e11}]}
+    return contract,geometry,column_values
+
+
+def test_load_products_reads_synthetic_fits_io_path(tmp_path,monkeypatch):
+    contract,geometry,column_values = _write_synthetic_archive(tmp_path)
+    monkeypatch.setattr(compare_hst2019,"CACHE",tmp_path)
+    result = load_products(contract,geometry)
+    assert set(result)=={"odyT030","odyT0f0"}
+    np.testing.assert_allclose(result["odyT030"]["counts_per_s"],column_values/100.0)
+    np.testing.assert_allclose(result["odyT0f0"]["counts_per_s"],column_values/0.5)
+    np.testing.assert_allclose(result["odyT030"]["wavelength_nm"],
+                               (4300.0+2.746*(np.arange(1,1025)-519.263))/10.0)
+    assert result["odyT030"]["header_vs_1d_max_diff_nm"]<1e-9
+    assert [member["exposure_name"] for member in result["odyT030"]["members"]] \
+        ==["odyT0alq","odyT0amq"]
+    assert result["odyT0f0"]["min_valid_fraction"]==pytest.approx(1.0)
+
+
+def test_load_products_rejects_misaligned_wavelength_solution(tmp_path,monkeypatch):
+    from astropy.io import fits
+    contract,geometry,_ = _write_synthetic_archive(tmp_path)
+    monkeypatch.setattr(compare_hst2019,"CACHE",tmp_path)
+    with fits.open(tmp_path/"odyT030_sx1.fits",mode="update") as hdus:
+        hdus[1].data["WAVELENGTH"][0] += 500.0
+    with pytest.raises(RuntimeError):
+        load_products(contract,geometry)
 
 
 def test_committed_contract_internally_consistent():

@@ -62,11 +62,12 @@ MIN_VALID_FRACTION = 0.5
 
 
 def column_medians(sci: np.ndarray, dq: np.ndarray, exptime_s: float) -> tuple[np.ndarray, np.ndarray]:
-    """Median counts/s per column over unflagged rows, with validity flags.
+    """Median counts/s per column over unflagged rows, with validity fractions.
 
     The slit fills the detector height, so every unflagged row is part of the
-    spectrum. Columns whose valid fraction drops below MIN_VALID_FRACTION are
-    flagged unreliable (e.g. saturated penumbral bins).
+    spectrum. run_analysis fails loudly if any dataset's minimum valid fraction
+    drops below MIN_VALID_FRACTION (e.g. a heavily saturated exposure); this is
+    a gate, not a downgrade-to-flag mechanism.
     """
     sci = np.asarray(sci,dtype=float)
     dq = np.asarray(dq)
@@ -132,6 +133,13 @@ def dataset_model_profile(table, member_records: list[dict], wavelengths_nm: np.
     return weighted/total
 
 
+def probe_window_summary(values: np.ndarray, window: np.ndarray) -> dict:
+    """Quantitative-window summary standing in for a full-resolution probe curve."""
+    in_window = values[window]
+    return {"window_min":float(in_window.min()),"window_median":float(np.median(in_window)),
+            "window_max":float(in_window.max())}
+
+
 def load_products(contract: dict, geometry: dict) -> dict:
     """Extract one spectrum per dataset and attach its geometry members."""
     from astropy.io import fits
@@ -169,14 +177,17 @@ def run_analysis():
     geometry = json.loads((DATA/"geometry.json").read_text())
     datasets = load_products(contract,geometry)
 
-    window = window_mask(datasets["ody904080"]["wavelength_nm"],MODEL_TABLE_MIN_NM,G430L_MAX_NM)
+    # All wavelength grids are gated equal below, so any dataset anchors the
+    # window; the anchor comes from the contract grouping, not a literal ID.
+    grid_anchor = contract["grouping"]["full_moon_out_of_eclipse"][0]
+    window = window_mask(datasets[grid_anchor]["wavelength_nm"],MODEL_TABLE_MIN_NM,G430L_MAX_NM)
     for dataset,data in datasets.items():
         if not np.array_equal(np.where(window)[0],np.where(window_mask(
                 data["wavelength_nm"],MODEL_TABLE_MIN_NM,G430L_MAX_NM))[0]):
             raise ValueError(f"{dataset}: wavelength grids disagree inside the window")
         if data["min_valid_fraction"]<MIN_VALID_FRACTION:
             raise RuntimeError(f"{dataset}: columns with <{MIN_VALID_FRACTION:.0%} valid pixels present")
-    wavelengths = datasets["ody904080"]["wavelength_nm"][window]
+    wavelengths = datasets[grid_anchor]["wavelength_nm"][window]
 
     grouping = contract["grouping"]
     umbral_datasets = grouping["umbral_in_eclipse"]
@@ -224,17 +235,18 @@ def run_analysis():
                 cases[f"{int(offset/1000):+d}km"] = dataset_model_profile(
                     table,datasets[dataset]["members"],wavelengths,radial_offset_m=offset)
             envelope = geometry["spatial_sensitivity"]["pointing_track_error_km_max"]*1000.0
-            cases["+track_envelope"] = dataset_model_profile(
-                table,datasets[dataset]["members"],wavelengths,radial_offset_m=envelope)
+            for sign,label in [(1.0,"+track_envelope"),(-1.0,"-track_envelope")]:
+                cases[label] = dataset_model_profile(
+                    table,datasets[dataset]["members"],wavelengths,radial_offset_m=sign*envelope)
             probes[variant][dataset] = cases
 
     metrics = {}
+    quantitative = window_mask(wavelengths,UMBRAL_QUANTITATIVE_MIN_NM,G430L_MAX_NM)
+    blue = window_mask(wavelengths,MODEL_TABLE_MIN_NM,UMBRAL_BLUE_CHECK_MAX_NM)
     for variant in profiles:
         metrics[variant] = {}
         for dataset in umbral_datasets:
-            quantitative = window_mask(wavelengths,UMBRAL_QUANTITATIVE_MIN_NM,G430L_MAX_NM)
             ratio = predictions[(variant,dataset)][quantitative]/observed[dataset][quantitative]
-            blue = window_mask(wavelengths,MODEL_TABLE_MIN_NM,UMBRAL_BLUE_CHECK_MAX_NM)
             metrics[variant][dataset] = {
                 "model_to_observed_median":float(np.median(ratio)),
                 "model_to_observed_min":float(ratio.min()),
@@ -257,9 +269,9 @@ def run_analysis():
                                      "this window (Rayleigh-slope region the paper detects), free of the "
                                      "blue-edge scattered-light bump"}
     metrics["penumbral_auxiliary_fixed_opac_only"] = {}
+    aux_window = window_mask(wavelengths,MODEL_TABLE_MIN_NM,G430L_MAX_NM)
     for dataset in penumbral_datasets:
-        quantitative = window_mask(wavelengths,MODEL_TABLE_MIN_NM,G430L_MAX_NM)
-        ratio = predictions[("fixed_opac",dataset)][quantitative]/observed[dataset][quantitative]
+        ratio = predictions[("fixed_opac",dataset)][aux_window]/observed[dataset][aux_window]
         metrics["penumbral_auxiliary_fixed_opac_only"][dataset] = {
             "model_to_observed_median":float(np.median(ratio)),
             "model_to_observed_min":float(ratio.min()),
@@ -303,13 +315,19 @@ def run_analysis():
                                    "Penumbral-only limb-darkening division: G430L I/I0 0.7-0.79; published "
                                    "penumbral ratios are therefore about 1/0.75 above the raw ratios here"],
             "published_cross_check":"No machine-readable published spectrum exists; the paper's umbral "
-                                    "statements used here are qualitative anchors: no photons <=4200 A, "
-                                    "umbral G430L S/N 60-120, and Chappuis-band O3 detection >4000 A",
+                                    "statements used here are qualitative anchors, checked where noted: "
+                                    "'no photons <=4200 A' is checked against the blue_end metrics; "
+                                    "'umbral G430L S/N 60-120' and 'Chappuis-band O3 detection >4000 A' are "
+                                    "recorded as unchecked anchors (no corresponding mechanical check here)",
         },
         "profiles":{name:asdict(profile) if profile else None for name,profile in profiles.items()},
-        "geometry_subset":{key:geometry[key] for key in
-                           ["vector_construction","longitude_convention","epoch_contract",
-                            "spatial_sensitivity","independent_checks","records"]},
+        "grouping":grouping,
+        "geometry_subset":{**{key:geometry[key] for key in
+                              ["vector_construction","longitude_convention","epoch_contract",
+                               "spatial_sensitivity","independent_checks","records"]},
+                           "authority":"validation/observations/hst2019/geometry.json is the single "
+                                       "authority for this embedded subset; refresh this snapshot by "
+                                       "rerunning the comparison after any geometry change"},
         "solar_scale_in_over_out":solar_scale,
         "numerical_checks":{
             "full_moon_geometric_transmission":"verified >= 1-1e-12 for all twelve reference positions",
@@ -318,12 +336,15 @@ def run_analysis():
             "min_valid_fraction":{name:datasets[name]["min_valid_fraction"] for name in datasets},
         },
         "metrics":metrics,
-        "probe_cases":{variant:{dataset:{label:values.tolist() for label,values in cases.items()}
+        "probe_cases":{variant:{dataset:{label:probe_window_summary(values,quantitative)
+                                         for label,values in cases.items()}
                                 for dataset,cases in probes[variant].items()}
                        for variant in probes},
         "probe_scope":"+/-150 km sampled displacement mirrors the December 2011 radial probe; the track-error "
-                      "envelope case (up to ~1042 km, Youngblood et al. pointing budget) brackets the "
-                      "same-region premise and is recorded, not folded into the headline metrics",
+                      "envelope cases (+/-1042 km, Youngblood et al. pointing budget) bracket the same-region "
+                      "premise symmetrically and are recorded, not folded into the headline metrics. Snapshot "
+                      "stores per-case quantitative-window summaries; full-resolution probe curves are "
+                      "regenerable byte-identically via run_analysis",
         "limitations":[
             "Pointing wanders within the paper's documented budget (up to 10 arcmin track approximation "
             "error), so in/out sampled lunar regions can differ; lunar albedo cancellation is conditional "
@@ -352,32 +373,38 @@ def run_analysis():
                     record[f"{dataset}_{variant}_model_to_observed"] = float(
                         predictions[(variant,dataset)][index]/observed[dataset][index])
         records.append(record)
-    report["records"] = records
-    return report,datasets,window,observed,predictions,probes
+    # Per-wavelength records live only in comparison.csv; the JSON snapshot
+    # stays at precedent scale (metrics + probe summaries + checks).
+    return report,records,datasets,window,observed,predictions,probes
 
 
 def write_analysis(out: Path):
-    report,datasets,window,observed,predictions,probes = run_analysis()
+    report,records,datasets,window,observed,predictions,probes = run_analysis()
+    grid_anchor = next(iter(datasets))
     out.mkdir(parents=True,exist_ok=True)
     (out/"comparison.json").write_text(json.dumps(report,indent=2)+"\n")
     with (out/"comparison.csv").open("w",newline="") as stream:
-        writer = csv.DictWriter(stream,fieldnames=list(report["records"][0]),lineterminator="\n")
-        writer.writeheader();writer.writerows(report["records"])
+        writer = csv.DictWriter(stream,fieldnames=list(records[0]),lineterminator="\n")
+        writer.writeheader();writer.writerows(records)
     with (DATA/"spectra.csv").open("w",newline="") as stream:
         fields = ["wavelength_nm"]+[f"{name}_rate_cps" for name in datasets]
         rows = []
         for index in np.where(window)[0]:
-            row = {"wavelength_nm":float(datasets["ody904080"]["wavelength_nm"][index])}
+            row = {"wavelength_nm":float(datasets[grid_anchor]["wavelength_nm"][index])}
             for name,data in datasets.items():
                 row[f"{name}_rate_cps"] = float(data["counts_per_s"][index])
             rows.append(row)
         writer = csv.DictWriter(stream,fieldnames=fields,lineterminator="\n")
         writer.writeheader();writer.writerows(rows)
-    wavelengths = np.array([record["wavelength_nm"] for record in report["records"]])
+    wavelengths = np.array([record["wavelength_nm"] for record in records])
+    umbral_datasets = report["grouping"]["umbral_in_eclipse"]
+    penumbral_datasets = report["grouping"]["penumbral_auxiliary"]
+    umbral_colors = dict(zip(umbral_datasets,("#a66b44","#4a6c96")))
     with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,
                          "axes.spines.right":False}):
         fig,axes = plt.subplots(2,2,figsize=(11,7.3),gridspec_kw={"hspace":.35})
-        for dataset,color in [("ody902030","#a66b44"),("ody902040","#4a6c96")]:
+        for dataset in umbral_datasets:
+            color = umbral_colors[dataset]
             axes[0,0].plot(wavelengths,observed[dataset],"-",color=color,alpha=.75,
                            label=f"observed umbral/full-moon {dataset}")
             for variant,style in [("molecular","--"),("fixed_opac","-")]:
@@ -387,22 +414,21 @@ def write_analysis(out: Path):
         axes[0,0].set_ylabel("Umbral / full-moon spectrum");axes[0,0].legend(frameon=False,fontsize=7)
         axes[0,0].set_title("Umbral comparison, 300-570 nm window",loc="left")
         for variant,color in [("molecular","#a66b44"),("fixed_opac","#227580")]:
-            for dataset in ("ody902030","ody902040"):
-                ratio = np.array([record[f"{dataset}_{variant}_model_to_observed"]
-                                  for record in report["records"]])
+            for dataset in umbral_datasets:
+                ratio = np.array([record[f"{dataset}_{variant}_model_to_observed"] for record in records])
                 axes[1,0].plot(wavelengths,ratio,"-",color=color,alpha=.8,
-                               label=f"{variant} {dataset}" if dataset=="ody902030" else None)
+                               label=f"{variant} {dataset}" if dataset==umbral_datasets[0] else None)
         axes[1,0].axhline(1,color="#253d4a",lw=.8)
         axes[1,0].set_ylabel("Model / observed");axes[1,0].set_xlabel("Wavelength (nm)")
         axes[1,0].legend(frameon=False,fontsize=7);axes[1,0].set_ylim(0.05,20)
-        for dataset,color in [("ody902030","#a66b44"),("ody9a2010","#ad8540")]:
-            axes[0,1].plot(wavelengths,np.array([record[f"{dataset}_rate_cps"]
-                          for record in report["records"]]),color=color,alpha=.8,label=dataset)
-        axes[0,1].plot(wavelengths,np.array([record["fullmoon_rate_avg_cps"]
-                       for record in report["records"]]),color="#253d4a",label="full-moon average")
+        for dataset,color in [(umbral_datasets[0],"#a66b44"),(penumbral_datasets[0],"#ad8540")]:
+            axes[0,1].plot(wavelengths,np.array([record[f"{dataset}_rate_cps"] for record in records]),
+                           color=color,alpha=.8,label=dataset)
+        axes[0,1].plot(wavelengths,np.array([record["fullmoon_rate_avg_cps"] for record in records]),
+                       color="#253d4a",label="full-moon average")
         axes[0,1].set_yscale("log");axes[0,1].set_ylabel("Counts / s")
         axes[0,1].legend(frameon=False,fontsize=7);axes[0,1].set_title("Extracted slit spectra",loc="left")
-        for dataset,color in [("ody9a2010","#ad8540"),("ody9a2020","#a64d4d")]:
+        for dataset,color in [(penumbral_datasets[0],"#ad8540"),(penumbral_datasets[1],"#a64d4d")]:
             axes[1,1].plot(wavelengths,observed[dataset],color=color,alpha=.8,
                            label=f"penumbral (aux) {dataset}")
             axes[1,1].plot(wavelengths,predictions[("fixed_opac",dataset)],"--",color=color,lw=1.1)
@@ -413,8 +439,8 @@ def write_analysis(out: Path):
         for ax in axes.flat: ax.grid(alpha=.18)
         fig.suptitle("2019-01-21 HST/STIS G430L / fixed-atmosphere comparison",fontsize=12)
         fig.savefig(out/"comparison.png",dpi=160,bbox_inches="tight");plt.close(fig)
-    for dataset in ("ody902030","ody902040"):
-        for variant in ("molecular","fixed_opac"):
+    for dataset in umbral_datasets:
+        for variant in report["profiles"]:
             metric = report["metrics"][variant][dataset]
             print(f"{dataset} {variant}: model/observed median "
                   f"{metric['model_to_observed_median']:.3g} "
