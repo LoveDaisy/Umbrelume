@@ -21,6 +21,11 @@ variant quantifies the sensitivity to this definition.
 Deterministic outputs: no wall-clock or runtime fields; fixed JSON key order
 and fixed CSV row/column order; PNG written without timestamp metadata.
 
+Field-naming scope: "variant" without qualification means a shape x width
+combination within one model variant; per-band fields whose name says
+"main_variant" are restricted to the fixed OPAC model, "all_variants" span
+both model variants.
+
 Reproduce:
     uv run python -m validation.filter_response_2011 --out outputs/filter_response_2011
 Snapshot gate: rerun to outputs/regen_check; analysis.json and comparison.csv
@@ -242,7 +247,16 @@ def cross_check_gate(mono: dict, observations: list, adjudicated_rtol: float | N
 
 
 def relative_differences(computed: dict, reference: dict) -> dict:
-    """Relative differences at the readouts the reference contains (>=1)."""
+    """Relative differences at every readout the reference contains.
+
+    The reference must be fully covered by the computed columns; a reference
+    key missing on the computed side is a hard error, so a silently shrunk
+    observation set can never pass the gate.
+    """
+    missing = set(reference)-set(computed)
+    if missing:
+        raise ValueError(f"Cross-check reference has keys absent from the "
+                         f"computed columns: {sorted(missing)}")
     common = sorted(set(computed) & set(reference))
     if not common:
         raise ValueError("Cross-check reference shares no readout with the observations")
@@ -333,6 +347,7 @@ def per_band_summary(products, band: float) -> dict:
                      if name.startswith(main+"_")}
     outermost = mask & (angles == np.max(angles[mask]))
     mono_outermost = float(mono_ratios[main][outermost][0])
+    outermost_deviation = abs(mono_outermost-1.0)
     outermost_diffs = {}
     for model, _ in VARIANT_TABLES:
         for shape in SHAPES:
@@ -344,7 +359,28 @@ def per_band_summary(products, band: float) -> dict:
                   if name.startswith(main+"_")]
     all_diffs = list(outermost_diffs.values())
     best = min(abs(float(band_ratio(products, main, band, shape, width)[outermost][0])-1.0)
-               for shape in SHAPES for width in WIDTHS_NM)/abs(mono_outermost-1.0)
+               for shape in SHAPES for width in WIDTHS_NM)/outermost_deviation
+    best_all = min(abs(float(band_ratio(products, model, band, shape, width)[outermost][0])-1.0)
+                   / abs(float(mono_ratios[model][outermost][0])-1.0)
+                   for model, _ in VARIANT_TABLES
+                   for shape in SHAPES for width in WIDTHS_NM)
+    # Outer-region deviation reductions (positive = the band shift moves the
+    # model/observed ratio toward unity at that readout).
+    reductions, fractions, nominal_fractions = [], [], []
+    outer_indices = np.where(outer)[0]
+    for shape in SHAPES:
+        for width in WIDTHS_NM:
+            band_curve = band_ratio(products, main, band, shape, width)[outer]
+            for k, index in enumerate(outer_indices):
+                dev_mono = abs(float(mono_ratios[main][index])-1.0)
+                reduction = dev_mono-abs(float(band_curve[k])-1.0)
+                fraction = reduction/dev_mono if dev_mono > 0 else 0.0
+                reductions.append(reduction)
+                fractions.append(fraction)
+                if shape == "gauss" and width == NOMINAL_WIDTH_NM:
+                    nominal_fractions.append(fraction)
+    sensitivity_ratio = products["sensitivity_values"][band]/observed
+    r_only_diffs = sensitivity_ratio-mono_ratios[main]
     summary = {
         "readout_count": int(mask.sum()),
         "angle_range_deg": [float(np.min(angles[mask])), float(np.max(angles[mask]))],
@@ -364,8 +400,23 @@ def per_band_summary(products, band: float) -> dict:
             "mono_deviation_from_unity": mono_outermost-1.0,
             "main_variant_signed_range": [min(main_diffs), max(main_diffs)],
             "all_variant_signed_range": [min(all_diffs), max(all_diffs)],
+            "main_variant_max_abs_shift_over_deviation":
+                max(abs(value) for value in main_diffs)/outermost_deviation,
+            "all_variant_max_abs_shift_over_deviation":
+                max(abs(value) for value in all_diffs)/outermost_deviation,
         },
-        "outermost_deviation_ratio_best_variant": best,
+        "outermost_deviation_ratio_best_main_variant": best,
+        "outermost_deviation_ratio_best_all_variants": best_all,
+        "outer_toward_unity_reduction": {
+            "max_deviation_reduction_main_variant": max(reductions),
+            "max_deviation_reduction_fraction_main_variant": max(fractions),
+            "nominal_width_max_deviation_reduction_fraction": max(nominal_fractions),
+        },
+        "definition_sensitivity_R_only": {
+            "signed_range_all_readouts": [float(np.min(r_only_diffs[mask])),
+                                          float(np.max(r_only_diffs[mask]))],
+            "outer_max_abs": float(np.max(np.abs(r_only_diffs[outer]))),
+        },
         "outermost_classification": classify_outermost(best),
     }
     inner = mask & (angles < OUTER_MIN_ANGLE_DEG)
@@ -634,6 +685,9 @@ def main():
         print(f"{band} nm: band-vs-mono envelope max |difference| = "
               f"{summary['band_vs_mono_envelope_max']:.3g}; "
               f"{summary['outermost_classification']}")
+    convergence = report["grid_convergence"]
+    print(f"Grid convergence: max relative change {convergence['max_relative_change_base_to_refined']:.3g} "
+          f"(threshold {convergence['threshold']:g}, within={convergence['within_threshold']})")
     print(f"Monochromatic cross-check: {report['monochromatic_cross_check']['status']}")
     print(f"Results: {args.out.resolve()}")
 

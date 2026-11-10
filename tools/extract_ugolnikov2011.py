@@ -74,16 +74,19 @@ def normalized_text(document) -> str:
 
 
 def keyword_hits(text: str, keywords: list[str]) -> dict[str, int]:
-    """Hyphen-insensitive literal counts.
+    """Hyphen-insensitive literal counts over three spelling forms.
 
-    Each keyword is counted on the normalized text and on a hyphen-stripped
-    copy, so a natively hyphenated spelling in the body ("band-width",
-    "pass-band") is matched by the space-form keyword; the recorded count is
-    the larger of the two forms.
+    Each keyword is counted on the normalized text, on a hyphen-stripped copy
+    (band-width -> bandwidth), and on a copy with hyphens replaced by spaces
+    (response-curve -> "response curve"); the recorded count is the maximum of
+    the three forms, so natively hyphenated single-word and multi-word
+    variants are both covered.
     """
     dehyphenated = text.replace("-", "")
+    spaced = text.replace("-", " ")
     return {keyword: max(text.count(keyword),
-                         dehyphenated.count(keyword.replace("-", "")))
+                         dehyphenated.count(keyword.replace("-", "")),
+                         spaced.count(keyword.replace("-", " ")))
             for keyword in keywords}
 
 
@@ -109,9 +112,10 @@ def filter_information(text: str, branch: str, digest: str) -> dict:
                          "figure raster content covered by manual page inspection recorded in the "
                          "task progress log",
                 "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed; "
-                                 "keywords additionally matched against a hyphen-stripped copy so "
-                                 "natively hyphenated spelling variants (e.g. band-width) are "
-                                 "covered; recorded count is the max of both forms",
+                                 "each keyword matched on three forms (as-is, hyphen-stripped, "
+                                 "hyphen-to-space) so natively hyphenated spelling variants "
+                                 "(band-width, response-curve) are covered; recorded count is "
+                                 "the max of the three forms",
                 "hit_counts": hits,
             },
             "filter_statements_present": FILTER_STATEMENTS,

@@ -53,7 +53,7 @@
         "spectral bandpass"
       ],
       "scope": "full extracted text of all 5 pages (body, figure captions, table text); figure raster content covered by manual page inspection recorded in the task progress log",
-      "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed; keywords additionally matched against a hyphen-stripped copy so natively hyphenated spelling variants (e.g. band-width) are covered; recorded count is the max of both forms",
+      "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed; each keyword matched on three forms (as-is, hyphen-stripped, hyphen-to-space) so natively hyphenated spelling variants (band-width, response-curve) are covered; recorded count is the max of the three forms",
       "hit_counts": {
         "fwhm": 0,
         "bandwidth": 0,
