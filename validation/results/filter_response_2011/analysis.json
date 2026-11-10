@@ -24,7 +24,9 @@
       "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
       "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
       "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e",
-      "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87"
+      "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+      "validation/filter_response_2011.py": "7c21f7874cd9b01a190cdb18c48a152e71adf80f1153a76ac02ad287291604ad",
+      "validation/compare_observations.py": "fbb2aaaaff2ec395027064a346b9cf227d72115da0e8aa9f7d310a52263406ec"
     },
     "fitted_parameters": [],
     "adjudicated_rtol": null,
@@ -168,6 +170,18 @@
       "outer_band_effect_max": 0.14652981644841567,
       "main_variant_outer_effect_max": 0.10771962362826626,
       "outer_mono_deviation_max": 1.9857231349395121,
+      "outermost_band_minus_mono": {
+        "mono_ratio": 1.0809978065710706,
+        "mono_deviation_from_unity": 0.08099780657107059,
+        "main_variant_signed_range": [
+          0.005743067848382966,
+          0.03367247257801931
+        ],
+        "all_variant_signed_range": [
+          0.005743067848382966,
+          0.03561547683203514
+        ]
+      },
       "outermost_deviation_ratio_best_variant": 1.0709039922376635,
       "outermost_classification": "band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.07)"
     },
@@ -240,6 +254,18 @@
       "outer_band_effect_max": 0.01717943159498514,
       "main_variant_outer_effect_max": 0.013108926130783516,
       "outer_mono_deviation_max": 0.6832148555227773,
+      "outermost_band_minus_mono": {
+        "mono_ratio": 0.9736756331854489,
+        "mono_deviation_from_unity": -0.02632436681455108,
+        "main_variant_signed_range": [
+          -0.012717133238162037,
+          -0.0015116859789540138
+        ],
+        "all_variant_signed_range": [
+          -0.014457819839512442,
+          -0.0015116859789540138
+        ]
+      },
       "outermost_deviation_ratio_best_variant": 1.0574253500417876,
       "outermost_classification": "band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.06)",
       "innermost_angle_deg": 0.15,

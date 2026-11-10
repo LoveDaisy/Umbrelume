@@ -11,6 +11,10 @@ filter response curves stated, branch B = FWHM/bandwidth stated without curves,
 branch C = no filter width or response information stated. The guard re-checks
 that claim against the extracted text so the adjudication is mechanically
 reproducible; contradicting hits abort instead of silently switching branches.
+Branch A/B currently abort even when their anchors are found — producing A/B
+output first requires an owner adjudication of the carrier form and sampling
+method. Making ``--branch`` required intentionally retires the previous
+no-argument invocation; the curve-extraction path itself is unchanged.
 """
 from __future__ import annotations
 
@@ -70,7 +74,17 @@ def normalized_text(document) -> str:
 
 
 def keyword_hits(text: str, keywords: list[str]) -> dict[str, int]:
-    return {keyword: text.count(keyword) for keyword in keywords}
+    """Hyphen-insensitive literal counts.
+
+    Each keyword is counted on the normalized text and on a hyphen-stripped
+    copy, so a natively hyphenated spelling in the body ("band-width",
+    "pass-band") is matched by the space-form keyword; the recorded count is
+    the larger of the two forms.
+    """
+    dehyphenated = text.replace("-", "")
+    return {keyword: max(text.count(keyword),
+                         dehyphenated.count(keyword.replace("-", "")))
+            for keyword in keywords}
 
 
 def filter_information(text: str, branch: str, digest: str) -> dict:
@@ -94,7 +108,10 @@ def filter_information(text: str, branch: str, digest: str) -> dict:
                 "scope": "full extracted text of all 5 pages (body, figure captions, table text); "
                          "figure raster content covered by manual page inspection recorded in the "
                          "task progress log",
-                "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed",
+                "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed; "
+                                 "keywords additionally matched against a hyphen-stripped copy so "
+                                 "natively hyphenated spelling variants (e.g. band-width) are "
+                                 "covered; recorded count is the max of both forms",
                 "hit_counts": hits,
             },
             "filter_statements_present": FILTER_STATEMENTS,
@@ -106,8 +123,8 @@ def filter_information(text: str, branch: str, digest: str) -> dict:
                             "recorded as an upgrade path only; no external contact was made",
         }
     if branch == "A":
-        found = {keyword: text.count(keyword) for keyword in BRANCH_A_ANCHORS
-                 if text.count(keyword)}
+        found = {keyword: count for keyword, count
+                 in keyword_hits(text, BRANCH_A_ANCHORS).items() if count}
         if not found:
             raise ValueError("Branch A claimed but no filter response-curve statement found in "
                              "the fixed PDF; re-adjudicate H1 before regenerating")
@@ -115,8 +132,8 @@ def filter_information(text: str, branch: str, digest: str) -> dict:
                          "owner-adjudicated carrier form and sampling method (plan Step 1/2), "
                          f"anchors found: {found}")
     if branch == "B":
-        found = {keyword: text.count(keyword) for keyword in BRANCH_B_ANCHORS
-                 if text.count(keyword)}
+        found = {keyword: count for keyword, count
+                 in keyword_hits(text, BRANCH_B_ANCHORS).items() if count}
         if not found:
             raise ValueError("Branch B claimed but no FWHM/bandwidth statement found in the fixed "
                              "PDF; re-adjudicate H1 before regenerating")

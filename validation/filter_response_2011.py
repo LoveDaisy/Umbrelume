@@ -333,7 +333,17 @@ def per_band_summary(products, band: float) -> dict:
                      if name.startswith(main+"_")}
     outermost = mask & (angles == np.max(angles[mask]))
     mono_outermost = float(mono_ratios[main][outermost][0])
-    best = min(float(np.abs(band_ratio(products, main, band, shape, width)[outermost][0]-1.0))
+    outermost_diffs = {}
+    for model, _ in VARIANT_TABLES:
+        for shape in SHAPES:
+            for width in WIDTHS_NM:
+                outermost_diffs[f"{model}_{shape}{width:g}"] = float(
+                    band_ratio(products, model, band, shape, width)[outermost][0]
+                    - mono_ratios[model][outermost][0])
+    main_diffs = [value for name, value in outermost_diffs.items()
+                  if name.startswith(main+"_")]
+    all_diffs = list(outermost_diffs.values())
+    best = min(abs(float(band_ratio(products, main, band, shape, width)[outermost][0])-1.0)
                for shape in SHAPES for width in WIDTHS_NM)/abs(mono_outermost-1.0)
     summary = {
         "readout_count": int(mask.sum()),
@@ -349,6 +359,12 @@ def per_band_summary(products, band: float) -> dict:
         "main_variant_outer_effect_max": max(v["outer_max_abs_difference"]
                                              for v in main_variants.values()),
         "outer_mono_deviation_max": float(np.max(np.abs(mono_ratios[main][outer]-1.0))),
+        "outermost_band_minus_mono": {
+            "mono_ratio": mono_outermost,
+            "mono_deviation_from_unity": mono_outermost-1.0,
+            "main_variant_signed_range": [min(main_diffs), max(main_diffs)],
+            "all_variant_signed_range": [min(all_diffs), max(all_diffs)],
+        },
         "outermost_deviation_ratio_best_variant": best,
         "outermost_classification": classify_outermost(best),
     }
@@ -507,8 +523,12 @@ def compute_analysis(adjudicated_rtol: float | None = None):
             "adopted_geometry": {"moon_distance_m": geometry_data["moon_distance_m"],
                                  "sun_distance_m": geometry_data["sun_distance_m"]},
             "production_module_sha256": {
-                name: hashlib.sha256((Path(eclipse.__file__).parent/name).read_bytes()).hexdigest()
-                for name in ["aerosol.py", "atmosphere.py", "rays.py", "spectra.py", "transport.py"]},
+                **{name: hashlib.sha256((Path(eclipse.__file__).parent/name).read_bytes()).hexdigest()
+                   for name in ["aerosol.py", "atmosphere.py", "rays.py", "spectra.py", "transport.py"]},
+                "validation/filter_response_2011.py": hashlib.sha256(
+                    Path(__file__).read_bytes()).hexdigest(),
+                "validation/compare_observations.py": hashlib.sha256(
+                    (Path(__file__).parent/"compare_observations.py").read_bytes()).hexdigest()},
             "fitted_parameters": [],
             "adjudicated_rtol": products["cross_check"]["adjudicated_rtol"],
             "adjudication_reference": products["cross_check"]["adjudication_reference"],

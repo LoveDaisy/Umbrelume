@@ -9,9 +9,11 @@ import math
 import numpy as np
 import pytest
 
+from validation import filter_response_2011 as filter_response
 from validation.filter_response_2011 import (
     BANDS_NM, GAUSSIAN_TRUNCATED_TAIL_FRACTION, NOMINAL_WIDTH_NM, SIGMA_CUTOFF,
-    SHAPES, WIDTHS_NM, band_mean, gaussian_sigma_nm, response_values,
+    SHAPES, WIDTHS_NM, band_mean, classify_outermost, cross_check_gate,
+    gaussian_sigma_nm, response_values,
     support_grid, union_grid, grid_indices, variant_grids,
     load_obs2011_predictions, load_round2_predictions)
 from validation.compare_observations import DATA
@@ -97,3 +99,58 @@ def test_committed_cross_check_references_contain_expected_fields():
                for value in round2.values())
     assert len(obs2011) == 4
     assert all("model_event_300du" in value for value in obs2011.values())
+
+
+def test_classify_outermost_thresholds_are_pinned():
+    # Audit anchor for the thresholds quoted in docs/OBSERVATIONAL_VALIDATION.md.
+    assert "materially reduces" in classify_outermost(0.5)
+    assert "marginally" in classify_outermost(2.0/3.0)
+    assert "marginally" in classify_outermost(1.5)
+    assert "does not reduce" in classify_outermost(1.5 + 1e-12)
+
+
+def _gate_with_predictions(monkeypatch, molecular, opac, obs2011_value):
+    key = (503.0, 0.400)
+    monkeypatch.setattr(filter_response, "load_round2_predictions",
+                        lambda: {key: {"molecular_prediction": molecular,
+                                       "fixed_opac_prediction": opac}})
+    monkeypatch.setattr(filter_response, "load_obs2011_predictions",
+                        lambda: {key: {"model_event_300du": obs2011_value}})
+    observations = [{"wavelength_nm": 503.0, "shadow_angle_deg": 0.400}]
+    mono = {"molecular": np.array([molecular]), "fixed_opac": np.array([opac])}
+    return mono, observations
+
+
+def test_cross_check_gate_reproduced_on_exact_match(monkeypatch):
+    mono, observations = _gate_with_predictions(monkeypatch, 1.0, 1.0, 1.0)
+    result = cross_check_gate(mono, observations, None)
+    assert result["status"] == "reproduced"
+    assert result["adjudicated_rtol"] is None
+
+
+def test_cross_check_gate_middle_band_pauses_without_adjudication(monkeypatch, capsys):
+    mono, observations = _gate_with_predictions(monkeypatch, 1.0*(1+5e-10), 1.0, 1.0)
+    with pytest.raises(RuntimeError, match="gate stopped the run"):
+        cross_check_gate(mono, observations, None)
+    assert "pause: owner adjudication required" in capsys.readouterr().out
+
+
+def test_cross_check_gate_middle_band_accepts_covering_adjudication(monkeypatch):
+    mono, observations = _gate_with_predictions(monkeypatch, 1.0*(1+5e-10), 1.0, 1.0)
+    result = cross_check_gate(mono, observations, 1e-9)
+    assert result["status"] == "adjudicated"
+    assert result["adjudicated_rtol"] == 1e-9
+
+
+def test_cross_check_gate_middle_band_rejects_non_covering_adjudication(monkeypatch, capsys):
+    mono, observations = _gate_with_predictions(monkeypatch, 1.0*(1+5e-10), 1.0, 1.0)
+    with pytest.raises(RuntimeError, match="gate stopped the run"):
+        cross_check_gate(mono, observations, 1e-11)
+    assert "pause: owner adjudication required" in capsys.readouterr().out
+
+
+def test_cross_check_gate_blocks_above_ceiling(monkeypatch, capsys):
+    mono, observations = _gate_with_predictions(monkeypatch, 1.0*(1+1e-6), 1.0, 1.0)
+    with pytest.raises(RuntimeError, match="gate stopped the run"):
+        cross_check_gate(mono, observations, 1e-3)
+    assert "block: rtol above the adjudication ceiling" in capsys.readouterr().out
