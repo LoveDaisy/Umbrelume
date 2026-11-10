@@ -135,6 +135,11 @@ uv run python -m validation.multiple_events --out outputs/multiple-events
 uv run python -m validation.compare_dec2011 --out outputs/dec2011
 uv run python -m validation.compare_hst2019 --out outputs/hst2019
 
+# 跨事件消光缺口判别（高度统计 / 相关表 / 判别表可离线再生；
+# sources / prior_parameters 为一次性文献产物：命令侧对 prior_parameters（硬依赖）
+# 恒做 schema 校验、sources.json 存在时校验，再生产物之前执行）
+uv run python -m validation.extinction_gap_diagnosis --out validation/results/extinction_gap_diagnosis
+
 # 可选：重新核对网络来源；结果与固定 SHA 绑定
 uv run python tools/extract_hernitschek2008.py
 uv run --with pymupdf==2.1 python tools/extract_yan2011.py --qa outputs/observations/yan2011dec-readout.png
@@ -149,4 +154,7 @@ uv run python tools/fetch_hst2019_geometry.py
 物理、气溶胶及分辨率检查通过。
 1990 年亮度和 2011 年 12 月光谱现均已进入固定模型比较。
 跨事件一致偏亮与不同光谱形状残差需要同时解释，不能只用单次亮度拟合判断改进。
+四口径贡献路径高度分布与缺失消光成分的判别探针见
+[观测参照](OBSERVATIONAL_VALIDATION.md)的「跨事件消光缺口判别」一节；
+判别结论按相容性排序表述，下一个物理增量的裁定属 owner。
 绿松石带与真实月面渲染的中远期安排见 [ROADMAP](ROADMAP.md)。

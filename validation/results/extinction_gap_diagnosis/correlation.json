@@ -1,0 +1,452 @@
+{
+  "scope": "Cross-event correlation of committed residual magnitudes against contribution-path depth statistics (height_stats.json records). Brightness and shape axes are kept in separate fields. Residual = event-level median of ln(model/observed) over the aperture's committed quantitative readouts, with ratio medians recorded alongside; only the two committed model variants enter (calibrated variants excluded, discipline). N=4 events per variant: rank orderings only, no significance claims. Negative rho(p50, residual) means deeper contribution paths carry larger model/observed residuals (the issue hypothesis direction); positive rho(below-2 km fraction, residual) is the boundary-layer-relevant depth reading.",
+  "residual_sources": {
+    "validation/results/round2/analysis.json": {
+      "sha256": "3e79065a41f666943d296550693c21e21cd2bd2f93620bf0c8d72be8db4cb6fc"
+    },
+    "validation/results/hst2019/comparison.json": {
+      "sha256": "ef4ea1f8e4eef6251013a050f9cb23a0811bd521ceb593c376f70b595081c45f"
+    },
+    "validation/results/hst2019/comparison.csv": {
+      "sha256": "02f5d5e43b0bcda6f2da64697329a66fcf4e9b3a1d5c0b8e0069c481c9e858d9"
+    },
+    "validation/results/dec2011/comparison.json": {
+      "sha256": "2a5acd0f138c9e1d27d722f2fe2f58fa7d02871f8d2245d8e062967ece6f9172"
+    },
+    "validation/results/multiple_events/analysis.json": {
+      "sha256": "ba2a9c266b48cc0b838c32142b84d70ede9d003007977e42364125e15c96edbf"
+    }
+  },
+  "hst_consistency_check": {
+    "ody902030|molecular": {
+      "pooled_window_median": 4.047394382599984,
+      "committed_model_to_observed_median": 4.047394382599984
+    },
+    "ody902040|molecular": {
+      "pooled_window_median": 4.538037785792078,
+      "committed_model_to_observed_median": 4.538037785792078
+    },
+    "ody902030|fixed_opac": {
+      "pooled_window_median": 2.5803898543192547,
+      "committed_model_to_observed_median": 2.5803898543192547
+    },
+    "ody902040|fixed_opac": {
+      "pooled_window_median": 3.030537617863472,
+      "committed_model_to_observed_median": 3.030537617863472
+    }
+  },
+  "event_level": {
+    "june_2011": {
+      "molecular": {
+        "residual_ln_ratio_median": 0.7478882720499894,
+        "residual_ratio_median": 2.1204278744607996,
+        "residual_readout_count": 18,
+        "p50_height_m_median": 10218.218345805384,
+        "band_fraction_below_2km_median": 0.0,
+        "band_fraction_2_to_12km_median": 0.7464325104877181,
+        "band_fraction_over_12km_median": 0.1828452755513736,
+        "depth_readout_count": 18,
+        "shape_axis": {
+          "metric": "503_over_677_transmission_ratio_model_over_observed",
+          "median_over_paired_angles": 1.0570308383319524,
+          "paired_angle_count": 5,
+          "values_by_angle": [
+            {
+              "shadow_angle_deg": 0.4,
+              "ratio": 1.7678895960553076
+            },
+            {
+              "shadow_angle_deg": 0.45,
+              "ratio": 1.2251542278060068
+            },
+            {
+              "shadow_angle_deg": 0.5,
+              "ratio": 0.9975466378720315
+            },
+            {
+              "shadow_angle_deg": 0.55,
+              "ratio": 1.005697300869044
+            },
+            {
+              "shadow_angle_deg": 0.575,
+              "ratio": 1.0570308383319524
+            }
+          ]
+        }
+      },
+      "fixed_opac": {
+        "residual_ln_ratio_median": 0.4903044317043148,
+        "residual_ratio_median": 1.6335678293310734,
+        "residual_readout_count": 18,
+        "p50_height_m_median": 10630.987086087018,
+        "band_fraction_below_2km_median": 0.0,
+        "band_fraction_2_to_12km_median": 0.7177424225216549,
+        "band_fraction_over_12km_median": 0.2269154157037917,
+        "depth_readout_count": 18,
+        "shape_axis": {
+          "metric": "503_over_677_transmission_ratio_model_over_observed",
+          "median_over_paired_angles": 1.110223743645006,
+          "paired_angle_count": 5,
+          "values_by_angle": [
+            {
+              "shadow_angle_deg": 0.4,
+              "ratio": 1.7738217584897673
+            },
+            {
+              "shadow_angle_deg": 0.45,
+              "ratio": 1.2682300298747442
+            },
+            {
+              "shadow_angle_deg": 0.5,
+              "ratio": 1.0488075853070522
+            },
+            {
+              "shadow_angle_deg": 0.55,
+              "ratio": 1.0593263690883545
+            },
+            {
+              "shadow_angle_deg": 0.575,
+              "ratio": 1.110223743645006
+            }
+          ]
+        }
+      }
+    },
+    "hst_2019": {
+      "molecular": {
+        "residual_ln_ratio_median": 1.4879649096445675,
+        "residual_ratio_median": 4.428074811228745,
+        "residual_readout_count": 1020,
+        "p50_height_m_median": 8559.171732124461,
+        "band_fraction_below_2km_median": 0.00012900096221994483,
+        "band_fraction_2_to_12km_median": 0.9998709990377801,
+        "band_fraction_over_12km_median": 0.0,
+        "depth_readout_count": 2,
+        "shape_axis": {
+          "ody902030": {
+            "430_over_570": 0.5236937032982233,
+            "500_over_570": 0.5928549102011875
+          },
+          "ody902040": {
+            "430_over_570": 0.9237266041472804,
+            "500_over_570": 0.7292801912180917
+          }
+        }
+      },
+      "fixed_opac": {
+        "residual_ln_ratio_median": 1.0889545584469191,
+        "residual_ratio_median": 2.9711662766265676,
+        "residual_readout_count": 1020,
+        "p50_height_m_median": 8923.165921165535,
+        "band_fraction_below_2km_median": 6.552517576187988e-05,
+        "band_fraction_2_to_12km_median": 0.9999344748242381,
+        "band_fraction_over_12km_median": 0.0,
+        "depth_readout_count": 2,
+        "shape_axis": {
+          "ody902030": {
+            "430_over_570": 0.5436560536385642,
+            "500_over_570": 0.5977664876986659
+          },
+          "ody902040": {
+            "430_over_570": 0.9764455250938486,
+            "500_over_570": 0.7418879089677634
+          }
+        }
+      }
+    },
+    "dec_2011": {
+      "molecular": {
+        "residual_ln_ratio_median": 0.5830385819218816,
+        "residual_ratio_median": 1.7914737084237926,
+        "residual_readout_count": 7,
+        "p50_height_m_median": 12359.171732124838,
+        "band_fraction_below_2km_median": 0.0,
+        "band_fraction_2_to_12km_median": 0.4602140946293339,
+        "band_fraction_over_12km_median": 0.5397859053706662,
+        "depth_readout_count": 7,
+        "shape_axis": {
+          "450_to750_transmission_ratio_model_over_observed": 1.2735235403403302,
+          "500_to750_transmission_ratio_model_over_observed": 1.1460278428601909
+        }
+      },
+      "fixed_opac": {
+        "residual_ln_ratio_median": 0.5022815543906,
+        "residual_ratio_median": 1.6524872124209726,
+        "residual_readout_count": 7,
+        "p50_height_m_median": 12823.723379504108,
+        "band_fraction_below_2km_median": 0.0,
+        "band_fraction_2_to_12km_median": 0.3982193922256255,
+        "band_fraction_over_12km_median": 0.6017806077743745,
+        "depth_readout_count": 7,
+        "shape_axis": {
+          "450_to750_transmission_ratio_model_over_observed": 1.3761098274632995,
+          "500_to750_transmission_ratio_model_over_observed": 1.202573248177952
+        }
+      }
+    },
+    "event_1990_02_09": {
+      "molecular": {
+        "residual_ln_ratio_median": 0.6393686212481877,
+        "residual_ratio_median": 1.8952838595007397,
+        "residual_readout_count": 1,
+        "p50_height_m_median": 11066.956797652414,
+        "band_fraction_below_2km_median": 0.009443965628665169,
+        "band_fraction_2_to_12km_median": 0.5827085267578278,
+        "band_fraction_over_12km_median": 0.40784750761350697,
+        "depth_readout_count": 1,
+        "shape_axis": null
+      },
+      "fixed_opac": {
+        "residual_ln_ratio_median": 0.45061027138224796,
+        "residual_ratio_median": 1.5692695736389852,
+        "residual_readout_count": 1,
+        "p50_height_m_median": 11929.585866063231,
+        "band_fraction_below_2km_median": 0.005494094452373901,
+        "band_fraction_2_to_12km_median": 0.5019285902488076,
+        "band_fraction_over_12km_median": 0.49257731529881843,
+        "depth_readout_count": 1,
+        "shape_axis": null
+      }
+    }
+  },
+  "cross_event": {
+    "molecular": {
+      "spearman_rho_residual_ln_vs_p50_median": -1.0,
+      "spearman_rho_residual_ln_vs_below2km_median": 0.21081851067789195,
+      "pairwise_direction": {
+        "pairs_total": 6,
+        "pairs": [
+          {
+            "pair": [
+              "june_2011",
+              "hst_2019"
+            ],
+            "p50_height_m_median": [
+              10218.218345805384,
+              8559.171732124461
+            ],
+            "residual_ln_ratio_median": [
+              0.7478882720499894,
+              1.4879649096445675
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          },
+          {
+            "pair": [
+              "june_2011",
+              "dec_2011"
+            ],
+            "p50_height_m_median": [
+              10218.218345805384,
+              12359.171732124838
+            ],
+            "residual_ln_ratio_median": [
+              0.7478882720499894,
+              0.5830385819218816
+            ],
+            "deeper_by_p50": "june_2011",
+            "larger_residual": "june_2011",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          },
+          {
+            "pair": [
+              "june_2011",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              10218.218345805384,
+              11066.956797652414
+            ],
+            "residual_ln_ratio_median": [
+              0.7478882720499894,
+              0.6393686212481877
+            ],
+            "deeper_by_p50": "june_2011",
+            "larger_residual": "june_2011",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": false
+          },
+          {
+            "pair": [
+              "hst_2019",
+              "dec_2011"
+            ],
+            "p50_height_m_median": [
+              8559.171732124461,
+              12359.171732124838
+            ],
+            "residual_ln_ratio_median": [
+              1.4879649096445675,
+              0.5830385819218816
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          },
+          {
+            "pair": [
+              "hst_2019",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              8559.171732124461,
+              11066.956797652414
+            ],
+            "residual_ln_ratio_median": [
+              1.4879649096445675,
+              0.6393686212481877
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": false
+          },
+          {
+            "pair": [
+              "dec_2011",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              12359.171732124838,
+              11066.956797652414
+            ],
+            "residual_ln_ratio_median": [
+              0.5830385819218816,
+              0.6393686212481877
+            ],
+            "deeper_by_p50": "event_1990_02_09",
+            "larger_residual": "event_1990_02_09",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          }
+        ],
+        "deeper_has_larger_residual_count": 6,
+        "more_below2km_has_larger_residual_count": 4
+      }
+    },
+    "fixed_opac": {
+      "spearman_rho_residual_ln_vs_p50_median": -0.39999999999999997,
+      "spearman_rho_residual_ln_vs_below2km_median": -0.316227766016838,
+      "pairwise_direction": {
+        "pairs_total": 6,
+        "pairs": [
+          {
+            "pair": [
+              "june_2011",
+              "hst_2019"
+            ],
+            "p50_height_m_median": [
+              10630.987086087018,
+              8923.165921165535
+            ],
+            "residual_ln_ratio_median": [
+              0.4903044317043148,
+              1.0889545584469191
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          },
+          {
+            "pair": [
+              "june_2011",
+              "dec_2011"
+            ],
+            "p50_height_m_median": [
+              10630.987086087018,
+              12823.723379504108
+            ],
+            "residual_ln_ratio_median": [
+              0.4903044317043148,
+              0.5022815543906
+            ],
+            "deeper_by_p50": "june_2011",
+            "larger_residual": "dec_2011",
+            "deeper_has_larger_residual": false,
+            "more_below2km_has_larger_residual": false
+          },
+          {
+            "pair": [
+              "june_2011",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              10630.987086087018,
+              11929.585866063231
+            ],
+            "residual_ln_ratio_median": [
+              0.4903044317043148,
+              0.45061027138224796
+            ],
+            "deeper_by_p50": "june_2011",
+            "larger_residual": "june_2011",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": false
+          },
+          {
+            "pair": [
+              "hst_2019",
+              "dec_2011"
+            ],
+            "p50_height_m_median": [
+              8923.165921165535,
+              12823.723379504108
+            ],
+            "residual_ln_ratio_median": [
+              1.0889545584469191,
+              0.5022815543906
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": true
+          },
+          {
+            "pair": [
+              "hst_2019",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              8923.165921165535,
+              11929.585866063231
+            ],
+            "residual_ln_ratio_median": [
+              1.0889545584469191,
+              0.45061027138224796
+            ],
+            "deeper_by_p50": "hst_2019",
+            "larger_residual": "hst_2019",
+            "deeper_has_larger_residual": true,
+            "more_below2km_has_larger_residual": false
+          },
+          {
+            "pair": [
+              "dec_2011",
+              "event_1990_02_09"
+            ],
+            "p50_height_m_median": [
+              12823.723379504108,
+              11929.585866063231
+            ],
+            "residual_ln_ratio_median": [
+              0.5022815543906,
+              0.45061027138224796
+            ],
+            "deeper_by_p50": "event_1990_02_09",
+            "larger_residual": "dec_2011",
+            "deeper_has_larger_residual": false,
+            "more_below2km_has_larger_residual": false
+          }
+        ],
+        "deeper_has_larger_residual_count": 4,
+        "more_below2km_has_larger_residual_count": 2
+      }
+    }
+  }
+}

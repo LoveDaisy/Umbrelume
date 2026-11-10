@@ -1,0 +1,1107 @@
+{
+  "scope": "Contribution-path altitude statistics of the same weighted mixed kernel that produced each aperture's committed prediction (kernel identity = plan design point 1). P10/P50/P90 and band fractions describe the atmospheric branch only; the vacuum branch (tangent above table top, transmission one) is recorded separately and enters the zeroth-moment identity only. Single authoritative implementation of four-aperture height statistics; round2 altitude_quantiles is a historical product generator and its committed June values are the anchor.",
+  "summary": {
+    "record_count": 56,
+    "worst_relative_gap": 1.0687840051735467e-15
+  },
+  "kernel_identity": {
+    "zeroth_moment_definition": "sum(weights) + vacuum branch == committed prediction",
+    "relative_tolerance": 1e-12,
+    "tolerance_semantics": "structural reuse makes equality hold by construction; the budget covers float summation-order differences only. Gate failure routing: aperture/kernel-identity errors fix the kernel; pure reproduction differences fix the tolerance definition with written justification, never silently.",
+    "band_edges_m": [
+      2000.0,
+      12000.0
+    ],
+    "band_semantics": "below 2 km: no aerosol component in the model; 2-12 km: OPAC free troposphere; over 12 km: no component (molecular above; vacuum above the 120 km table top reported separately)"
+  },
+  "committed_sources": {
+    "validation/results/round2/analysis.json": {
+      "sha256": "3e79065a41f666943d296550693c21e21cd2bd2f93620bf0c8d72be8db4cb6fc"
+    },
+    "validation/results/hst2019/comparison.json": {
+      "sha256": "ef4ea1f8e4eef6251013a050f9cb23a0811bd521ceb593c376f70b595081c45f"
+    },
+    "validation/results/hst2019/comparison.csv": {
+      "sha256": "02f5d5e43b0bcda6f2da64697329a66fcf4e9b3a1d5c0b8e0069c481c9e858d9"
+    },
+    "validation/results/dec2011/comparison.json": {
+      "sha256": "2a5acd0f138c9e1d27d722f2fe2f58fa7d02871f8d2245d8e062967ece6f9172"
+    },
+    "validation/results/multiple_events/analysis.json": {
+      "sha256": "ba2a9c266b48cc0b838c32142b84d70ede9d003007977e42364125e15c96edbf"
+    },
+    "validation/observations/ugolnikov2011/geometry.json": {
+      "sha256": "4bfa67baae78e2b99f401e3a5377af30ef392ae3ae8255487e31d78ccaf10117"
+    },
+    "validation/observations/hst2019/geometry.json": {
+      "sha256": "bbfa1e0415d766c2a085eed4c54c6ed27b22552b54ed087e9eeb5251604034f9"
+    }
+  },
+  "production_module_sha256": {
+    "aerosol.py": "bc1ea10ece29c229184188d95b1626f9ac735b1a420a71a8aea268d50933242c",
+    "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+    "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
+    "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+    "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e"
+  },
+  "records": [
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.4deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.4,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7011.685220636537,
+        10006.793534282933,
+        11672.798988206674
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.9663113364785656,
+      "band_fraction_over_12km": 0.033688663521434466,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 9.119133681613278e-05,
+      "committed_prediction": 9.119133681613275e-05,
+      "relative_gap": 2.972327773502102e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.4deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.4,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7605.590218800774,
+        10348.279535920725,
+        11782.720769700634
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.9540616532882824,
+      "band_fraction_over_12km": 0.04593834671171768,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 6.686705900272951e-05,
+      "committed_prediction": 6.686705900272956e-05,
+      "relative_gap": 8.107147141324448e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.425deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.425,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7375.549530535981,
+        10429.643157327833,
+        12136.02011384011
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.8676118786384814,
+      "band_fraction_over_12km": 0.1323881213615186,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00010900181494564925,
+      "committed_prediction": 0.00010900181494564925,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.425deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.425,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7992.041713933677,
+        10799.379058753795,
+        12244.280377473126
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.8283295486251339,
+      "band_fraction_over_12km": 0.17167045137486608,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 8.405891603749525e-05,
+      "committed_prediction": 8.405891603749526e-05,
+      "relative_gap": 1.6122652771329546e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.45deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.45,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7744.3162709112175,
+        10861.52343347562,
+        12643.896169388656
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.7549992434908301,
+      "band_fraction_over_12km": 0.24500075650916983,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00013010299255721754,
+      "committed_prediction": 0.00013010299255721756,
+      "relative_gap": 2.0833536400184776e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.45deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.45,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        8375.566669477592,
+        11227.523140729909,
+        12741.153966204143
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.6964321688493377,
+      "band_fraction_over_12km": 0.3035678311506623,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00010500225098004662,
+      "committed_prediction": 0.00010500225098004665,
+      "relative_gap": 2.581378404667565e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.475deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.475,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        8127.638276122239,
+        11311.751955573971,
+        13206.78310478478
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.6424781024225287,
+      "band_fraction_over_12km": 0.35752189757747127,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0001556584375268429,
+      "committed_prediction": 0.0001556584375268429,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.475deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.475,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        8767.420336421725,
+        11681.76901884172,
+        13294.261522753555
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5743421172602833,
+      "band_fraction_over_12km": 0.4256578827397166,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00013074191285073763,
+      "committed_prediction": 0.0001307419128507376,
+      "relative_gap": 2.0731725367275512e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.5deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.5,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        8528.149157071703,
+        11805.618884908516,
+        13822.009772742262
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5362054543867543,
+      "band_fraction_over_12km": 0.4637945456132457,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00018716192861575125,
+      "committed_prediction": 0.00018716192861575122,
+      "relative_gap": 1.4482140952813678e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.5deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.5,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        9170.774602006235,
+        12140.07597784034,
+        13902.119837583732
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.466492606679545,
+      "band_fraction_over_12km": 0.5335073933204549,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00016270579228704472,
+      "committed_prediction": 0.00016270579228704472,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.525deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.525,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        8951.467165077078,
+        12344.584941728423,
+        14514.566273694307
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.4391941870835406,
+      "band_fraction_over_12km": 0.5608058129164594,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0002266462731363922,
+      "committed_prediction": 0.00022664627313639235,
+      "relative_gap": 7.175512909270613e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.525deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.525,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        9593.618387107601,
+        12635.592742156576,
+        14579.653240959131
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.37351443997150985,
+      "band_fraction_over_12km": 0.6264855600284902,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00020288517927613504,
+      "committed_prediction": 0.00020288517927613526,
+      "relative_gap": 1.0687840051735467e-15
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.55deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.55,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        9408.463895617177,
+        12949.949681954862,
+        15301.688675744994
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.35282045901551556,
+      "band_fraction_over_12km": 0.6471795409844844,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0002769925113317414,
+      "committed_prediction": 0.00027699251133174126,
+      "relative_gap": 3.9141930851228143e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.55deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.55,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        10028.04511355099,
+        13201.977900394742,
+        15351.752874168167
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.2946062880274712,
+      "band_fraction_over_12km": 0.7053937119725289,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00025413324649787195,
+      "committed_prediction": 0.00025413324649787195,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.575deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.575,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        9901.168239619392,
+        13632.819695101845,
+        16204.554965427074
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.2774633251123327,
+      "band_fraction_over_12km": 0.7225366748876674,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0003424893714782575,
+      "committed_prediction": 0.0003424893714782575,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "503nm@0.575deg",
+      "wavelength_nm": 503.0,
+      "shadow_angle_deg": 0.575,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        10500.008798415523,
+        13838.038363661433,
+        16247.23058507147
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.2284177403356337,
+      "band_fraction_over_12km": 0.7715822596643663,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0003207192129145766,
+      "committed_prediction": 0.00032071921291457667,
+      "relative_gap": 1.690266951319628e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.15deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.15,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        880.3039204662877,
+        3121.3462277640556,
+        5750.9301100591265
+      ],
+      "band_fraction_below_2km": 0.2781318069577947,
+      "band_fraction_2_to_12km": 0.7218681930422053,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0011566628371932307,
+      "committed_prediction": 0.0011566628371932307,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.15deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.15,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        810.7864489465919,
+        3327.758660223778,
+        5904.257144601516
+      ],
+      "band_fraction_below_2km": 0.28235477492397293,
+      "band_fraction_2_to_12km": 0.7176452250760271,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0006123977974141891,
+      "committed_prediction": 0.0006123977974141888,
+      "relative_gap": 5.311264232481631e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.2deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.2,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        1008.5512231364204,
+        3657.7201518133343,
+        6586.2337047925585
+      ],
+      "band_fraction_below_2km": 0.2621342225153938,
+      "band_fraction_2_to_12km": 0.7378657774846061,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0011475374398582198,
+      "committed_prediction": 0.001147537439858219,
+      "relative_gap": 7.558461343932867e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.2deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.2,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        972.8511697218128,
+        4021.2076237887327,
+        6761.6829804065865
+      ],
+      "band_fraction_below_2km": 0.2544261100399391,
+      "band_fraction_2_to_12km": 0.7455738899600609,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0006312321647306881,
+      "committed_prediction": 0.0006312321647306879,
+      "relative_gap": 3.435193049606634e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.25deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.25,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        1270.9265075456287,
+        4605.771870709372,
+        7554.058007505088
+      ],
+      "band_fraction_below_2km": 0.1878425450614076,
+      "band_fraction_2_to_12km": 0.8121574549385925,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0011006495685785345,
+      "committed_prediction": 0.001100649568578534,
+      "relative_gap": 3.940226584146047e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.25deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.25,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        1290.918473361278,
+        5071.8128145938645,
+        7745.878105060257
+      ],
+      "band_fraction_below_2km": 0.17380823090449446,
+      "band_fraction_2_to_12km": 0.8261917690955055,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0006377023523757263,
+      "committed_prediction": 0.0006377023523757263,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.3deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.3,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        2729.5848777842857,
+        5929.159128140663,
+        8701.92998241586
+      ],
+      "band_fraction_below_2km": 0.043277714272134955,
+      "band_fraction_2_to_12km": 0.956722285727865,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0010115624190957938,
+      "committed_prediction": 0.001011562419095794,
+      "relative_gap": 2.1436189245833015e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.3deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.3,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        3046.0438332003155,
+        6401.318357439771,
+        8882.334303618758
+      ],
+      "band_fraction_below_2km": 0.038150622004821035,
+      "band_fraction_2_to_12km": 0.9618493779951789,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0006317318040261018,
+      "committed_prediction": 0.0006317318040261017,
+      "relative_gap": 1.7162380706112236e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.35deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.35,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        3805.125914812368,
+        7106.719050939113,
+        10102.950944237115
+      ],
+      "band_fraction_below_2km": 0.005639579137606831,
+      "band_fraction_2_to_12km": 0.9943604208623932,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0010848390020000319,
+      "committed_prediction": 0.0010848390020000314,
+      "relative_gap": 3.997651892996646e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.35deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.35,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        4202.762669085676,
+        7602.9659907823425,
+        10318.05221198837
+      ],
+      "band_fraction_below_2km": 0.00492540884073786,
+      "band_fraction_2_to_12km": 0.9950745911592621,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0007392372892679605,
+      "committed_prediction": 0.0007392372892679603,
+      "relative_gap": 2.933299464801486e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.4deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.4,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        4623.800371383794,
+        8067.510370402924,
+        11100.627171286937
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.988038904262766,
+      "band_fraction_over_12km": 0.011961095737234011,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.001161424155719498,
+      "committed_prediction": 0.001161424155719498,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.4deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.4,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        5034.931163526419,
+        8575.826635351576,
+        11288.791665301876
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.983635230858631,
+      "band_fraction_over_12km": 0.01636476914136904,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0008487790595929197,
+      "committed_prediction": 0.0008487790595929198,
+      "relative_gap": 1.277366777881508e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.45deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.45,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        5382.7312718704015,
+        8974.596460235205,
+        12031.245489457446
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.8955240556038954,
+      "band_fraction_over_12km": 0.10447594439610466,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.001245037527881541,
+      "committed_prediction": 0.001245037527881541,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.45deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.45,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        5807.559190112199,
+        9505.688653961455,
+        12235.183328306408
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.8659982742618715,
+      "band_fraction_over_12km": 0.1340017257381285,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0009707032774689177,
+      "committed_prediction": 0.0009707032774689179,
+      "relative_gap": 2.233848793243043e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.5deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.5,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        6166.295696554498,
+        9929.160108369562,
+        13161.319290846304
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.7666975702587714,
+      "band_fraction_over_12km": 0.2333024297412286,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0013501388366125593,
+      "committed_prediction": 0.0013501388366125595,
+      "relative_gap": 1.6060602703729658e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.5deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.5,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        6603.092098734614,
+        10462.59511342024,
+        13338.354020899429
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.7178396199672826,
+      "band_fraction_over_12km": 0.2821603800327173,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0011163524290810779,
+      "committed_prediction": 0.0011163524290810777,
+      "relative_gap": 1.942401242191881e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.55deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.55,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7011.187251866938,
+        11003.504080131073,
+        14573.99957233771
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.6203246051870173,
+      "band_fraction_over_12km": 0.37967539481298274,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00149649476166097,
+      "committed_prediction": 0.0014964947616609705,
+      "relative_gap": 2.8979778620331166e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.55deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.55,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7444.745823882008,
+        11508.248233251237,
+        14723.298544479272
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5641054498337569,
+      "band_fraction_over_12km": 0.43589455016624307,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0013034853643375686,
+      "committed_prediction": 0.0013034853643375693,
+      "relative_gap": 4.990629901102858e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.575deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.575,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7462.091953748738,
+        11608.626556397538,
+        15434.889827739984
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5441034218891163,
+      "band_fraction_over_12km": 0.4558965781108837,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0015948150530460678,
+      "committed_prediction": 0.0015948150530460676,
+      "relative_gap": 1.359658814875992e-16
+    },
+    {
+      "event": "june_2011",
+      "readout": "677nm@0.575deg",
+      "wavelength_nm": 677.0,
+      "shadow_angle_deg": 0.575,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7904.235796157618,
+        12084.27769407174,
+        15571.780962290231
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.4886581935632406,
+      "band_fraction_over_12km": 0.5113418064367594,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.001421887878351557,
+      "committed_prediction": 0.001421887878351557,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "hst_2019",
+      "readout": "ody902030",
+      "wavelength_window_nm": [
+        430.0,
+        570.0
+      ],
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        5259.171732124732,
+        8359.171732123867,
+        10259.171732124809
+      ],
+      "band_fraction_below_2km": 0.0002518608620955997,
+      "band_fraction_2_to_12km": 0.9997481391379044,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 5.114572831023337e-05,
+      "committed_prediction": 5.114572831023338e-05,
+      "relative_gap": 2.649786718035097e-16,
+      "per_wavelength_max_relative_gap": 8.8034271603597595e-16
+    },
+    {
+      "event": "hst_2019",
+      "readout": "ody902030",
+      "wavelength_window_nm": [
+        430.0,
+        570.0
+      ],
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        5859.171732124749,
+        8710.166676128976,
+        10388.74101612367
+      ],
+      "band_fraction_below_2km": 0.00012824434924509586,
+      "band_fraction_2_to_12km": 0.9998717556507549,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 3.248706517116405e-05,
+      "committed_prediction": 3.248706517116405e-05,
+      "relative_gap": 0.0,
+      "per_wavelength_max_relative_gap": 8.009508663047469e-16
+    },
+    {
+      "event": "hst_2019",
+      "readout": "ody902040",
+      "wavelength_window_nm": [
+        430.0,
+        570.0
+      ],
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        5567.8083985713465,
+        8759.171732125056,
+        10759.171732124805
+      ],
+      "band_fraction_below_2km": 6.141062344289955e-06,
+      "band_fraction_2_to_12km": 0.9999938589376557,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 1.8713623586032692e-12,
+      "kernel_zeroth_moment": 5.9329079891270154e-05,
+      "committed_prediction": 5.9329079891270154e-05,
+      "relative_gap": 0.0,
+      "per_wavelength_max_relative_gap": 1.2617610736322032e-15
+    },
+    {
+      "event": "hst_2019",
+      "readout": "ody902040",
+      "wavelength_window_nm": [
+        430.0,
+        570.0
+      ],
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        6189.8333238710775,
+        9136.165166202096,
+        10889.833323871408
+      ],
+      "band_fraction_below_2km": 2.8060022786639183e-06,
+      "band_fraction_2_to_12km": 0.9999971939977214,
+      "band_fraction_over_12km": 0.0,
+      "vacuum_branch_fraction": 2.8315147104444835e-12,
+      "kernel_zeroth_moment": 3.921088824633389e-05,
+      "committed_prediction": 3.921088824633389e-05,
+      "relative_gap": 0.0,
+      "per_wavelength_max_relative_gap": 1.7259419899856522e-15
+    },
+    {
+      "event": "dec_2011",
+      "readout": "450nm",
+      "wavelength_nm": 450.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        11823.723379504121,
+        15110.16667612995,
+        17276.27662049667
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.11142880238862508,
+      "band_fraction_over_12km": 0.8885711976113749,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00022030393118543335,
+      "committed_prediction": 0.00022030393118543338,
+      "relative_gap": 1.2303481906241088e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "450nm",
+      "wavelength_nm": 450.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        12140.828267875491,
+        15176.276620496383,
+        17289.83332387124
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.08962308877589578,
+      "band_fraction_over_12km": 0.9103769112241042,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0002150272226967064,
+      "committed_prediction": 0.00021502722269670644,
+      "relative_gap": 1.2605405944515683e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "500nm",
+      "wavelength_nm": 500.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        10289.833323871013,
+        14210.166676129797,
+        16976.2766204958
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.22817757643273096,
+      "band_fraction_over_12km": 0.771822423567269,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0003919317429604162,
+      "committed_prediction": 0.00039193174296041626,
+      "relative_gap": 1.3831517757353542e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "500nm",
+      "wavelength_nm": 500.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        10876.276620496577,
+        14389.833323871546,
+        17023.723379504696
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.18571557657193827,
+      "band_fraction_over_12km": 0.8142844234280617,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00037149407174938816,
+      "committed_prediction": 0.0003714940717493881,
+      "relative_gap": 1.459245590891842e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "550nm",
+      "wavelength_nm": 550.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        8910.1666761298,
+        13240.828267876108,
+        16623.723379504587
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.3551276908907349,
+      "band_fraction_over_12km": 0.6448723091092651,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00038169673810639946,
+      "committed_prediction": 0.0003816967381063995,
+      "relative_gap": 1.4202402905828327e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "550nm",
+      "wavelength_nm": 550.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        9576.27662049585,
+        13576.27662049553,
+        16710.166676128993
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.2979184892705352,
+      "band_fraction_over_12km": 0.7020815107294648,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0003505942379140098,
+      "committed_prediction": 0.00035059423791400964,
+      "relative_gap": 4.638705040917246e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "600nm",
+      "wavelength_nm": 600.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7976.27662049521,
+        12359.171732124838,
+        16259.171732125047
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.4602140946293339,
+      "band_fraction_over_12km": 0.5397859053706662,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0003567308599443696,
+      "committed_prediction": 0.00035673085994436944,
+      "relative_gap": 4.558908245229671e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "600nm",
+      "wavelength_nm": 600.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        8559.17173212519,
+        12823.723379504108,
+        16398.014492824455
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.3982193922256255,
+      "band_fraction_over_12km": 0.6017806077743745,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00031998093641158893,
+      "committed_prediction": 0.000319980936411589,
+      "relative_gap": 1.6941668223179765e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "650nm",
+      "wavelength_nm": 650.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7689.833323871023,
+        12076.276620495777,
+        16159.171732124685
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.49222748335446564,
+      "band_fraction_over_12km": 0.5077725166455344,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0010541183767562448,
+      "committed_prediction": 0.0010541183767562448,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "dec_2011",
+      "readout": "650nm",
+      "wavelength_nm": 650.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        8189.833323871403,
+        12540.828267875764,
+        16289.833323871113
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.43438475785679437,
+      "band_fraction_over_12km": 0.5656152421432056,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0009463188620138941,
+      "committed_prediction": 0.0009463188620138941,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "dec_2011",
+      "readout": "700nm",
+      "wavelength_nm": 700.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7489.833323870475,
+        11840.828267874285,
+        16059.171732124714
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5160758687543905,
+      "band_fraction_over_12km": 0.48392413124560946,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0021205467973035436,
+      "committed_prediction": 0.0021205467973035436,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "dec_2011",
+      "readout": "700nm",
+      "wavelength_nm": 700.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7923.723379503767,
+        12323.723379503916,
+        16198.01449282463
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.4627564077573239,
+      "band_fraction_over_12km": 0.537243592242676,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0019100902463466119,
+      "committed_prediction": 0.001910090246346612,
+      "relative_gap": 1.1352365937255941e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "750nm",
+      "wavelength_nm": 750.0,
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        7310.16667612866,
+        11610.166676128925,
+        15940.828267875573
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.5411186026454425,
+      "band_fraction_over_12km": 0.45888139735455746,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0028271483840417535,
+      "committed_prediction": 0.002827148384041754,
+      "relative_gap": 1.5339869369509427e-16
+    },
+    {
+      "event": "dec_2011",
+      "readout": "750nm",
+      "wavelength_nm": 750.0,
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7676.276620495538,
+        12070.414133937262,
+        16089.833323869747
+      ],
+      "band_fraction_below_2km": 0.0,
+      "band_fraction_2_to_12km": 0.4919864027367817,
+      "band_fraction_over_12km": 0.5080135972632184,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.0025537223801792,
+      "committed_prediction": 0.0025537223801792006,
+      "relative_gap": 1.6982302867384097e-16
+    },
+    {
+      "event": "event_1990_02_09",
+      "readout": "whole_disk_nominal_v",
+      "variant": "molecular",
+      "p10_p50_p90_height_m": [
+        6023.723379503776,
+        11066.956797652414,
+        16701.985507174697
+      ],
+      "band_fraction_below_2km": 0.009443965628665169,
+      "band_fraction_2_to_12km": 0.5827085267578278,
+      "band_fraction_over_12km": 0.40784750761350697,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.000268321085727071,
+      "committed_prediction": 0.000268321085727071,
+      "relative_gap": 0.0
+    },
+    {
+      "event": "event_1990_02_09",
+      "readout": "whole_disk_nominal_v",
+      "variant": "fixed_opac",
+      "p10_p50_p90_height_m": [
+        7040.828267876228,
+        11929.585866063231,
+        17201.98550717547
+      ],
+      "band_fraction_below_2km": 0.005494094452373901,
+      "band_fraction_2_to_12km": 0.5019285902488076,
+      "band_fraction_over_12km": 0.49257731529881843,
+      "vacuum_branch_fraction": 0.0,
+      "kernel_zeroth_moment": 0.00022216625424551937,
+      "committed_prediction": 0.00022216625424551926,
+      "relative_gap": 4.880138867927873e-16
+    }
+  ]
+}

@@ -131,6 +131,120 @@
 < 2/3 为实质性减小、> 1.5 为不减小）；带型/宽度比阈 0.1。单色列与两份已提交结果
 逐点交叉核对 rtol = 0（逐位一致）后方产出任何带通产物；复核命令见该文件 docstring。
 
+## 跨事件消光缺口判别（2026-11 增补）
+
+四个独立口径（June 2011 曲线读数、1990 整月面、Dec 2011 七点谱、HST 2019 本影谱）
+的「贡献路径高度分布」逐一算出，与已提交残差做跨事件相关检验，并对
+「完整背景地球大气」缺失消光成分做文献先验反事实探针。本节只做相容性排序，
+不做唯一因果归因；下一个物理增量的裁定属 owner。全部产物在
+`validation/results/extinction_gap_diagnosis/`（`height_stats.json`、
+`correlation.json`、`discrimination.json`、`sources.json`、`prior_parameters.json`），
+由 `uv run python -m validation.extinction_gap_diagnosis --out
+validation/results/extinction_gap_diagnosis` 离线再生（byte-identical；
+sources / prior_parameters 为一次性文献产物：命令侧经
+`validate_literature_products` 对 prior_parameters.json（硬依赖）恒做 schema 校验、
+存在的 sources.json 一并校验，在再生产物之前执行）。
+
+### 机器与口径
+
+- 「贡献核」= 生成该口径已提交 prediction 的同一加权混合核按切点高度 b 的分解，
+  逐项镜像 `eclipse.transport.transmission_profile` 的 tau 构造；零阶矩闸
+  Σw + 真空外枝 = 已提交 prediction 以 1e-12 相对容差在 pytest 全口径全变体通过
+  （`height_stats.json:summary.record_count` 条记录，最差偏差
+  `height_stats.json:summary.worst_relative_gap`；容差语义 = 结构复现使相等由构造
+  成立，预算仅覆盖浮点求和序，见
+  `height_stats.json:kernel_identity.relative_tolerance`）。
+- 独立锚：June 2011 分子套与 round2 已提交
+  `molecular_tangent_height_p10_p50_p90_m` 逐点精确相等（pytest 常驻）。
+  HST 形状基线同样锚定：已提交 `slope_model_vs_observed` 的带中位聚合作用在
+  **全窗口网格**上（430 nm 带含 [425, 430) 行），探针形状分支复用同一聚合结构，
+  基线由 pytest 逐值相等断言与 AOD=0 斜率恒等闸双重钉住——探针不引入第二种
+  同名口径。本机器是四口径高度统计的唯一权威实现；round2 的
+  `altitude_quantiles` 为历史产物生成器，不再扩展。
+- 高度带 <2 km / 2–12 km / >12 km 与模型组件边界一一对应
+  （`height_stats.json:kernel_identity.band_semantics`）；真空外枝（切点高于
+  大气表顶）实测在四口径全部几何关闭，记录值为浮点噪声量级（≤1e-9 噪声底由
+  pytest 钉住），不进入大气枝统计。
+- 残差一律读已提交产物，不重算模型；亮度轴与形状轴字段分离
+  （`correlation.json:scope`）。
+
+### 跨事件相关（亮度轴）
+
+事件级残差 = 各口径定量读数 ln(model/observed) 中位数（HST 与已提交
+`model_to_observed_median` 逐值相等抽核，见
+`correlation.json:hst_consistency_check`）。固定 OPAC 变体四口径残差对数中位
+0.490 / 1.089 / 0.502 / 0.451（June / HST / Dec / 1990 顺序，下同；各
+`correlation.json:event_level.june_2011.fixed_opac.residual_ln_ratio_median`
+等四个 `correlation.json:event_level.*.fixed_opac.residual_ln_ratio_median`
+分支），对应贡献核 P50 中位高度 10.6 / 8.9 / 12.8 / 11.9 km
+（`correlation.json:event_level.*.fixed_opac.p50_height_m_median`）。
+
+深度方向：分子变体 ρ(P50 中位, 残差) = −1.0、六对「更深者残差更大」全部成立
+（`correlation.json:cross_event.molecular.spearman_rho_residual_ln_vs_p50_median`
+与 `...pairwise_direction.deeper_has_larger_residual_count`）；固定 OPAC 变体
+ρ = −0.40、四/六对。「贡献路径越深、模型越偏亮」的深度格局在分子变体上跨事件
+完美秩一致，在已含自由对流层气溶胶的固定 OPAC 变体上减弱——气溶胶项吸收了
+部分深度信号。N=4，只报排序一致性，不做显著性声明。
+
+### 判别探针与相容性排序
+
+12 个缺失消光候选（OPAC 1998 Tables 3/5 十个边界层类型 @RH80%、mineral
+transported 2–3.5 km、平流层背景 12–35 km）以文献 AOD550 构造反事实探针，
+经同一 kernel 适配器附加在固定 OPAC 基线上（AOD=0 严格复原基线，pytest）；
+先验逐参数钉 SHA+页码（`prior_parameters.json`，OPAC PDF SHA 与 round2 已钉值
+逐字节一致）。各候选与基线的叠加语义逐行钉在产物中
+（`discrimination.json:candidates[antarctic].stacking_semantics`；
+antarctic 行另附双重计入的代理解读字段 `...candidates[antarctic].interpretation`）。
+判定带（`discrimination.json:verdict_bands`）：先验量级效应闭合
+残差对数缺口的 [0.5, 2] 为相容、[0.1, 0.5)∪(2, 10] 为张力、其余为排除倾向；
+机械排序键 = 四口径亮度闭合的最小值（最弱链）降序
+（`discrimination.json:ranking`）。
+
+主要结果（相容性排序，不是归因）：
+
+1. **0–2 km 边界层类型（continental/maritime/urban/arctic 各湿度型）在四口径
+   事件级全部排除倾向**：贡献核对 <2 km 路径的质量占比在 HST/Dec ≈ 0、June
+   中位 = 0、1990 仅 0.55%（`correlation.json:event_level.*.fixed_opac.band_fraction_below_2km_median`），
+   先验 AOD（如 continental clean 的 0.046）推不动任何事件级残差。它们只触
+   June 最深读数——最深单点闭合 20–25%
+   （`discrimination.json:candidates[continental_clean].events.june_2011.brightness.max_readout_gap_closure_fraction`
+   = 0.229），事件中位不动。
+2. **平流层背景（12–35 km，τ=0.005，OPAC 同源先验）四口径亮度全部张力**
+   （闭合 0.19–0.44，`discrimination.json:candidates[stratosphere_background].events.*.brightness.gap_closure_fraction`），
+   但是**唯一改善 Dec 蓝/红形状的候选**（450/750 向 unity 收敛分数 +0.42、
+   500/750 +0.57，
+   `discrimination.json:candidates[stratosphere_background].events.dec_2011.shape.450_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`
+   与 `...500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`），
+   June 形状亦相容（+0.79，
+   `discrimination.json:candidates[stratosphere_background].events.june_2011.shape.disagreement_closed_fraction`）；
+   HST 斜率微恶化（−0.076，
+   `discrimination.json:candidates[stratosphere_background].events.hst_2019.shape.ody902030.430_over_570.disagreement_closed_fraction`）。
+3. **antarctic 型（0–10 km 层、≈5×自由对流层 AOD 的弱谱依赖配置）亮度 3/4
+   相容**（June 1.13 过闭合、HST 0.53、1990 0.51、Dec 0.23，
+   `discrimination.json:candidates[antarctic].events.*.brightness.gap_closure_fraction`），
+   但 **Dec 形状强烈恶化**
+   （450/750 收敛分数 −0.68、500/750 −0.93，
+   `discrimination.json:candidates[antarctic].events.dec_2011.shape.450_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`
+   与 `...500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`）。
+   该行实质是「2–12 km 更多同类消光」假设的 OPAC 代理解读——与 677 nm 同事件
+   校准方向一致，但形状代价与平流层候选相反。湿度化自由对流层本身因先验不可得
+   未探针（检索过程见 `prior_parameters.json` 的 unavailable 行）。
+4. desert（0–6 km 层）仅 June 相容（0.53）；mineral transported 事件级排除
+   （负 Ångström 谱经 validation 侧参数化评估，
+   `discrimination.json:scope`）。
+
+### 机制发现：形状响应由高度选择性决定
+
+「低层消光增量会恶化蓝/红形状指标」这一待核查假设获定量证实，且机制超出
+Ångström 指数的直觉：形状变化由**贡献核高度分布 × 成分作用带**决定，而非谱斜率
+单独决定。Dec 的 450 nm 核在 2–12 km 带的质量仅 9.0%、750 nm 核达 49.2%
+（`height_stats.json:records.41.band_fraction_2_to_12km` 与
+`height_stats.json:records.53.band_fraction_2_to_12km`，fixed_opac 变体的
+450/750 nm 两点），因此作用于低层的候选（含近中性谱的
+antarctic 型）打在红核占优的 2–12 km 质量上，f(450)/f(750) > 1，把本已偏蓝的 Dec 比值推得
+更远；作用于高层的平流层候选命中 >12 km 质量占优的蓝色核，反而改善。任何「下一个物理增量」的
+形状轴代价都必须按此机制用 kernel 评估，不能按谱斜率手推。
+
 ## 其他已核实的公开参照
 
 | 参照 | 公开程度与可比较内容 | 当前限制 |

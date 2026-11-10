@@ -1,0 +1,2058 @@
+{
+  "scope": "Prior-driven counterfactual discrimination probes for the missing-extinction candidates (plan Step 5). Each candidate's literature AOD550 enters as an extra extinction column (or, for negative-Angstrom mineral transported, a validation-side spectral factor) on top of the committed fixed_opac default, evaluated through the same kernel adapters as the height statistics; a zero-AOD probe restores the baseline exactly (pytest). Fixed priors only: nothing is fitted, nothing becomes a default, and no causal attribution is made - the product ranks prior-order compatibility only, per docs/ROUND2.md discipline.",
+  "variant_scope": "Probes run on the fixed_opac variant only: the candidates are missing components on top of the committed default physics; probing the molecular variant would conflate the free-troposphere candidate with the boundary-layer ones.",
+  "verdict_bands": {
+    "brightness_semantics": "gap_closure_fraction = fraction of the event's committed log-residual closed by the probe (1 = exactly closes). Premise: every committed event residual is positive (model brighter than observed across all four apertures, verified in correlation.json); a future negative residual would invert the closure sign semantics and require re-deriving the bands.",
+    "shape_semantics": "disagreement_closed_fraction = movement of the shape metric toward unity; negative = pushed further away",
+    "compatible": "closure in [0.5, 2]: prior-order effect of the residual's order",
+    "tension": "closure in [0.1, 0.5) or (2, 10]: right direction, magnitude off",
+    "excluded_leaning": "closure < 0.1 (negligible at prior level) or > 10 (dominant at prior level); for shape, < 0.1 also covers worsening",
+    "ranking_key": "brightness-axis minimum gap closure across the four events (weakest link), descending; shape verdicts are recorded per event alongside and enter the owner's reading, not this mechanical key",
+    "gloss": {
+      "compatible": "\u76f8\u5bb9",
+      "tension": "\u5f20\u529b",
+      "excluded_leaning": "\u6392\u9664\u503e\u5411"
+    }
+  },
+  "band_fractions_fixed_opac": {
+    "june_2011": {
+      "band_fraction_below_2km_median": 0.0,
+      "band_fraction_2_to_12km_median": 0.7177424225216549,
+      "band_fraction_over_12km_median": 0.2269154157037917
+    },
+    "hst_2019": {
+      "band_fraction_below_2km_median": 6.552517576187988e-05,
+      "band_fraction_2_to_12km_median": 0.9999344748242381,
+      "band_fraction_over_12km_median": 0.0
+    },
+    "dec_2011": {
+      "band_fraction_below_2km_median": 0.0,
+      "band_fraction_2_to_12km_median": 0.3982193922256255,
+      "band_fraction_over_12km_median": 0.6017806077743745
+    },
+    "event_1990_02_09": {
+      "band_fraction_below_2km_median": 0.005494094452373901,
+      "band_fraction_2_to_12km_median": 0.5019285902488076,
+      "band_fraction_over_12km_median": 0.49257731529881843
+    }
+  },
+  "candidates": {
+    "continental_clean": {
+      "candidate": "continental_clean",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.046,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental clean' minus ft_part(2) and stratosphere 0.005 per the Table 3 header note and ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.22921000321731996,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -1.2867367971125532e-07,
+            "new_residual_ln_median": 1.0889544297732394,
+            "gap_closure_fraction": 1.1816257961651894e-07,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00012977717645516838,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437530897124969,
+                "disagreement_closed_fraction": 0.0002126380216204043,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5978607000602688,
+                "disagreement_closed_fraction": 0.00023422305382729352,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764473595631582,
+                "disagreement_closed_fraction": 7.788198704826407e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418891461827307,
+                "disagreement_closed_fraction": 4.793324336014881e-06,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005165246420105851,
+            "new_residual_ln_median": 0.4454450249621421,
+            "gap_closure_fraction": 0.011462780029983442,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.011462780029983364,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.22921000321731996,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "continental_average": {
+      "candidate": "continental_average",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.133,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental average' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.2477006010330324,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -2.606220905754242e-07,
+            "new_residual_ln_median": 1.0889542978248286,
+            "gap_closure_fraction": 2.3933238403182475e-07,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00019183259103329754,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437992324449981,
+                "disagreement_closed_fraction": 0.0003137519574336251,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5979066136311423,
+                "disagreement_closed_fraction": 0.0003483696116582877,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764494241532505,
+                "disagreement_closed_fraction": 0.00016553370081213138,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418905542898526,
+                "disagreement_closed_fraction": 1.0248733713668234e-05,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005463707211007862,
+            "new_residual_ln_median": 0.4451465641712401,
+            "gap_closure_fraction": 0.012125127983097075,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.012125127983096999,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.2477006010330324,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "continental_polluted": {
+      "candidate": "continental_polluted",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.309,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental polluted' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.2500496138176852,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -3.536155790406781e-07,
+            "new_residual_ln_median": 1.08895420483134,
+            "gap_closure_fraction": 3.247294171255494e-07,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00020927652585505188,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.543812135825027,
+                "disagreement_closed_fraction": 0.0003420275161033263,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5979196668081819,
+                "disagreement_closed_fraction": 0.0003808213508604939,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764510925675612,
+                "disagreement_closed_fraction": 0.0002363658597693817,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.741891708868207,
+                "disagreement_closed_fraction": 1.4721900196300804e-05,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005500601431464691,
+            "new_residual_ln_median": 0.44510966995078327,
+            "gap_closure_fraction": 0.012207004102661895,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.01220700410266205,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.2500496138176852,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "urban": {
+      "candidate": "urban",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.625,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Urban' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.25046377315912144,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -3.8875748042954683e-07,
+            "new_residual_ln_median": 1.0889541696894387,
+            "gap_closure_fraction": 3.570006456320801e-07,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00021281658292907364,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5438147490406522,
+                "disagreement_closed_fraction": 0.00034775393286870797,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5979223231700032,
+                "disagreement_closed_fraction": 0.0003874253799631086,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764518324495073,
+                "disagreement_closed_fraction": 0.0002677773834391516,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418922283770455,
+                "disagreement_closed_fraction": 1.6734625893984633e-05,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005507048706110573,
+            "new_residual_ln_median": 0.4451032226761374,
+            "gap_closure_fraction": 0.012221311975907007,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.012221311975907157,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.25046377315912144,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "desert": {
+      "candidate": "desert",
+      "action_band_m": [
+        0.0,
+        6000.0
+      ],
+      "probe_aod550": 0.275169,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Desert' minus ft_part(6)=0.005831 and stratosphere 0.005; the desert boundary layer is 6 km thick (Table 5 H=6 km), so its free-troposphere part is scaled per ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": -0.25948769109780534,
+            "new_residual_ln_median": 0.23081674060650947,
+            "gap_closure_fraction": 0.5292379067344289,
+            "verdict": "compatible",
+            "max_readout_gap_closure_fraction": 1.494849929154447,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1175418658572591,
+            "disagreement_closed_fraction": -0.06639333749924499,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 1.1560660983255568,
+                "new_ratio": 2.0506551994622435,
+                "disagreement_closed_fraction": -0.35774832890814473,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0893332498023847,
+                "new_ratio": 1.3815251399404305,
+                "disagreement_closed_fraction": -0.4223804102717055,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 1.044150200069721,
+                "new_ratio": 1.0951126500329995,
+                "disagreement_closed_fraction": -0.9487268102824316,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0154079247302064,
+                "new_ratio": 1.0756483900479907,
+                "disagreement_closed_fraction": -0.2751225333768172,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 1.0065915742246936,
+                "new_ratio": 1.1175418658572591,
+                "disagreement_closed_fraction": -0.06639333749924499,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -0.04534731086459631,
+            "new_residual_ln_median": 1.0436072475823228,
+            "gap_closure_fraction": 0.04164297813241282,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.1150912286947712,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.6358606437751418,
+                "disagreement_closed_fraction": 0.20205064813886964,
+                "verdict": "tension"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.6680131384738418,
+                "disagreement_closed_fraction": 0.1746414672742396,
+                "verdict": "tension"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 1.111731910036483,
+                "disagreement_closed_fraction": -3.7435534216601765,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.8154409669317755,
+                "disagreement_closed_fraction": 0.28496556542492923,
+                "verdict": "tension"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": -0.0017129692775662564,
+            "new_residual_ln_median": 0.5005685851130337,
+            "gap_closure_fraction": 0.0034103766355595916,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.025104268952286252,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.008657184512458,
+              "new_ratio": 1.3880230641490559,
+              "disagreement_closed_fraction": -0.03167488806688752,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.008286097791595,
+              "new_ratio": 1.2125378877139108,
+              "disagreement_closed_fraction": -0.04919030338697636,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.05087465580563977,
+            "new_residual_ln_median": 0.3997356155766082,
+            "gap_closure_fraction": 0.11290167809442438,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 0.1129016780944242,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "compatible": 1,
+        "excluded_leaning": 2,
+        "tension": 1
+      },
+      "min_gap_closure_fraction": 0.0034103766355595916,
+      "max_readout_gap_closure_fraction": 1.494849929154447,
+      "geometric_mean_gap_closure_fraction": 0.0539726654505583
+    },
+    "maritime_clean": {
+      "candidate": "maritime_clean",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.078,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime clean' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.22939905277705924,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -7.591480244428794e-08,
+            "new_residual_ln_median": 1.0889544825321167,
+            "gap_closure_fraction": 6.971347137988807e-08,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 9.99824722079251e-05,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437306120741575,
+                "disagreement_closed_fraction": 0.00016338210726321188,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5978396737803067,
+                "disagreement_closed_fraction": 0.00018194923944060898,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764467633697993,
+                "disagreement_closed_fraction": 5.257073042805729e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418887574929218,
+                "disagreement_closed_fraction": 3.287428942505557e-06,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005083527285937417,
+            "new_residual_ln_median": 0.44552674409631055,
+            "gap_closure_fraction": 0.011281427896314228,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.011281427896314394,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.22939905277705924,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "maritime_polluted": {
+      "candidate": "maritime_polluted",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.099,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime polluted' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.23415815556825523,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -9.54674779229947e-08,
+            "new_residual_ln_median": 1.0889544629794412,
+            "gap_closure_fraction": 8.766892721322701e-08,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00011584539428694641,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.543742491721587,
+                "disagreement_closed_fraction": 0.0001894143303794726,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.597851129804791,
+                "disagreement_closed_fraction": 0.00021043026882783088,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764470379550774,
+                "disagreement_closed_fraction": 6.422818741508829e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418889423750171,
+                "disagreement_closed_fraction": 4.00371501248585e-06,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.005191380083966968,
+            "new_residual_ln_median": 0.445418891298281,
+            "gap_closure_fraction": 0.011520776186575593,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.01152077618657536,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.23415815556825523,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "maritime_tropical": {
+      "candidate": "maritime_tropical",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.038,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime tropical' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.20118710284619803,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -3.9155841680127423e-08,
+            "new_residual_ln_median": 1.0889545192910774,
+            "gap_closure_fraction": 3.595727790145071e-08,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 5.8068792425028096e-05,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5436993517425,
+                "disagreement_closed_fraction": 9.488041702098233e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5978090039925569,
+                "disagreement_closed_fraction": 0.00010570052616378815,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764461664607996,
+                "disagreement_closed_fraction": 2.722909143797311e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418883486595679,
+                "disagreement_closed_fraction": 1.7034916991408507e-06,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.0045067943484962125,
+            "new_residual_ln_median": 0.44610347703375175,
+            "gap_closure_fraction": 0.010001534884394914,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.010001534884395032,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.20118710284619803,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "arctic": {
+      "candidate": "arctic",
+      "action_band_m": [
+        0.0,
+        2000.0
+      ],
+      "probe_aod550": 0.045,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Arctic' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": 1.1102230246251565e-16,
+            "new_residual_ln_median": 0.4903044317043149,
+            "gap_closure_fraction": -2.2643544557938907e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.23482206449927176,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9999999999999993,
+                "new_ratio": 1.7738217584897662,
+                "disagreement_closed_fraction": 1.4347270704715364e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -1.334217105686264e-07,
+            "new_residual_ln_median": 1.0889544250252086,
+            "gap_closure_fraction": 1.2252275316144884e-07,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.00013761500056193519,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437588287253824,
+                "disagreement_closed_fraction": 0.0002252140904632889,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5978667592116718,
+                "disagreement_closed_fraction": 0.00024928681956944083,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764475339906118,
+                "disagreement_closed_fraction": 8.528726584505108e-05,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7418892730908497,
+                "disagreement_closed_fraction": 5.285002654942465e-06,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.0052370960876376715,
+            "new_residual_ln_median": 0.4453731752946103,
+            "gap_closure_fraction": 0.011622229718760889,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.011622229718760917,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.23482206449927176,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "antarctic": {
+      "candidate": "antarctic",
+      "action_band_m": [
+        0.0,
+        10000.0
+      ],
+      "probe_aod550": 0.065517,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Antarctic' minus ft_part(10)=0.001483 and stratosphere 0.005; the antarctic boundary layer is 10 km thick (Table 5 H=10 km), so its free-troposphere part is scaled per ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": -0.5522046875804144,
+            "new_residual_ln_median": -0.06190025587609961,
+            "gap_closure_fraction": 1.1262486159077376,
+            "verdict": "compatible",
+            "max_readout_gap_closure_fraction": 3.7485334093676874,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.30816565769397,
+            "disagreement_closed_fraction": -1.7958191901598721,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 1.4365520069318771,
+                "new_ratio": 2.548187207097907,
+                "disagreement_closed_fraction": -1.0007026038133553,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.3387246349929653,
+                "new_ratio": 1.6978107838311844,
+                "disagreement_closed_fraction": -1.6015386277108579,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 1.2472885169980796,
+                "new_ratio": 1.30816565769397,
+                "disagreement_closed_fraction": -5.313888625206032,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.1696047872943849,
+                "new_ratio": 1.238993192592918,
+                "disagreement_closed_fraction": -3.0284479948028915,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 1.1364109693499935,
+                "new_ratio": 1.261670440711,
+                "disagreement_closed_fraction": -1.3739934070262887,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -0.5797017360209205,
+            "new_residual_ln_median": 0.5092528224259987,
+            "gap_closure_fraction": 0.5323470401259888,
+            "verdict": "compatible",
+            "max_readout_gap_closure_fraction": 0.7702048358092972,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.9299474719147486,
+                "disagreement_closed_fraction": 0.8464918212593795,
+                "verdict": "compatible"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.766084861343411,
+                "disagreement_closed_fraction": 0.4184593488536804,
+                "verdict": "tension"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 1.6281211601769903,
+                "disagreement_closed_fraction": -25.666744331156934,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.9525284864031965,
+                "disagreement_closed_fraction": 0.8160817906400419,
+                "verdict": "compatible"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": -0.11364522878381705,
+            "new_residual_ln_median": 0.3886363256067829,
+            "gap_closure_fraction": 0.2262580176206126,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 0.519915224480616,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.1852839157404687,
+              "new_ratio": 1.6310808447846403,
+              "disagreement_closed_fraction": -0.6779163922437543,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.156821490118561,
+              "new_ratio": 1.3911625769339366,
+              "disagreement_closed_fraction": -0.9309685777971866,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.22993653847485554,
+            "new_residual_ln_median": 0.22067373290739242,
+            "gap_closure_fraction": 0.5102780674961641,
+            "verdict": "compatible",
+            "max_readout_gap_closure_fraction": 0.5102780674961641,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "compatible": 3,
+        "tension": 1
+      },
+      "min_gap_closure_fraction": 0.2262580176206126,
+      "max_readout_gap_closure_fraction": 3.7485334093676874,
+      "geometric_mean_gap_closure_fraction": 0.5129322414714287,
+      "interpretation": "The antarctic type (0-10 km, weak spectral dependence, AOD about 5x the free-troposphere prior) reads on this baseline as a proxy for the 'more same-type extinction across 2-10 km' hypothesis: it double counts the 2-10 km band already carried by the fixed_opac free troposphere, so its brightness compatibility transfers to any low-layer scaled increment, and so does its shape cost."
+    },
+    "mineral_transported": {
+      "candidate": "mineral_transported",
+      "action_band_m": [
+        2000.0,
+        3500.0
+      ],
+      "probe_aod550": 0.097,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Mineral transported (2-3.5 km)'; consistent with Sec. 5b p. 843: 1.5 km layer at 11 particles/cm3 yields 'an additional optical thickness of 0.1'",
+      "stacking_semantics": "Adds the 2-3.5 km layer on top of the committed fixed_opac free troposphere, whose 2-3.5 km band is therefore double counted; this matches the OPAC construction where mineral transported sits above the boundary layer.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": -0.006796843760330462,
+            "new_residual_ln_median": 0.48350758794398435,
+            "gap_closure_fraction": 0.013862497095334022,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.5606819884665314,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.1102237436450058,
+            "disagreement_closed_fraction": 2.0144897785377636e-15,
+            "verdict": "excluded_leaning",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 1.0130025064508756,
+                "new_ratio": 1.796885887347234,
+                "disagreement_closed_fraction": -0.029805479885290226,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 1.0,
+                "new_ratio": 1.2682300298747442,
+                "disagreement_closed_fraction": 0.0,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.048807585307052,
+                "disagreement_closed_fraction": 4.549387221845374e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 1.0000000000000004,
+                "new_ratio": 1.059326369088355,
+                "disagreement_closed_fraction": -7.485528217455585e-15,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9999999999999998,
+                "new_ratio": 1.1102237436450058,
+                "disagreement_closed_fraction": 2.0144897785377636e-15,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -0.0031298881153638547,
+            "new_residual_ln_median": 1.0858246703315553,
+            "gap_closure_fraction": 0.002874213704406308,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.017216427822380795,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5567315873372308,
+                "disagreement_closed_fraction": 0.028652804102961636,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.6098143926434078,
+                "disagreement_closed_fraction": 0.02995251409016394,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9939005515114184,
+                "disagreement_closed_fraction": 0.7410492692839156,
+                "verdict": "compatible"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7531589859298523,
+                "disagreement_closed_fraction": 0.04366737302779537,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": 4.440892098500626e-16,
+            "new_residual_ln_median": 0.5022815543906004,
+            "gap_closure_fraction": -8.841439745659384e-16,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 6.435699540271309e-16,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 1.0000000000000002,
+              "new_ratio": 1.3761098274632997,
+              "disagreement_closed_fraction": -5.903717178107989e-16,
+              "verdict": "excluded_leaning"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 1.0000000000000004,
+              "new_ratio": 1.2025732481779525,
+              "disagreement_closed_fraction": -2.1922401592729013e-15,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.013217840661988167,
+            "new_residual_ln_median": 0.4373924307202598,
+            "gap_closure_fraction": 0.029333198778275543,
+            "verdict": "excluded_leaning",
+            "max_readout_gap_closure_fraction": 0.029333198778275428,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "excluded_leaning": 4
+      },
+      "min_gap_closure_fraction": 0.0,
+      "max_readout_gap_closure_fraction": 0.5606819884665314,
+      "geometric_mean_gap_closure_fraction": 0.0
+    },
+    "stratosphere_background": {
+      "candidate": "stratosphere_background",
+      "action_band_m": [
+        12000.0,
+        35000.0
+      ],
+      "probe_aod550": 0.005,
+      "probe_aod550_source_location": "Table 3, printed page 840, row 'Stratosphere (12-35 km)'; consistent with Sec. 5b p. 842: 'background conditions with 3 particles cm-3, which yields an optical depth of about 0.005'",
+      "stacking_semantics": "Adds the 12-35 km layer on top of the committed fixed_opac free troposphere; no overlap with existing components.",
+      "events": {
+        "june_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.4903044317043148,
+            "probe_delta_ln_median": -0.1656911014955449,
+            "new_residual_ln_median": 0.3246133302087699,
+            "gap_closure_fraction": 0.3379351496367206,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 3.1732284240449258,
+            "base_p50_height_m_median": 10630.987086087018,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.2269154157037917
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.110223743645006,
+            "median_new": 1.0230596103982648,
+            "disagreement_closed_fraction": 0.7907927127522352,
+            "verdict": "compatible",
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.7738217584897673,
+                "shape_factor": 0.9273676041495686,
+                "new_ratio": 1.6449848343590303,
+                "disagreement_closed_fraction": 0.16649431567055203,
+                "verdict": "tension"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.2682300298747442,
+                "shape_factor": 0.9192012153622853,
+                "new_ratio": 1.1657585848198122,
+                "disagreement_closed_fraction": 0.3820282356259038,
+                "verdict": "tension"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 1.0488075853070522,
+                "shape_factor": 0.9166009385667173,
+                "new_ratio": 0.9613380170683364,
+                "disagreement_closed_fraction": 0.20786937750683404,
+                "verdict": "tension"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 1.0593263690883545,
+                "shape_factor": 0.9188744848015193,
+                "new_ratio": 0.973387971632726,
+                "disagreement_closed_fraction": 0.5514300171035099,
+                "verdict": "compatible"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.110223743645006,
+                "shape_factor": 0.9214895792441168,
+                "new_ratio": 1.0230596103982648,
+                "disagreement_closed_fraction": 0.7907927127522352,
+                "verdict": "compatible"
+              }
+            ]
+          }
+        },
+        "hst_2019": {
+          "brightness": {
+            "base_residual_ln_median": 1.0889545584469191,
+            "probe_delta_ln_median": -0.20719586312739247,
+            "new_residual_ln_median": 0.8817586953195267,
+            "gap_closure_fraction": 0.19027044013930006,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 0.3217807691000238,
+            "base_p50_height_m_median": 8923.165921165535,
+            "base_band_fraction_below_2km_median": 6.552517576187988e-05,
+            "base_band_fraction_over_12km_median": 0.0
+          },
+          "shape": {
+            "ody902030": {
+              "430_over_570": {
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5091747337486129,
+                "disagreement_closed_fraction": -0.07555993711515398,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.5977664876986659,
+                "new_slope": 0.5785080158362389,
+                "disagreement_closed_fraction": -0.04787883474015336,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "ody902040": {
+              "430_over_570": {
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9111780017487947,
+                "disagreement_closed_fraction": -2.7709182057804647,
+                "verdict": "excluded_leaning"
+              },
+              "500_over_570": {
+                "base_slope": 0.7418879089677634,
+                "new_slope": 0.7167848514159475,
+                "disagreement_closed_fraction": -0.09725641852508426,
+                "verdict": "excluded_leaning"
+              }
+            }
+          }
+        },
+        "dec_2011": {
+          "brightness": {
+            "base_residual_ln_median": 0.5022815543906,
+            "probe_delta_ln_median": -0.22016916540204823,
+            "new_residual_ln_median": 0.28211238898855173,
+            "gap_closure_fraction": 0.4383381461602179,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 0.46719352896888683,
+            "base_p50_height_m_median": 12823.723379504108,
+            "base_band_fraction_below_2km_median": 0.0,
+            "base_band_fraction_over_12km_median": 0.6017806077743745
+          },
+          "shape": {
+            "450_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.3761098274632995,
+              "shape_factor": 0.883965184292898,
+              "new_ratio": 1.2164331772408636,
+              "disagreement_closed_fraction": 0.42454793404199725,
+              "verdict": "tension"
+            },
+            "500_to750_transmission_ratio_model_over_observed": {
+              "base_ratio": 1.202573248177952,
+              "shape_factor": 0.9032294590360194,
+              "new_ratio": 1.0861995844029604,
+              "disagreement_closed_fraction": 0.5744769599229723,
+              "verdict": "compatible"
+            }
+          }
+        },
+        "event_1990_02_09": {
+          "brightness": {
+            "base_residual_ln_median": 0.45061027138224796,
+            "probe_delta_ln_median": -0.19569773854856093,
+            "new_residual_ln_median": 0.25491253283368703,
+            "gap_closure_fraction": 0.4342948906784963,
+            "verdict": "tension",
+            "max_readout_gap_closure_fraction": 0.4342948906784961,
+            "base_p50_height_m_median": 11929.585866063231,
+            "base_band_fraction_below_2km_median": 0.005494094452373901,
+            "base_band_fraction_over_12km_median": 0.49257731529881843
+          },
+          "shape": {}
+        }
+      },
+      "brightness_verdict_counts": {
+        "tension": 4
+      },
+      "min_gap_closure_fraction": 0.19027044013930006,
+      "max_readout_gap_closure_fraction": 3.1732284240449258,
+      "geometric_mean_gap_closure_fraction": 0.33262100310873605
+    }
+  },
+  "not_probed": [
+    {
+      "candidate": "free_troposphere_humidified",
+      "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling needs the per-component OPAC data files, marked unavailable in prior_parameters.json (row free_troposphere_reference/aod550_at_other_rh and each boundary-layer type's aod550_at_rh_50_70_90 row carry the unavailable status and the search trail); no sourced prior AOD exists, so no probe runs and the candidate carries no verdict.",
+      "direction_support": "The 677 nm same-event calibration direction supports 'more same-type extinction' (docs/ROUND2.md), but that calibrated value is not a prior and is excluded from this ranking."
+    }
+  ],
+  "ranking": [
+    "antarctic",
+    "stratosphere_background",
+    "desert",
+    "continental_clean",
+    "continental_average",
+    "continental_polluted",
+    "urban",
+    "maritime_clean",
+    "maritime_polluted",
+    "maritime_tropical",
+    "arctic",
+    "mineral_transported"
+  ]
+}
