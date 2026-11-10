@@ -64,24 +64,33 @@ def test_cli_aod550_override_touches_only_free_troposphere_layer(tmp_path):
 
 
 def test_cli_aod550_zero_is_the_molecular_counterfactual(tmp_path):
-    zero_out, none_out = tmp_path/"zero", tmp_path/"none"
+    zero_out, none_out, ft_zero_out = tmp_path/"zero", tmp_path/"none", tmp_path/"ft-zero"
     common = ["--no-plots", "--radial-step-km", "1000", "--wavelength-step-nm", "50",
               "--height-step-m", "500"]
     main(["simulate", "--out", str(zero_out), "--aerosol", "opac", "--aod550", "0", *common])
     main(["simulate", "--out", str(none_out), "--aerosol", "none", *common])
+    main(["simulate", "--out", str(ft_zero_out), "--aerosol", "opac-ft",
+          "--aod550", "0", *common])
     zero = np.load(zero_out/"rays.npz")
     none = np.load(none_out/"rays.npz")
+    ft_zero = np.load(ft_zero_out/"rays.npz")
     for key in zero.files:
         np.testing.assert_array_equal(zero[key], none[key])
+        np.testing.assert_array_equal(zero[key], ft_zero[key])
     zero_metadata = json.loads((zero_out/"metadata.json").read_text())
     none_metadata = json.loads((none_out/"metadata.json").read_text())
+    ft_zero_metadata = json.loads((ft_zero_out/"metadata.json").read_text())
     assert zero_metadata["aerosol"] is None and none_metadata["aerosol"] is None
     # The preset field keeps the requested choice while the medium is
     # molecular-only; the disabled source field is the disambiguator, so the
-    # combination's semantics stay pinned against silent drift.
+    # combination's semantics stay pinned against silent drift — for both
+    # aerosol presets that accept --aod550.
     assert zero_metadata["aerosol_preset"] == "opac"
     assert zero_metadata["aerosol_aod_source"] == "Disabled"
     assert "No aerosol extinction" in zero_metadata["approximations"]
+    assert ft_zero_metadata["aerosol"] is None
+    assert ft_zero_metadata["aerosol_preset"] == "opac-ft"
+    assert ft_zero_metadata["aerosol_aod_source"] == "Disabled"
 
 
 def test_cli_molecular_counterfactual_has_consistent_metadata(tmp_path):

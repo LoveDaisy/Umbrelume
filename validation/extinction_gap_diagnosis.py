@@ -51,8 +51,8 @@ from scipy.stats import spearmanr
 
 import eclipse
 from eclipse.aerosol import (
-    FREE_TROPOSPHERE_SOURCE, OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
-    STRATOSPHERE_BACKGROUND_SOURCE, AerosolColumn, AerosolProfile,
+    OPAC_DEFAULT_LAYER_SOURCES, OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
+    AerosolColumn, AerosolProfile,
 )
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
@@ -1204,8 +1204,8 @@ def build_strat_predictions(height_stats: dict) -> dict:
                 "source": {
                     "prior_parameters_json": PRIOR_PARAMETERS_JSON,
                     "opac1998_sha256": OPAC_PDF_SHA256,
-                    "layer_candidates": [FREE_TROPOSPHERE_SOURCE["candidate"],
-                                          STRATOSPHERE_BACKGROUND_SOURCE["candidate"]],
+                    "layer_candidates": [source["candidate"]
+                                         for source in OPAC_DEFAULT_LAYER_SOURCES],
                 },
             },
         },

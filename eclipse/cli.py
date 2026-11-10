@@ -13,8 +13,8 @@ import numpy as np
 from . import __version__
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
 from .aerosol import (
-    FREE_TROPOSPHERE_SOURCE, OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
-    STRATOSPHERE_BACKGROUND_SOURCE, AerosolColumn, AerosolProfile,
+    AerosolColumn, AerosolProfile, FREE_TROPOSPHERE_SOURCE, OPAC_DEFAULT_LAYER_SOURCES,
+    OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
 )
 from .color import spectrum_to_xyz
 from .report import write_report
@@ -49,7 +49,7 @@ def _aerosol_layer_metadata(aerosol_prior, layer_sources):
              "source": {**source,
                         "prior_parameters_json": PRIOR_PARAMETERS_JSON,
                         "opac1998_sha256": OPAC_PDF_SHA256}}
-            for layer, source in zip(layers, layer_sources)]
+            for layer, source in zip(layers, layer_sources, strict=True)]
 
 
 def main(argv=None):
@@ -97,7 +97,7 @@ def main(argv=None):
     elif args.aerosol == "opac":
         aerosol_prior = AerosolColumn.opac_default(
             ft_aod550=.013 if args.aod550 is None else args.aod550)
-        layer_sources = (FREE_TROPOSPHERE_SOURCE, STRATOSPHERE_BACKGROUND_SOURCE)
+        layer_sources = OPAC_DEFAULT_LAYER_SOURCES
     else:
         aerosol_prior = AerosolProfile.opac_free_troposphere(
             aod550=.013 if args.aod550 is None else args.aod550)

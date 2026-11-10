@@ -29,6 +29,11 @@ STRATOSPHERE_BACKGROUND_SOURCE = {
     "rows": ("aod550", "angstrom_0.35_to_0.5um", "angstrom_0.5_to_0.8um",
              "layer_bottom_m", "layer_top_m", "scale_height_m"),
 }
+# Layer order of ``AerosolColumn.opac_default()`` paired with each layer's
+# pinned prior-row provenance. CLI metadata and validation products consume
+# this single pairing, so the layer order and its source rows are written in
+# exactly one place and cannot drift apart when the default column evolves.
+OPAC_DEFAULT_LAYER_SOURCES = (FREE_TROPOSPHERE_SOURCE, STRATOSPHERE_BACKGROUND_SOURCE)
 
 
 @dataclass(frozen=True)
