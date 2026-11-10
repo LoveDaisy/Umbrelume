@@ -33,7 +33,8 @@ each lunar surface point, observing site or exposure.
 
 ```bash
 # Optional one-time extraction dependency; not required for ordinary comparisons
-uv run --with pymupdf==2.1 python tools/extract_ugolnikov2011.py
+# --branch carries the H1 adjudication (A/B/C) from the human reading of the fixed PDF
+uv run --with pymupdf==2.1 python tools/extract_ugolnikov2011.py --branch C
 uv run python tools/fetch_eclipse2011_geometry.py
 
 # Entirely offline with the committed CSV and geometry
@@ -54,6 +55,21 @@ Axis placement and source curve smoothing are additional limitations. Readout
 precision should not be confused with the much longer decimal values needed for
 deterministic reproduction. Do not calculate chi-square significance from these
 allowances or treat the eighteen readouts as independent exposures.
+
+## Filter information (H1 adjudication, branch C)
+
+The fixed PDF was re-read in full for filter width and response information
+(2026-11-10). The paper states only that the SAO cameras used "narrow filters
+with the effective wavelengths 503 and 677 nm" and that the 503 nm filter's weak
+"red tail" was corrected in reduction using the 677 and 867 nm data. No FWHM,
+bandwidth, passband shape or response curve is stated in text, tables or
+figures. The literal keyword search (24 parameter terms, all zero hits) and the
+verbatim statements are recorded in `source.json` → `filter_information`, and
+the search is mechanically reproducible with the extraction command above.
+The passband-shape approximation used for band-integrated predictions and its
+grade are defined once in `source.json` → `filter_information.approximation_grade`;
+other documents cite it and do not restate it. Requesting the measured response
+curves from the authors is recorded there as an upgrade path only.
 
 ## Missing contracts and limits
 
