@@ -16,12 +16,13 @@
 | 2007-03-03 | 同一论文：中央 20 角分直径视场的明视觉亮度 | 已录入数值；云遮挡期间的最低值借用 1990 年光变形状外推，食外基线也有额外气溶胶警告。**只作背景，不能算第二个独立实测最低值** |
 | **2011-12-10** | [Yan et al. Fig. 15](https://arxiv.org/pdf/1405.4780v1)：Tycho 附近同月面区域的食中／食外光谱比 | **已完成七个连续谱点的固定模型比较**；独立星历、Fig.1 轨迹核对、1800 秒时间平均及位置敏感性均已落实；准确光纤位置未公开，采用名义 Tycho 位置 |
 | 2019-01-21 / GF-4 | [Shu et al. 2024](https://doi.org/10.3390/rs16224181)：可见多波段月面辐亮度、全月面辐照度和蓝带分布 | 已核查官方 PDF 并保存来源合同；原始数据仅按需提供，全食期间无有效采样；发表图的比值含月面光度模型分母，尚不能直接当作本模型的透射率 |
-| 2019-01-21 / HST | [Youngblood et al. 2020](https://arxiv.org/html/2008.01837)：公开 MAST/STIS FITS | 先前已确认归档下载；仍需实际指向、漂移和月面反射处理。主要覆盖蓝端，不能独立验证完整可见颜色 |
+| **2019-01-21 / HST** | [Youngblood et al. 2020](https://arxiv.org/html/2008.01837)：MAST/STIS 公开 FITS（G430L，星载接收者） | **已完成 300–570 nm 窗口固定模型对照**：本影/全月比值给出亮度比与蓝端斜率两个量；蓝端 300–420 nm 只是散射光上限。不宣称完整颜色/绿松石带验证 |
 
 数据、来源版本及提取方法分别位于
 [1990/2007](../validation/observations/hernitschek2008/README.md)、
 [2011-12](../validation/observations/yan2011dec/README.md)、
-[GF-4 来源合同](../validation/observations/gf4_2019/source.json)。
+[GF-4 来源合同](../validation/observations/gf4_2019/source.json)、
+[2019-01 HST](../validation/observations/hst2019/README.md)。
 图表读数是可追溯的公开观测摘要，不是原始曝光；读取裕量始终与测量误差分开。
 
 ## 1990 年：新增独立亮度比较
@@ -93,6 +94,31 @@ U1 从 14:08:25 到 14:38:25 UTC。本次采用 Tycho 中心作名义位置，�
 它们不再阻止一个明确前提下的比较。这七个点仍不足以积分完整实测颜色，也未直接采样绿松石带。
 详见 [完整比较、几何与敏感性](DECEMBER2011.md)及[对照图](../figures/dec2011/comparison.png)。
 
+## 2019 年 1 月：HST/STIS 星载口径光谱对照
+
+第一个星载（HST，低地球轨道）接收者的独立事件对照，无地面气团量，误差源换成指向漂移。
+数据为 HST-GO/DD-15674 的公开 MAST 产品：本影 `ody902030`/`ody902040`（管线 CR 拒绝组合）、
+全月 G430L 参考 12 次单次曝光，半影两组只作辅助。提取复现论文自身方法（逐列跨全缝中位数、
+无本底扣除、比值内仪器响应抵消），管线 1D 产品只取波长解；论文的 Lommel-Seeliger 修正（≤1%）
+省略并记录在案，半影临边昏暗修正未复现（辅助支与发表值存在已知约 1/0.75 的系统差）。
+
+几何由 Horizons DE441 + MEAN_ME 站点矢量独立重建：论文 Table 1 的线性轨道月面经纬度
+（东经为正，经 FITS `RA_APER` 重构投影检查确认，残差 RMS 123″）在反射历元的影轴距离
+2324–2490 km；eclipse angle 与论文 Table 1 最大差 0.013°，曝光中点与 FITS 记录差 ≤0.85 s。
+±150 km 采样位移探针与论文指向包络（线性轨道近似误差最大约 10′ ≈ 1042 km）分别记录；
+后者限定同区域反照率抵消前提（论文自评指向漂移使 in/out 采样区域不同）。
+
+固定模型（不拟合）结果：430–570 nm 定量窗口内 model/observed 中位数 4.05–4.54（分子-only）
+与 2.58–3.03（固定 OPAC 默认）——偏亮方向与 1990、2011-12 两个事件一致，固定 OPAC 先验同样
+降低偏亮。蓝端形状：430/570 斜率 model/observed 0.52–0.98（`slope_model_vs_observed` 字段），
+观测本影谱相对模型更平，模型红端偏高更多。300–420 nm 的观测是长波散射光上限（数值为零的
+模型叠加蓝端污染鼓包），与论文「本影 ≤4200 Å 未探测到光子」一致，只作上限核对本档。
+以上数字均出自 [comparison.json](../validation/results/hst2019/comparison.json) 的
+`metrics`、`probe_cases` 与 `independent_checks` 等生成字段。
+
+边界：G430L 止于 570 nm、模型表始于 300 nm——Chappuis 谷中心（约 600 nm）与绿松石带不在此
+来源的可达范围，不宣称完整可见颜色。
+
 ## 其他资料的使用限制
 
 - [2004 年 May/October 地影扫描](https://arxiv.org/pdf/astro-ph/0510163)有独立事件曲线，但仪器为一个 **675+855 nm 双通带**，响应延伸至约 1100 nm。不能把它当作 675 nm 单色观测；后续须取得响应并扩展模型光谱输入。
@@ -106,16 +132,19 @@ U1 从 14:08:25 到 14:38:25 UTC。本次采用 Tycho 中心作名义位置，�
 # 日常比较离线运行，使用已提交的数值和距离
 uv run python -m validation.multiple_events --out outputs/multiple-events
 uv run python -m validation.compare_dec2011 --out outputs/dec2011
+uv run python -m validation.compare_hst2019 --out outputs/hst2019
 
 # 可选：重新核对网络来源；结果与固定 SHA 绑定
 uv run python tools/extract_hernitschek2008.py
 uv run --with pymupdf==2.1 python tools/extract_yan2011.py --qa outputs/observations/yan2011dec-readout.png
 uv run python tools/fetch_photometry_geometry.py
 uv run python tools/fetch_dec2011_geometry.py
+uv run python tools/fetch_hst2019.py
+uv run python tools/fetch_hst2019_geometry.py
 ```
 
 可复现输入及 [CSV](../validation/results/multiple_events/comparison.csv)、JSON、图均保留；
-生产传播代码、默认值和既有历史图片没有改动。当前 105 项测试通过；物理、气溶胶及分辨率检查通过。
+生产传播代码、默认值和既有历史图片没有改动。当前 143 项测试通过；物理、气溶胶及分辨率检查通过。
 1990 年亮度和 2011 年 12 月光谱现均已进入固定模型比较。
 跨事件一致偏亮与不同光谱形状残差需要同时解释，不能只用单次亮度拟合判断改进。
 绿松石带与真实月面渲染的中远期安排见 [ROADMAP](ROADMAP.md)。
