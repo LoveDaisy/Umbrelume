@@ -36,8 +36,8 @@
       "band_fraction_over_12km_median": 0.49257731529881843
     }
   },
-  "candidates": [
-    {
+  "candidates": {
+    "continental_clean": {
       "candidate": "continental_clean",
       "action_band_m": [
         0.0,
@@ -202,7 +202,7 @@
       "max_readout_gap_closure_fraction": 0.22921000321731996,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "continental_average": {
       "candidate": "continental_average",
       "action_band_m": [
         0.0,
@@ -367,7 +367,7 @@
       "max_readout_gap_closure_fraction": 0.2477006010330324,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "continental_polluted": {
       "candidate": "continental_polluted",
       "action_band_m": [
         0.0,
@@ -532,7 +532,7 @@
       "max_readout_gap_closure_fraction": 0.2500496138176852,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "urban": {
       "candidate": "urban",
       "action_band_m": [
         0.0,
@@ -697,7 +697,7 @@
       "max_readout_gap_closure_fraction": 0.25046377315912144,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "desert": {
       "candidate": "desert",
       "action_band_m": [
         0.0,
@@ -864,7 +864,7 @@
       "max_readout_gap_closure_fraction": 1.494849929154447,
       "geometric_mean_gap_closure_fraction": 0.0539726654505583
     },
-    {
+    "maritime_clean": {
       "candidate": "maritime_clean",
       "action_band_m": [
         0.0,
@@ -1029,7 +1029,7 @@
       "max_readout_gap_closure_fraction": 0.22939905277705924,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "maritime_polluted": {
       "candidate": "maritime_polluted",
       "action_band_m": [
         0.0,
@@ -1194,7 +1194,7 @@
       "max_readout_gap_closure_fraction": 0.23415815556825523,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "maritime_tropical": {
       "candidate": "maritime_tropical",
       "action_band_m": [
         0.0,
@@ -1359,7 +1359,7 @@
       "max_readout_gap_closure_fraction": 0.20118710284619803,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "arctic": {
       "candidate": "arctic",
       "action_band_m": [
         0.0,
@@ -1524,7 +1524,7 @@
       "max_readout_gap_closure_fraction": 0.23482206449927176,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "antarctic": {
       "candidate": "antarctic",
       "action_band_m": [
         0.0,
@@ -1690,7 +1690,7 @@
       "max_readout_gap_closure_fraction": 3.7485334093676874,
       "geometric_mean_gap_closure_fraction": 0.5129322414714287
     },
-    {
+    "mineral_transported": {
       "candidate": "mineral_transported",
       "action_band_m": [
         2000.0,
@@ -1855,7 +1855,7 @@
       "max_readout_gap_closure_fraction": 0.5606819884665314,
       "geometric_mean_gap_closure_fraction": 0.0
     },
-    {
+    "stratosphere_background": {
       "candidate": "stratosphere_background",
       "action_band_m": [
         12000.0,
@@ -2020,7 +2020,7 @@
       "max_readout_gap_closure_fraction": 3.1732284240449258,
       "geometric_mean_gap_closure_fraction": 0.33262100310873605
     }
-  ],
+  },
   "not_probed": [
     {
       "candidate": "free_troposphere_humidified",

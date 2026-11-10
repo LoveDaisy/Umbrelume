@@ -6,6 +6,7 @@ gates stay in the gate too (measured cost ~10 s, budget 60 s).
 """
 import json
 import math
+import re
 from pathlib import Path
 
 import numpy as np
@@ -191,9 +192,9 @@ def test_discrimination_product_schema_and_signs():
     expected = {row["candidate"] for row in
                 json.loads(PRIOR_PATH.read_text())["parameters"]}
     expected.discard("free_troposphere_reference")
-    assert {item["candidate"] for item in product["candidates"]} == expected
+    assert set(product["candidates"]) == expected
     verdicts = {"compatible", "tension", "excluded_leaning"}
-    for item in product["candidates"]:
+    for item in product["candidates"].values():
         for event, row in item["events"].items():
             brightness = row["brightness"]
             # Median-of-sums float noise is ~1e-16; real deltas are orders larger.
@@ -215,10 +216,42 @@ def test_discrimination_product_schema_and_signs():
             else:
                 assert shape == {}
         assert sum(item["brightness_verdict_counts"].values()) == 4
-    assert product["ranking"] == [item["candidate"] for item in
-                                  sorted(product["candidates"],
-                                         key=lambda item: -item["min_gap_closure_fraction"])]
+    assert product["ranking"] == [name for name, item in sorted(
+        product["candidates"].items(),
+        key=lambda kv: -kv[1]["min_gap_closure_fraction"])]
     assert product["not_probed"][0]["candidate"] == "free_troposphere_humidified"
+
+
+def test_docs_field_paths_resolve_into_products():
+    """Every docs-cited product field path must exist (plan Step 6).
+
+    Spans of the form ``file.json:dot.path[bracket]`` in the three docs are
+    resolved against the products; ``*`` fans out over dict keys and every
+    branch must carry the remaining path. Numbers without a resolvable path
+    fail this gate.
+    """
+    products = ROOT/"validation/results/extinction_gap_diagnosis"
+    pattern = re.compile(r"`([a-z_0-9]+\.json:[^`]+)`")
+    paths = []
+    for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md", "ROUND2.md"]:
+        paths += pattern.findall((ROOT/"docs"/name).read_text())
+    assert len(paths) >= 12
+    for path in paths:
+        file_name, _, pointer = path.partition(":")
+        normalized = re.sub(r"\[([^\]]+)\]", r".\1", pointer)
+        keys = [key for key in normalized.split(".") if key]
+        assert keys, path
+        branches = [json.loads((products/file_name).read_text())]
+        for key in keys:
+            expanded = []
+            for branch in branches:
+                if key == "*":
+                    assert isinstance(branch, dict) and branch, path
+                    expanded.extend(branch.values())
+                else:
+                    expanded.append(branch[int(key)] if key.isdigit() else branch[key])
+            branches = expanded
+        assert branches, f"docs field path resolved to nothing: {path}"
 
 
 def test_full_scale_probe_zero_aod_restores_committed_moments():

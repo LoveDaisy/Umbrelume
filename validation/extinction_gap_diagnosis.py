@@ -866,8 +866,7 @@ def build_discrimination(height_stats: dict) -> dict:
                  "evaluated through the same kernel adapters as the height statistics; a zero-AOD "
                  "probe restores the baseline exactly (pytest). Fixed priors only: nothing is "
                  "fitted, nothing becomes a default, and no causal attribution is made - the "
-                 "product ranks prior-order compatibility only, per docs/ROUND2.md discipline.",
-        "variant_scope": "Probes run on the fixed_opac variant only: the candidates are missing "
+                 "product ranks prior-order compatibility only, per docs/ROUND2.md discipline.",        "variant_scope": "Probes run on the fixed_opac variant only: the candidates are missing "
                          "components on top of the committed default physics; probing the "
                          "molecular variant would conflate the free-troposphere candidate with "
                          "the boundary-layer ones.",
@@ -886,7 +885,9 @@ def build_discrimination(height_stats: dict) -> dict:
             "gloss": {"compatible": "相容", "tension": "张力", "excluded_leaning": "排除倾向"},
         },
         "band_fractions_fixed_opac": band_fractions,
-        "candidates": candidates,
+        # Keyed by candidate name so product citations resolve as
+        # candidates[<name>]; ranking carries the mechanical order.
+        "candidates": {item["candidate"]: item for item in candidates},
         "not_probed": [{
             "candidate": "free_troposphere_humidified",
             "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling "
