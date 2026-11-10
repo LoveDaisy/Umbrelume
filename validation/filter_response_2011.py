@@ -589,7 +589,12 @@ def write_outputs(output_dir: Path, report: dict, records: list, products: dict)
                  "Assumed passbands (branch C envelope, nominal width drawn): grade and keyword search in "
                  "validation/observations/ugolnikov2011/source.json filter_information. No fitted parameters.",
                  fontsize=8.5, color="#535d67")
-        fig.subplots_adjust(top=.86, bottom=.20, left=.07, right=.98)
+        fig.text(.085, .045,
+                 "Main-variant same-width shape effect up to "
+                 f"{report['shape_vs_width']['max_shape_effect_same_width']:.3g} and 10-to-40 nm width effect up to "
+                 f"{report['shape_vs_width']['max_width_effect_10_to_40nm']:.3g} in model/observed ratio.",
+                 fontsize=8.5, color="#535d67")
+        fig.subplots_adjust(top=.86, bottom=.22, left=.07, right=.98)
         fig.savefig(output_dir/"comparison.png", dpi=180,
                     metadata={"Software": None, "CreationDate": None})
         plt.close(fig)
