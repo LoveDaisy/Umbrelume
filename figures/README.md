@@ -48,3 +48,14 @@ never the default; blue observations are withheld from its fit. Generate with
 `uv run lunar-eclipse simulate --out outputs/current`. Metadata accompanies
 the figures. Original baseline/observations2011 snapshots above are unchanged.
 See [ROUND2.md](../docs/ROUND2.md) and [ROADMAP.md](../docs/ROADMAP.md).
+
+## Stratospheric-background default
+
+`stratosphere_background/render/` contains the current default visualization,
+produced by `uv run lunar-eclipse simulate --out outputs/strat-render`. The
+default is now the two-layer OPAC column (free troposphere 2–12 km plus
+stratospheric background 12–35 km), so the disk is slightly darker than the
+round2 render (axis relative photopic irradiance 3.78e-5 versus 4.28e-5, about
+0.18 stops). The `round2/render/` snapshot above stays frozen as the
+round2-era default. See [physics/AEROSOL.md](../docs/physics/AEROSOL.md) and
+the `preregistered_check` under [validation results](../validation/results/stratosphere_background/).

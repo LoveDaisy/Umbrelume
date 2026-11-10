@@ -11,7 +11,7 @@ import numpy as np
 from eclipse.color import linear_display_rgb, spectrum_to_xyz
 from eclipse.transport import simulate
 from eclipse import __version__
-from eclipse.aerosol import AerosolProfile
+from eclipse.aerosol import AerosolColumn, AerosolProfile
 
 
 def compare(coarse, fine):
@@ -36,7 +36,7 @@ def compare(coarse, fine):
     }
 
 
-def run_checks(aerosol_profile=AerosolProfile.opac_free_troposphere()):
+def run_checks(aerosol_profile=AerosolColumn.opac_default()):
     # Dense sampling around the faint cold edge, plus the entire shadow.
     radius = np.unique(np.r_[np.arange(0, 9_000_001, 20_000),
                              np.arange(4_400_000, 4_800_001, 2_000)])
@@ -61,9 +61,11 @@ def run_checks(aerosol_profile=AerosolProfile.opac_free_troposphere()):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("outputs/validation/convergence.json"))
-    parser.add_argument("--aerosol",choices=["opac-ft","none"],default="opac-ft")
+    parser.add_argument("--aerosol",choices=["opac","opac-ft","none"],default="opac")
     args = parser.parse_args()
-    result = run_checks(AerosolProfile.opac_free_troposphere() if args.aerosol=="opac-ft" else None)
+    result = run_checks(AerosolColumn.opac_default() if args.aerosol=="opac"
+                        else AerosolProfile.opac_free_troposphere()
+                        if args.aerosol=="opac-ft" else None)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2)+"\n")
     print(json.dumps(result, indent=2))

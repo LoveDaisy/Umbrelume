@@ -15,7 +15,7 @@ from .atmosphere import (
     Atmosphere, EARTH_RADIUS_M, LAYER_BOUNDARIES_M, REFERENCE_NUMBER_DENSITY,
 )
 from .spectra import refractive_index_air
-from .aerosol import AerosolProfile
+from .aerosol import AerosolPrior, AerosolProfile, active_aerosol_layers
 
 
 @dataclass(frozen=True)
@@ -27,8 +27,24 @@ class RayTable:
     ozone_column_m2: np.ndarray
     reference_wavelength_nm: float
     refraction: bool
-    aerosol_tau550: np.ndarray | None = None
-    aerosol_profile: AerosolProfile | None = None
+    # One 550 nm tau table per active aerosol layer, on the shared tangent
+    # grid, plus that table's own layer profile. Both fields are constructed
+    # together by build_ray_table, so every tau table and its profile stay
+    # same-source by construction; consumers take (tau, profile) pairs from
+    # the table only, never from separately passed arguments. Hand-built
+    # tables (tests, diagnostics) must satisfy the same pairing invariant,
+    # enforced below.
+    aerosol_layer_taus: tuple[np.ndarray, ...] | None = None
+    aerosol_profiles: tuple[AerosolProfile, ...] = ()
+
+    def __post_init__(self):
+        if (self.aerosol_layer_taus is None) != (not self.aerosol_profiles):
+            raise ValueError("aerosol_layer_taus and aerosol_profiles must be "
+                             "None/empty together")
+        if self.aerosol_layer_taus is not None and \
+                len(self.aerosol_layer_taus) != len(self.aerosol_profiles):
+            raise ValueError("each aerosol tau table requires exactly one layer "
+                             "profile of its own")
 
 
 def build_ray_table(
@@ -38,7 +54,7 @@ def build_ray_table(
     quadrature_order: int = 48,
     reference_wavelength_nm: float = 550.0,
     refraction: bool = True,
-    aerosol_profile: AerosolProfile | None = None,
+    aerosol_profile: AerosolPrior = None,
 ) -> RayTable:
     """Trace all tangent heights once. Columns include both sides of the limb.
 
@@ -60,17 +76,19 @@ def build_ray_table(
     boundaries = np.asarray(LAYER_BOUNDARIES_M)
     boundaries = boundaries[(boundaries > 0) & (boundaries < top)]
     aerosol_edges = np.empty(0)
-    active_aerosol = aerosol_profile is not None and aerosol_profile.aod550 > 0
-    if active_aerosol:
-        if aerosol_profile.top_m > top:
-            raise ValueError("Aerosol layer must lie within the molecular atmosphere")
+    aerosol_layers = active_aerosol_layers(aerosol_profile)
+    if aerosol_layers:
+        for layer in aerosol_layers:
+            if layer.top_m > top:
+                raise ValueError("Aerosol layer must lie within the molecular atmosphere")
         # A sharply truncated layer gives square-root structure in its tangent
-        # optical depth. Resolve both sides of each cutoff without globally
-        # oversampling the otherwise smooth height table.
+        # optical depth. Resolve both sides of every layer cutoff without
+        # globally oversampling the otherwise smooth height table.
         offsets = height_step_m*np.array([0, .0001, .001, .01, .05, .1, .25, .5])
         aerosol_edges = np.concatenate([edge + sign*offsets
-                                        for edge in [aerosol_profile.bottom_m, aerosol_profile.top_m]
-                                        for sign in [-1, 1]])
+                                        for layer in aerosol_layers
+                                        for edge in (layer.bottom_m, layer.top_m)
+                                        for sign in (-1, 1)])
         aerosol_edges = aerosol_edges[(aerosol_edges >= 0) & (aerosol_edges <= top)]
     h = np.unique(np.concatenate((dense, upper, boundaries, aerosol_edges)))
     radius = EARTH_RADIUS_M + h
@@ -124,16 +142,24 @@ def build_ray_table(
         nprime = coefficient * atmosphere.density_gradient(altitude)
         bending[ids] += np.sum(-2 * b[ids, None] * nprime / n
                                / denominator * measure, axis=1)
-    aerosol_tau = None
-    if active_aerosol:
-        aerosol_tau = np.zeros_like(h)
-        a_layers = np.unique(np.concatenate(([aerosol_profile.bottom_m],
-            boundaries[(boundaries > aerosol_profile.bottom_m) & (boundaries < aerosol_profile.top_m)],
-            [aerosol_profile.top_m])))
+    aerosol_layer_taus = None
+    if aerosol_layers:
+        aerosol_layer_taus = []
         # Separate from the molecular integration: adding extinction does not
         # change the refractive medium or the molecular-column quadrature.
-        for lower, upper_bound in zip(a_layers[:-1], a_layers[1:]):
-            ids, altitude, _, _, _, _, path = segment(lower, upper_bound)
-            aerosol_tau[ids] += np.sum(aerosol_profile.extinction550(altitude)*path, axis=1)
+        # Each layer integrates independently: its own support splits at the
+        # US1976 boundaries it spans, with both sides of its own cutoffs
+        # resolved, and the per-tangent quadrature depends only on the segment
+        # structure, never on the rest of the height grid.
+        for layer in aerosol_layers:
+            a_layers = np.unique(np.concatenate(([layer.bottom_m],
+                boundaries[(boundaries > layer.bottom_m) & (boundaries < layer.top_m)],
+                [layer.top_m])))
+            layer_tau = np.zeros_like(h)
+            for lower, upper_bound in zip(a_layers[:-1], a_layers[1:]):
+                ids, altitude, _, _, _, _, path = segment(lower, upper_bound)
+                layer_tau[ids] += np.sum(layer.extinction550(altitude)*path, axis=1)
+            aerosol_layer_taus.append(layer_tau)
+        aerosol_layer_taus = tuple(aerosol_layer_taus)
     return RayTable(h, b, bending, air, ozone, reference_wavelength_nm, refraction,
-                    aerosol_tau, aerosol_profile)
+                    aerosol_layer_taus, aerosol_layers)

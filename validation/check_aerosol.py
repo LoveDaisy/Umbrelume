@@ -15,7 +15,7 @@ import numpy as np
 from scipy.integrate import simpson, solve_ivp
 from scipy.special import k1e
 
-from eclipse.aerosol import AerosolProfile
+from eclipse.aerosol import AerosolColumn, AerosolProfile
 from eclipse.atmosphere import (
     Atmosphere, EARTH_RADIUS_M, LAYER_BOUNDARIES_M, REFERENCE_NUMBER_DENSITY,
 )
@@ -42,7 +42,7 @@ def straight_exponential_checks():
         beta0 = profile.aod550 / (scale * -np.expm1(-profile.top_m/scale))
         tangent_radius = EARTH_RADIUS_M + heights
         exact = 2*beta0*tangent_radius*np.exp(-heights/scale)*k1e(tangent_radius/scale)
-        actual = np.interp(heights, table.altitude_m, table.aerosol_tau550)
+        actual = np.interp(heights, table.altitude_m, table.aerosol_layer_taus[0])
         difference = np.abs(actual/exact - 1)
         results.append({"scale_height_m":scale, "tangent_altitude_m":heights.tolist(),
                         "bessel_tau550":exact.tolist(), "production_tau550":actual.tolist(),
@@ -51,25 +51,29 @@ def straight_exponential_checks():
     return {"pass":all(row["pass"] for row in results), "profiles":results}
 
 
-def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
-    """Integrate one outward half-ray; split aerosol support discontinuities.
+def cartesian_aerosol_reference(atmosphere, profiles, tangent_altitude_m):
+    """Integrate one outward half-ray; split every aerosol support discontinuity.
 
     The Cartesian ray equation is independent of the production turning-point
-    quadrature. The exponential extinction is evaluated directly from the AOD
-    normalization and profile parameters, independently of extinction550().
-    Each radial segment has a fixed active/inactive aerosol flag, so an ODE
-    step across a cutoff cannot integrate the wrong side of a jump.
+    quadrature. Each layer's exponential extinction is evaluated directly from
+    its AOD normalization and profile parameters, independently of
+    extinction550(), and one ODE state accumulates per layer. Each radial
+    segment carries a fixed per-layer active/inactive flag, so an ODE step
+    across a cutoff cannot integrate the wrong side of a jump.
     """
+    profiles = tuple(profiles)
     if not 0 <= tangent_altitude_m < atmosphere.top_m:
         raise ValueError("Tangent must lie inside atmosphere")
     coefficient = (float(refractive_index_air(550.))-1)/REFERENCE_NUMBER_DENSITY
-    scale = profile.scale_height_m
-    beta_bottom = profile.aod550 / (scale * -np.expm1(
-        -(profile.top_m-profile.bottom_m)/scale))
-    boundaries = np.r_[LAYER_BOUNDARIES_M, profile.bottom_m, profile.top_m, atmosphere.top_m]
+    beta_bottoms = [p.aod550/(p.scale_height_m * -np.expm1(
+        -(p.top_m-p.bottom_m)/p.scale_height_m)) for p in profiles]
+    boundaries = np.r_[LAYER_BOUNDARIES_M,
+                       [edge for p in profiles for edge in (p.bottom_m, p.top_m)],
+                       atmosphere.top_m]
     boundaries = np.unique(boundaries[(boundaries > tangent_altitude_m)
                                      & (boundaries <= atmosphere.top_m)])
-    state = np.array([EARTH_RADIUS_M+tangent_altitude_m, 0., 0., 1., 0.])
+    state = np.array([EARTH_RADIUS_M+tangent_altitude_m, 0., 0., 1.,
+                      *[0.]*len(profiles)])
     first_impact = ((1+coefficient*float(atmosphere.number_density(tangent_altitude_m)))
                     * state[0])
     invariant_error = 0.
@@ -77,7 +81,7 @@ def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
     steps = 0
     lower = tangent_altitude_m
     for upper in boundaries:
-        aerosol_active = upper > profile.bottom_m and lower < profile.top_m
+        active = [upper > p.bottom_m and lower < p.top_m for p in profiles]
 
         def derivative(_, value):
             position, direction = value[:2], value[2:4]
@@ -88,9 +92,10 @@ def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
             gradient = (coefficient*float(atmosphere.density_gradient(altitude))/n
                         * position/radius)
             acceleration = gradient-direction*np.dot(direction,gradient)
-            extinction = (beta_bottom*np.exp(-(altitude-profile.bottom_m)/scale)
-                          if aerosol_active else 0.)
-            return np.r_[direction,acceleration,extinction]
+            extinctions = [beta_bottoms[i]*np.exp(-(altitude-profiles[i].bottom_m)
+                                                  /profiles[i].scale_height_m)
+                           if active[i] else 0. for i in range(len(profiles))]
+            return np.r_[direction,acceleration,extinctions]
 
         def exit_shell(_, value):
             return np.linalg.norm(value[:2])-(EARTH_RADIUS_M+upper)
@@ -99,7 +104,8 @@ def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
         exit_shell.direction = 1
         solution = solve_ivp(derivative, (0.,4*(EARTH_RADIUS_M+atmosphere.top_m)),state,
                              events=exit_shell,method="DOP853",rtol=1e-10,
-                             atol=[1e-6,1e-6,1e-13,1e-13,1e-12],max_step=3000.)
+                             atol=[1e-6,1e-6,1e-13,1e-13,*([1e-12]*len(profiles))],
+                             max_step=3000.)
         if not solution.success or not len(solution.t_events[0]):
             raise RuntimeError("Cartesian aerosol reference failed to exit radial shell")
         states = solution.y
@@ -111,7 +117,7 @@ def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
         state = states[:,-1]
         steps += len(solution.t)
         lower = float(upper)
-    return {"tau550":float(2*state[4]),
+    return {"tau550":float(2*np.sum(state[4:])),
             "bending_rad":float(-2*np.arctan2(state[2],state[3])),
             "max_invariant_relative_error":invariant_error,
             "max_direction_norm_error":direction_error,"accepted_steps":steps}
@@ -119,17 +125,19 @@ def cartesian_aerosol_reference(atmosphere, profile, tangent_altitude_m):
 
 def curved_aerosol_checks():
     atmosphere = Atmosphere()
-    profile = AerosolProfile()
-    table = build_ray_table(atmosphere,aerosol_profile=profile)
+    profiles = (AerosolProfile(), AerosolProfile.opac_stratospheric_background())
+    column = AerosolColumn(profiles)
+    table = build_ray_table(atmosphere,aerosol_profile=column)
     results = []
-    for altitude in [1000.,2000.,5000.,11000.,13000.]:
-        reference = cartesian_aerosol_reference(atmosphere,profile,altitude)
-        actual = float(np.interp(altitude,table.altitude_m,table.aerosol_tau550))
+    for altitude in [1000.,2000.,5000.,11000.,12000.,13000.,25000.,35000.]:
+        reference = cartesian_aerosol_reference(atmosphere,profiles,altitude)
+        actual = float(np.interp(altitude,table.altitude_m,
+                                 np.sum(table.aerosol_layer_taus,axis=0)))
         difference = abs(actual/reference["tau550"]-1) if reference["tau550"] else abs(actual)
         results.append({"tangent_altitude_m":altitude,"production_tau550":actual,
                         "cartesian_reference":reference,"relative_or_zero_absolute_difference":difference,
                         "pass":bool(difference < 2e-6 and reference["max_invariant_relative_error"] < 2e-8)})
-    return {"pass":all(row["pass"] for row in results),"profile":asdict(profile),"rays":results}
+    return {"pass":all(row["pass"] for row in results),"profile":asdict(column),"rays":results}
 
 
 def aerosol_energy_check(radius_samples=2049):
@@ -148,7 +156,9 @@ def aerosol_energy_check(radius_samples=2049):
                    +table.impact_m[1:,None]*subsamples).ravel())
     tau = np.interp(b,table.impact_m,table.air_column_m2)[:,None]*rayleigh_cross_section(wavelengths)
     tau += np.interp(b,table.impact_m,table.ozone_column_m2)[:,None]*ozone_cross_section(wavelengths)
-    tau += np.interp(b,table.impact_m,table.aerosol_tau550)[:,None]*profile.spectral_factor(wavelengths)
+    for layer_tau, layer_profile in zip(table.aerosol_layer_taus, table.aerosol_profiles):
+        tau += (np.interp(b,table.impact_m,layer_tau)[:,None]
+                *layer_profile.spectral_factor(wavelengths))
     m = geometry.magnification
     transmitted_area = 2*np.pi*m*m*np.trapezoid(b[:,None]*np.exp(-tau),x=b,axis=0)
     pupil_deficit = np.pi*(m*table.impact_m[-1])**2-transmitted_area

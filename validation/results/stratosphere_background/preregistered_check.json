@@ -1,0 +1,118 @@
+{
+  "scope": "Preregistered comparison: the committed discrimination-table values of stratosphere_background are the preregistered predictions, checked item by item against the production two-layer variant's rerun. Brightness-axis values landing in the tension band (the brightness residual is NOT closed by this component) are the expected outcome, not a failure; any systematic deviation routes as a finding with evidence, and tuning physical parameters toward the prediction is forbidden.",
+  "tolerance_definition": {
+    "rule": "max(1e-06 * |probe_value|, 1e-09)",
+    "relative": 1e-06,
+    "floor_absolute": 1e-09,
+    "floor_rationale": "Independently scaled: the probe and production paths share the same build_ray_table/atmosphere machinery and linear interpolation, so their difference is float-reordering scale (~1e-12 relative on O(1) deltas) plus the small quadrature subdivision difference between the probe's own single-layer table and the production two-layer table; the floor keeps about three orders of magnitude of margin.",
+    "floor_discipline": "The floor is fixed before measurement and is never derived from the checked rows' own measured differences."
+  },
+  "measured_max_absolute_diff": 3.0572261389139044e-10,
+  "rows": [
+    {
+      "event": "june_2011",
+      "axis": "brightness",
+      "metric": "gap_closure_fraction",
+      "probe_value": 0.3379351496367206,
+      "production_value": 0.3379351496367206,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.brightness.gap_closure_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.brightness.june_2011.gap_closure_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.brightness.base_residual_ln_median",
+      "abs_diff": 0.0,
+      "tolerance": 3.379351496367206e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "hst_2019",
+      "axis": "brightness",
+      "metric": "gap_closure_fraction",
+      "probe_value": 0.19027044013930006,
+      "production_value": 0.19027044013719646,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.hst_2019.brightness.gap_closure_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.brightness.hst_2019.gap_closure_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.hst_2019.brightness.base_residual_ln_median",
+      "abs_diff": 2.1035950759085154e-12,
+      "tolerance": 1.9027044013930005e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "dec_2011",
+      "axis": "brightness",
+      "metric": "gap_closure_fraction",
+      "probe_value": 0.4383381461602179,
+      "production_value": 0.4383381461602179,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.brightness.gap_closure_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.brightness.dec_2011.gap_closure_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.brightness.base_residual_ln_median",
+      "abs_diff": 0.0,
+      "tolerance": 4.3833814616021786e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "event_1990_02_09",
+      "axis": "brightness",
+      "metric": "gap_closure_fraction",
+      "probe_value": 0.4342948906784963,
+      "production_value": 0.4342948903727737,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.event_1990_02_09.brightness.gap_closure_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.brightness.event_1990_02_09.gap_closure_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.event_1990_02_09.brightness.base_residual_ln_median",
+      "abs_diff": 3.0572261389139044e-10,
+      "tolerance": 4.3429489067849627e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "june_2011",
+      "axis": "shape",
+      "metric": "median_new",
+      "probe_value": 1.0230596103982648,
+      "production_value": 1.0230596103982648,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.shape.median_new",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.shape.june_2011.median_new",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.shape.median_base",
+      "abs_diff": 0.0,
+      "tolerance": 1.0230596103982647e-06,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "june_2011",
+      "axis": "shape",
+      "metric": "disagreement_closed_fraction",
+      "probe_value": 0.7907927127522352,
+      "production_value": 0.7907927127522352,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.shape.disagreement_closed_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.shape.june_2011.disagreement_closed_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.june_2011.shape.median_base",
+      "abs_diff": 0.0,
+      "tolerance": 7.907927127522352e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "dec_2011",
+      "axis": "shape",
+      "metric": "450_to750_transmission_ratio_model_over_observed",
+      "probe_value": 0.42454793404199725,
+      "production_value": 0.42454793404199725,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.shape.450_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.shape.dec_2011.450_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.shape.450_to750_transmission_ratio_model_over_observed.base_ratio",
+      "abs_diff": 0.0,
+      "tolerance": 4.245479340419972e-07,
+      "verdict": "within_tolerance"
+    },
+    {
+      "event": "dec_2011",
+      "axis": "shape",
+      "metric": "500_to750_transmission_ratio_model_over_observed",
+      "probe_value": 0.5744769599229723,
+      "production_value": 0.5744769599229723,
+      "probe_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.shape.500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction",
+      "production_source_path": "validation/results/stratosphere_background/predictions.json:preregistered_production.shape.dec_2011.500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction",
+      "baseline_source_path": "validation/results/extinction_gap_diagnosis/discrimination.json:candidates.stratosphere_background.events.dec_2011.shape.500_to750_transmission_ratio_model_over_observed.base_ratio",
+      "abs_diff": 0.0,
+      "tolerance": 5.744769599229723e-07,
+      "verdict": "within_tolerance"
+    }
+  ],
+  "verdict": "within_tolerance"
+}

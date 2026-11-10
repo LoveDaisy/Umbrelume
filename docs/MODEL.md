@@ -1,10 +1,13 @@
 # Physical and numerical contract
 
-Current default: v0.2, with the fixed OPAC free-tropospheric aerosol component.
-`--aerosol none` reproduces the molecular-only first-version medium. Historical
-figures and observational snapshots retain their original parameters. See
-[ROUND2.md](ROUND2.md) for the selected increment and [ROADMAP.md](ROADMAP.md)
-for implemented milestones and deferred physics.
+Current default: the fixed OPAC two-layer aerosol column (free troposphere
+2–12 km plus stratospheric background 12–35 km). `--aerosol opac-ft` keeps the
+historical free-troposphere-only preset, and `--aerosol none` reproduces the
+molecular-only first-version medium. Historical figures and observational
+snapshots retain their original parameters. See [ROUND2.md](ROUND2.md) for the
+selected increment, [physics/AEROSOL.md](physics/AEROSOL.md) for both layers'
+priors and composition semantics, and [ROADMAP.md](ROADMAP.md) for implemented
+milestones and deferred physics.
 
 ## Quantity being computed
 
@@ -41,19 +44,28 @@ achromatic**; extinction retains its wavelength dependence:
 
 `T_lambda(b) = exp[-sigma_R(lambda) C_air(b) - sigma_O3(lambda) C_O3(b) - tau_a(lambda,b)]`.
 
-The aerosol term is the full path integral of the prescribed extinction
-coefficient, `tau_a = integral beta550(h(s)) ds * f(lambda)`, on exactly the same
-curved gas ray. It adds no refractivity or in-scattered light. The default
-2–12 km exponential component and continuous broken power law are defined in
-[physics/AEROSOL.md](physics/AEROSOL.md). Its independent literature AOD550 is
-0.013; a separately calibrated value is not silently substituted.
+The aerosol term is the sum over aerosol layers of the full path integral of
+each prescribed extinction coefficient,
+`tau_a = sum_l [integral beta_l(h(s)) ds] * f_l(lambda)`, on exactly the same
+curved gas ray. It adds no refractivity or in-scattered light. The two default
+layers (free troposphere 2–12 km and stratospheric background 12–35 km, each
+with its own broken power law) are defined in
+[physics/AEROSOL.md](physics/AEROSOL.md). Their independent literature AOD550
+values are 0.013 and 0.005; separately calibrated values are not silently
+substituted. The ray table stores one 550 nm tau table per layer (`tau_l(b)`),
+and the transmission hook multiplies each layer's table by that layer's own
+spectral factor — layers never share or merge a spectral factor.
 
 The molecular integrals retain their own layer divisions. Aerosol integration
-also splits at both support boundaries. Tangent-height nodes resolve the
-square-root column structure near a sharp aerosol cutoff. A zero AOD restores
-the original table exactly; `aerosol=False` on `transmission_profile` provides
-a counterfactual on the identical sampled ray table. `extinction=False`
-disables molecular, ozone and aerosol attenuation together.
+splits at every layer's support boundaries (2, 12 and 35 km for the default
+column; the 12 km edge is shared by both layers). Tangent-height nodes resolve
+the square-root column structure near each sharp aerosol cutoff. A zero AOD
+restores the original table exactly; `aerosol=False` on `transmission_profile`
+provides a counterfactual on the identical sampled ray table.
+`extinction=False` disables molecular, ozone and aerosol attenuation together.
+The CLI `--aod550` overrides only the free-troposphere layer's AOD and
+`--aod550 0` disables the whole aerosol component exactly (molecular-only);
+the stratospheric layer is not exposed as a separate knob.
 
 An opaque spherical surface blocks any ray whose turning point is below sea
 level. Thus the admitted interval starts at `b_ground = n(R) R`, rather than R.
@@ -125,13 +137,16 @@ landing map or globally inverting it would lose physical ray branches.
    `2 pi ∫ r[1-E_lambda/F_lambda]dr = pi(m*b_top)^2 - 2 pi m^2 ∫ b T_lambda db`.
 
    This is independent of where refracted rays land. Both extinguishing and
-   lossless refracting atmospheres are checked.
+   lossless refracting atmospheres are checked; the extinguished closure runs
+   on the production two-layer aerosol column.
 4. **Resolution:** ray-table height spacing and spectral sampling are separately
    refined; photopic irradiance and normalized linear RGB differences are saved.
 5. **Aerosol paths:** a straight spherical exponential atmosphere has an exact
    modified-Bessel optical-depth solution. A separate Cartesian ODE accumulates
-   aerosol extinction on curved rays and splits its support boundaries. Global
-   energy closure also includes aerosol attenuation.
+   each aerosol layer's extinction on curved rays and splits every layer's
+   support boundaries (the default two-layer column is checked at tangents
+   covering the 12 and 35 km cutoffs). Global energy closure also includes
+   both layers' attenuation.
 
 The independent ray solver shares the declared molecular medium with production
 code, but uses a different equation, parameterization and integrator. It validates
@@ -164,8 +179,11 @@ when ozone is removed. It does not yet establish the observed turquoise band's
 width, saturation or absolute brightness. The first [observational comparison](OBSERVATIONAL_VALIDATION.md)
 showed substantial inner-umbra overprediction against June 2011 published
 503/677 nm photometry. [Round 2](ROUND2.md) selected aerosol extinction after
-altitude attribution and source/density probes. The independent fixed prior
-improves the prediction while retaining a substantial inner residual. A separate
+altitude attribution and source/density probes, and the four-aperture
+discrimination then promoted the stratospheric-background prior into the
+default as the only shape-axis-improving candidate, with its brightness effect
+staying in the tension band (the brightness residual is not closed by these
+components; see [physics/AEROSOL.md](physics/AEROSOL.md)). A separate
 red-band AOD calibration is checked on withheld blue readouts and explicitly
 does not constitute independent event validation. Unknown filter responses and
 observational uncertainties remain. Future increments and their entry conditions
