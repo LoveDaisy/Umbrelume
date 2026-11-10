@@ -482,23 +482,23 @@
       "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
     },
     "echeck_earth": {
-      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A13%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
-      "response_sha256": "b95263c05eaf8523633ca48705c3eeec7dc641cbb82c11a5b8a236b457ad6eda",
-      "api_signature": {
-        "source": "NASA/JPL Horizons API",
-        "version": "1.2"
-      },
-      "row_count": 302,
-      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
-    },
-    "echeck_sun": {
-      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A13%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
-      "response_sha256": "9cbfb16612daaefd56944edd923b604f57f63d3c58d66200eb7862ecd3a59b1b",
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A15%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "5d913d1b0a87da49d408768b2fff85736bd5d0c8b775dc712c2eea37c52c304c",
       "api_signature": {
         "version": "1.2",
         "source": "NASA/JPL Horizons API"
       },
-      "row_count": 302,
+      "row_count": 304,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "echeck_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A15%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "dcac3355625777d9a55ade347a38741525680dfd23f1ccdd44f3ae99ae010d01",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 304,
       "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
     }
   },
@@ -544,7 +544,8 @@
         "ody904cmq": 0.65,
         "ody904cnq": 0.65,
         "ody904coq": 0.65
-      }
+      },
+      "scope": "TIME-OBS is the first CR-SPLIT member (or single-exposure) start and mid = TIME-OBS + member exposure/2; later CR-SPLIT members take their Table-1 mid-time offsets from the first member, so their diffs are constructed from Table 1 rather than independently checked - only the four first members and the twelve single exposures carry independent FITS evidence"
     },
     "eclipse_angle_table1_vs_horizons": {
       "max_abs_diff_deg": 0.013404150962423422,
@@ -1184,8 +1185,8 @@
       "receiver_axial_distance_m": 355294705.30898935,
       "sun_site_distance_m": 147207468684.58932,
       "eclipse_angle_table1_deg": 3.0,
-      "eclipse_angle_horizons_deg": 2.986959590246448,
-      "eclipse_angle_abs_diff_deg": 0.01304040975355214,
+      "eclipse_angle_horizons_deg": 2.9925175273532023,
+      "eclipse_angle_abs_diff_deg": 0.007482472646797689,
       "fits_mid_time_abs_diff_s": 0.65
     }
   ]

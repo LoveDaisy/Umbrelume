@@ -65,6 +65,77 @@ def parse_calendar(text: str) -> datetime:
     raise ValueError(f"Unparseable calendar date {text!r}")
 
 
+def parse_sexagesimal(text: str, hours: bool) -> float:
+    """Sexagesimal to degrees; RA fields are hour-based (x15), angles sign-carrying."""
+    text = text.strip()
+    parts = [float(part) for part in text.split()]
+    if len(parts)!=3:
+        raise ValueError(f"Unparseable sexagesimal value {text!r}")
+    if hours:
+        return parts[0]*15+parts[1]/4+parts[2]/240
+    sign = -1 if text.startswith("-") else 1
+    return sign*(abs(parts[0])+parts[1]/60+parts[2]/3600)
+
+
+def horizons_request(parameters: dict, required: list[str], cache: Path, label: str,
+                     validate=None) -> tuple[str, dict]:
+    """Fetch a Horizons JSON response with validate-before-cache semantics.
+
+    Shared by both OBSERVER-based fetch paths: failed, malformed or
+    schema-violating responses never poison the cache (any earlier file is
+    removed), and cached bytes are only read back after they were validated
+    when first fetched.
+    """
+    url = HORIZONS+urlencode(parameters)
+    path = cache/f"horizons_{label}.json"
+    if path.exists():
+        raw = path.read_bytes()
+    else:
+        with urlopen(url, timeout=90) as response:
+            raw = response.read()
+    response = json.loads(raw)
+    result = response.get("result","")
+    problem = None
+    if "error" in response:
+        problem = str(response["error"])
+    elif not all(text in result for text in required):
+        problem = "unexpected response content"
+    elif validate is not None:
+        problem = validate(result)
+    if problem:
+        if path.exists():
+            path.unlink()
+        raise ValueError(f"{label}: {problem}")
+    path.write_bytes(raw)
+    meta = {"url":url,"response_sha256":hashlib.sha256(raw).hexdigest(),
+            "api_signature":response["signature"]}
+    return result,meta
+
+
+def observer_columns_problem(result: str, wanted: set[str]) -> str | None:
+    """Pre-cache schema check: the CSV header must carry every wanted column."""
+    if "$$SOE" not in result or "$$EOE" not in result:
+        return "no data section"
+    header = [line for line in result.split("$$SOE")[0].splitlines() if "Date" in line]
+    if not header:
+        return "no CSV header line"
+    columns = [column.strip() for column in header[-1].split(",")]
+    missing = wanted-set(columns)
+    return f"observer table missing columns {sorted(missing)}" if missing else None
+
+
+def observer_section(result: str, wanted: set[str], label: str) -> tuple[list[list[str]], dict]:
+    """Parse the $$SOE data rows and locate the wanted CSV columns."""
+    section = result.split("$$SOE")[1].split("$$EOE")[0].strip().splitlines()
+    header = [line for line in result.split("$$SOE")[0].splitlines() if "Date" in line][-1]
+    columns = [column.strip() for column in header.split(",")]
+    indices = {name:columns.index(name) for name in wanted if name in columns}
+    missing = wanted-set(indices)
+    if missing:
+        raise ValueError(f"{label}: observer table missing columns {sorted(missing)}")
+    return section,indices
+
+
 def horizons_site_states(command: str, site_coord: str, start: datetime, end: datetime,
                          step: str, cache: Path, label: str) -> tuple[list[datetime], np.ndarray, dict]:
     """Fetch Earth/Sun states from a lunar site via the OBSERVER pipeline.
@@ -77,64 +148,34 @@ def horizons_site_states(command: str, site_coord: str, start: datetime, end: da
     aberration, matching the December 2011 LT convention) times the delta
     distance. Vectors are returned in metres, site origin, ICRF axes.
     """
+    requested = [float(x) for x in site_coord.split(",")]
+    wanted = {"R.A._(ICRF)","DEC__(ICRF)","delta"}
+
+    def validate(result: str) -> str | None:
+        site_match = re.search(r"Center geodetic\s*:\s*([\d.-]+),\s*([\d.-]+)",result)
+        if not site_match or not np.allclose([float(x) for x in site_match.groups()],
+                                             [requested[0]%360,requested[1]],rtol=0,atol=1e-6):
+            return "unexpected lunar site coordinates"
+        return observer_columns_problem(result,wanted)
+
     parameters = {"format":"json","COMMAND":f"'{command}'","OBJ_DATA":"'NO'",
                   "MAKE_EPHEM":"'YES'","EPHEM_TYPE":"'OBSERVER'","CENTER":"'coord@301'",
                   "COORD_TYPE":"'GEODETIC'","SITE_COORD":f"'{site_coord}'",
                   "START_TIME":"'"+fmt_time(start)+"'","STOP_TIME":"'"+fmt_time(end)+"'",
                   "STEP_SIZE":f"'{step}'","TIME_TYPE":"'UT'","QUANTITIES":"'1,20'",
                   "CSV_FORMAT":"'YES'"}
-    url = HORIZONS+urlencode(parameters)
-    path = cache/f"horizons_{label}.json"
-    if path.exists():
-        raw = path.read_bytes()
-    else:
-        with urlopen(url, timeout=90) as response:
-            raw = response.read()
-    response = json.loads(raw)
-    if "error" in response:
-        # Validate before caching so failed or malformed requests never
-        # poison the cache for later runs.
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: {response['error']}")
-    result = response["result"]
-    if not all(text in result for text in ["DE441","MEAN_ME (high precision)"]):
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: unexpected ephemeris or lunar orientation")
-    path.write_bytes(raw)
-    site_match = re.search(r"Center geodetic\s*:\s*([\d.-]+),\s*([\d.-]+)",result)
-    requested = [float(x) for x in site_coord.split(",")]
-    if not site_match or not np.allclose([float(x) for x in site_match.groups()],
-                                        [requested[0]%360,requested[1]],rtol=0,atol=1e-6):
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: unexpected lunar site coordinates")
-    section = result.split("$$SOE")[1].split("$$EOE")[0].strip().splitlines()
-    header = [line for line in result.split("$$SOE")[0].splitlines() if "Date" in line][-1]
-    columns = [column.strip() for column in header.split(",")]
-    wanted = {"R.A._(ICRF)","DEC__(ICRF)","delta"}
-    indices = {name:columns.index(name) for name in wanted if name in columns}
-    missing = wanted-set(indices)
-    if missing:
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: observer table missing columns {sorted(missing)}")
+    result,meta = horizons_request(parameters,["DE441","MEAN_ME (high precision)"],cache,label,validate)
+    section,indices = observer_section(result,wanted,label)
     epochs,vectors = [],[]
     for row in csv.reader(section):
         epochs.append(parse_calendar(row[0]))
-        ra_text,dec_text = row[indices["R.A._(ICRF)"]].strip(),row[indices["DEC__(ICRF)"]].strip()
-        ra_parts = [float(part) for part in ra_text.split()]
-        ra = np.radians(ra_parts[0]*15+ra_parts[1]/4+ra_parts[2]/240)
-        dec_parts = [float(part) for part in dec_text.split()]
-        sign = -1 if dec_text.startswith("-") else 1
-        dec = np.radians(sign*(abs(dec_parts[0])+dec_parts[1]/60+dec_parts[2]/3600))
+        ra = np.radians(parse_sexagesimal(row[indices["R.A._(ICRF)"]],hours=True))
+        dec = np.radians(parse_sexagesimal(row[indices["DEC__(ICRF)"]],hours=False))
         direction = np.array([np.cos(dec)*np.cos(ra),np.cos(dec)*np.sin(ra),np.sin(dec)])
         vectors.append(float(row[indices["delta"]])*1_495_978_707_00.0*direction)
-    meta = {"url":url,"response_sha256":hashlib.sha256(raw).hexdigest(),
-            "api_signature":response["signature"],"row_count":len(vectors),
-            "construction":"astrometric ICRF direction x delta distance (OBSERVER pipeline); "
-                           "VECTORS output served time-only rows at retrieval time"}
+    meta.update({"row_count":len(vectors),
+                 "construction":"astrometric ICRF direction x delta distance (OBSERVER pipeline); "
+                                "VECTORS output served time-only rows at retrieval time"})
     return epochs,np.array(vectors),meta
 
 
@@ -144,55 +185,29 @@ def horizons_observer(command: str, center: str, start: datetime, end: datetime,
     receiver, its range (delta, AU) and the lunar-orientation columns used by
     the pointing check. Horizons serves spacecraft-centered VECTORS output as
     time-only rows, so the downleg range comes from here instead."""
+    wanted = {"R.A.__(a-app)","DEC_(a-app)","delta","ObsSub-LON","ObsSub-LAT",
+              "NP.ang","Ang-diam","N.Pole-RA","N.Pole-DC"}
     parameters = {"format":"json","COMMAND":f"'{command}'","OBJ_DATA":"'NO'",
                   "MAKE_EPHEM":"'YES'","EPHEM_TYPE":"'OBSERVER'","CENTER":f"'{center}'",
                   "START_TIME":"'"+fmt_time(start)+"'","STOP_TIME":"'"+fmt_time(end)+"'",
                   "STEP_SIZE":"'1m'","TIME_TYPE":"'UT'","CSV_FORMAT":"'YES'"}
-    url = HORIZONS+urlencode(parameters)
-    path = cache/f"horizons_{label}.json"
-    if path.exists():
-        raw = path.read_bytes()
-    else:
-        with urlopen(url, timeout=90) as response:
-            raw = response.read()
-    response = json.loads(raw)
-    if "error" in response:
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: {response['error']}")
-    result = response["result"]
-    if "DE441" not in result:
-        if path.exists():
-            path.unlink()
-        raise ValueError(f"{label}: unexpected ephemeris")
-    path.write_bytes(raw)
-    section = result.split("$$SOE")[1].split("$$EOE")[0].strip().splitlines()
-    header = [line for line in result.split("$$SOE")[0].splitlines() if "Date" in line][-1]
-    columns = [column.strip() for column in header.split(",")]
-    wanted = {"R.A.__(a-app)","DEC_(a-app)","delta","ObsSub-LON","ObsSub-LAT","NP.ang","Ang-diam","N.Pole-RA","N.Pole-DC"}
-    indices = {name:columns.index(name) for name in wanted if name in columns}
-    missing = wanted-set(indices)
-    if missing:
-        raise ValueError(f"{label}: observer table missing columns {sorted(missing)}")
+    result,meta = horizons_request(parameters,["DE441"],cache,label,
+                                   validate=lambda result: observer_columns_problem(result,wanted))
+    section,indices = observer_section(result,wanted,label)
     records = []
     for row in csv.reader(section):
-        epoch = parse_calendar(row[0])
-        entry = {"epoch_utc":epoch.isoformat()}
+        entry = {"epoch_utc":parse_calendar(row[0]).isoformat()}
         for name,index in indices.items():
             text = row[index].strip()
             if name=="R.A.__(a-app)":
-                parts = [float(part) for part in text.split()]
-                entry[name] = parts[0]*15+parts[1]/4+parts[2]/240
+                entry[name] = parse_sexagesimal(text,hours=True)
             elif name=="DEC_(a-app)":
-                parts = [float(part) for part in text.split()]
-                sign = -1 if text.startswith("-") else 1
-                entry[name] = sign*(abs(parts[0])+parts[1]/60+parts[2]/3600)
+                entry[name] = parse_sexagesimal(text,hours=False)
             else:
                 entry[name] = float(text)
         entry["range_m"] = entry.pop("delta")*1_495_978_707_00.0
         records.append(entry)
-    meta = {"url":url,"response_sha256":hashlib.sha256(raw).hexdigest(),
-            "api_signature":response["signature"],"row_count":len(records)}
+    meta.update({"row_count":len(records)})
     return records,meta
 
 
@@ -261,7 +276,9 @@ def member_mid_times(rows: list[dict], contract: dict, headers: dict) -> dict:
 
 def observer_at(records: list[dict], epoch: datetime) -> dict:
     times = [datetime.fromisoformat(record["epoch_utc"]) for record in records]
-    after = next(index for index,time in enumerate(times) if time>=epoch)
+    after = next((index for index,time in enumerate(times) if time>=epoch),None)
+    if after is None:
+        raise ValueError(f"observer-table epoch {epoch.isoformat()} beyond the sampled table")
     if times[after]==epoch:
         return records[after]
     before = after-1
@@ -344,17 +361,23 @@ def main():
         row["reflection_time"] = row["mid_time"]-timedelta(seconds=downlegs[row["exposure_name"]])
 
     # Eclipse angle at the fixed (0,0) site at observed mid times (Table 1 convention).
+    # The stop time is padded past the last mid time: Horizons ends the table
+    # at the last full step, which would otherwise sit before it.
     zero_earth_epochs,zero_earth,zero_earth_meta = horizons_site_states(
-        "399","0.0,0.0,0",rows[0]["mid_time"],rows[-1]["mid_time"],"1m",args.cache,"echeck_earth")
+        "399","0.0,0.0,0",rows[0]["mid_time"],rows[-1]["mid_time"]+timedelta(minutes=2),
+        "1m",args.cache,"echeck_earth")
     zero_sun_epochs,zero_sun,zero_sun_meta = horizons_site_states(
-        "10","0.0,0.0,0",rows[0]["mid_time"],rows[-1]["mid_time"],"1m",args.cache,"echeck_sun")
+        "10","0.0,0.0,0",rows[0]["mid_time"],rows[-1]["mid_time"]+timedelta(minutes=2),
+        "1m",args.cache,"echeck_sun")
 
     def interpolate_vector(vector_table,table_epochs,epoch):
         after = next((index for index,time in enumerate(table_epochs) if time>=epoch),None)
         if after is None:
-            return vector_table[-1]
-        if after==0 or table_epochs[after]==epoch:
+            raise ValueError(f"interpolation epoch {epoch.isoformat()} beyond the sampled table")
+        if table_epochs[after]==epoch:
             return vector_table[after]
+        if after==0:
+            raise ValueError(f"interpolation epoch {epoch.isoformat()} before the sampled table")
         before = after-1
         weight = (epoch-table_epochs[before]).total_seconds()/(
             table_epochs[after]-table_epochs[before]).total_seconds()
@@ -487,7 +510,13 @@ def main():
         "independent_checks":{
             "mid_time_fits_vs_table1":{"max_abs_diff_s":float(max(mid_time_checks.values())),
                                        "tolerance_s":2.0,
-                                       "per_exposure_abs_diff_s":mid_time_checks},
+                                       "per_exposure_abs_diff_s":mid_time_checks,
+                                       "scope":"TIME-OBS is the first CR-SPLIT member (or single-exposure) start "
+                                               "and mid = TIME-OBS + member exposure/2; later CR-SPLIT members take "
+                                               "their Table-1 mid-time offsets from the first member, so their diffs "
+                                               "are constructed from Table 1 rather than independently checked - "
+                                               "only the four first members and the twelve single exposures carry "
+                                               "independent FITS evidence"},
             "eclipse_angle_table1_vs_horizons":{
                 "max_abs_diff_deg":float(max(record["eclipse_angle_abs_diff_deg"] for record in records)),
                 "tolerance_deg":0.1,

@@ -30,6 +30,7 @@ from dataclasses import asdict
 import hashlib
 import json
 from pathlib import Path
+from typing import NamedTuple
 
 import matplotlib
 matplotlib.use("Agg")
@@ -59,6 +60,22 @@ SLOPE_BANDS_NM = [(430.0, 570.0), (500.0, 570.0)]
 # over ~1024 rows is robust to them, matching the paper's flag list.
 DQ_EXCLUDE_MASK = 2 | 4 | 8 | 4096
 MIN_VALID_FRACTION = 0.5
+# Cross-dataset wavelength-grid gate: per-dataset lamp solutions differ by
+# <=0.026 nm (measured over all sixteen G430L grids), so 0.1 nm (~1/3 pixel)
+# pins genuine misalignment without rejecting solution micro-offsets.
+GRID_TOLERANCE_NM = 0.1
+PLOT_COLORS = ("#a66b44","#4a6c96","#ad8540","#a64d4d","#7a5296")
+
+
+class Analysis(NamedTuple):
+    """Self-describing return contract of run_analysis."""
+    report: dict
+    records: list
+    datasets: dict
+    window: np.ndarray
+    observed: dict
+    predictions: dict
+    probes: dict
 
 
 def column_medians(sci: np.ndarray, dq: np.ndarray, exptime_s: float) -> tuple[np.ndarray, np.ndarray]:
@@ -181,13 +198,13 @@ def run_analysis():
     # window; the anchor comes from the contract grouping, not a literal ID.
     grid_anchor = contract["grouping"]["full_moon_out_of_eclipse"][0]
     window = window_mask(datasets[grid_anchor]["wavelength_nm"],MODEL_TABLE_MIN_NM,G430L_MAX_NM)
+    wavelengths = datasets[grid_anchor]["wavelength_nm"][window]
     for dataset,data in datasets.items():
-        if not np.array_equal(np.where(window)[0],np.where(window_mask(
-                data["wavelength_nm"],MODEL_TABLE_MIN_NM,G430L_MAX_NM))[0]):
-            raise ValueError(f"{dataset}: wavelength grids disagree inside the window")
+        if not np.allclose(data["wavelength_nm"][window],wavelengths,rtol=0,atol=GRID_TOLERANCE_NM):
+            raise ValueError(f"{dataset}: wavelength grid deviates by more than "
+                             f"{GRID_TOLERANCE_NM} nm inside the window")
         if data["min_valid_fraction"]<MIN_VALID_FRACTION:
             raise RuntimeError(f"{dataset}: columns with <{MIN_VALID_FRACTION:.0%} valid pixels present")
-    wavelengths = datasets[grid_anchor]["wavelength_nm"][window]
 
     grouping = contract["grouping"]
     umbral_datasets = grouping["umbral_in_eclipse"]
@@ -375,12 +392,14 @@ def run_analysis():
         records.append(record)
     # Per-wavelength records live only in comparison.csv; the JSON snapshot
     # stays at precedent scale (metrics + probe summaries + checks).
-    return report,records,datasets,window,observed,predictions,probes
+    return Analysis(report,records,datasets,window,observed,predictions,probes)
 
 
 def write_analysis(out: Path):
-    report,records,datasets,window,observed,predictions,probes = run_analysis()
-    grid_anchor = next(iter(datasets))
+    analysis = run_analysis()
+    report,records,datasets,window,observed,predictions = (analysis.report,analysis.records,
+        analysis.datasets,analysis.window,analysis.observed,analysis.predictions)
+    grid_anchor = report["grouping"]["full_moon_out_of_eclipse"][0]
     out.mkdir(parents=True,exist_ok=True)
     (out/"comparison.json").write_text(json.dumps(report,indent=2)+"\n")
     with (out/"comparison.csv").open("w",newline="") as stream:
@@ -399,7 +418,8 @@ def write_analysis(out: Path):
     wavelengths = np.array([record["wavelength_nm"] for record in records])
     umbral_datasets = report["grouping"]["umbral_in_eclipse"]
     penumbral_datasets = report["grouping"]["penumbral_auxiliary"]
-    umbral_colors = dict(zip(umbral_datasets,("#a66b44","#4a6c96")))
+    umbral_colors = {dataset:PLOT_COLORS[index] for index,dataset in enumerate(umbral_datasets)}
+    penumbral_colors = {dataset:PLOT_COLORS[index] for index,dataset in enumerate(penumbral_datasets)}
     with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,
                          "axes.spines.right":False}):
         fig,axes = plt.subplots(2,2,figsize=(11,7.3),gridspec_kw={"hspace":.35})
@@ -421,17 +441,19 @@ def write_analysis(out: Path):
         axes[1,0].axhline(1,color="#253d4a",lw=.8)
         axes[1,0].set_ylabel("Model / observed");axes[1,0].set_xlabel("Wavelength (nm)")
         axes[1,0].legend(frameon=False,fontsize=7);axes[1,0].set_ylim(0.05,20)
-        for dataset,color in [(umbral_datasets[0],"#a66b44"),(penumbral_datasets[0],"#ad8540")]:
+        for dataset,color in [(umbral_datasets[0],umbral_colors[umbral_datasets[0]]),
+                              (penumbral_datasets[0],penumbral_colors[penumbral_datasets[0]])]:
             axes[0,1].plot(wavelengths,np.array([record[f"{dataset}_rate_cps"] for record in records]),
                            color=color,alpha=.8,label=dataset)
         axes[0,1].plot(wavelengths,np.array([record["fullmoon_rate_avg_cps"] for record in records]),
                        color="#253d4a",label="full-moon average")
         axes[0,1].set_yscale("log");axes[0,1].set_ylabel("Counts / s")
         axes[0,1].legend(frameon=False,fontsize=7);axes[0,1].set_title("Extracted slit spectra",loc="left")
-        for dataset,color in [(penumbral_datasets[0],"#ad8540"),(penumbral_datasets[1],"#a64d4d")]:
-            axes[1,1].plot(wavelengths,observed[dataset],color=color,alpha=.8,
-                           label=f"penumbral (aux) {dataset}")
-            axes[1,1].plot(wavelengths,predictions[("fixed_opac",dataset)],"--",color=color,lw=1.1)
+        for dataset in penumbral_datasets:
+            axes[1,1].plot(wavelengths,observed[dataset],color=penumbral_colors[dataset],
+                           alpha=.8,label=f"penumbral (aux) {dataset}")
+            axes[1,1].plot(wavelengths,predictions[("fixed_opac",dataset)],"--",
+                           color=penumbral_colors[dataset],lw=1.1)
         axes[1,1].set_yscale("log");axes[1,1].set_ylim(1e-5,1)
         axes[1,1].set_ylabel("Penumbral / full-moon (raw)");axes[1,1].set_xlabel("Wavelength (nm)")
         axes[1,1].legend(frameon=False,fontsize=7)

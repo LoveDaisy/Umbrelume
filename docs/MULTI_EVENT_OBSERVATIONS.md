@@ -145,7 +145,8 @@ uv run python tools/fetch_hst2019_geometry.py
 ```
 
 可复现输入及 [CSV](../validation/results/multiple_events/comparison.csv)、JSON、图均保留；
-生产传播代码、默认值和既有历史图片没有改动。当前 143 项测试通过；物理、气溶胶及分辨率检查通过。
+生产传播代码、默认值和既有历史图片没有改动。离线测试套件全部通过（`uv run pytest -q`）；
+物理、气溶胶及分辨率检查通过。
 1990 年亮度和 2011 年 12 月光谱现均已进入固定模型比较。
 跨事件一致偏亮与不同光谱形状残差需要同时解释，不能只用单次亮度拟合判断改进。
 绿松石带与真实月面渲染的中远期安排见 [ROADMAP](ROADMAP.md)。

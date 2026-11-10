@@ -114,7 +114,8 @@
           "ody904cmq": 0.65,
           "ody904cnq": 0.65,
           "ody904coq": 0.65
-        }
+        },
+        "scope": "TIME-OBS is the first CR-SPLIT member (or single-exposure) start and mid = TIME-OBS + member exposure/2; later CR-SPLIT members take their Table-1 mid-time offsets from the first member, so their diffs are constructed from Table 1 rather than independently checked - only the four first members and the twelve single exposures carry independent FITS evidence"
       },
       "eclipse_angle_table1_vs_horizons": {
         "max_abs_diff_deg": 0.013404150962423422,
@@ -749,8 +750,8 @@
         "receiver_axial_distance_m": 355294705.30898935,
         "sun_site_distance_m": 147207468684.58932,
         "eclipse_angle_table1_deg": 3.0,
-        "eclipse_angle_horizons_deg": 2.986959590246448,
-        "eclipse_angle_abs_diff_deg": 0.01304040975355214,
+        "eclipse_angle_horizons_deg": 2.9925175273532023,
+        "eclipse_angle_abs_diff_deg": 0.007482472646797689,
         "fits_mid_time_abs_diff_s": 0.65
       }
     ],

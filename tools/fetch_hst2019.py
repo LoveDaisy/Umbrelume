@@ -56,6 +56,10 @@ def fetch(name: str, cache: Path) -> bytes:
         raw = response.read()
     if len(raw) < 1000:
         raise RuntimeError(f"Download of {name} returned only {len(raw)} bytes")
+    # Validate before caching (same discipline as the Horizons fetch paths):
+    # an HTTP-200 error page must not poison the cache with non-FITS bytes.
+    if name.endswith(".fits") and not raw[:80].lstrip().startswith(b"SIMPLE  ="):
+        raise RuntimeError(f"Download of {name} is not a FITS file (missing SIMPLE header)")
     cache.mkdir(parents=True, exist_ok=True)
     path.write_bytes(raw)
     return raw
