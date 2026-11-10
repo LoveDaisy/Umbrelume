@@ -2,14 +2,30 @@
 from dataclasses import replace
 
 import numpy as np
+import pytest
 
 from eclipse.aerosol import AerosolColumn, AerosolProfile
 from eclipse.atmosphere import Atmosphere
-from eclipse.rays import build_ray_table
+from eclipse.rays import RayTable, build_ray_table
 from eclipse.transport import transmission_profile
 from validation.check_aerosol import (
     aerosol_energy_check, curved_aerosol_checks, straight_exponential_checks,
 )
+
+
+def test_ray_table_rejects_mismatched_aerosol_pairs():
+    """The (tau, profile) pairing invariant is mechanical, not comment-only."""
+    altitude = np.linspace(0., 100_000., 3)
+    fields = (altitude, altitude, altitude*0., altitude*0., altitude*0., 550., False)
+    # tau tables without profiles, and a length mismatch, must fail loud
+    # instead of silently dropping layers in the transmission hook.
+    with pytest.raises(ValueError):
+        RayTable(*fields, None, (AerosolProfile.opac_free_troposphere(),))
+    with pytest.raises(ValueError):
+        RayTable(*fields, (altitude*0., altitude*0.),
+                 (AerosolProfile.opac_free_troposphere(),))
+    ok = RayTable(*fields, (altitude*0.,), (AerosolProfile.opac_free_troposphere(),))
+    assert len(ok.aerosol_layer_taus) == len(ok.aerosol_profiles) == 1
 
 
 def test_straight_exponential_slant_tau_matches_exact_bessel_integral():

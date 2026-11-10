@@ -76,6 +76,10 @@ def test_cli_aod550_zero_is_the_molecular_counterfactual(tmp_path):
     zero_metadata = json.loads((zero_out/"metadata.json").read_text())
     none_metadata = json.loads((none_out/"metadata.json").read_text())
     assert zero_metadata["aerosol"] is None and none_metadata["aerosol"] is None
+    # The preset field keeps the requested choice while the medium is
+    # molecular-only; the disabled source field is the disambiguator, so the
+    # combination's semantics stay pinned against silent drift.
+    assert zero_metadata["aerosol_preset"] == "opac"
     assert zero_metadata["aerosol_aod_source"] == "Disabled"
     assert "No aerosol extinction" in zero_metadata["approximations"]
 

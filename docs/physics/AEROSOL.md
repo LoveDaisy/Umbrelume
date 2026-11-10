@@ -94,7 +94,11 @@ Interface mapping (names and semantics stable across the change):
   stratospheric layer stays at its published 0.005. `--aod550 0` disables the
   **whole** aerosol component (molecular-only, bit-exact with `--aerosol
   none`); a zero-AOD layer inside an explicit Python-API `AerosolColumn` is
-  legal and normalizes to its active subset.
+  legal and normalizes to its active subset. In that `--aod550 0` case the
+  metadata self-describes asymmetrically: `aerosol` is null and
+  `aerosol_preset` keeps the requested choice string, so the actual medium is
+  identified by `aerosol_aod_source == "Disabled"` — read all three fields,
+  never `aerosol_preset` alone.
 
 Saved ray tables (`rays.npz`) carry the new key `aerosol_layer_taus` (a 2-D
 `(n_layers, n_tangent)` stack) whenever the run has an aerosol component, and

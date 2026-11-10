@@ -457,6 +457,15 @@ def mv1990_kernel(variant: str, extra_aerosol=None) -> tuple:
     """
     analysis = mv1990_analysis()
     record = mv1990_record("fixed_opac")
+    # The single-record geometry read rests on the observation property that
+    # all committed per-variant records carry identical geometry values; a
+    # future record regeneration that breaks it must fail loud, not silently
+    # pick one variant's geometry.
+    for other in VARIANTS:
+        for field in ("shadow_center_offset_m", "aperture_radius_m"):
+            if mv1990_record(other)[field] != record[field]:
+                raise RuntimeError(f"mv1990 quadrature geometry differs between the "
+                                   f"{other} and fixed_opac records ({field})")
     event = next(item for item in analysis["geometry"]["events"]
                  if item["event_date"] == MV1990_EVENT)
     geometry = Geometry(moon_distance_m=event["moon_distance_m"],
@@ -1127,53 +1136,48 @@ def variant_prediction_records(event: str) -> list:
     return records
 
 
-def strat_brightness_factor() -> dict:
-    """Per-readout production/committed factors of the two-layer variant.
+def factors_from_prediction_records(predictions: dict) -> dict:
+    """Production/committed factors derived from the rerun's own records.
 
-    Same form as the probe's kernel-sum factors (probe_brightness_factor):
-    the factor is the production variant's kernel moment over the committed
-    fixed_opac prediction. The preregistered comparison therefore isolates
-    exactly the probe-extra-column versus production-column difference.
+    Single source with the predictions.json product: the factor consumed by
+    the preregistered metrics is exactly ``prediction/committed`` from the
+    same per-readout records that land in the file, so the checked quantity
+    and the stored quantity cannot drift apart. The probe side has no such
+    records (its extra channel lives on its own single-layer table), which is
+    why ``probe_brightness_factor`` keeps its own kernel path - the asymmetry
+    is physical, not accidental.
     """
-    geometry = june_geometry()
-    june = []
-    for record in june_records():
-        radius = geometry.moon_distance_m*np.tan(np.deg2rad(record["shadow_angle_deg"]))
-        _, _, _, moment = june_kernel(PRODUCTION_VARIANT, radius, record["wavelength_nm"])
-        june.append(moment/record["fixed_opac_prediction"])
-    wavelengths, window_rows = hst_window_data()
-    hst = {}
-    for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
-        committed = np.array([float(row[f"{dataset}_fixed_opac_prediction"])
-                              for row in window_rows])
-        _, _, sums, _ = hst_kernel(PRODUCTION_VARIANT, dataset, wavelengths)
-        hst[dataset] = (sums*hst_comparison()["solar_scale_in_over_out"][dataset])/committed
-    dec = []
-    for record in dec_comparison()["records"]:
-        _, _, _, moment = dec_kernel(PRODUCTION_VARIANT, record["wavelength_nm"])
-        dec.append(moment/record["fixed_opac_prediction"])
-    _, _, _, moment = mv1990_kernel(PRODUCTION_VARIANT)
-    mv1990 = moment/mv1990_record("fixed_opac")["prediction"]
-    return {"june_2011": june, "hst_2019": hst, "dec_2011": dec,
-            "event_1990_02_09": mv1990}
+    factors = {}
+    for event, records in predictions.items():
+        if event == "hst_2019":
+            factors[event] = {
+                record["dataset"]: np.array(record["prediction"][PRODUCTION_VARIANT])
+                /np.array(record["committed_prediction"]["fixed_opac"])
+                for record in records}
+        else:
+            factors[event] = [record["prediction"][PRODUCTION_VARIANT]
+                              /record["committed_prediction"]["fixed_opac"]
+                              for record in records]
+    return factors
 
 
 def build_strat_predictions(height_stats: dict) -> dict:
     """Four-aperture three-variant rerun: predictions plus derived metrics.
 
     The preregistered production metrics reuse the probe's own delta formulas
-    (probe_event_brightness / probe_event_shape) with the production factor
-    dict: the committed baseline rows are identical, so any probe-production
+    (probe_event_brightness / probe_event_shape) with factors derived from
+    this same run's prediction records (single source with the stored
+    product): the committed baseline rows are identical, so any probe-production
     difference is attributable to the prediction difference alone.
     """
-    factors = strat_brightness_factor()
+    predictions = {event: variant_prediction_records(event) for event in EVENT_ORDER}
+    factors = factors_from_prediction_records(predictions)
     depths = depth_statistics(height_stats)
     brightness = {event: probe_event_brightness(PREREGISTERED_CANDIDATE, event,
                                                 factors, depths)
                   for event in EVENT_ORDER}
     shape = {"june_2011": probe_event_shape(PREREGISTERED_CANDIDATE, "june_2011", factors),
              "dec_2011": probe_event_shape(PREREGISTERED_CANDIDATE, "dec_2011", factors)}
-    predictions = {event: variant_prediction_records(event) for event in EVENT_ORDER}
     reproduction = {}
     for event in EVENT_ORDER:
         worst = {}

@@ -31,9 +31,20 @@ class RayTable:
     # grid, plus that table's own layer profile. Both fields are constructed
     # together by build_ray_table, so every tau table and its profile stay
     # same-source by construction; consumers take (tau, profile) pairs from
-    # the table only, never from separately passed arguments.
+    # the table only, never from separately passed arguments. Hand-built
+    # tables (tests, diagnostics) must satisfy the same pairing invariant,
+    # enforced below.
     aerosol_layer_taus: tuple[np.ndarray, ...] | None = None
     aerosol_profiles: tuple[AerosolProfile, ...] = ()
+
+    def __post_init__(self):
+        if (self.aerosol_layer_taus is None) != (not self.aerosol_profiles):
+            raise ValueError("aerosol_layer_taus and aerosol_profiles must be "
+                             "None/empty together")
+        if self.aerosol_layer_taus is not None and \
+                len(self.aerosol_layer_taus) != len(self.aerosol_profiles):
+            raise ValueError("each aerosol tau table requires exactly one layer "
+                             "profile of its own")
 
 
 def build_ray_table(
