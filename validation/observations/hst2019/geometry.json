@@ -1,0 +1,1192 @@
+{
+  "source": "JPL Horizons DE441; ICRF vectors; lunar MEAN_ME high-precision site orientation",
+  "api_docs": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+  "vector_construction": "At lunar reflection epoch t (mid exposure minus Moon-to-HST downleg), e=Earth(t-LT_E)-site and s=Sun(t-LT_S)-site from the sampled selenographic site; rho=|e x u|, D=e.u, S=|s-e| for sunward u=(s-e)/|s-e|. Site vectors originate at the lunar surface point, so receiver-side (HST) parallax is exact and not an uncertainty term; the downleg only shifts the epoch (Moon-HST range/c, ~1.28 s). Site states come from the Horizons OBSERVER pipeline (astrometric ICRF direction times delta distance; the VECTORS pipeline served time-only rows at retrieval time, including for the previously validated December-2011 request shape), which matches the December 2011 LT convention of applying no apparent-sky stellar aberration.",
+  "horizons_hst_body_id": -48,
+  "horizons_hst_probe": "Moon vectors from HST (-48) confirmed available (DE441); A5 assumption verified. HST position enters only the downleg shift: a geocentric fallback would change the shift by <=6911 km/c = 0.023 s (~40 km sampled displacement), not the shadow geometry.",
+  "longitude_convention": "Table 1 selenographic longitudes read east-positive (IAU/SPICE modern convention, same as Horizons Moon site coordinates); validated by the RA_APER pointing check below.",
+  "epoch_contract": {
+    "observed_span_utc": [
+      "2019-01-21T05:00:00+00:00",
+      "2019-01-21T10:20:00+00:00"
+    ],
+    "reflection_epoch_shift": "mid exposure time minus Moon-to-HST downleg; downleg interpolated linearly from 1-minute Moon-from-HST DE441 ranges",
+    "site_vector_sampling": "Earth/Sun vectors from each selenographic site linearly interpolated at the reflection epoch between 1-minute Horizons samples (Horizons rejects sub-minute steps); interpolation error <~2 km, far below the 150 km probe scale"
+  },
+  "requests": {
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27%40-48%27&START_TIME=%272019-01-21+05%3A00%3A00.000%27&STOP_TIME=%272019-01-21+10%3A20%3A00.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&CSV_FORMAT=%27YES%27",
+    "response_sha256": "9765ddcf11955ab339af0a6cc20dcbe38b365a01c7ec4642c83e8158d363fc91",
+    "api_signature": {
+      "version": "1.2",
+      "source": "NASA/JPL Horizons API"
+    },
+    "row_count": 321,
+    "site_00_lon-21.4_lat-1.0_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-21.4%2C-1%2C0%27&START_TIME=%272019-01-21+05%3A10%3A18.826%27&STOP_TIME=%272019-01-21+05%3A14%3A18.826%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "300864b6aff060c2d811363ed25a912de8de1d678e51ca2c3f1a0a7c1f56d88e",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_00_lon-21.4_lat-1.0_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-21.4%2C-1%2C0%27&START_TIME=%272019-01-21+05%3A10%3A18.826%27&STOP_TIME=%272019-01-21+05%3A14%3A18.826%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "26143fd8171ff9aee689d6bea8b1340fe1ee2d4236959d537e8a13e947cd05a2",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_01_lon-21.3_lat-0.8_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-21.3%2C-0.8%2C0%27&START_TIME=%272019-01-21+05%3A13%3A37.823%27&STOP_TIME=%272019-01-21+05%3A17%3A37.823%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "33defda8411643ccb5575d4a037fd3adb09dfc4045e3a3036fc9f3aa25a9bad9",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_01_lon-21.3_lat-0.8_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-21.3%2C-0.8%2C0%27&START_TIME=%272019-01-21+05%3A13%3A37.823%27&STOP_TIME=%272019-01-21+05%3A17%3A37.823%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "89874aa98a06f5f9bb3c703fc0e9536068887ec90b8147e9eaa1d7f4e74d0b9e",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_02_lon-14.3_lat-4.2_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-14.3%2C-4.2%2C0%27&START_TIME=%272019-01-21+05%3A16%3A56.820%27&STOP_TIME=%272019-01-21+05%3A20%3A56.820%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "744ce0978831441f5a178f042d7eb75896f0c0edb9c77cddc6a6d14feb0f4132",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_02_lon-14.3_lat-4.2_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-14.3%2C-4.2%2C0%27&START_TIME=%272019-01-21+05%3A16%3A56.820%27&STOP_TIME=%272019-01-21+05%3A20%3A56.820%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "d3eb50b29f9f0b1815fa8eb0277262f0b0942d6795db22b70b990c179a42ce4b",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_03_lon-9.4_lat-4.5_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.4%2C-4.5%2C0%27&START_TIME=%272019-01-21+05%3A21%3A58.813%27&STOP_TIME=%272019-01-21+05%3A25%3A58.813%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "bc93b631be6818371db8b0d3438298e06680831fcccfbf6f06579086c942f80d",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_03_lon-9.4_lat-4.5_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.4%2C-4.5%2C0%27&START_TIME=%272019-01-21+05%3A21%3A58.813%27&STOP_TIME=%272019-01-21+05%3A25%3A58.813%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "0eb62f723499eb649820c1cd9d5c69717938b392a8c2b656beebbdf23032305f",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_04_lon-10.6_lat-4.2_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-10.6%2C-4.2%2C0%27&START_TIME=%272019-01-21+05%3A25%3A17.808%27&STOP_TIME=%272019-01-21+05%3A29%3A17.808%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "cc5a03ef4cbcbb9d4196835b5540b44d55e7077f337638b4fe17d8e4b6641e21",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_04_lon-10.6_lat-4.2_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-10.6%2C-4.2%2C0%27&START_TIME=%272019-01-21+05%3A25%3A17.808%27&STOP_TIME=%272019-01-21+05%3A29%3A17.808%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "9b5d5f90bb42cd00e0803bda5e64ceb61d2086bef0dbc02ac23045e0912fb566",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_05_lon-7.6_lat-16.6_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-7.6%2C-16.6%2C0%27&START_TIME=%272019-01-21+06%3A18%3A26.812%27&STOP_TIME=%272019-01-21+06%3A22%3A26.812%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "862992f381ad549ea65b7f3f0b187b1aacc51ae0514efee5c904697b2d49b9cd",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_05_lon-7.6_lat-16.6_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-7.6%2C-16.6%2C0%27&START_TIME=%272019-01-21+06%3A18%3A26.812%27&STOP_TIME=%272019-01-21+06%3A22%3A26.812%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "fff288066adaf5a75aca5b42ebb4121daaba3ad9c84b25cdfbc6ffd86994c936",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_06_lon+4.2_lat-20.1_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%274.2%2C-20.1%2C0%27&START_TIME=%272019-01-21+06%3A19%3A59.814%27&STOP_TIME=%272019-01-21+06%3A23%3A59.814%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "ce1426d3c4913106a0de905c7383b66c0112f24efa4c8e1571e0230009917238",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_06_lon+4.2_lat-20.1_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%274.2%2C-20.1%2C0%27&START_TIME=%272019-01-21+06%3A19%3A59.814%27&STOP_TIME=%272019-01-21+06%3A23%3A59.814%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "10dccf837a62c8388bc2a900033623bd80fc7c56f0b406ac8e5b18e3669f9554",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_07_lon+4.1_lat-19.4_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%274.1%2C-19.4%2C0%27&START_TIME=%272019-01-21+06%3A21%3A32.816%27&STOP_TIME=%272019-01-21+06%3A25%3A32.816%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "4d87727920fba159c8ffa5e10b41b3a9475c2a7e7b6bc0d307f9694e4ba2b174",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_07_lon+4.1_lat-19.4_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%274.1%2C-19.4%2C0%27&START_TIME=%272019-01-21+06%3A21%3A32.816%27&STOP_TIME=%272019-01-21+06%3A25%3A32.816%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "cb99d9e035b264d8b4b73b0f25aa421333e9dcbc36ad8fc596dc0a84e56ab815",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_08_lon+2.1_lat-17.3_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%272.1%2C-17.3%2C0%27&START_TIME=%272019-01-21+06%3A22%3A50.818%27&STOP_TIME=%272019-01-21+06%3A26%3A50.818%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "7c592f679e27fa5c2377383d46a8bd9c82ff368c4543053e5288b7b2a75ac623",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_08_lon+2.1_lat-17.3_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%272.1%2C-17.3%2C0%27&START_TIME=%272019-01-21+06%3A22%3A50.818%27&STOP_TIME=%272019-01-21+06%3A26%3A50.818%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "50466cda9493d3f03adf0ea307d55f774c1359f5201c7999ad8a0d046fb15afb",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_09_lon-0.3_lat-14.7_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-0.3%2C-14.7%2C0%27&START_TIME=%272019-01-21+06%3A23%3A54.819%27&STOP_TIME=%272019-01-21+06%3A27%3A54.819%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "ca6f5455809f425eb6ca1fc9522bd518f53acbb1103b5821e6fd3d917be97e50",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_09_lon-0.3_lat-14.7_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-0.3%2C-14.7%2C0%27&START_TIME=%272019-01-21+06%3A23%3A54.819%27&STOP_TIME=%272019-01-21+06%3A27%3A54.819%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "c8ebe639cf4f4883be0bb98a5b7ff2483c1ba1ec50c67ae907eb6eee5215dfbb",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_10_lon-3.1_lat-11.4_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-3.1%2C-11.4%2C0%27&START_TIME=%272019-01-21+06%3A24%3A58.821%27&STOP_TIME=%272019-01-21+06%3A28%3A58.821%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "6b456ab19329988da81799c403d8467943496fced8041afe8e11325b72dc7eac",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_10_lon-3.1_lat-11.4_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-3.1%2C-11.4%2C0%27&START_TIME=%272019-01-21+06%3A24%3A58.821%27&STOP_TIME=%272019-01-21+06%3A28%3A58.821%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "05cea99a0440ce0b1cc1cce821ffacc8ef26bc877c5e10d0836f5e21e8e11338",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_11_lon-15.6_lat-3.0_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-15.6%2C-3%2C0%27&START_TIME=%272019-01-21+10%3A00%3A34.824%27&STOP_TIME=%272019-01-21+10%3A04%3A34.824%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "b1c960fc3d88231ae1f5f2e2a6383c198d54989828dc157314b8255ce725ec11",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_11_lon-15.6_lat-3.0_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-15.6%2C-3%2C0%27&START_TIME=%272019-01-21+10%3A00%3A34.824%27&STOP_TIME=%272019-01-21+10%3A04%3A34.824%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "27476dc4fdd6ba68a4b4f24a297c81a8c397c1803e6caa208acc0acdad990c38",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_12_lon-14.3_lat-3.7_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-14.3%2C-3.7%2C0%27&START_TIME=%272019-01-21+10%3A01%3A19.823%27&STOP_TIME=%272019-01-21+10%3A05%3A19.823%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "534f7da3aa5fad711374ad5c59efe9975edc5c135ade8a0e62f24b017ccf6cca",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_12_lon-14.3_lat-3.7_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-14.3%2C-3.7%2C0%27&START_TIME=%272019-01-21+10%3A01%3A19.823%27&STOP_TIME=%272019-01-21+10%3A05%3A19.823%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "3fd0eb2daf3b28e677a0cd5b2c77f600ce35d46bfa99ec565508bf89e3bf48ec",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_13_lon-12.7_lat-4.6_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-12.7%2C-4.6%2C0%27&START_TIME=%272019-01-21+10%3A02%3A04.822%27&STOP_TIME=%272019-01-21+10%3A06%3A04.822%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "a0681d4f8d9bd3157f17143483c4fec2501ce1d6fa8a706ea49d09239246be53",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_13_lon-12.7_lat-4.6_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-12.7%2C-4.6%2C0%27&START_TIME=%272019-01-21+10%3A02%3A04.822%27&STOP_TIME=%272019-01-21+10%3A06%3A04.822%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "c8dfd237dce2c3c668b38d761c70e11c5b6803aa03fc7c5265ea4b94eaf82241",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_14_lon-10.7_lat-5.8_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-10.7%2C-5.8%2C0%27&START_TIME=%272019-01-21+10%3A02%3A49.821%27&STOP_TIME=%272019-01-21+10%3A06%3A49.821%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "08b138a65efe166ad3337be0d062669671f235bb39a229a2f5b020bd84b918d8",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_14_lon-10.7_lat-5.8_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-10.7%2C-5.8%2C0%27&START_TIME=%272019-01-21+10%3A02%3A49.821%27&STOP_TIME=%272019-01-21+10%3A06%3A49.821%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "e9739d692fdfa417e7ad93522825621a23ead68a8c1a7ec55cd9a7a736776b9d",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_15_lon-8.4_lat-7.3_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.4%2C-7.3%2C0%27&START_TIME=%272019-01-21+10%3A03%3A34.820%27&STOP_TIME=%272019-01-21+10%3A07%3A34.820%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "8ee3dcb2e7b6def50ece4a8499b4de37eb044318ef862d99993a6de5abf8c351",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_15_lon-8.4_lat-7.3_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.4%2C-7.3%2C0%27&START_TIME=%272019-01-21+10%3A03%3A34.820%27&STOP_TIME=%272019-01-21+10%3A07%3A34.820%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "d4e926823b0a3c8ed89c559451b32381fb7ab98059831dc10d49874f5db4dfb5",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_16_lon-7.3_lat-6.1_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-7.3%2C-6.1%2C0%27&START_TIME=%272019-01-21+10%3A07%3A22.816%27&STOP_TIME=%272019-01-21+10%3A11%3A22.816%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "956d4620c297862d38afb074d31982c18e8aa7a554fbcb549f8d087ecce8f1a1",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_16_lon-7.3_lat-6.1_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-7.3%2C-6.1%2C0%27&START_TIME=%272019-01-21+10%3A07%3A22.816%27&STOP_TIME=%272019-01-21+10%3A11%3A22.816%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "264e487bb4a073be0e6df7110df14777cdb73dda16aecb3f3f76d2e34c66181b",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_17_lon-8.5_lat-5.3_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.5%2C-5.3%2C0%27&START_TIME=%272019-01-21+10%3A08%3A07.815%27&STOP_TIME=%272019-01-21+10%3A12%3A07.815%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "a50d335ed632b8e8d851bc286f568b05b613a92c136e6f0ec2bd5a1b14f0d7f5",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_17_lon-8.5_lat-5.3_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.5%2C-5.3%2C0%27&START_TIME=%272019-01-21+10%3A08%3A07.815%27&STOP_TIME=%272019-01-21+10%3A12%3A07.815%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "1d7f6c6170e85a23107dda6edd04f2bcf634e9a4ec4f1e143d80fa8ee090ffea",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_18_lon-9.3_lat-4.8_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.3%2C-4.8%2C0%27&START_TIME=%272019-01-21+10%3A08%3A52.813%27&STOP_TIME=%272019-01-21+10%3A12%3A52.813%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "4dd833262fafa1694d41fd52823683f3d612e46ecdc420d8c0a31b323569e401",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_18_lon-9.3_lat-4.8_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.3%2C-4.8%2C0%27&START_TIME=%272019-01-21+10%3A08%3A52.813%27&STOP_TIME=%272019-01-21+10%3A12%3A52.813%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "05f41b50d1cad483689678669db3710a57d1467aa62cef0c7bb0fd1397971d57",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_19_lon-9.6_lat-4.7_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.6%2C-4.7%2C0%27&START_TIME=%272019-01-21+10%3A09%3A37.812%27&STOP_TIME=%272019-01-21+10%3A13%3A37.812%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "52960a0156f23b68f45e4d2fb7a2e391d6ed165eae7f4cf38618e486139ee0f4",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_19_lon-9.6_lat-4.7_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.6%2C-4.7%2C0%27&START_TIME=%272019-01-21+10%3A09%3A37.812%27&STOP_TIME=%272019-01-21+10%3A13%3A37.812%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "5953df7a7aa2f6dcebc123ec8c27e1eae6fd05f8b924c36e2f0ce9571ebcacbd",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_20_lon-9.6_lat-4.9_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.6%2C-4.9%2C0%27&START_TIME=%272019-01-21+10%3A10%3A22.811%27&STOP_TIME=%272019-01-21+10%3A14%3A22.811%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "108b9d004e868c5dc5016452b86b5a05d4cfa83ff12d0f5866bf1fe8429a8037",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_20_lon-9.6_lat-4.9_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.6%2C-4.9%2C0%27&START_TIME=%272019-01-21+10%3A10%3A22.811%27&STOP_TIME=%272019-01-21+10%3A14%3A22.811%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "928f344fb2409e46de15fc6d2415cadcd354a402b5794a9bd1d735f05c1bc739",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_21_lon-9.1_lat-5.4_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.1%2C-5.4%2C0%27&START_TIME=%272019-01-21+10%3A11%3A07.810%27&STOP_TIME=%272019-01-21+10%3A15%3A07.810%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "fa62621a8b781c3090d40750b99c0a93577a6c5122b4e582449dff3a4207c020",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_21_lon-9.1_lat-5.4_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-9.1%2C-5.4%2C0%27&START_TIME=%272019-01-21+10%3A11%3A07.810%27&STOP_TIME=%272019-01-21+10%3A15%3A07.810%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "2a8e58f6d61a7384bd4c11fc57820745119bfc8f52aa3ef3a9a8720b40d1433a",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_22_lon-8.3_lat-6.4_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.3%2C-6.4%2C0%27&START_TIME=%272019-01-21+10%3A11%3A52.809%27&STOP_TIME=%272019-01-21+10%3A15%3A52.809%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "0d2e24997a981d864511aacddf6ae00b408e2bb446593f9fb56c2bc890505035",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "site_22_lon-8.3_lat-6.4_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%27-8.3%2C-6.4%2C0%27&START_TIME=%272019-01-21+10%3A11%3A52.809%27&STOP_TIME=%272019-01-21+10%3A15%3A52.809%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "ff2e1e09cf52c115c1e2f911bb9568aefe1819bf8c17891cd8d5bf5efb71e766",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 5,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "echeck_earth": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A13%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "b95263c05eaf8523633ca48705c3eeec7dc641cbb82c11a5b8a236b457ad6eda",
+      "api_signature": {
+        "source": "NASA/JPL Horizons API",
+        "version": "1.2"
+      },
+      "row_count": 302,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    },
+    "echeck_sun": {
+      "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%270.0%2C0.0%2C0%27&START_TIME=%272019-01-21+05%3A12%3A20.000%27&STOP_TIME=%272019-01-21+10%3A13%3A54.000%27&STEP_SIZE=%271m%27&TIME_TYPE=%27UT%27&QUANTITIES=%271%2C20%27&CSV_FORMAT=%27YES%27",
+      "response_sha256": "9cbfb16612daaefd56944edd923b604f57f63d3c58d66200eb7862ecd3a59b1b",
+      "api_signature": {
+        "version": "1.2",
+        "source": "NASA/JPL Horizons API"
+      },
+      "row_count": 302,
+      "construction": "astrometric ICRF direction x delta distance (OBSERVER pipeline); VECTORS output served time-only rows at retrieval time"
+    }
+  },
+  "spatial_sensitivity": {
+    "sample_probe_offsets_m": [
+      -150000.0,
+      0.0,
+      150000.0
+    ],
+    "probe_semantics": "Sampled point displaced +/-150 km toward/away from the shadow axis on the lunar surface (rho +/- 150 km), mirroring the December 2011 radial probe scale.",
+    "pointing_small_terms_arcsec": 30.48,
+    "pointing_track_error_max_arcsec": 600.0,
+    "pointing_terms_source": "Youngblood et al. 2020 Sec. II.1: 14\" initial gyro slew, gyro guiding accumulating at 0.001\"/s (16.48\" max orbit 2, 10.72\" max orbit 3), linear-track approximation dominating at up to 10 arcmin.",
+    "pointing_track_error_km_max": 1042.44,
+    "pointing_small_terms_km_max": 52.955952,
+    "scope": "Displacement sensitivity, not a confidence interval; the track-error envelope exceeds the 150 km probe and limits the same-region albedo cancellation premise, see limitations."
+  },
+  "independent_checks": {
+    "mid_time_fits_vs_table1": {
+      "max_abs_diff_s": 0.85,
+      "tolerance_s": 2.0,
+      "per_exposure_abs_diff_s": {
+        "ody902alq": 0.65,
+        "ody902amq": 0.65,
+        "ody902aoq": 0.65,
+        "ody902apq": 0.6,
+        "ody902aqq": 0.6,
+        "ody9a2atq": 0.85,
+        "ody9a2avq": 0.85,
+        "ody9a2axq": 0.85,
+        "ody9a2ayq": 0.0,
+        "ody9a2azq": 0.0,
+        "ody9a2b0q": 0.0,
+        "ody904ccq": 0.75,
+        "ody904cdq": 0.75,
+        "ody904ceq": 0.75,
+        "ody904cfq": 0.75,
+        "ody904cgq": 0.75,
+        "ody904ciq": 0.65,
+        "ody904cjq": 0.65,
+        "ody904ckq": 0.65,
+        "ody904clq": 0.65,
+        "ody904cmq": 0.65,
+        "ody904cnq": 0.65,
+        "ody904coq": 0.65
+      }
+    },
+    "eclipse_angle_table1_vs_horizons": {
+      "max_abs_diff_deg": 0.013404150962423422,
+      "tolerance_deg": 0.1,
+      "scope": "Table 1 evaluates e at the fixed selenographic (0,0) site at observed mid times; Horizons site vectors reproduce the same angle definition."
+    },
+    "pointing_ra_aper_vs_table1": {
+      "max_separation_arcsec": 278.62424323877974,
+      "rms_separation_arcsec": 122.99182495272012,
+      "tolerance_arcsec": 1200.0,
+      "checked_exposure_count": 16,
+      "per_exposure": [
+        {
+          "exposure_name": "ody902alq",
+          "predicted_ra_deg": 122.33393956961541,
+          "predicted_dec_deg": 20.315260716146817,
+          "fits_ra_aper_deg": 122.3559440098,
+          "fits_dec_aper_deg": 20.38985600014,
+          "separation_arcsec": 278.62424323877974,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody902amq",
+          "predicted_ra_deg": 122.19963305637343,
+          "predicted_dec_deg": 20.184734581232792,
+          "fits_ra_aper_deg": 122.3559440098,
+          "fits_dec_aper_deg": 20.38985600014,
+          "separation_arcsec": 907.6750592099836,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody902aoq",
+          "predicted_ra_deg": 122.06489533748474,
+          "predicted_dec_deg": 20.054142343202482,
+          "fits_ra_aper_deg": 122.3559440098,
+          "fits_dec_aper_deg": 20.38985600014,
+          "separation_arcsec": 1557.9792463721012,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody902apq",
+          "predicted_ra_deg": 121.98163138874396,
+          "predicted_dec_deg": 19.903812552647658,
+          "fits_ra_aper_deg": 121.9698074785,
+          "fits_dec_aper_deg": 19.93153653951,
+          "separation_arcsec": 107.5309295514928,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody902aqq",
+          "predicted_ra_deg": 122.01162797310535,
+          "predicted_dec_deg": 19.82943470498105,
+          "fits_ra_aper_deg": 121.9698074785,
+          "fits_dec_aper_deg": 19.93153653951,
+          "separation_arcsec": 393.8914668479704,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody9a2atq",
+          "predicted_ra_deg": 124.60119780645738,
+          "predicted_dec_deg": 20.794091075828764,
+          "fits_ra_aper_deg": 124.6245439152,
+          "fits_dec_aper_deg": 20.8300688445,
+          "separation_arcsec": 151.48405310850202,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody9a2avq",
+          "predicted_ra_deg": 124.51511720237933,
+          "predicted_dec_deg": 20.795938026609104,
+          "fits_ra_aper_deg": 124.6245439152,
+          "fits_dec_aper_deg": 20.8300688445,
+          "separation_arcsec": 388.1887509597208,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody9a2axq",
+          "predicted_ra_deg": 124.48051849536789,
+          "predicted_dec_deg": 20.79627765061792,
+          "fits_ra_aper_deg": 124.6245439152,
+          "fits_dec_aper_deg": 20.8300688445,
+          "separation_arcsec": 499.69043278034724,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody9a2ayq",
+          "predicted_ra_deg": 124.45585859020373,
+          "predicted_dec_deg": 20.79700128277623,
+          "fits_ra_aper_deg": 124.5193636693,
+          "fits_dec_aper_deg": 20.8337022863,
+          "separation_arcsec": 251.2425778110222,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody9a2azq",
+          "predicted_ra_deg": 124.43586655839661,
+          "predicted_dec_deg": 20.79754990348419,
+          "fits_ra_aper_deg": 124.5193636693,
+          "fits_dec_aper_deg": 20.8337022863,
+          "separation_arcsec": 309.64923602938893,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody9a2b0q",
+          "predicted_ra_deg": 124.41515322624579,
+          "predicted_dec_deg": 20.798129996942198,
+          "fits_ra_aper_deg": 124.5193636693,
+          "fits_dec_aper_deg": 20.8337022863,
+          "separation_arcsec": 373.32133141362846,
+          "checked_against_header_pointing": false
+        },
+        {
+          "exposure_name": "ody904ccq",
+          "predicted_ra_deg": 125.37881113080178,
+          "predicted_dec_deg": 19.74012739998905,
+          "fits_ra_aper_deg": 125.3609585908,
+          "fits_dec_aper_deg": 19.76349539303,
+          "separation_arcsec": 103.61352493971545,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cdq",
+          "predicted_ra_deg": 125.34586046139654,
+          "predicted_dec_deg": 19.711597867124592,
+          "fits_ra_aper_deg": 125.3045240037,
+          "fits_dec_aper_deg": 19.70615136259,
+          "separation_arcsec": 141.45910078736566,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904ceq",
+          "predicted_ra_deg": 125.31293210799254,
+          "predicted_dec_deg": 19.6830464369893,
+          "fits_ra_aper_deg": 125.2809395854,
+          "fits_dec_aper_deg": 19.67992239181,
+          "separation_arcsec": 109.02622318775133,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cfq",
+          "predicted_ra_deg": 125.28001319193194,
+          "predicted_dec_deg": 19.654381951697584,
+          "fits_ra_aper_deg": 125.259482776,
+          "fits_dec_aper_deg": 19.65438166268,
+          "separation_arcsec": 69.60342931319704,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cgq",
+          "predicted_ra_deg": 125.24752695875712,
+          "predicted_dec_deg": 19.625513032066564,
+          "fits_ra_aper_deg": 125.2402236693,
+          "fits_dec_aper_deg": 19.6295887583,
+          "separation_arcsec": 28.78455007605098,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904ciq",
+          "predicted_ra_deg": 125.18274764805167,
+          "predicted_dec_deg": 19.52096895495009,
+          "fits_ra_aper_deg": 125.1788719925,
+          "fits_dec_aper_deg": 19.5188470566,
+          "separation_arcsec": 15.208097967040597,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cjq",
+          "predicted_ra_deg": 125.18495128873934,
+          "predicted_dec_deg": 19.504168594809283,
+          "fits_ra_aper_deg": 125.173660165,
+          "fits_dec_aper_deg": 19.49846149314,
+          "separation_arcsec": 43.47704222239458,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904ckq",
+          "predicted_ra_deg": 125.18739576690449,
+          "predicted_dec_deg": 19.48765497546336,
+          "fits_ra_aper_deg": 125.1713657172,
+          "fits_dec_aper_deg": 19.4804959701,
+          "separation_arcsec": 60.19930025239836,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904clq",
+          "predicted_ra_deg": 125.18970448419755,
+          "predicted_dec_deg": 19.471179212626723,
+          "fits_ra_aper_deg": 125.1715973246,
+          "fits_dec_aper_deg": 19.46367692838,
+          "separation_arcsec": 67.1317689225997,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cmq",
+          "predicted_ra_deg": 125.19238071878515,
+          "predicted_dec_deg": 19.454732578009633,
+          "fits_ra_aper_deg": 125.1743689824,
+          "fits_dec_aper_deg": 19.44804300704,
+          "separation_arcsec": 65.71322498086336,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904cnq",
+          "predicted_ra_deg": 125.19444040554248,
+          "predicted_dec_deg": 19.43858690539792,
+          "fits_ra_aper_deg": 125.1796866705,
+          "fits_dec_aper_deg": 19.43362400796,
+          "separation_arcsec": 53.1778591596915,
+          "checked_against_header_pointing": true
+        },
+        {
+          "exposure_name": "ody904coq",
+          "predicted_ra_deg": 125.19704424781179,
+          "predicted_dec_deg": 19.421794991931666,
+          "fits_ra_aper_deg": 125.1875495639,
+          "fits_dec_aper_deg": 19.42045076737,
+          "separation_arcsec": 32.59717904286029,
+          "checked_against_header_pointing": true
+        }
+      ],
+      "scope": "Body frame reconstructed from Horizons sub-observer longitude/latitude and pole direction (no hand-coded east/west sign); residuals judged only for single-exposure sets and first CR-SPLIT members, the only commanded pointings recorded in the headers. Residual scatter is the paper's documented linear-track approximation error; the east-positive Table 1 convention is confirmed by residuals far inside that budget."
+    }
+  },
+  "limitations": [
+    "Sampled positions are the paper's published mean linear-track coordinates; the actual in-exposure pointing wanders within the documented error budget (up to 10 arcmin track approximation error), so the in/out sampled lunar regions can differ and albedo cancellation is conditional on the nominal pointing record.",
+    "The Lommel-Seeliger per-exposure correction applied by the paper (F_LS in 0.4975-0.5021, incidence/emission angles closely coupled) changes ratios by <=1% and is omitted here; the paper's penumbral limb-darkening division (G430L I/I0 0.7-0.79) is likewise not reproduced for the auxiliary penumbral branch.",
+    "Selenographic (0,0) eclipse-angle check absorbs SPICE-vs-MEAN_ME orientation differences within 0.1 deg; per-exposure eclipse angles from Table 1 are evaluated at (0,0), not at the sampled point."
+  ],
+  "records": [
+    {
+      "dataset_id": "ody902030",
+      "exposure_name": "ody902alq",
+      "phase": "umbral",
+      "mid_time_utc": "2019-01-21T05:12:20+00:00",
+      "reflection_utc": "2019-01-21T05:12:18.826527+00:00",
+      "downleg_s": 1.1734733809234636,
+      "texp_s": 154.7,
+      "lon_deg": -21.4,
+      "lat_deg": -1.0,
+      "shadow_axis_distance_m": 2323789.0492612487,
+      "receiver_axial_distance_m": 356077226.80245996,
+      "sun_site_distance_m": 147204715352.38998,
+      "eclipse_angle_table1_deg": 0.38,
+      "eclipse_angle_horizons_deg": 0.37872532306947254,
+      "eclipse_angle_abs_diff_deg": 0.001274676930527463,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody902030",
+      "exposure_name": "ody902amq",
+      "phase": "umbral",
+      "mid_time_utc": "2019-01-21T05:15:39+00:00",
+      "reflection_utc": "2019-01-21T05:15:37.823751+00:00",
+      "downleg_s": 1.1762490408753155,
+      "texp_s": 154.7,
+      "lon_deg": -21.3,
+      "lat_deg": -0.8,
+      "shadow_axis_distance_m": 2388885.2262727516,
+      "receiver_axial_distance_m": 356072989.92956257,
+      "sun_site_distance_m": 147204745402.16776,
+      "eclipse_angle_table1_deg": 0.38,
+      "eclipse_angle_horizons_deg": 0.37961061820518416,
+      "eclipse_angle_abs_diff_deg": 0.00038938179481584623,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody902030",
+      "exposure_name": "ody902aoq",
+      "phase": "umbral",
+      "mid_time_utc": "2019-01-21T05:18:58+00:00",
+      "reflection_utc": "2019-01-21T05:18:56.820168+00:00",
+      "downleg_s": 1.1798315074956274,
+      "texp_s": 154.7,
+      "lon_deg": -14.3,
+      "lat_deg": -4.2,
+      "shadow_axis_distance_m": 2312827.2399328686,
+      "receiver_axial_distance_m": 356014459.3167015,
+      "sun_site_distance_m": 147204775456.8042,
+      "eclipse_angle_table1_deg": 0.38,
+      "eclipse_angle_horizons_deg": 0.38329437621961193,
+      "eclipse_angle_abs_diff_deg": 0.0032943762196119275,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody902040",
+      "exposure_name": "ody902apq",
+      "phase": "umbral",
+      "mid_time_utc": "2019-01-21T05:24:00+00:00",
+      "reflection_utc": "2019-01-21T05:23:58.813573+00:00",
+      "downleg_s": 1.1864265988640488,
+      "texp_s": 154.8,
+      "lon_deg": -9.4,
+      "lat_deg": -4.5,
+      "shadow_axis_distance_m": 2381033.863974659,
+      "receiver_axial_distance_m": 355983696.34279996,
+      "sun_site_distance_m": 147204821075.1057,
+      "eclipse_angle_table1_deg": 0.39,
+      "eclipse_angle_horizons_deg": 0.39399924622618854,
+      "eclipse_angle_abs_diff_deg": 0.003999246226188524,
+      "fits_mid_time_abs_diff_s": 0.6
+    },
+    {
+      "dataset_id": "ody902040",
+      "exposure_name": "ody902aqq",
+      "phase": "umbral",
+      "mid_time_utc": "2019-01-21T05:27:19+00:00",
+      "reflection_utc": "2019-01-21T05:27:17.808782+00:00",
+      "downleg_s": 1.1912179258315556,
+      "texp_s": 154.8,
+      "lon_deg": -10.6,
+      "lat_deg": -4.2,
+      "shadow_axis_distance_m": 2489950.896818847,
+      "receiver_axial_distance_m": 355985012.01151884,
+      "sun_site_distance_m": 147204851143.30914,
+      "eclipse_angle_table1_deg": 0.4,
+      "eclipse_angle_horizons_deg": 0.4042758390702766,
+      "eclipse_angle_abs_diff_deg": 0.004275839070276566,
+      "fits_mid_time_abs_diff_s": 0.6
+    },
+    {
+      "dataset_id": "ody9a2010",
+      "exposure_name": "ody9a2atq",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:20:28+00:00",
+      "reflection_utc": "2019-01-21T06:20:26.812423+00:00",
+      "downleg_s": 1.1875765059163996,
+      "texp_s": 48.3,
+      "lon_deg": -7.6,
+      "lat_deg": -16.6,
+      "shadow_axis_distance_m": 4677913.218860512,
+      "receiver_axial_distance_m": 355972471.3569423,
+      "sun_site_distance_m": 147205333685.37988,
+      "eclipse_angle_table1_deg": 0.77,
+      "eclipse_angle_horizons_deg": 0.7657140940834773,
+      "eclipse_angle_abs_diff_deg": 0.00428590591652267,
+      "fits_mid_time_abs_diff_s": 0.85
+    },
+    {
+      "dataset_id": "ody9a2010",
+      "exposure_name": "ody9a2avq",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:22:01+00:00",
+      "reflection_utc": "2019-01-21T06:21:59.814627+00:00",
+      "downleg_s": 1.185373309251844,
+      "texp_s": 48.3,
+      "lon_deg": 4.2,
+      "lat_deg": -20.1,
+      "shadow_axis_distance_m": 4422593.448986583,
+      "receiver_axial_distance_m": 356005174.9550131,
+      "sun_site_distance_m": 147205347779.19614,
+      "eclipse_angle_table1_deg": 0.78,
+      "eclipse_angle_horizons_deg": 0.7790161915437078,
+      "eclipse_angle_abs_diff_deg": 0.0009838084562922012,
+      "fits_mid_time_abs_diff_s": 0.85
+    },
+    {
+      "dataset_id": "ody9a2010",
+      "exposure_name": "ody9a2axq",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:23:34+00:00",
+      "reflection_utc": "2019-01-21T06:23:32.816745+00:00",
+      "downleg_s": 1.1832552775393002,
+      "texp_s": 48.3,
+      "lon_deg": 4.1,
+      "lat_deg": -19.4,
+      "shadow_axis_distance_m": 4521850.460651476,
+      "receiver_axial_distance_m": 355995455.39589727,
+      "sun_site_distance_m": 147205361873.18094,
+      "eclipse_angle_table1_deg": 0.8,
+      "eclipse_angle_horizons_deg": 0.7924231963313172,
+      "eclipse_angle_abs_diff_deg": 0.007576803668682852,
+      "fits_mid_time_abs_diff_s": 0.85
+    },
+    {
+      "dataset_id": "ody9a2020",
+      "exposure_name": "ody9a2ayq",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:24:52+00:00",
+      "reflection_utc": "2019-01-21T06:24:50.818451+00:00",
+      "downleg_s": 1.181548912330404,
+      "texp_s": 20.0,
+      "lon_deg": 2.1,
+      "lat_deg": -17.3,
+      "shadow_axis_distance_m": 4673531.455775433,
+      "receiver_axial_distance_m": 355968464.29655766,
+      "sun_site_distance_m": 147205373692.5877,
+      "eclipse_angle_table1_deg": 0.81,
+      "eclipse_angle_horizons_deg": 0.8037092612642297,
+      "eclipse_angle_abs_diff_deg": 0.0062907387357703515,
+      "fits_mid_time_abs_diff_s": 0.0
+    },
+    {
+      "dataset_id": "ody9a2020",
+      "exposure_name": "ody9a2azq",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:25:56+00:00",
+      "reflection_utc": "2019-01-21T06:25:54.819789+00:00",
+      "downleg_s": 1.1802113077923035,
+      "texp_s": 20.0,
+      "lon_deg": -0.3,
+      "lat_deg": -14.7,
+      "shadow_axis_distance_m": 4831509.478078833,
+      "receiver_axial_distance_m": 355941648.63378716,
+      "sun_site_distance_m": 147205383394.44275,
+      "eclipse_angle_table1_deg": 0.82,
+      "eclipse_angle_horizons_deg": 0.8129813067620344,
+      "eclipse_angle_abs_diff_deg": 0.0070186932379655564,
+      "fits_mid_time_abs_diff_s": 0.0
+    },
+    {
+      "dataset_id": "ody9a2020",
+      "exposure_name": "ody9a2b0q",
+      "phase": "penumbral",
+      "mid_time_utc": "2019-01-21T06:27:00+00:00",
+      "reflection_utc": "2019-01-21T06:26:58.821064+00:00",
+      "downleg_s": 1.1789360149499628,
+      "texp_s": 20.0,
+      "lon_deg": -3.1,
+      "lat_deg": -11.4,
+      "shadow_axis_distance_m": 5012239.4220338445,
+      "receiver_axial_distance_m": 355917041.21286887,
+      "sun_site_distance_m": 147205393094.20926,
+      "eclipse_angle_table1_deg": 0.83,
+      "eclipse_angle_horizons_deg": 0.8223142764202003,
+      "eclipse_angle_abs_diff_deg": 0.007685723579799686,
+      "fits_mid_time_abs_diff_s": 0.0
+    },
+    {
+      "dataset_id": "ody904080",
+      "exposure_name": "ody904ccq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:02:36+00:00",
+      "reflection_utc": "2019-01-21T10:02:34.824282+00:00",
+      "downleg_s": 1.1757179599245027,
+      "texp_s": 0.5,
+      "lon_deg": -15.6,
+      "lat_deg": -3.0,
+      "shadow_axis_distance_m": 18362106.315163717,
+      "receiver_axial_distance_m": 355359476.88718957,
+      "sun_site_distance_m": 147207364745.29303,
+      "eclipse_angle_table1_deg": 2.89,
+      "eclipse_angle_horizons_deg": 2.881925086580877,
+      "eclipse_angle_abs_diff_deg": 0.008074913419123142,
+      "fits_mid_time_abs_diff_s": 0.75
+    },
+    {
+      "dataset_id": "ody904090",
+      "exposure_name": "ody904cdq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:03:21+00:00",
+      "reflection_utc": "2019-01-21T10:03:19.823512+00:00",
+      "downleg_s": 1.1764879166846618,
+      "texp_s": 0.5,
+      "lon_deg": -14.3,
+      "lat_deg": -3.7,
+      "shadow_axis_distance_m": 18365120.650262855,
+      "receiver_axial_distance_m": 355350329.68134797,
+      "sun_site_distance_m": 147207371651.94504,
+      "eclipse_angle_table1_deg": 2.9,
+      "eclipse_angle_horizons_deg": 2.889274467035167,
+      "eclipse_angle_abs_diff_deg": 0.010725532964833029,
+      "fits_mid_time_abs_diff_s": 0.75
+    },
+    {
+      "dataset_id": "ody9040a0",
+      "exposure_name": "ody904ceq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:04:06+00:00",
+      "reflection_utc": "2019-01-21T10:04:04.822707+00:00",
+      "downleg_s": 1.1772932133034346,
+      "texp_s": 0.5,
+      "lon_deg": -12.7,
+      "lat_deg": -4.6,
+      "shadow_axis_distance_m": 18357487.642616447,
+      "receiver_axial_distance_m": 355341394.68952876,
+      "sun_site_distance_m": 147207378543.5972,
+      "eclipse_angle_table1_deg": 2.91,
+      "eclipse_angle_horizons_deg": 2.8965958490375767,
+      "eclipse_angle_abs_diff_deg": 0.013404150962423422,
+      "fits_mid_time_abs_diff_s": 0.75
+    },
+    {
+      "dataset_id": "ody9040b0",
+      "exposure_name": "ody904cfq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:04:51+00:00",
+      "reflection_utc": "2019-01-21T10:04:49.821858+00:00",
+      "downleg_s": 1.1781419542090823,
+      "texp_s": 0.5,
+      "lon_deg": -10.7,
+      "lat_deg": -5.8,
+      "shadow_axis_distance_m": 18335895.78868953,
+      "receiver_axial_distance_m": 355333641.9087228,
+      "sun_site_distance_m": 147207385439.1549,
+      "eclipse_angle_table1_deg": 2.91,
+      "eclipse_angle_horizons_deg": 2.9039378854691758,
+      "eclipse_angle_abs_diff_deg": 0.006062114530824392,
+      "fits_mid_time_abs_diff_s": 0.75
+    },
+    {
+      "dataset_id": "ody9040c0",
+      "exposure_name": "ody904cgq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:05:36+00:00",
+      "reflection_utc": "2019-01-21T10:05:34.820972+00:00",
+      "downleg_s": 1.179027744172014,
+      "texp_s": 0.5,
+      "lon_deg": -8.4,
+      "lat_deg": -7.3,
+      "shadow_axis_distance_m": 18303420.9386825,
+      "receiver_axial_distance_m": 355329148.4121354,
+      "sun_site_distance_m": 147207392341.3897,
+      "eclipse_angle_table1_deg": 2.92,
+      "eclipse_angle_horizons_deg": 2.911278951534596,
+      "eclipse_angle_abs_diff_deg": 0.008721048465404113,
+      "fits_mid_time_abs_diff_s": 0.75
+    },
+    {
+      "dataset_id": "ody9040d0",
+      "exposure_name": "ody904ciq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:09:24+00:00",
+      "reflection_utc": "2019-01-21T10:09:22.816045+00:00",
+      "downleg_s": 1.1839550424651974,
+      "texp_s": 0.7,
+      "lon_deg": -7.3,
+      "lat_deg": -6.1,
+      "shadow_axis_distance_m": 18511604.53428202,
+      "receiver_axial_distance_m": 355308624.2292353,
+      "sun_site_distance_m": 147207427286.2191,
+      "eclipse_angle_table1_deg": 2.96,
+      "eclipse_angle_horizons_deg": 2.9484625702932186,
+      "eclipse_angle_abs_diff_deg": 0.011537429706781399,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040e0",
+      "exposure_name": "ody904cjq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:10:09+00:00",
+      "reflection_utc": "2019-01-21T10:10:07.815001+00:00",
+      "downleg_s": 1.1849985028396872,
+      "texp_s": 0.7,
+      "lon_deg": -8.5,
+      "lat_deg": -5.3,
+      "shadow_axis_distance_m": 18598456.454459697,
+      "receiver_axial_distance_m": 355305941.50076944,
+      "sun_site_distance_m": 147207434193.39554,
+      "eclipse_angle_table1_deg": 2.96,
+      "eclipse_angle_horizons_deg": 2.9557873587852903,
+      "eclipse_angle_abs_diff_deg": 0.004212641214709656,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040f0",
+      "exposure_name": "ody904ckq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:10:54+00:00",
+      "reflection_utc": "2019-01-21T10:10:52.813938+00:00",
+      "downleg_s": 1.18606172219283,
+      "texp_s": 0.7,
+      "lon_deg": -9.3,
+      "lat_deg": -4.8,
+      "shadow_axis_distance_m": 18671068.094829127,
+      "receiver_axial_distance_m": 355303915.0165721,
+      "sun_site_distance_m": 147207441083.5657,
+      "eclipse_angle_table1_deg": 2.97,
+      "eclipse_angle_horizons_deg": 2.963134607075767,
+      "eclipse_angle_abs_diff_deg": 0.006865392924233049,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040g0",
+      "exposure_name": "ody904clq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:11:39+00:00",
+      "reflection_utc": "2019-01-21T10:11:37.812858+00:00",
+      "downleg_s": 1.1871422881513671,
+      "texp_s": 0.7,
+      "lon_deg": -9.6,
+      "lat_deg": -4.7,
+      "shadow_axis_distance_m": 18726259.622478597,
+      "receiver_axial_distance_m": 355301716.50007504,
+      "sun_site_distance_m": 147207447983.30316,
+      "eclipse_angle_table1_deg": 2.98,
+      "eclipse_angle_horizons_deg": 2.9704894719653434,
+      "eclipse_angle_abs_diff_deg": 0.009510528034656573,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040h0",
+      "exposure_name": "ody904cmq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:12:24+00:00",
+      "reflection_utc": "2019-01-21T10:12:22.811766+00:00",
+      "downleg_s": 1.1882336622032206,
+      "texp_s": 0.7,
+      "lon_deg": -9.6,
+      "lat_deg": -4.9,
+      "shadow_axis_distance_m": 18770603.618033245,
+      "receiver_axial_distance_m": 355299376.4111192,
+      "sun_site_distance_m": 147207454891.51453,
+      "eclipse_angle_table1_deg": 2.99,
+      "eclipse_angle_horizons_deg": 2.977842226030049,
+      "eclipse_angle_abs_diff_deg": 0.012157773969950991,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040i0",
+      "exposure_name": "ody904cnq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:13:09+00:00",
+      "reflection_utc": "2019-01-21T10:13:07.810666+00:00",
+      "downleg_s": 1.1893342498751616,
+      "texp_s": 0.7,
+      "lon_deg": -9.1,
+      "lat_deg": -5.4,
+      "shadow_axis_distance_m": 18797706.117742997,
+      "receiver_axial_distance_m": 355296475.4887729,
+      "sun_site_distance_m": 147207461778.2803,
+      "eclipse_angle_table1_deg": 2.99,
+      "eclipse_angle_horizons_deg": 2.985168641740247,
+      "eclipse_angle_abs_diff_deg": 0.004831358259753227,
+      "fits_mid_time_abs_diff_s": 0.65
+    },
+    {
+      "dataset_id": "ody9040j0",
+      "exposure_name": "ody904coq",
+      "phase": "full_moon",
+      "mid_time_utc": "2019-01-21T10:13:54+00:00",
+      "reflection_utc": "2019-01-21T10:13:52.809557+00:00",
+      "downleg_s": 1.1904432041806714,
+      "texp_s": 0.7,
+      "lon_deg": -8.3,
+      "lat_deg": -6.4,
+      "shadow_axis_distance_m": 18812732.810200263,
+      "receiver_axial_distance_m": 355294705.30898935,
+      "sun_site_distance_m": 147207468684.58932,
+      "eclipse_angle_table1_deg": 3.0,
+      "eclipse_angle_horizons_deg": 2.986959590246448,
+      "eclipse_angle_abs_diff_deg": 0.01304040975355214,
+      "fits_mid_time_abs_diff_s": 0.65
+    }
+  ]
+}
