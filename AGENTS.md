@@ -6,8 +6,8 @@ dependencies and environment are managed with `uv sync` and `uv.lock`.
 - New implementation lives on `main`; `legacy/*` branches preserve earlier work.
   Do not modify or remove legacy branches unless the user requests it.
 - Use topic branches and isolated git worktrees for implementation. Keep tool cwd
-  and imports explicitly anchored to the intended worktree. No scratchpad workflow
-  is required for this project.
+  and imports explicitly anchored to the intended worktree. Task management runs
+  through the ignored `scratchpad/` directory; see `scratchpad/common.md`.
 - Run `uv run pytest -q`. For changes to physics or integration, also run
   `uv run python -m validation.check_physics --out outputs/validation/physics.json`
   and `uv run python -m validation.check_aerosol --out outputs/validation/aerosol.json`;
@@ -23,3 +23,14 @@ dependencies and environment are managed with `uv sync` and `uv.lock`.
   records the aerosol selection and its evidence. Preserve historical snapshots.
   Fixed literature priors, fitted same-event parameters and independent prediction
   are distinct. The default OPAC AOD must not silently become a calibrated value.
+- Coarse-to-fine organization: `eclipse/` carries only the current default physics,
+  layered as spectra → atmosphere → aerosol → rays → transport → color → report → cli.
+  Observational comparisons stay in `validation/` (run on demand, not in the pytest
+  gate); data acquisition stays in `tools/`.
+- Each physics increment enters as a removable component: its own module, exact
+  zero-value restoration of the previous state (the aerosol pattern), and
+  counterfactual tests. Before adding a third counterfactual switch to
+  `transmission_profile`, review composing attenuation terms into a stack.
+- Keep the whole pytest run within ~60 s; the independent numerical cross-checks
+  are the last tests to cut. Observational comparisons are validation scripts,
+  not pytest tests.
