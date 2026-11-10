@@ -199,7 +199,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.22921000321731996,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -365,7 +365,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.2477006010330324,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -531,7 +531,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.2500496138176852,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -697,7 +697,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.25046377315912144,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -1031,7 +1031,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.22939905277705924,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -1197,7 +1197,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.23415815556825523,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -1363,7 +1363,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.20118710284619803,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -1529,7 +1529,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.23482206449927176,
       "geometric_mean_gap_closure_fraction": 0.0
     },
@@ -1863,7 +1863,7 @@
       "brightness_verdict_counts": {
         "excluded_leaning": 4
       },
-      "min_gap_closure_fraction": -8.841439745659384e-16,
+      "min_gap_closure_fraction": 0.0,
       "max_readout_gap_closure_fraction": 0.5606819884665314,
       "geometric_mean_gap_closure_fraction": 0.0
     },

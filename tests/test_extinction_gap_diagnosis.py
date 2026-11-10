@@ -304,6 +304,20 @@ def test_broken_power_law_spectral_mirrors_aerosol_profile():
     assert dust[0] < 1.0 < dust[2]
 
 
+def test_docs_height_stats_index_citations_semantically_pinned():
+    """Position-index citations in docs are pinned to the readout semantics
+    they describe; any record reordering fails loud instead of silently
+    re-pointing the citation (review round 2 Minor#1/#2)."""
+    stats = json.loads((ROOT/"validation/results/extinction_gap_diagnosis"
+                        "/height_stats.json").read_text())
+    pinned = {41: ("dec_2011", "450nm", "fixed_opac"),
+              53: ("dec_2011", "750nm", "fixed_opac")}
+    for index, (event, readout, variant) in pinned.items():
+        record = stats["records"][index]
+        assert (record["event"], record["readout"], record["variant"]) \
+            == (event, readout, variant)
+
+
 def test_full_scale_probe_zero_aod_restores_committed_moments():
     """Adapter-level zero-value restoration on every aperture's own grid."""
     zero_profile = AerosolProfile(aod550=0.0)

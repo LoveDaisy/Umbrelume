@@ -47,7 +47,10 @@ from eclipse.spectra import ozone_cross_section, rayleigh_cross_section
 from eclipse.transport import Geometry, circle_overlap, receiver_quadrature
 
 from .compare_dec2011 import exposure_average
-from .compare_hst2019 import BAND_HALFWIDTH_NM, G430L_MAX_NM, SLOPE_BANDS_NM, UMBRAL_QUANTITATIVE_MIN_NM
+# Import the committed band-median aggregation itself (plan compatibility
+# strategy: import first, anchored reimplementation only when import fails);
+# its empty-mask ValueError comes along, replacing a silent-nan copy.
+from .compare_hst2019 import BAND_HALFWIDTH_NM, G430L_MAX_NM, SLOPE_BANDS_NM, UMBRAL_QUANTITATIVE_MIN_NM, band_median
 from .multiple_events import aperture_quadrature, photopic_response
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -228,12 +231,6 @@ def hst_window_data() -> tuple:
     wavelengths, rows = hst_grid_data()
     window = (wavelengths >= UMBRAL_QUANTITATIVE_MIN_NM) & (wavelengths <= G430L_MAX_NM)
     return wavelengths[window], [row for row, keep in zip(rows, window) if keep]
-
-
-def band_median(values: np.ndarray, wavelength_nm: np.ndarray, center_nm: float) -> float:
-    """The compare_hst2019 band-median aggregation (full window grid)."""
-    mask = (wavelength_nm >= center_nm-BAND_HALFWIDTH_NM) & (wavelength_nm <= center_nm+BAND_HALFWIDTH_NM)
-    return float(np.median(values[mask]))
 
 
 @lru_cache(maxsize=None)
@@ -809,9 +806,11 @@ def probe_event_brightness(candidate: str, event: str, factors: dict,
 def hst_probe_slopes(extra_aerosol=None) -> dict:
     """HST slopes of the probe prediction on the full window grid.
 
-    The aggregation structure is the committed ``compare_hst2019`` one (band
-    medians over the full window grid, ratio of ratios); with
-    ``extra_aerosol=None`` it reproduces the anchored baselines exactly.
+    The aggregation structure is the committed ``compare_hst2019`` one (its
+    own ``band_median`` over the full window grid, ratio of ratios). A
+    zero-AOD extra restores the fresh base kernel bitwise; against the
+    anchored CSV baselines the fresh kernel path agrees within the 1e-9
+    reproduction budget (float summation order), pinned by pytest.
     """
     wavelengths, rows = hst_grid_data()
     slopes = {}
@@ -932,7 +931,10 @@ def build_discrimination(height_stats: dict) -> dict:
             "stacking_semantics": STACKING_SEMANTICS[kind],
             "events": events,
             "brightness_verdict_counts": verdict_counts,
-            "min_gap_closure_fraction": min(closures),
+            # Clamped like the geometric mean: zero-effect candidates close
+            # float noise around an exactly-zero effect, and the ranking of
+            # those candidates must not be decided by the noise sign.
+            "min_gap_closure_fraction": max(min(closures), 0.),
             "max_readout_gap_closure_fraction": max(
                 events[event]["brightness"]["max_readout_gap_closure_fraction"]
                 for event in EVENT_ORDER),
