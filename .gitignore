@@ -7,3 +7,9 @@ build/
 dist/
 outputs/
 .DS_Store
+
+# Claude Code scratchpad (local task management)
+scratchpad/
+
+# Claude Code local settings
+.claude/settings.local.json
