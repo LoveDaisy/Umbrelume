@@ -2,7 +2,7 @@
   "scope": "Prior-driven counterfactual discrimination probes for the missing-extinction candidates (plan Step 5). Each candidate's literature AOD550 enters as an extra extinction column (or, for negative-Angstrom mineral transported, a validation-side spectral factor) on top of the committed fixed_opac default, evaluated through the same kernel adapters as the height statistics; a zero-AOD probe restores the baseline exactly (pytest). Fixed priors only: nothing is fitted, nothing becomes a default, and no causal attribution is made - the product ranks prior-order compatibility only, per docs/ROUND2.md discipline.",
   "variant_scope": "Probes run on the fixed_opac variant only: the candidates are missing components on top of the committed default physics; probing the molecular variant would conflate the free-troposphere candidate with the boundary-layer ones.",
   "verdict_bands": {
-    "brightness_semantics": "gap_closure_fraction = fraction of the event's committed log-residual closed by the probe (1 = exactly closes)",
+    "brightness_semantics": "gap_closure_fraction = fraction of the event's committed log-residual closed by the probe (1 = exactly closes). Premise: every committed event residual is positive (model brighter than observed across all four apertures, verified in correlation.json); a future negative residual would invert the closure sign semantics and require re-deriving the bands.",
     "shape_semantics": "disagreement_closed_fraction = movement of the shape metric toward unity; negative = pushed further away",
     "compatible": "closure in [0.5, 2]: prior-order effect of the residual's order",
     "tension": "closure in [0.1, 0.5) or (2, 10]: right direction, magnitude off",
@@ -45,6 +45,7 @@
       ],
       "probe_aod550": 0.046,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental clean' minus ft_part(2) and stratosphere 0.005 per the Table 3 header note and ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -123,9 +124,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373386137681787,
-                "disagreement_closed_fraction": 0.00020715543255438705,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437530897124969,
+                "disagreement_closed_fraction": 0.0002126380216204043,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -137,9 +138,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120056977403502,
-                "disagreement_closed_fraction": 1.9466170762081002e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764473595631582,
+                "disagreement_closed_fraction": 7.788198704826407e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -210,6 +211,7 @@
       ],
       "probe_aod550": 0.133,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental average' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -288,9 +290,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373842028085347,
-                "disagreement_closed_fraction": 0.0003056715346001196,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437992324449981,
+                "disagreement_closed_fraction": 0.0003137519574336251,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -302,9 +304,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120076256444326,
-                "disagreement_closed_fraction": 4.137516377595196e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764494241532505,
+                "disagreement_closed_fraction": 0.00016553370081213138,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -375,6 +377,7 @@
       ],
       "probe_aod550": 0.309,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Continental polluted' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -453,9 +456,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373969520194791,
-                "disagreement_closed_fraction": 0.00033322207211074824,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.543812135825027,
+                "disagreement_closed_fraction": 0.0003420275161033263,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -467,9 +470,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.912009183680298,
-                "disagreement_closed_fraction": 5.90809185399916e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764510925675612,
+                "disagreement_closed_fraction": 0.0002363658597693817,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -540,6 +543,7 @@
       ],
       "probe_aod550": 0.625,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Urban' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -618,9 +622,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.537399534043732,
-                "disagreement_closed_fraction": 0.00033880172377246325,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5438147490406522,
+                "disagreement_closed_fraction": 0.00034775393286870797,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -632,9 +636,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120098746427183,
-                "disagreement_closed_fraction": 6.693311978648492e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764518324495073,
+                "disagreement_closed_fraction": 0.0002677773834391516,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -705,6 +709,7 @@
       ],
       "probe_aod550": 0.275169,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Desert' minus ft_part(6)=0.005831 and stratosphere 0.005; the desert boundary layer is 6 km thick (Table 5 H=6 km), so its free-troposphere part is scaled per ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -783,9 +788,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.6279712824613496,
-                "disagreement_closed_fraction": 0.1960607458553375,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.6358606437751418,
+                "disagreement_closed_fraction": 0.20205064813886964,
                 "verdict": "tension"
               },
               "500_over_570": {
@@ -797,10 +802,10 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 1.0379164606531979,
-                "disagreement_closed_fraction": 0.5691116175565546,
-                "verdict": "compatible"
+                "base_slope": 0.9764455250938486,
+                "new_slope": 1.111731910036483,
+                "disagreement_closed_fraction": -3.7435534216601765,
+                "verdict": "excluded_leaning"
               },
               "500_over_570": {
                 "base_slope": 0.7418879089677634,
@@ -872,6 +877,7 @@
       ],
       "probe_aod550": 0.078,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime clean' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -950,9 +956,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373164108711165,
-                "disagreement_closed_fraction": 0.00015917585554174778,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437306120741575,
+                "disagreement_closed_fraction": 0.00016338210726321188,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -964,9 +970,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120051411049599,
-                "disagreement_closed_fraction": 1.3140482160854048e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764467633697993,
+                "disagreement_closed_fraction": 5.257073042805729e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1037,6 +1043,7 @@
       ],
       "probe_aod550": 0.099,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime polluted' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1115,9 +1122,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373281464134134,
-                "disagreement_closed_fraction": 0.00018453589544298673,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.543742491721587,
+                "disagreement_closed_fraction": 0.0001894143303794726,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1129,9 +1136,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120053974962746,
-                "disagreement_closed_fraction": 1.6054151764381348e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764470379550774,
+                "disagreement_closed_fraction": 6.422818741508829e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1202,6 +1209,7 @@
       ],
       "probe_aod550": 0.038,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Maritime tropical' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1280,9 +1288,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5372855273949602,
-                "disagreement_closed_fraction": 9.243789254047643e-05,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5436993517425,
+                "disagreement_closed_fraction": 9.488041702098233e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1294,9 +1302,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120045837086431,
-                "disagreement_closed_fraction": 6.806146276779106e-06,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764461664607996,
+                "disagreement_closed_fraction": 2.722909143797311e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1367,6 +1375,7 @@
       ],
       "probe_aod550": 0.045,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Arctic' minus ft_part(2) and stratosphere 0.005",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1445,9 +1454,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5373442849546467,
-                "disagreement_closed_fraction": 0.00021941064083335436,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5437588287253824,
+                "disagreement_closed_fraction": 0.0002252140904632889,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1459,9 +1468,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9120058606516575,
-                "disagreement_closed_fraction": 2.1317519449205047e-05,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9764475339906118,
+                "disagreement_closed_fraction": 8.528726584505108e-05,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1532,6 +1541,7 @@
       ],
       "probe_aod550": 0.065517,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Antarctic' minus ft_part(10)=0.001483 and stratosphere 0.005; the antarctic boundary layer is 10 km thick (Table 5 H=10 km), so its free-troposphere part is scaled per ft_part_scaling_formula",
+      "stacking_semantics": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic 0-10 km) layer on top of the committed fixed_opac free troposphere; the 2 km types touch only kernel mass below 2 km.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1610,9 +1620,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.9097251097861259,
-                "disagreement_closed_fraction": 0.8049195546335927,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.9299474719147486,
+                "disagreement_closed_fraction": 0.8464918212593795,
                 "verdict": "compatible"
               },
               "500_over_570": {
@@ -1624,9 +1634,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 1.5076886114024226,
-                "disagreement_closed_fraction": -4.76945001678839,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 1.6281211601769903,
+                "disagreement_closed_fraction": -25.666744331156934,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1688,7 +1698,8 @@
       },
       "min_gap_closure_fraction": 0.2262580176206126,
       "max_readout_gap_closure_fraction": 3.7485334093676874,
-      "geometric_mean_gap_closure_fraction": 0.5129322414714287
+      "geometric_mean_gap_closure_fraction": 0.5129322414714287,
+      "interpretation": "The antarctic type (0-10 km, weak spectral dependence, AOD about 5x the free-troposphere prior) reads on this baseline as a proxy for the 'more same-type extinction across 2-10 km' hypothesis: it double counts the 2-10 km band already carried by the fixed_opac free troposphere, so its brightness compatibility transfers to any low-layer scaled increment, and so does its shape cost."
     },
     "mineral_transported": {
       "candidate": "mineral_transported",
@@ -1698,6 +1709,7 @@
       ],
       "probe_aod550": 0.097,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Mineral transported (2-3.5 km)'; consistent with Sec. 5b p. 843: 1.5 km layer at 11 particles/cm3 yields 'an additional optical thickness of 0.1'",
+      "stacking_semantics": "Adds the 2-3.5 km layer on top of the committed fixed_opac free troposphere, whose 2-3.5 km band is therefore double counted; this matches the OPAC construction where mineral transported sits above the boundary layer.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1776,9 +1788,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5501538581598256,
-                "disagreement_closed_fraction": 0.027900388594942867,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5567315873372308,
+                "disagreement_closed_fraction": 0.028652804102961636,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1790,10 +1802,10 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.9282964159038218,
-                "disagreement_closed_fraction": 0.18514964650335897,
-                "verdict": "tension"
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9939005515114184,
+                "disagreement_closed_fraction": 0.7410492692839156,
+                "verdict": "compatible"
               },
               "500_over_570": {
                 "base_slope": 0.7418879089677634,
@@ -1863,6 +1875,7 @@
       ],
       "probe_aod550": 0.005,
       "probe_aod550_source_location": "Table 3, printed page 840, row 'Stratosphere (12-35 km)'; consistent with Sec. 5b p. 842: 'background conditions with 3 particles cm-3, which yields an optical depth of about 0.005'",
+      "stacking_semantics": "Adds the 12-35 km layer on top of the committed fixed_opac free troposphere; no overlap with existing components.",
       "events": {
         "june_2011": {
           "brightness": {
@@ -1941,9 +1954,9 @@
           "shape": {
             "ody902030": {
               "430_over_570": {
-                "base_slope": 0.5372427510901131,
-                "new_slope": 0.5038344043022971,
-                "disagreement_closed_fraction": -0.07219410796160569,
+                "base_slope": 0.5436560536385642,
+                "new_slope": 0.5091747337486129,
+                "disagreement_closed_fraction": -0.07555993711515398,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -1955,9 +1968,9 @@
             },
             "ody902040": {
               "430_over_570": {
-                "base_slope": 0.9120039847948919,
-                "new_slope": 0.8522357543989858,
-                "disagreement_closed_fraction": -0.6792151923765355,
+                "base_slope": 0.9764455250938486,
+                "new_slope": 0.9111780017487947,
+                "disagreement_closed_fraction": -2.7709182057804647,
                 "verdict": "excluded_leaning"
               },
               "500_over_570": {
@@ -2024,7 +2037,7 @@
   "not_probed": [
     {
       "candidate": "free_troposphere_humidified",
-      "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling needs the per-component OPAC data files, marked unavailable in prior_parameters.json (search trail there); no sourced prior AOD exists, so no probe runs and the candidate carries no verdict.",
+      "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling needs the per-component OPAC data files, marked unavailable in prior_parameters.json (row free_troposphere_reference/aod550_at_other_rh and each boundary-layer type's aod550_at_rh_50_70_90 row carry the unavailable status and the search trail); no sourced prior AOD exists, so no probe runs and the candidate carries no verdict.",
       "direction_support": "The 677 nm same-event calibration direction supports 'more same-type extinction' (docs/ROUND2.md), but that calibrated value is not a prior and is excluded from this ranking."
     }
   ],

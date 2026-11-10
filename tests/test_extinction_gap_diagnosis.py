@@ -228,9 +228,11 @@ def test_docs_field_paths_resolve_into_products():
     Spans of the form ``file.json:dot.path[bracket]`` in the three docs are
     resolved against the products; ``*`` fans out over dict keys and every
     branch must carry the remaining path. Numbers without a resolvable path
-    fail this gate.
+    fail this gate. The file is located by name under validation/results/**
+    (shared docs may cite other products; ambiguous or missing locations
+    fail loud instead of silently resolving into this task's directory).
     """
-    products = ROOT/"validation/results/extinction_gap_diagnosis"
+    results_root = ROOT/"validation/results"
     pattern = re.compile(r"`([a-z_0-9]+\.json:[^`]+)`")
     paths = []
     for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md", "ROUND2.md"]:
@@ -238,10 +240,13 @@ def test_docs_field_paths_resolve_into_products():
     assert len(paths) >= 12
     for path in paths:
         file_name, _, pointer = path.partition(":")
+        hits = sorted(results_root.rglob(file_name))
+        assert len(hits) == 1, f"{path}: expected exactly one {file_name} under " \
+                               f"validation/results, found {[str(h) for h in hits]}"
         normalized = re.sub(r"\[([^\]]+)\]", r".\1", pointer)
         keys = [key for key in normalized.split(".") if key]
         assert keys, path
-        branches = [json.loads((products/file_name).read_text())]
+        branches = [json.loads(hits[0].read_text())]
         for key in keys:
             expanded = []
             for branch in branches:
@@ -252,6 +257,51 @@ def test_docs_field_paths_resolve_into_products():
                     expanded.append(branch[int(key)] if key.isdigit() else branch[key])
             branches = expanded
         assert branches, f"docs field path resolved to nothing: {path}"
+
+
+def test_hst_slope_baseline_matches_committed():
+    """Shape baseline anchor: recomputed slopes == committed fields exactly.
+
+    The committed slope aggregates band medians over the FULL window grid;
+    the anchored baseline (fail loud inside hst_slope_baseline) is what the
+    probe's HST shape branch must use (review round 1 Major#1).
+    """
+    baselines = egd.hst_slope_baseline()
+    for variant in egd.VARIANTS:
+        for dataset, slopes in baselines[variant].items():
+            committed = egd.hst_comparison()["metrics"][variant][dataset]["slope_model_vs_observed"]
+            assert slopes == committed
+
+
+def test_hst_probe_slope_zero_aod_restores_baseline():
+    """AOD=0 probe restores the slopes: exact vs the fresh base kernel,
+    committed-congruent within the reproduction tolerance vs the anchored
+    CSV baseline (the r1 drift was 1.2-6.6%, far above this budget)."""
+    molecular = egd.ray_table("molecular")
+    zero_extra = (molecular.impact_m, np.zeros_like(molecular.impact_m),
+                  AerosolProfile(aod550=0.0))
+    baselines = egd.hst_slope_baseline()["fixed_opac"]
+    restored = egd.hst_probe_slopes(zero_extra)
+    exact = egd.hst_probe_slopes(None)
+    for dataset in restored:
+        assert restored[dataset] == exact[dataset]
+        for band, slope in restored[dataset].items():
+            assert slope == pytest.approx(baselines[dataset][band], rel=1e-9)
+
+
+def test_broken_power_law_spectral_mirrors_aerosol_profile():
+    """Mirror anchor: the validation-side spectral factor equals the
+    production form on nonnegative exponents (review round 1 Minor#2)."""
+    grid = np.array([300., 350., 430., 499.9, 500., 550., 570., 750., 800.])
+    for blue, visible in [(1.10, 1.42), (0.0, 0.0), (1.21, 1.58), (2.0, 0.5)]:
+        mirror = egd.BrokenPowerLawSpectral(blue, visible)
+        profile = AerosolProfile(aod550=1.0, angstrom_blue=blue, angstrom_visible=visible)
+        assert np.array_equal(mirror.spectral_factor(grid), profile.spectral_factor(grid))
+    # Negative-exponent branch (mineral transported): 550 nm normalization
+    # holds and extinction rises toward the red.
+    dust = egd.BrokenPowerLawSpectral(-0.10, -0.13).spectral_factor(np.array([350., 550., 750.]))
+    assert dust[1] == 1.0
+    assert dust[0] < 1.0 < dust[2]
 
 
 def test_full_scale_probe_zero_aod_restores_committed_moments():

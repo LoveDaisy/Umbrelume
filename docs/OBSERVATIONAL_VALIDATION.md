@@ -148,12 +148,17 @@ sources / prior_parameters 为一次性文献产物，命令侧仅做 schema 校
 - 「贡献核」= 生成该口径已提交 prediction 的同一加权混合核按切点高度 b 的分解，
   逐项镜像 `eclipse.transport.transmission_profile` 的 tau 构造；零阶矩闸
   Σw + 真空外枝 = 已提交 prediction 以 1e-12 相对容差在 pytest 全口径全变体通过
-  （56 记录，最差偏差 1.1e-15；容差语义 = 结构复现使相等由构造成立，预算仅覆盖
-  浮点求和序，见 `height_stats.json:kernel_identity.relative_tolerance`）。
+  （`height_stats.json:summary.record_count` 条记录，最差偏差
+  `height_stats.json:summary.worst_relative_gap`；容差语义 = 结构复现使相等由构造
+  成立，预算仅覆盖浮点求和序，见
+  `height_stats.json:kernel_identity.relative_tolerance`）。
 - 独立锚：June 2011 分子套与 round2 已提交
   `molecular_tangent_height_p10_p50_p90_m` 逐点精确相等（pytest 常驻）。
-  本机器是四口径高度统计的唯一权威实现；round2 的 `altitude_quantiles` 为历史
-  产物生成器，不再扩展。
+  HST 形状基线同样锚定：已提交 `slope_model_vs_observed` 的带中位聚合作用在
+  **全窗口网格**上（430 nm 带含 [425, 430) 行），探针形状分支复用同一聚合结构，
+  基线由 pytest 逐值相等断言与 AOD=0 斜率恒等闸双重钉住——探针不引入第二种
+  同名口径。本机器是四口径高度统计的唯一权威实现；round2 的
+  `altitude_quantiles` 为历史产物生成器，不再扩展。
 - 高度带 <2 km / 2–12 km / >12 km 与模型组件边界一一对应
   （`height_stats.json:kernel_identity.band_semantics`）；真空外枝（切点高于
   大气表顶）实测在四口径全部几何关闭，记录值为浮点噪声量级（≤1e-9 噪声底由
@@ -185,7 +190,10 @@ sources / prior_parameters 为一次性文献产物，命令侧仅做 schema 校
 transported 2–3.5 km、平流层背景 12–35 km）以文献 AOD550 构造反事实探针，
 经同一 kernel 适配器附加在固定 OPAC 基线上（AOD=0 严格复原基线，pytest）；
 先验逐参数钉 SHA+页码（`prior_parameters.json`，OPAC PDF SHA 与 round2 已钉值
-逐字节一致）。判定带（`discrimination.json:verdict_bands`）：先验量级效应闭合
+逐字节一致）。各候选与基线的叠加语义逐行钉在产物中
+（`discrimination.json:candidates[antarctic].stacking_semantics`；
+antarctic 行另附双重计入的代理解读字段 `...candidates[antarctic].interpretation`）。
+判定带（`discrimination.json:verdict_bands`）：先验量级效应闭合
 残差对数缺口的 [0.5, 2] 为相容、[0.1, 0.5)∪(2, 10] 为张力、其余为排除倾向；
 机械排序键 = 四口径亮度闭合的最小值（最弱链）降序
 （`discrimination.json:ranking`）。
@@ -207,7 +215,7 @@ transported 2–3.5 km、平流层背景 12–35 km）以文献 AOD550 构造反
    与 `...500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`），
    June 形状亦相容（+0.79，
    `discrimination.json:candidates[stratosphere_background].events.june_2011.shape.disagreement_closed_fraction`）；
-   HST 斜率微恶化（−0.07，
+   HST 斜率微恶化（−0.076，
    `discrimination.json:candidates[stratosphere_background].events.hst_2019.shape.ody902030.430_over_570.disagreement_closed_fraction`）。
 3. **antarctic 型（0–10 km 层、≈5×自由对流层 AOD 的弱谱依赖配置）亮度 3/4
    相容**（June 1.13 过闭合、HST 0.53、1990 0.51、Dec 0.23，

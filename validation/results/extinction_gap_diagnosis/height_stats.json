@@ -1,5 +1,9 @@
 {
   "scope": "Contribution-path altitude statistics of the same weighted mixed kernel that produced each aperture's committed prediction (kernel identity = plan design point 1). P10/P50/P90 and band fractions describe the atmospheric branch only; the vacuum branch (tangent above table top, transmission one) is recorded separately and enters the zeroth-moment identity only. Single authoritative implementation of four-aperture height statistics; round2 altitude_quantiles is a historical product generator and its committed June values are the anchor.",
+  "summary": {
+    "record_count": 56,
+    "worst_relative_gap": 1.0687840051735467e-15
+  },
   "kernel_identity": {
     "zeroth_moment_definition": "sum(weights) + vacuum branch == committed prediction",
     "relative_tolerance": 1e-12,

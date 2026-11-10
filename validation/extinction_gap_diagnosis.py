@@ -209,13 +209,66 @@ def hst_comparison() -> dict:
 
 
 @lru_cache(maxsize=None)
-def hst_window_data() -> tuple:
-    """Committed quantitative-window wavelengths and comparison.csv rows."""
+def hst_grid_data() -> tuple:
+    """Committed full-window wavelengths and comparison.csv rows (300-570 nm).
+
+    The committed ``slope_model_vs_observed`` aggregates band medians on this
+    full grid (its 430 nm band includes rows in [425, 430) below the
+    quantitative-window cutoff), so shape-axis probes must reuse it.
+    """
     with (RESULTS/"hst2019/comparison.csv").open() as stream:
         rows = list(csv.DictReader(stream))
     wavelengths = np.array([float(row["wavelength_nm"]) for row in rows])
+    return wavelengths, rows
+
+
+@lru_cache(maxsize=None)
+def hst_window_data() -> tuple:
+    """Committed quantitative-window wavelengths and comparison.csv rows."""
+    wavelengths, rows = hst_grid_data()
     window = (wavelengths >= UMBRAL_QUANTITATIVE_MIN_NM) & (wavelengths <= G430L_MAX_NM)
     return wavelengths[window], [row for row, keep in zip(rows, window) if keep]
+
+
+def band_median(values: np.ndarray, wavelength_nm: np.ndarray, center_nm: float) -> float:
+    """The compare_hst2019 band-median aggregation (full window grid)."""
+    mask = (wavelength_nm >= center_nm-BAND_HALFWIDTH_NM) & (wavelength_nm <= center_nm+BAND_HALFWIDTH_NM)
+    return float(np.median(values[mask]))
+
+
+@lru_cache(maxsize=None)
+def hst_slope_baseline() -> dict:
+    """Committed-aggregation HST slope baselines, anchored to the committed
+    ``slope_model_vs_observed`` fields.
+
+    The slopes are recomputed from the committed per-wavelength predictions
+    and observed ratios with the exact ``compare_hst2019`` structure (band
+    medians over the full window grid), then asserted equal to the committed
+    metric fields; any drift fails loud instead of silently diverging (the
+    asymmetry that let the shape baseline drift in review round 1).
+    """
+    wavelengths, rows = hst_grid_data()
+    baselines = {}
+    for variant in VARIANTS:
+        baselines[variant] = {}
+        for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+            observed = np.array([float(row[f"{dataset}_obs_ratio"]) for row in rows])
+            committed = np.array([float(row[f"{dataset}_{variant}_prediction"]) for row in rows])
+            slopes = {}
+            for num, den in SLOPE_BANDS_NM:
+                slopes[f"{num:g}_over_{den:g}"] = (
+                    band_median(committed, wavelengths, num)
+                    /band_median(committed, wavelengths, den)
+                    /(band_median(observed, wavelengths, num)
+                      /band_median(observed, wavelengths, den)))
+            committed_slopes = hst_comparison()["metrics"][variant][dataset]["slope_model_vs_observed"]
+            for key, value in slopes.items():
+                if value != committed_slopes[key]:
+                    raise RuntimeError(f"HST slope consistency check failed for "
+                                       f"{dataset}/{variant}/{key}: recomputed {value!r} != "
+                                       f"committed {committed_slopes[key]!r}")
+            baselines[variant][dataset] = slopes
+    return baselines
 
 
 def hst_members(dataset: str) -> list:
@@ -598,6 +651,18 @@ AOD_ROW_BY_CANDIDATE_KIND = {
     "layer_total": "tau_0.55um_layer",
     "background": "aod550",
 }
+# How each candidate kind stacks on the committed fixed_opac baseline.
+STACKING_SEMANTICS = {
+    "boundary_layer": "Adds the candidate's 0-2 km (desert 0-6 km, antarctic "
+                      "0-10 km) layer on top of the committed fixed_opac free "
+                      "troposphere; the 2 km types touch only kernel mass below 2 km.",
+    "layer_total": "Adds the 2-3.5 km layer on top of the committed fixed_opac "
+                   "free troposphere, whose 2-3.5 km band is therefore double "
+                   "counted; this matches the OPAC construction where mineral "
+                   "transported sits above the boundary layer.",
+    "background": "Adds the 12-35 km layer on top of the committed fixed_opac "
+                  "free troposphere; no overlap with existing components.",
+}
 # Prior-driven counterfactual probes: the AOD is the literature value, never
 # tuned; verdicts compare the prior-order effect with the committed residual.
 VERDICT_COMPATIBLE = (0.5, 2.0)
@@ -741,6 +806,28 @@ def probe_event_brightness(candidate: str, event: str, factors: dict,
             "base_band_fraction_over_12km_median": fixed["band_fraction_over_12km_median"]}
 
 
+def hst_probe_slopes(extra_aerosol=None) -> dict:
+    """HST slopes of the probe prediction on the full window grid.
+
+    The aggregation structure is the committed ``compare_hst2019`` one (band
+    medians over the full window grid, ratio of ratios); with
+    ``extra_aerosol=None`` it reproduces the anchored baselines exactly.
+    """
+    wavelengths, rows = hst_grid_data()
+    slopes = {}
+    for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+        observed = np.array([float(row[f"{dataset}_obs_ratio"]) for row in rows])
+        _, _, sums, _ = hst_kernel("fixed_opac", dataset, wavelengths, extra_aerosol)
+        new_pred = sums*hst_comparison()["solar_scale_in_over_out"][dataset]
+        slopes[dataset] = {f"{num:g}_over_{den:g}":
+                           (band_median(new_pred, wavelengths, num)
+                            /band_median(new_pred, wavelengths, den))
+                           /(band_median(observed, wavelengths, num)
+                             /band_median(observed, wavelengths, den))
+                           for num, den in SLOPE_BANDS_NM}
+    return slopes
+
+
 def probe_event_shape(candidate: str, event: str, factors: dict) -> dict:
     """Shape-axis probe deltas for one candidate x event (fixed_opac).
 
@@ -769,23 +856,20 @@ def probe_event_shape(candidate: str, event: str, factors: dict) -> dict:
                 "disagreement_closed_fraction": median_closed,
                 "verdict": closure_verdict(median_closed), "by_angle": metrics}
     if event == "hst_2019":
-        wavelengths, window_rows = hst_window_data()
+        # The committed slope aggregates band medians over the FULL window
+        # grid (the 430 nm band includes [425, 430) rows), so the probe
+        # evaluates its kernel on that same grid and takes its baseline from
+        # the anchored hst_slope_baseline() - not from the quantitative
+        # window subset (review round 1 Major#1).
+        baselines = hst_slope_baseline()["fixed_opac"]
+        probe_slopes = hst_probe_slopes(candidate_probe_extra(candidate))
         metrics = {}
-        for dataset, factor_array in factors["hst_2019"].items():
-            observed = np.array([float(row[f"{dataset}_obs_ratio"]) for row in window_rows])
-            committed = np.array([float(row[f"{dataset}_fixed_opac_prediction"])
-                                  for row in window_rows])
-            new_pred = committed*np.asarray(factor_array)
+        for dataset, slope_values in probe_slopes.items():
             metrics[dataset] = {}
-            for num, den in SLOPE_BANDS_NM:
-                num_mask = (wavelengths >= num-BAND_HALFWIDTH_NM) & (wavelengths <= num+BAND_HALFWIDTH_NM)
-                den_mask = (wavelengths >= den-BAND_HALFWIDTH_NM) & (wavelengths <= den+BAND_HALFWIDTH_NM)
-                base_slope = ((np.median(committed[num_mask])/np.median(committed[den_mask]))
-                              /(np.median(observed[num_mask])/np.median(observed[den_mask])))
-                new_slope = ((np.median(new_pred[num_mask])/np.median(new_pred[den_mask]))
-                             /(np.median(observed[num_mask])/np.median(observed[den_mask])))
+            for band, new_slope in slope_values.items():
+                base_slope = baselines[dataset][band]
                 closed = shape_closed_fraction(base_slope, new_slope)
-                metrics[dataset][f"{num:g}_over_{den:g}"] = {
+                metrics[dataset][band] = {
                     "base_slope": base_slope, "new_slope": new_slope,
                     "disagreement_closed_fraction": closed,
                     "verdict": closure_verdict(closed)}
@@ -840,11 +924,12 @@ def build_discrimination(height_stats: dict) -> dict:
         for event in EVENT_ORDER:
             verdict = events[event]["brightness"]["verdict"]
             verdict_counts[verdict] = verdict_counts.get(verdict, 0) + 1
-        candidates.append({
+        candidate_record = {
             "candidate": candidate,
             "action_band_m": [bottom, top],
             "probe_aod550": aod_row["value"],
             "probe_aod550_source_location": aod_row["source"]["location"],
+            "stacking_semantics": STACKING_SEMANTICS[kind],
             "events": events,
             "brightness_verdict_counts": verdict_counts,
             "min_gap_closure_fraction": min(closures),
@@ -856,7 +941,20 @@ def build_discrimination(height_stats: dict) -> dict:
             # null effect is 0, not nan.
             "geometric_mean_gap_closure_fraction": float(np.exp(np.mean(
                 np.log([max(closure, 0.) for closure in closures])))),
-        })
+        }
+        if candidate == "antarctic":
+            # Interpretation pinned in the product (a08), not only in docs:
+            # the antarctic type's 0-10 km layer double counts 2-10 km
+            # extinction already carried by the fixed_opac free troposphere.
+            candidate_record["interpretation"] = (
+                "The antarctic type (0-10 km, weak spectral dependence, AOD "
+                "about 5x the free-troposphere prior) reads on this baseline "
+                "as a proxy for the 'more same-type extinction across 2-10 km' "
+                "hypothesis: it double counts the 2-10 km band already carried "
+                "by the fixed_opac free troposphere, so its brightness "
+                "compatibility transfers to any low-layer scaled increment, "
+                "and so does its shape cost.")
+        candidates.append(candidate_record)
     ranked = sorted(candidates, key=lambda item: -item["min_gap_closure_fraction"])
     return {
         "scope": "Prior-driven counterfactual discrimination probes for the missing-extinction "
@@ -872,7 +970,11 @@ def build_discrimination(height_stats: dict) -> dict:
                          "the boundary-layer ones.",
         "verdict_bands": {
             "brightness_semantics": "gap_closure_fraction = fraction of the event's committed "
-                                    "log-residual closed by the probe (1 = exactly closes)",
+                                    "log-residual closed by the probe (1 = exactly closes). "
+                                    "Premise: every committed event residual is positive (model "
+                                    "brighter than observed across all four apertures, verified in "
+                                    "correlation.json); a future negative residual would invert the "
+                                    "closure sign semantics and require re-deriving the bands.",
             "shape_semantics": "disagreement_closed_fraction = movement of the shape metric "
                                "toward unity; negative = pushed further away",
             "compatible": "closure in [0.5, 2]: prior-order effect of the residual's order",
@@ -892,7 +994,9 @@ def build_discrimination(height_stats: dict) -> dict:
             "candidate": "free_troposphere_humidified",
             "reason": "The free troposphere is tabulated at 50% RH only and humidified scaling "
                       "needs the per-component OPAC data files, marked unavailable in "
-                      "prior_parameters.json (search trail there); no sourced prior AOD exists, "
+                      "prior_parameters.json (row free_troposphere_reference/aod550_at_other_rh "
+                      "and each boundary-layer type's aod550_at_rh_50_70_90 row carry the "
+                      "unavailable status and the search trail); no sourced prior AOD exists, "
                       "so no probe runs and the candidate carries no verdict.",
             "direction_support": "The 677 nm same-event calibration direction supports 'more "
                                  "same-type extinction' (docs/ROUND2.md), but that calibrated "
@@ -908,6 +1012,7 @@ def write_discrimination(out: Path, stats: dict) -> dict:
     return discrimination
 
 
+@lru_cache(maxsize=1)
 def build_height_stats() -> dict:
     records = height_records()
     worst = max(record["relative_gap"] for record in records)
@@ -922,6 +1027,7 @@ def build_height_stats() -> dict:
                  "separately and enters the zeroth-moment identity only. Single authoritative "
                  "implementation of four-aperture height statistics; round2 altitude_quantiles is "
                  "a historical product generator and its committed June values are the anchor.",
+        "summary": {"record_count": len(records), "worst_relative_gap": worst},
         "kernel_identity": {
             "zeroth_moment_definition": "sum(weights) + vacuum branch == committed prediction",
             "relative_tolerance": MOMENT_TOLERANCE,
