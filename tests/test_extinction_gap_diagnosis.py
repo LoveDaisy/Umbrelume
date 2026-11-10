@@ -4,6 +4,10 @@ The synthetic-table zeroth-moment gate and the June 2011 full-scale anchor are
 the two non-negotiable pytest residents (plan M1); the full-scale four-aperture
 gates stay in the gate too (measured cost ~10 s, budget 60 s).
 """
+import json
+import math
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -13,6 +17,9 @@ from eclipse.rays import RayTable, build_ray_table
 from eclipse.transport import Geometry, transmission_profile
 
 from validation import extinction_gap_diagnosis as egd
+
+ROOT = Path(__file__).resolve().parents[1]
+PRIOR_PATH = ROOT/"validation/results/extinction_gap_diagnosis/prior_parameters.json"
 
 
 def synthetic_ray_table():
@@ -134,6 +141,47 @@ def test_correlation_event_level_and_hst_cross_check():
     # residuals); any change routes as a finding, not a silent pass.
     assert correlation["cross_event"]["molecular"]["spearman_rho_residual_ln_vs_p50_median"] == -1.0
     assert correlation["cross_event"]["molecular"]["pairwise_direction"]["deeper_has_larger_residual_count"] == 6
+
+
+def test_prior_parameters_schema_every_numeric_row_sourced():
+    """Literature gate: no number without a pinned source (plan Step 4)."""
+    prior = json.loads(PRIOR_PATH.read_text())
+    rows = prior["parameters"]
+    assert len(rows) >= 40
+    for row in rows:
+        if isinstance(row["value"], (int, float)) and not isinstance(row["value"], bool):
+            assert row["source"], f"{row['candidate']}/{row['name']}: numeric row without source"
+            assert row["source"].get("sha256") and row["source"].get("location")
+    sources = json.loads((PRIOR_PATH.parent/"sources.json").read_text())
+    opac = next(item for item in sources if item["file_name"] == "opac1998.pdf")
+    assert opac["sha256"] == "68a20ba9488db1e0f65a9976d4ee46e6c879f89054fcff583ba67bb5d68d425c"
+
+
+def test_prior_boundary_layer_aod_derivation_consistency():
+    """Recorded derived BL AOD reproduces the documented subtraction formula."""
+    prior = json.loads(PRIOR_PATH.read_text())
+    rows = prior["parameters"]
+
+    def get(candidate, name):
+        return next(row for row in rows
+                    if row["candidate"] == candidate and row["name"] == name)
+
+    ft_tau = get("free_troposphere_reference", "aod550_2_to_12km_reference")["value"]
+    z_ft_km = get("free_troposphere_reference", "scale_height_m")["value"]/1000.
+    strat = get("stratosphere_background", "aod550")["value"]
+
+    def ft_part(h_bl_km):
+        return ft_tau*(math.exp(-h_bl_km/z_ft_km) - math.exp(-12/z_ft_km)) \
+            / (math.exp(-2/z_ft_km) - math.exp(-12/z_ft_km))
+
+    boundary_types = sorted({row["candidate"] for row in rows
+                             if row["name"] == "aod550_boundary_layer_only"})
+    assert len(boundary_types) == 10
+    for candidate in boundary_types:
+        tau = get(candidate, "tau_0.55um_type_total")["value"]
+        top_km = get(candidate, "layer_top_m")["value"]/1000.
+        recorded = get(candidate, "aod550_boundary_layer_only")["value"]
+        assert recorded == pytest.approx(tau - ft_part(top_km) - strat, abs=1e-6)
 
 
 def test_full_scale_probe_zero_aod_restores_committed_moments():
