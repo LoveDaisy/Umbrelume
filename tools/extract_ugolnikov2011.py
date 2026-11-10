@@ -39,21 +39,33 @@ CURVES = {503: (228, [0.400, 0.425, 0.450, 0.475, 0.500, 0.525, 0.550, 0.575]),
 # Branch C trigger keywords: terms whose presence would contradict the
 # adjudication that the paper states no filter width or response information.
 # The paper is in English; the list is literal substrings of the normalized
-# (lowercase, dehyphenated, whitespace-collapsed) full text.
-FILTER_KEYWORDS = ["fwhm", "bandwidth", "band width", "bandpass", "band-pass",
-                   "passband", "pass band", "half-width", "halfwidth", "half width",
-                   "central wavelength", "center wavelength", "centre wavelength",
-                   "wavelength shift", "wavelength offset", "interference filter",
-                   "response curve", "filter response", "spectral response",
-                   "transmission curve", "transmission profile", "spectral transmission",
-                   "filter transmission", "spectral bandpass"]
-BRANCH_A_ANCHORS = ["response curve", "filter response", "spectral response",
-                    "transmission curve", "spectral transmission", "filter transmission"]
-BRANCH_B_ANCHORS = ["fwhm", "bandwidth", "band width", "bandpass", "band-pass",
-                    "passband", "pass band", "half-width", "halfwidth", "half width"]
+# (lowercase, dehyphenated, whitespace-collapsed) full text. The two anchor
+# lists below are DERIVED SLICES of these semantic groups — extend the groups,
+# never the branch lists, so the three lists cannot drift apart.
+WIDTH_TERMS = ["fwhm", "bandwidth", "band width", "bandpass", "band-pass",
+               "passband", "pass band", "half-width", "halfwidth", "half width"]
+WAVELENGTH_TERMS = ["central wavelength", "center wavelength", "centre wavelength",
+                    "wavelength shift", "wavelength offset", "interference filter"]
+RESPONSE_TERMS = ["response curve", "filter response", "spectral response",
+                  "transmission curve", "transmission profile", "spectral transmission",
+                  "filter transmission", "spectral bandpass"]
+FILTER_KEYWORDS = WIDTH_TERMS + WAVELENGTH_TERMS + RESPONSE_TERMS
+BRANCH_A_ANCHORS = RESPONSE_TERMS
+BRANCH_B_ANCHORS = WIDTH_TERMS
 # Human-adjudicated on 2026-11-10 from the fixed PDF (progress log DECISION
 # entry); fixed constant so regeneration stays deterministic.
 ADJUDICATION_DATE = "2026-11-10"
+# Branch-aware missing-information lists (filter row removed when the paper
+# states the corresponding information). Kept beside the other branch constants.
+MISSING_INFORMATION = {
+    "C": ["Filter response curves and FWHM", "Pointwise measurement uncertainties",
+          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
+    "B": ["Filter response curves (FWHM is recorded in filter_information)",
+          "Pointwise measurement uncertainties",
+          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
+    "A": ["Pointwise measurement uncertainties",
+          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
+}
 FILTER_STATEMENTS = [
     {"page_one_based": 1, "section": "abstract",
      "quote": "three narrow spectral bands with effective wavelengths equal to 503, 677, and 867 nm"},
@@ -218,17 +230,6 @@ def extract(pdf: Path, out: Path, branch: str):
     }
     (out/"source.json").write_text(json.dumps(manifest, indent=2)+"\n")
     print(f"Extracted {len(records)} curve readouts from audited PDF to {out} (branch {branch})")
-
-
-MISSING_INFORMATION = {
-    "C": ["Filter response curves and FWHM", "Pointwise measurement uncertainties",
-          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
-    "B": ["Filter response curves (FWHM is recorded in filter_information)",
-          "Pointwise measurement uncertainties",
-          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
-    "A": ["Pointwise measurement uncertainties",
-          "Original CCD data and reduction products", "Exact time attached to each curve coordinate"],
-}
 
 
 def main():

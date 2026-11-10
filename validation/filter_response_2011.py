@@ -327,6 +327,43 @@ def band_ratio(products, model: str, band: float, shape: str, width: float,
     return values/products["observed"]
 
 
+def outer_reduction_statistics(products, main: str, band: float, mono_ratios: dict,
+                               outer: np.ndarray) -> dict:
+    """Outer-region deviation reductions per variant family.
+
+    Positive reduction = the band shift moves the model/observed ratio toward
+    unity at that readout; negative = away from unity. The fraction is taken
+    against the same-model monochromatic deviation; at a degenerate point
+    (monochromatic ratio exactly 1) the fraction is recorded as 0 while the
+    reduction keeps its signed value.
+    """
+    families = {"main_variant": [main],
+                "all_variants": [model for model, _ in VARIANT_TABLES]}
+    stats = {"semantic": "positive = the band shift moves the model/observed "
+                         "ratio toward unity at that readout"}
+    outer_indices = np.where(outer)[0]
+    nominal_fractions = []
+    for family, models in families.items():
+        reductions, fractions = [], []
+        for model in models:
+            for shape in SHAPES:
+                for width in WIDTHS_NM:
+                    band_curve = band_ratio(products, model, band, shape, width)[outer]
+                    for k, index in enumerate(outer_indices):
+                        dev_mono = abs(float(mono_ratios[model][index])-1.0)
+                        reduction = dev_mono-abs(float(band_curve[k])-1.0)
+                        fraction = reduction/dev_mono if dev_mono > 0 else 0.0
+                        reductions.append(reduction)
+                        fractions.append(fraction)
+                        if (family == "main_variant" and shape == "gauss"
+                                and width == NOMINAL_WIDTH_NM):
+                            nominal_fractions.append(fraction)
+        stats[family] = {"max_deviation_reduction": max(reductions),
+                         "max_deviation_reduction_fraction": max(fractions)}
+    stats["nominal_width_max_deviation_reduction_fraction"] = max(nominal_fractions)
+    return stats
+
+
 def per_band_summary(products, band: float) -> dict:
     angles, observed = products["angles"], products["observed"]
     wavelengths = products["wavelengths"]
@@ -364,21 +401,7 @@ def per_band_summary(products, band: float) -> dict:
                    / abs(float(mono_ratios[model][outermost][0])-1.0)
                    for model, _ in VARIANT_TABLES
                    for shape in SHAPES for width in WIDTHS_NM)
-    # Outer-region deviation reductions (positive = the band shift moves the
-    # model/observed ratio toward unity at that readout).
-    reductions, fractions, nominal_fractions = [], [], []
-    outer_indices = np.where(outer)[0]
-    for shape in SHAPES:
-        for width in WIDTHS_NM:
-            band_curve = band_ratio(products, main, band, shape, width)[outer]
-            for k, index in enumerate(outer_indices):
-                dev_mono = abs(float(mono_ratios[main][index])-1.0)
-                reduction = dev_mono-abs(float(band_curve[k])-1.0)
-                fraction = reduction/dev_mono if dev_mono > 0 else 0.0
-                reductions.append(reduction)
-                fractions.append(fraction)
-                if shape == "gauss" and width == NOMINAL_WIDTH_NM:
-                    nominal_fractions.append(fraction)
+    # Outer-region deviation reductions (see outer_reduction_statistics).
     sensitivity_ratio = products["sensitivity_values"][band]/observed
     r_only_diffs = sensitivity_ratio-mono_ratios[main]
     summary = {
@@ -407,12 +430,9 @@ def per_band_summary(products, band: float) -> dict:
         },
         "outermost_deviation_ratio_best_main_variant": best,
         "outermost_deviation_ratio_best_all_variants": best_all,
-        "outer_toward_unity_reduction": {
-            "max_deviation_reduction_main_variant": max(reductions),
-            "max_deviation_reduction_fraction_main_variant": max(fractions),
-            "nominal_width_max_deviation_reduction_fraction": max(nominal_fractions),
-        },
-        "definition_sensitivity_R_only": {
+        "outer_toward_unity_reduction": outer_reduction_statistics(
+            products, main, band, mono_ratios, outer),
+        "definition_sensitivity_R_weight_only": {
             "signed_range_all_readouts": [float(np.min(r_only_diffs[mask])),
                                           float(np.max(r_only_diffs[mask]))],
             "outer_max_abs": float(np.max(np.abs(r_only_diffs[outer]))),
@@ -450,12 +470,18 @@ def classify_outermost(best_ratio: float) -> str:
 
 def shape_vs_width_summary(products) -> dict:
     shape_effect, width_effect = 0.0, 0.0
-    for band in BANDS_NM:
-        mask = products["wavelengths"] == band
-        for width in WIDTHS_NM:
+    shape_effect_by_width = {}
+    for width in WIDTHS_NM:
+        worst = 0.0
+        for band in BANDS_NM:
+            mask = products["wavelengths"] == band
             difference = (band_ratio(products, "fixed_opac", band, "rect", width)
                           - band_ratio(products, "fixed_opac", band, "gauss", width))
-            shape_effect = max(shape_effect, float(np.max(np.abs(difference)[mask])))
+            worst = max(worst, float(np.max(np.abs(difference)[mask])))
+        shape_effect_by_width[f"{width:g}"] = worst
+        shape_effect = max(shape_effect, worst)
+    for band in BANDS_NM:
+        mask = products["wavelengths"] == band
         for shape in SHAPES:
             difference = (band_ratio(products, "fixed_opac", band, shape, WIDTHS_NM[0])
                           - band_ratio(products, "fixed_opac", band, shape, WIDTHS_NM[-1]))
@@ -463,6 +489,7 @@ def shape_vs_width_summary(products) -> dict:
     ratio = shape_effect/width_effect if width_effect > 0 else math.inf
     adequate = ratio < SHAPE_VS_WIDTH_THRESHOLD
     return {"max_shape_effect_same_width": shape_effect,
+            "shape_effect_by_width": shape_effect_by_width,
             "max_width_effect_10_to_40nm": width_effect,
             "shape_over_width_ratio": ratio,
             "threshold": SHAPE_VS_WIDTH_THRESHOLD,
