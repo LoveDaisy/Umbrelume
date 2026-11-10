@@ -46,4 +46,25 @@ selection evidence and remaining mismatch.
 
 The original numerical snapshot above is molecular-only. Reproduce that medium
 with `validation.check_convergence --aerosol none`; current convergence defaults
-to `opac-ft`. Historical JSON files are retained with their original conditions.
+to `opac`. Historical JSON files are retained with their original conditions.
+
+## Stratospheric-background rerun
+
+`stratosphere_background/` holds the four-aperture three-variant rerun with the
+production two-layer default (`molecular` / `fixed_opac` / `fixed_opac_strat`)
+and the preregistered comparison of the committed `stratosphere_background`
+probe deltas against that rerun. Generate with:
+
+```bash
+uv run python -m validation.extinction_gap_diagnosis --strat-rerun \
+    --out validation/results/stratosphere_background
+```
+
+`predictions.json` records per-readout predictions for all three variants with
+the committed variants' moment-reproduction gaps; `preregistered_check.json`
+compares each preregistered item (probe value read from
+`extinction_gap_diagnosis/discrimination.json`, never retyped) against the
+production rerun under `max(1e-6 x |probe|, 1e-9)`. The brightness axis stays
+in the tension band by preregistered expectation — the residual is not closed
+by this component. The committed `extinction_gap_diagnosis/` products remain
+byte-identical.

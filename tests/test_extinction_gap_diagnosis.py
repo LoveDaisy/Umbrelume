@@ -349,3 +349,45 @@ def test_full_scale_probe_zero_aod_restores_committed_moments():
     _, _, _, base = egd.mv1990_kernel("fixed_opac")
     _, _, _, probed = egd.mv1990_kernel("fixed_opac", zero_extra)
     assert base == probed
+
+
+def test_strat_rerun_reproduces_committed_and_fulfills_preregistration():
+    """Live three-variant rerun gate and preregistered check (plan Step 6).
+
+    The production variant walks the real AerosolColumn chain; the committed
+    variants must reproduce their committed predictions within the moment
+    budget, and the preregistered probe-vs-production comparison must hold.
+    The preregistered reading itself (brightness tension on all four events,
+    June shape compatible) is pinned via the committed product's verdicts.
+    """
+    predictions = egd.build_strat_predictions(egd.build_height_stats())
+    for event, worst in predictions["moment_gate"][
+            "committed_variant_worst_relative_gap"].items():
+        for variant, gap in worst.items():
+            assert gap <= egd.MOMENT_TOLERANCE, f"{event}/{variant}: {gap}"
+    check = egd.build_preregistered_check(predictions)
+    assert check["verdict"] == "within_tolerance"
+    for row in check["rows"]:
+        assert row["verdict"] in ("within_tolerance", "systematic_deviation")
+        assert row["tolerance"] == max(egd.PREREGISTERED_RELATIVE_TOLERANCE
+                                       * abs(row["probe_value"]),
+                                       egd.PREREGISTERED_FLOOR_ABSOLUTE)
+        assert row["abs_diff"] <= row["tolerance"]
+        assert row["probe_source_path"].startswith(
+            "validation/results/extinction_gap_diagnosis/discrimination.json:")
+        assert row["production_source_path"].startswith(
+            "validation/results/stratosphere_background/predictions.json:")
+    committed = json.loads((ROOT/"validation/results/extinction_gap_diagnosis"
+                            "/discrimination.json").read_text())
+    candidate = committed["candidates"][egd.PREREGISTERED_CANDIDATE]
+    # Probe single source: every brightness probe value is the committed
+    # product's field, never a retyped number.
+    for row, event in zip(check["rows"][:4], egd.EVENT_ORDER):
+        assert row["axis"] == "brightness"
+        assert row["probe_value"] == candidate["events"][event]["brightness"][
+            "gap_closure_fraction"]
+    # Preregistered reading: the brightness residual stays in the tension band
+    # (not closed by this component) and the June shape axis is compatible.
+    assert all(candidate["events"][event]["brightness"]["verdict"] == "tension"
+               for event in egd.EVENT_ORDER)
+    assert candidate["events"]["june_2011"]["shape"]["verdict"] == "compatible"

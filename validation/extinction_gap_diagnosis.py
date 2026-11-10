@@ -29,7 +29,12 @@ literature products that the command validates before regenerating - the
 committed ``prior_parameters.json`` is a hard dependency of the
 discrimination step and is always schema-checked, ``sources.json`` is
 schema-checked when present (``validate_literature_products``, shared with
-the pytest gate).
+the pytest gate). ``--strat-rerun`` additionally writes the four-aperture
+three-variant rerun (``predictions.json``, including the production
+``fixed_opac_strat`` variant traced through the real ``AerosolColumn``) and
+the ``preregistered_check.json`` comparison of the committed
+``stratosphere_background`` probe deltas against the production rerun, into
+a new directory; the committed discrimination products stay untouched.
 """
 from __future__ import annotations
 
@@ -37,6 +42,7 @@ import argparse
 import csv
 import hashlib
 import json
+from dataclasses import asdict
 from functools import lru_cache
 from pathlib import Path
 
@@ -44,7 +50,10 @@ import numpy as np
 from scipy.stats import spearmanr
 
 import eclipse
-from eclipse.aerosol import AerosolProfile
+from eclipse.aerosol import (
+    FREE_TROPOSPHERE_SOURCE, OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
+    STRATOSPHERE_BACKGROUND_SOURCE, AerosolColumn, AerosolProfile,
+)
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
 from eclipse.spectra import ozone_cross_section, rayleigh_cross_section
@@ -61,6 +70,21 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT/"validation/results"
 OBSERVATIONS = ROOT/"validation/observations"
 VARIANTS = ("molecular", "fixed_opac")
+# The production two-layer variant walks the production chain (a real
+# ``AerosolColumn`` through ``build_ray_table``), never the probe's extra
+# channel. It joins rerun products only: the committed discrimination
+# products and the pytest gates that reproduce them stay two-variant.
+STRAT_VARIANTS = VARIANTS + ("fixed_opac_strat",)
+PRODUCTION_VARIANT = "fixed_opac_strat"
+DEFAULT_COLUMN = AerosolColumn.opac_default()
+PREREGISTERED_CANDIDATE = "stratosphere_background"
+PREREGISTERED_RELATIVE_TOLERANCE = 1e-6
+# Independently scaled absolute floor: the probe and production paths differ
+# only by float reordering and the small quadrature-subdivision difference
+# between the probe's own single-layer table and the production two-layer
+# table (~1e-12 relative on O(1) deltas). The floor must never be derived
+# from the checked rows' own measured differences.
+PREREGISTERED_FLOOR_ABSOLUTE = 1e-9
 QUANTILE_LEVELS = (.1, .5, .9)
 # Component boundaries of the current default physics, taken from the default
 # profile: 0-2 km bare, 2-12 km OPAC free troposphere, >12 km no component.
@@ -79,11 +103,13 @@ MV1990_WAVELENGTH_STEP_NM = 2.5
 
 @lru_cache(maxsize=None)
 def ray_table(variant: str):
-    """The two committed model variants' tables (molecular / fixed OPAC)."""
+    """The committed variants' and the production two-layer variant's tables."""
     if variant == "molecular":
         return build_ray_table(Atmosphere())
     if variant == "fixed_opac":
         return build_ray_table(Atmosphere(), aerosol_profile=DEFAULT_OPAC)
+    if variant == PRODUCTION_VARIANT:
+        return build_ray_table(Atmosphere(), aerosol_profile=DEFAULT_COLUMN)
     raise ValueError(f"Unknown variant {variant!r}")
 
 
@@ -424,9 +450,13 @@ def mv1990_kernel(variant: str, extra_aerosol=None) -> tuple:
     The committed refined prediction's aperture quadrature, wavelength grid
     and response are reused exactly; the kernel decomposes the disk-weighted
     mean spectrum into per-impact nodes with photopic wavelength aggregation.
+    The quadrature geometry is an observation property, identical across the
+    committed per-variant records, so it is read from the fixed_opac record
+    and any variant (including production ones without a committed record)
+    reuses the same quadrature exactly.
     """
     analysis = mv1990_analysis()
-    record = mv1990_record(variant)
+    record = mv1990_record("fixed_opac")
     event = next(item for item in analysis["geometry"]["events"]
                  if item["event_date"] == MV1990_EVENT)
     geometry = Geometry(moon_distance_m=event["moon_distance_m"],
@@ -1022,6 +1052,275 @@ def write_discrimination(out: Path, stats: dict) -> dict:
     return discrimination
 
 
+def variant_prediction_records(event: str) -> list:
+    """Per-readout predictions of all three variants through the kernel adapters.
+
+    The two committed variants carry their zeroth-moment relative gaps against
+    the committed predictions (the rerun's reproduction evidence); the
+    production variant has no committed counterpart, so its records carry the
+    kernel moment itself and are validated only by the preregistered check
+    against the independent probe path.
+    """
+    records = []
+    if event == "june_2011":
+        geometry = june_geometry()
+        for record in june_records():
+            radius = geometry.moon_distance_m*np.tan(np.deg2rad(record["shadow_angle_deg"]))
+            predictions, committed, gaps = {}, {}, {}
+            for variant in STRAT_VARIANTS:
+                _, _, _, moment = june_kernel(variant, radius, record["wavelength_nm"])
+                predictions[variant] = moment
+                if variant in VARIANTS:
+                    committed[variant] = record[f"{variant}_prediction"]
+                    gaps[variant] = moment_gap(moment, committed[variant])["relative_gap"]
+            records.append({"shadow_angle_deg": record["shadow_angle_deg"],
+                            "wavelength_nm": record["wavelength_nm"],
+                            "observed_curve_brightness": record["observed_curve_brightness"],
+                            "prediction": predictions,
+                            "committed_prediction": committed,
+                            "relative_gap": gaps})
+    elif event == "hst_2019":
+        solar_scale = hst_comparison()["solar_scale_in_over_out"]
+        wavelengths, window_rows = hst_window_data()
+        for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+            predictions, gaps = {}, {}
+            for variant in STRAT_VARIANTS:
+                _, _, sums, _ = hst_kernel(variant, dataset, wavelengths)
+                scaled = sums*solar_scale[dataset]
+                predictions[variant] = scaled.tolist()
+                if variant in VARIANTS:
+                    committed = np.array([float(row[f"{dataset}_{variant}_prediction"])
+                                          for row in window_rows])
+                    gaps[variant] = float(np.max(np.abs(scaled-committed)/committed))
+            records.append({"dataset": dataset,
+                            "window_wavelength_nm": wavelengths.tolist(),
+                            "prediction": predictions,
+                            "committed_prediction": {
+                                variant: [float(row[f"{dataset}_{variant}_prediction"])
+                                          for row in window_rows]
+                                for variant in VARIANTS},
+                            "relative_gap": gaps})
+    elif event == "dec_2011":
+        for record in dec_comparison()["records"]:
+            predictions, committed, gaps = {}, {}, {}
+            for variant in STRAT_VARIANTS:
+                _, _, _, moment = dec_kernel(variant, record["wavelength_nm"])
+                predictions[variant] = moment
+                if variant in VARIANTS:
+                    committed[variant] = record[f"{variant}_prediction"]
+                    gaps[variant] = moment_gap(moment, committed[variant])["relative_gap"]
+            records.append({"wavelength_nm": record["wavelength_nm"],
+                            "prediction": predictions,
+                            "committed_prediction": committed,
+                            "relative_gap": gaps})
+    else:
+        predictions, committed, gaps = {}, {}, {}
+        for variant in STRAT_VARIANTS:
+            _, _, _, moment = mv1990_kernel(variant)
+            predictions[variant] = moment
+            if variant in VARIANTS:
+                committed[variant] = mv1990_record(variant)["prediction"]
+                gaps[variant] = moment_gap(moment, committed[variant])["relative_gap"]
+        records.append({"prediction": predictions,
+                        "committed_prediction": committed,
+                        "relative_gap": gaps})
+    return records
+
+
+def strat_brightness_factor() -> dict:
+    """Per-readout production/committed factors of the two-layer variant.
+
+    Same form as the probe's kernel-sum factors (probe_brightness_factor):
+    the factor is the production variant's kernel moment over the committed
+    fixed_opac prediction. The preregistered comparison therefore isolates
+    exactly the probe-extra-column versus production-column difference.
+    """
+    geometry = june_geometry()
+    june = []
+    for record in june_records():
+        radius = geometry.moon_distance_m*np.tan(np.deg2rad(record["shadow_angle_deg"]))
+        _, _, _, moment = june_kernel(PRODUCTION_VARIANT, radius, record["wavelength_nm"])
+        june.append(moment/record["fixed_opac_prediction"])
+    wavelengths, window_rows = hst_window_data()
+    hst = {}
+    for dataset in hst_comparison()["grouping"]["umbral_in_eclipse"]:
+        committed = np.array([float(row[f"{dataset}_fixed_opac_prediction"])
+                              for row in window_rows])
+        _, _, sums, _ = hst_kernel(PRODUCTION_VARIANT, dataset, wavelengths)
+        hst[dataset] = (sums*hst_comparison()["solar_scale_in_over_out"][dataset])/committed
+    dec = []
+    for record in dec_comparison()["records"]:
+        _, _, _, moment = dec_kernel(PRODUCTION_VARIANT, record["wavelength_nm"])
+        dec.append(moment/record["fixed_opac_prediction"])
+    _, _, _, moment = mv1990_kernel(PRODUCTION_VARIANT)
+    mv1990 = moment/mv1990_record("fixed_opac")["prediction"]
+    return {"june_2011": june, "hst_2019": hst, "dec_2011": dec,
+            "event_1990_02_09": mv1990}
+
+
+def build_strat_predictions(height_stats: dict) -> dict:
+    """Four-aperture three-variant rerun: predictions plus derived metrics.
+
+    The preregistered production metrics reuse the probe's own delta formulas
+    (probe_event_brightness / probe_event_shape) with the production factor
+    dict: the committed baseline rows are identical, so any probe-production
+    difference is attributable to the prediction difference alone.
+    """
+    factors = strat_brightness_factor()
+    depths = depth_statistics(height_stats)
+    brightness = {event: probe_event_brightness(PREREGISTERED_CANDIDATE, event,
+                                                factors, depths)
+                  for event in EVENT_ORDER}
+    shape = {"june_2011": probe_event_shape(PREREGISTERED_CANDIDATE, "june_2011", factors),
+             "dec_2011": probe_event_shape(PREREGISTERED_CANDIDATE, "dec_2011", factors)}
+    predictions = {event: variant_prediction_records(event) for event in EVENT_ORDER}
+    reproduction = {}
+    for event in EVENT_ORDER:
+        worst = {}
+        for variant in VARIANTS:
+            gaps = [record["relative_gap"][variant] for record in predictions[event]]
+            worst[variant] = float(np.max([gap for gap in gaps if gap is not None]))
+        reproduction[event] = worst
+    return {
+        "scope": "Four-aperture rerun of the committed two variants plus the production "
+                 "two-layer variant (fixed_opac_strat) through the same kernel adapters as "
+                 "the height statistics. Committed-variant relative gaps are the rerun's "
+                 "reproduction evidence; the production variant is validated by the "
+                 "preregistered check against the independent probe path (a zero-AOD probe "
+                 "restores the baseline exactly, pytest).",
+        "variants": list(STRAT_VARIANTS),
+        "variant_definition": {
+            "molecular": "no aerosol component",
+            "fixed_opac": "AerosolProfile.opac_free_troposphere() (committed default)",
+            "fixed_opac_strat": "AerosolColumn.opac_default(): committed free troposphere "
+                                 "+ stratospheric background, traced through the production "
+                                 "build_ray_table",
+            "production_column": {
+                "layers": [asdict(layer) for layer in DEFAULT_COLUMN.layers],
+                "source": {
+                    "prior_parameters_json": PRIOR_PARAMETERS_JSON,
+                    "opac1998_sha256": OPAC_PDF_SHA256,
+                    "layer_candidates": [FREE_TROPOSPHERE_SOURCE["candidate"],
+                                          STRATOSPHERE_BACKGROUND_SOURCE["candidate"]],
+                },
+            },
+        },
+        "moment_gate": {
+            "definition": "sum(weights) + vacuum branch == committed prediction",
+            "relative_tolerance": MOMENT_TOLERANCE,
+            "committed_variant_worst_relative_gap": reproduction,
+        },
+        "predictions": predictions,
+        "preregistered_production": {"brightness": brightness, "shape": shape},
+    }
+
+
+def write_strat_predictions(out: Path, height_stats: dict) -> dict:
+    predictions = build_strat_predictions(height_stats)
+    out.mkdir(parents=True, exist_ok=True)
+    (out/"predictions.json").write_text(json.dumps(predictions, indent=2)+"\n")
+    return predictions
+
+
+def preregistered_check_rows(predictions: dict) -> list:
+    """The preregistered prediction rows, probe value against production value.
+
+    Probe values are read from the committed discrimination.json only (never
+    retyped from issue/plan text); production values come from this rerun's
+    derived metrics. Tolerance is max(relative x |probe|, floor) with an
+    independently scaled floor.
+    """
+    committed = json.loads((RESULTS/"extinction_gap_diagnosis/discrimination.json").read_text())
+    candidate = committed["candidates"][PREREGISTERED_CANDIDATE]
+    production = predictions["preregistered_production"]
+    probe_root = f"validation/results/extinction_gap_diagnosis/discrimination.json:" \
+                 f"candidates.{PREREGISTERED_CANDIDATE}.events"
+    production_root = "validation/results/stratosphere_background/predictions.json"
+    rows = []
+    for event in EVENT_ORDER:
+        rows.append({
+            "event": event, "axis": "brightness",
+            "metric": "gap_closure_fraction",
+            "probe_value": candidate["events"][event]["brightness"]["gap_closure_fraction"],
+            "production_value": production["brightness"][event]["gap_closure_fraction"],
+            "probe_source_path": f"{probe_root}.{event}.brightness.gap_closure_fraction",
+            "production_source_path": f"{production_root}:preregistered_production."
+                                      f"brightness.{event}.gap_closure_fraction",
+            "baseline_source_path": f"{probe_root}.{event}.brightness.base_residual_ln_median",
+        })
+    june_shape = candidate["events"]["june_2011"]["shape"]
+    for metric, production_metric in [
+            ("median_new", "median_new"),
+            ("disagreement_closed_fraction", "disagreement_closed_fraction")]:
+        rows.append({
+            "event": "june_2011", "axis": "shape", "metric": metric,
+            "probe_value": june_shape[metric],
+            "production_value": production["shape"]["june_2011"][production_metric],
+            "probe_source_path": f"{probe_root}.june_2011.shape.{metric}",
+            "production_source_path": f"{production_root}:preregistered_production."
+                                      f"shape.june_2011.{production_metric}",
+            "baseline_source_path": f"{probe_root}.june_2011.shape.median_base",
+        })
+    for key in ["450_to750_transmission_ratio_model_over_observed",
+                "500_to750_transmission_ratio_model_over_observed"]:
+        rows.append({
+            "event": "dec_2011", "axis": "shape", "metric": key,
+            "probe_value": candidate["events"]["dec_2011"]["shape"][key]["disagreement_closed_fraction"],
+            "production_value": production["shape"]["dec_2011"][key]["disagreement_closed_fraction"],
+            "probe_source_path": f"{probe_root}.dec_2011.shape.{key}.disagreement_closed_fraction",
+            "production_source_path": f"{production_root}:preregistered_production."
+                                      f"shape.dec_2011.{key}.disagreement_closed_fraction",
+            "baseline_source_path": f"{probe_root}.dec_2011.shape.{key}.base_ratio",
+        })
+    for row in rows:
+        difference = abs(row["production_value"]-row["probe_value"])
+        tolerance = max(PREREGISTERED_RELATIVE_TOLERANCE*abs(row["probe_value"]),
+                        PREREGISTERED_FLOOR_ABSOLUTE)
+        row["abs_diff"] = difference
+        row["tolerance"] = tolerance
+        row["verdict"] = ("within_tolerance" if difference <= tolerance
+                          else "systematic_deviation")
+    return rows
+
+
+def build_preregistered_check(predictions: dict) -> dict:
+    rows = preregistered_check_rows(predictions)
+    return {
+        "scope": "Preregistered comparison: the committed discrimination-table values of "
+                 "stratosphere_background are the preregistered predictions, checked item "
+                 "by item against the production two-layer variant's rerun. Brightness-axis "
+                 "values landing in the tension band (the brightness residual is NOT closed "
+                 "by this component) are the expected outcome, not a failure; any "
+                 "systematic deviation routes as a finding with evidence, and tuning "
+                 "physical parameters toward the prediction is forbidden.",
+        "tolerance_definition": {
+            "rule": f"max({PREREGISTERED_RELATIVE_TOLERANCE:g} * |probe_value|, "
+                    f"{PREREGISTERED_FLOOR_ABSOLUTE:g})",
+            "relative": PREREGISTERED_RELATIVE_TOLERANCE,
+            "floor_absolute": PREREGISTERED_FLOOR_ABSOLUTE,
+            "floor_rationale": "Independently scaled: the probe and production paths share "
+                               "the same build_ray_table/atmosphere machinery and linear "
+                               "interpolation, so their difference is float-reordering scale "
+                               "(~1e-12 relative on O(1) deltas) plus the small quadrature "
+                               "subdivision difference between the probe's own single-layer "
+                               "table and the production two-layer table; the floor keeps "
+                               "about three orders of magnitude of margin.",
+            "floor_discipline": "The floor is fixed before measurement and is never derived "
+                                 "from the checked rows' own measured differences.",
+        },
+        "measured_max_absolute_diff": max(row["abs_diff"] for row in rows),
+        "rows": rows,
+        "verdict": ("within_tolerance" if all(row["verdict"] == "within_tolerance"
+                                              for row in rows) else "systematic_deviation"),
+    }
+
+
+def write_preregistered_check(out: Path, predictions: dict) -> dict:
+    check = build_preregistered_check(predictions)
+    (out/"preregistered_check.json").write_text(json.dumps(check, indent=2)+"\n")
+    return check
+
+
 def validate_literature_products() -> dict:
     """Schema gate for the one-shot literature products (plan Step 1 contract).
 
@@ -1124,8 +1423,24 @@ def write_correlation(out: Path, stats: dict) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path("outputs/extinction_gap_diagnosis"))
+    parser.add_argument("--strat-rerun", action="store_true",
+                        help="Write the four-aperture three-variant rerun predictions and "
+                             "the preregistered check into --out (use a new directory; the "
+                             "committed discrimination products stay untouched)")
     args = parser.parse_args()
     checked = validate_literature_products()
+    if args.strat_rerun:
+        predictions = write_strat_predictions(args.out, build_height_stats())
+        check = write_preregistered_check(args.out, predictions)
+        print(json.dumps({"literature_schema_check": checked,
+                          "moment_gate": predictions["moment_gate"],
+                          "preregistered_check": {key: check[key] for key in
+                                                  ("measured_max_absolute_diff", "verdict")},
+                          "rows": [{key: row[key] for key in
+                                    ("event", "axis", "metric", "abs_diff", "tolerance",
+                                     "verdict")} for row in check["rows"]]},
+                         indent=2))
+        raise SystemExit(0 if check["verdict"] == "within_tolerance" else 1)
     stats = write_height_stats(args.out)
     correlation = write_correlation(args.out, stats)
     discrimination = write_discrimination(args.out, stats)
