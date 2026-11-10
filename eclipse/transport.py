@@ -12,7 +12,7 @@ import numpy as np
 from numpy.polynomial.legendre import leggauss
 
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
-from .aerosol import AerosolProfile
+from .aerosol import AerosolColumn, AerosolPrior
 from .rays import RayTable, build_ray_table
 from .spectra import ozone_cross_section, rayleigh_cross_section, solar_irradiance
 
@@ -168,9 +168,16 @@ def transmission_profile(
         air = np.interp(bb, b, table.air_column_m2)
         o3 = np.interp(bb, b, table.ozone_column_m2)
         tau = air[:, None]*sigma_air + o3[:, None]*sigma_o3
-        if extinction and aerosol and table.aerosol_tau550 is not None:
-            tau += (np.interp(bb, b, table.aerosol_tau550)[:, None]
-                    * table.aerosol_profile.spectral_factor(wl))
+        if extinction and aerosol and table.aerosol_layer_taus is not None:
+            # The only extinction hook: each layer contributes its own tau
+            # table times its own spectral factor. The (tau, profile) pairs
+            # come from the table itself, so they are same-source by
+            # construction; a single-layer table reproduces the previous
+            # single-term operation order bit-exactly.
+            for layer_tau, layer_profile in zip(table.aerosol_layer_taus,
+                                                table.aerosol_profiles):
+                tau += (np.interp(bb, b, layer_tau)[:, None]
+                        * layer_profile.spectral_factor(wl))
         result[i] += area @ np.exp(-tau)
     return result
 
@@ -195,9 +202,16 @@ def simulate(
     height_step_m: float = 100.0,
     quadrature_order: int = 48,
     integration_order: int = 8,
-    aerosol_profile: AerosolProfile | None = AerosolProfile.opac_free_troposphere(),
+    aerosol_profile: AerosolPrior = AerosolColumn.opac_default(),
 ) -> EclipseResult:
-    """Precompute forward rays once, then integrate ozone on/off at all receivers."""
+    """Precompute forward rays once, then integrate ozone on/off at all receivers.
+
+    The default aerosol prior is the production two-layer OPAC column (free
+    troposphere + stratospheric background); pass ``None`` for the
+    molecular-only medium, a single ``AerosolProfile`` for one layer, or an
+    ``AerosolColumn`` for an explicit layer composition. The parameter keeps
+    the historical name ``aerosol_profile`` for every existing call site.
+    """
     radius = np.asarray(np.arange(0, 9_000_001, 20_000) if radius_m is None else radius_m,
                         dtype=float)
     wl = np.asarray(np.arange(380, 781, 5) if wavelength_nm is None else wavelength_nm,

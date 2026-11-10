@@ -32,11 +32,11 @@ from .compare_observations import DATA, load_observations
 
 def fit_red_aod(table, profile, radius_red_m, observed_red, geometry):
     """Calibrate exactly one column parameter, receiving no blue observations."""
-    unit_tau = table.aerosol_tau550/profile.aod550
+    unit_tau = table.aerosol_layer_taus[0]/profile.aod550
 
     def scaled(aod):
-        return replace(table, aerosol_tau550=unit_tau*aod,
-                       aerosol_profile=replace(profile,aod550=float(aod)))
+        return replace(table, aerosol_layer_taus=(unit_tau*aod,),
+                       aerosol_profiles=(replace(profile,aod550=float(aod)),))
 
     def objective(aod):
         prediction = transmission_profile(scaled(aod),radius_red_m,[677.],geometry=geometry)[:,0]

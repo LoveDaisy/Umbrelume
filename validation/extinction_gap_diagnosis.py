@@ -118,9 +118,13 @@ def kernel_weights(table, bb, area, wavelength_nm, extra_aerosol=None) -> np.nda
     air = np.interp(bb, b, table.air_column_m2)[:, None]
     o3 = np.interp(bb, b, table.ozone_column_m2)[:, None]
     tau = air*rayleigh_cross_section(wl)[None, :] + o3*ozone_cross_section(wl)[None, :]
-    if table.aerosol_tau550 is not None:
-        tau = tau + (np.interp(bb, b, table.aerosol_tau550)[:, None]
-                     * table.aerosol_profile.spectral_factor(wl)[None, :])
+    if table.aerosol_layer_taus is not None:
+        # Same-source (tau, profile) pairs from the table; a single-layer
+        # table reproduces the previous single-term operation order exactly.
+        for layer_tau, layer_profile in zip(table.aerosol_layer_taus,
+                                            table.aerosol_profiles):
+            tau = tau + (np.interp(bb, b, layer_tau)[:, None]
+                         * layer_profile.spectral_factor(wl)[None, :])
     if extra_aerosol is not None:
         extra_b, extra_tau550, extra_profile = extra_aerosol
         tau = tau + (np.interp(bb, extra_b, extra_tau550)[:, None]
@@ -717,7 +721,7 @@ def candidate_probe_extra(candidate: str) -> tuple:
     column_profile = AerosolProfile(aod550=aod, bottom_m=bottom, top_m=top,
                                     scale_height_m=scale_height)
     table = build_ray_table(Atmosphere(), aerosol_profile=column_profile)
-    return table.impact_m, table.aerosol_tau550, profile
+    return table.impact_m, table.aerosol_layer_taus[0], profile
 
 
 def closure_verdict(closure: float) -> str:

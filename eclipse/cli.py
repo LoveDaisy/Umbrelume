@@ -12,7 +12,10 @@ import numpy as np
 
 from . import __version__
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
-from .aerosol import AerosolProfile
+from .aerosol import (
+    FREE_TROPOSPHERE_SOURCE, OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
+    STRATOSPHERE_BACKGROUND_SOURCE, AerosolColumn, AerosolProfile,
+)
 from .color import spectrum_to_xyz
 from .report import write_report
 from .transport import Geometry, simulate, signed_landing_radius
@@ -32,6 +35,23 @@ def _nonnegative(value):
     return number
 
 
+def _aerosol_layer_metadata(aerosol_prior, layer_sources):
+    """Per-layer metadata records with their pinned prior_parameters.json rows.
+
+    ``layer_sources`` is produced by the same construction branch that built
+    ``aerosol_prior``, so every layer pairs with its own provenance. The OPAC
+    PDF sha256 identifies the source paper recorded next to those rows in
+    sources.json.
+    """
+    layers = (aerosol_prior.layers if isinstance(aerosol_prior, AerosolColumn)
+              else (aerosol_prior,))
+    return [{**asdict(layer),
+             "source": {**source,
+                        "prior_parameters_json": PRIOR_PARAMETERS_JSON,
+                        "opac1998_sha256": OPAC_PDF_SHA256}}
+            for layer, source in zip(layers, layer_sources)]
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -39,10 +59,15 @@ def main(argv=None):
     run.add_argument("--out", type=Path, default=Path("outputs/current"))
     run.add_argument("--ozone-du", type=_nonnegative, default=300.0)
     run.add_argument("--density-scale", type=_nonnegative, default=1.0)
-    run.add_argument("--aerosol", choices=["opac-ft", "none"], default="opac-ft",
-                     help="Fixed literature free-troposphere prior, or molecular-only counterfactual")
+    run.add_argument("--aerosol", choices=["opac", "opac-ft", "none"], default="opac",
+                     help="Aerosol preset: two-layer OPAC default (free troposphere "
+                          "2-12 km + stratospheric background 12-35 km), "
+                          "free-troposphere-only (historical preset), or "
+                          "molecular-only counterfactual")
     run.add_argument("--aod550", type=_nonnegative,
-                     help="Override the prior's 550 nm vertical AOD (default 0.013)")
+                     help="Override the free-troposphere layer's 550 nm vertical AOD "
+                          "(default 0.013; the stratospheric layer stays at 0.005); "
+                          "0 disables the whole aerosol component")
     run.add_argument("--moon-distance-km", type=_positive, default=384400.0)
     run.add_argument("--moon-offset-km", type=_nonnegative, default=2860.0,
                      help="Moon center's distance from the shadow axis")
@@ -64,14 +89,31 @@ def main(argv=None):
     wl = np.linspace(380, 780, int(np.ceil(400/args.wavelength_step_nm))+1)
     atmosphere = Atmosphere(ozone_du=args.ozone_du, density_scale=args.density_scale)
     if args.aerosol == "none" and args.aod550 is not None:
-        parser.error("--aod550 requires --aerosol opac-ft")
-    aerosol_profile = (AerosolProfile.opac_free_troposphere(
-        aod550=.013 if args.aod550 is None else args.aod550)
-        if args.aerosol == "opac-ft" else None)
+        parser.error("--aod550 requires --aerosol opac or opac-ft")
+    if args.aerosol == "none" or args.aod550 == 0:
+        # AOD=0 is the molecular-only counterfactual: the whole aerosol
+        # component is disabled and reproduces --aerosol none exactly.
+        aerosol_prior, layer_sources = None, ()
+    elif args.aerosol == "opac":
+        aerosol_prior = AerosolColumn.opac_default(
+            ft_aod550=.013 if args.aod550 is None else args.aod550)
+        layer_sources = (FREE_TROPOSPHERE_SOURCE, STRATOSPHERE_BACKGROUND_SOURCE)
+    else:
+        aerosol_prior = AerosolProfile.opac_free_troposphere(
+            aod550=.013 if args.aod550 is None else args.aod550)
+        layer_sources = (FREE_TROPOSPHERE_SOURCE,)
+    if aerosol_prior is None:
+        aerosol_text = "No aerosol extinction"
+    elif args.aerosol == "opac":
+        aerosol_text = ("OPAC free-troposphere (2-12 km) and stratospheric-background "
+                        "(12-35 km) aerosol extinction only; no boundary-layer component")
+    else:
+        aerosol_text = ("OPAC free-troposphere aerosol extinction only; no boundary "
+                        "layer or stratospheric aerosol preset")
     geometry = Geometry(moon_distance_m=args.moon_distance_km*1000)
     start = time.perf_counter()
     result = simulate(radius, wl, atmosphere=atmosphere, geometry=geometry,
-                      height_step_m=args.height_step_m, aerosol_profile=aerosol_profile)
+                      height_step_m=args.height_step_m, aerosol_profile=aerosol_prior)
     elapsed = time.perf_counter()-start
     relative_y = spectrum_to_xyz(result.irradiance, wl)[:, 1] / spectrum_to_xyz(
         result.reference_irradiance, wl)[1]
@@ -83,9 +125,10 @@ def main(argv=None):
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "model": "Finite-distance paraxial annular transport with spherical refracted ray tables",
         "atmosphere": asdict(atmosphere),
-        "aerosol": asdict(aerosol_profile) if aerosol_profile is not None else None,
+        "aerosol": ({"layers": _aerosol_layer_metadata(aerosol_prior, layer_sources)}
+                    if aerosol_prior is not None else None),
         "aerosol_preset": args.aerosol,
-        "aerosol_aod_source": ("Disabled" if aerosol_profile is None else
+        "aerosol_aod_source": ("Disabled" if aerosol_prior is None else
                                 "OPAC literature prior" if args.aod550 is None else
                                 "User override; not an independent prior"),
         "geometry": asdict(geometry),
@@ -105,8 +148,7 @@ def main(argv=None):
             "Spherical standard dry atmosphere; Gaussian ozone height profile",
             "Achromatic refracted paths at 550 nm; spectral Rayleigh and ozone extinction",
             "Uniform solar disk, finite-distance first-order paraxial propagation",
-            ("OPAC free-troposphere aerosol extinction only; no boundary layer or stratospheric aerosol preset"
-             if aerosol_profile is not None else "No aerosol extinction"),
+            aerosol_text,
             "No cloud extinction or scattered light entering receiver",
             "Neutral shadow-plane lunar screen; no lunar reflectance spectrum or BRDF",
             "Photopic colorimetry with global solar white; no observer atmosphere or dark adaptation",
@@ -117,14 +159,18 @@ def main(argv=None):
                         irradiance_W_m2_nm=result.irradiance,
                         irradiance_no_ozone_W_m2_nm=result.irradiance_no_ozone,
                         reference_irradiance_W_m2_nm=result.reference_irradiance)
-    np.savez_compressed(args.out/"rays.npz", tangent_altitude_m=table.altitude_m,
-                        vacuum_impact_parameter_m=table.impact_m,
-                        bending_rad=table.bending_rad,
-                        air_column_m2=table.air_column_m2,
-                        ozone_column_m2=table.ozone_column_m2,
-                        aerosol_tau550=(table.aerosol_tau550 if table.aerosol_tau550 is not None
-                                         else np.zeros_like(table.altitude_m)),
-                        signed_landing_radius_m=signed_landing_radius(table, geometry))
+    ray_records = {"tangent_altitude_m": table.altitude_m,
+                   "vacuum_impact_parameter_m": table.impact_m,
+                   "bending_rad": table.bending_rad,
+                   "air_column_m2": table.air_column_m2,
+                   "ozone_column_m2": table.ozone_column_m2}
+    if table.aerosol_layer_taus is not None:
+        ray_records["aerosol_layer_taus"] = np.stack(table.aerosol_layer_taus)
+    else:
+        # Molecular-only tables keep the historical zero-array key untouched.
+        ray_records["aerosol_tau550"] = np.zeros_like(table.altitude_m)
+    ray_records["signed_landing_radius_m"] = signed_landing_radius(table, geometry)
+    np.savez_compressed(args.out/"rays.npz", **ray_records)
     (args.out/"metadata.json").write_text(json.dumps(metadata, indent=2)+"\n")
     csv = np.column_stack((radius/1000, relative_y, result.irradiance / result.reference_irradiance))
     header = "radius_km,relative_photopic_irradiance," + ",".join(f"T_{w:g}nm" for w in wl)

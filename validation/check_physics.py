@@ -18,6 +18,7 @@ from scipy.integrate import simpson, solve_ivp
 from eclipse.atmosphere import (
     Atmosphere, EARTH_RADIUS_M, LAYER_BOUNDARIES_M, REFERENCE_NUMBER_DENSITY,
 )
+from eclipse.aerosol import AerosolColumn
 from eclipse.rays import build_ray_table
 from eclipse.spectra import ozone_cross_section, rayleigh_cross_section, refractive_index_air
 from eclipse.transport import Geometry, signed_landing_radius, transmission_profile
@@ -124,10 +125,14 @@ def energy_check(*, extinction: bool = True, radius_samples: int = 2049) -> dict
     Each source-disk convolution has unit integral. Hence for each wavelength,
     integral 2*pi*r*(1-E/F) dr equals pi*(m*b_top)^2 minus the transmitted
     atmospheric annular input area. This identity is independent of bending.
+    The extinguished closure runs on the production two-layer aerosol column,
+    so it includes the stratospheric-background term; the transparent closure
+    keeps the molecular-only table (extinction plays no role there).
     """
     atmosphere = Atmosphere()
     geometry = Geometry()
-    table = build_ray_table(atmosphere, height_step_m=100, quadrature_order=48)
+    table = build_ray_table(atmosphere, height_step_m=100, quadrature_order=48,
+                            aerosol_profile=AerosolColumn.opac_default() if extinction else None)
     wavelengths = np.array([450.0, 550.0, 650.0])
     landing = signed_landing_radius(table, geometry)
     support_radius = max(float(np.max(np.abs(landing))), geometry.magnification * table.impact_m[-1])
@@ -149,6 +154,10 @@ def energy_check(*, extinction: bool = True, radius_samples: int = 2049) -> dict
         ozone = np.interp(b, table.impact_m, table.ozone_column_m2)
         tau = air[:, None] * rayleigh_cross_section(wavelengths)
         tau += ozone[:, None] * ozone_cross_section(wavelengths)
+        for layer_tau, layer_profile in zip(table.aerosol_layer_taus,
+                                            table.aerosol_profiles):
+            tau += (np.interp(b, table.impact_m, layer_tau)[:, None]
+                    * layer_profile.spectral_factor(wavelengths))
         transmitted_area = 2 * np.pi * m**2 * np.trapezoid(b[:, None] * np.exp(-tau), x=b, axis=0)
         pupil_deficit = np.pi * (m * table.impact_m[-1])**2 - transmitted_area
     else:

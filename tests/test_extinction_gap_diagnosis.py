@@ -37,8 +37,8 @@ def synthetic_ray_table():
         / geometry.moon_distance_m
     return RayTable(altitude, impact, bending,
                     8e28*np.exp(-altitude/8_000.), 3e22*np.exp(-altitude/20_000.),
-                    550.0, False, 0.05*np.exp(-altitude/10_000.),
-                    egd.DEFAULT_OPAC)
+                    550.0, False, (0.05*np.exp(-altitude/10_000.),),
+                    (egd.DEFAULT_OPAC,))
 
 
 def test_synthetic_kernel_reproduces_transmission_profile():
@@ -80,7 +80,7 @@ def test_extra_aerosol_darkens_everywhere():
     probe_profile = AerosolProfile(aod550=0.01, bottom_m=0., top_m=2_000.,
                                    scale_height_m=2_000.)
     probe_table = build_ray_table(Atmosphere(), aerosol_profile=probe_profile)
-    extra = (probe_table.impact_m, probe_table.aerosol_tau550, probe_profile)
+    extra = (probe_table.impact_m, probe_table.aerosol_layer_taus[0], probe_profile)
     wavelengths = np.array([450., 677.])
     base = egd.kernel_weights(table, bb_quad, area, wavelengths)
     probed = egd.kernel_weights(table, bb_quad, area, wavelengths, extra)

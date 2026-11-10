@@ -1,14 +1,34 @@
-"""A fixed, independent OPAC free-tropospheric extinction prior.
+"""Fixed, independent OPAC free-tropospheric and stratospheric-background priors.
 
 The default describes a climatological/model component, not a measured profile
 for the June 2011 eclipse. Extinction includes scattering out of the direct
 beam and absorption. No scattering-into-beam or aerosol refractivity is added.
+The production default composes two layers: the OPAC free troposphere (2-12 km)
+and the OPAC stratospheric background (12-35 km).
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 import numpy as np
+
+# Provenance of the pinned prior rows. The numeric values themselves are
+# anchored to these rows by pytest (json-anchor test); the SHA identifies the
+# OPAC source paper recorded in sources.json alongside the parameter rows.
+PRIOR_PARAMETERS_JSON = (
+    "validation/results/extinction_gap_diagnosis/prior_parameters.json")
+OPAC_PDF_SHA256 = ("68a20ba9488db1e0f65a9976d4ee46e6c879f89054fcff583ba67b"
+                   "b5d68d425c")
+FREE_TROPOSPHERE_SOURCE = {
+    "candidate": "free_troposphere_reference",
+    "rows": ("aod550_2_to_12km_reference", "angstrom_0.35_to_0.5um",
+             "angstrom_0.5_to_0.8um", "scale_height_m"),
+}
+STRATOSPHERE_BACKGROUND_SOURCE = {
+    "candidate": "stratosphere_background",
+    "rows": ("aod550", "angstrom_0.35_to_0.5um", "angstrom_0.5_to_0.8um",
+             "layer_bottom_m", "layer_top_m", "scale_height_m"),
+}
 
 
 @dataclass(frozen=True)
@@ -45,8 +65,31 @@ class AerosolProfile:
 
     @classmethod
     def opac_free_troposphere(cls, aod550: float = 0.013) -> AerosolProfile:
-        """Published OPAC shape and spectral law, with explicit column control."""
+        """Published OPAC shape and spectral law, with explicit column control.
+
+        Parameters are pinned to ``prior_parameters.json`` rows
+        ``free_troposphere_reference`` (aod550_2_to_12km_reference 0.013,
+        Angstrom 1.21 over 350-500 nm and 1.58 over 500-800 nm, scale height
+        8 km; the 2 km bottom and 12 km top are stated in that row's source
+        location). The OPAC PDF sha256 is the module constant
+        ``OPAC_PDF_SHA256``.
+        """
         return cls(aod550=aod550)
+
+    @classmethod
+    def opac_stratospheric_background(cls) -> AerosolProfile:
+        """OPAC stratospheric-background layer: 12-35 km, near homogeneous.
+
+        Parameters are pinned to ``prior_parameters.json`` rows
+        ``stratosphere_background`` (aod550 0.005, Angstrom 0.74 over
+        350-500 nm and 1.14 over 500-800 nm, layer 12-35 km, scale height
+        99 km). The 99 km scale height over the 23 km thickness is the OPAC
+        representation of a homogeneous layer (exp(-23/99) ~ 0.79). OPAC
+        fixes this layer independent of volcanic activity.
+        """
+        return cls(aod550=0.005, bottom_m=12_000.0, top_m=35_000.0,
+                   scale_height_m=99_000.0, angstrom_visible=1.14,
+                   angstrom_blue=0.74)
 
     @classmethod
     def none(cls) -> AerosolProfile:
@@ -88,3 +131,60 @@ class AerosolProfile:
                               else self.angstrom_blue)
         reference = (550.0/self.break_nm)**(-reference_exponent)
         return raw/reference
+
+
+@dataclass(frozen=True)
+class AerosolColumn:
+    """Ordered composition of finite exponential aerosol layers.
+
+    A column's extinction is the sum of its layers' coefficients; layer
+    supports may overlap only on measure-zero boundaries, so the vertical
+    AOD of a column is exactly the sum of its layers' AOD550 (documented
+    invariant, asserted in tests). Each layer carries its own geometry, AOD
+    and broken-power-law spectral exponents; no merged spectral factor exists,
+    the only legal expansion is the per-layer (tau, profile) pair.
+    """
+
+    layers: tuple[AerosolProfile, ...]
+
+    def __post_init__(self):
+        if not self.layers:
+            raise ValueError("AerosolColumn requires at least one layer.")
+        if not all(isinstance(layer, AerosolProfile) for layer in self.layers):
+            raise ValueError("AerosolColumn layers must all be AerosolProfile instances.")
+
+    @classmethod
+    def opac_default(cls, ft_aod550: float = 0.013) -> AerosolColumn:
+        """Production default: OPAC free troposphere + stratospheric background.
+
+        ``ft_aod550`` overrides only the free-troposphere layer (the CLI
+        ``--aod550`` semantics); the stratospheric background stays at its
+        published 0.005.
+        """
+        return cls((AerosolProfile.opac_free_troposphere(aod550=ft_aod550),
+                    AerosolProfile.opac_stratospheric_background()))
+
+
+# The complete type face of an aerosol prior argument: single layer, layer
+# column, or no aerosol at all.
+AerosolPrior = AerosolProfile | AerosolColumn | None
+
+
+def active_aerosol_layers(aerosol: AerosolPrior) -> tuple[AerosolProfile, ...]:
+    """Single normalization point for every aerosol prior argument.
+
+    Returns the layers that carry extinction, in order. Zero-AOD layers are
+    dropped: they change no physical quantity, and ray tables store tau tables
+    only for layers that have one. A column mixing zero and nonzero layers
+    therefore normalizes to its active subset, which is exactly what the
+    layer-isolation counterfactuals compare.
+    """
+    if aerosol is None:
+        return ()
+    if isinstance(aerosol, AerosolColumn):
+        layers = aerosol.layers
+    elif isinstance(aerosol, AerosolProfile):
+        layers = (aerosol,)
+    else:
+        raise TypeError(f"Unsupported aerosol prior: {type(aerosol).__name__}")
+    return tuple(layer for layer in layers if layer.aod550 > 0)
