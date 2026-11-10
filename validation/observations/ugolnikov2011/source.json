@@ -20,6 +20,88 @@
   "measurement": "Same lunar surface element's in-eclipse brightness divided by fully out-of-eclipse brightness",
   "direction": "Western umbra, 30 degrees north of equator, as labeled in Fig. 2",
   "readout_definition": "Half PDF stroke thickness plus 1 PDF point vertically; 1 point horizontally. Graph readout allowance only, NOT observational uncertainty or a confidence interval.",
+  "filter_information": {
+    "branch": "C",
+    "status": "not stated in paper",
+    "adjudicated_date": "2026-11-10",
+    "method": "pymupdf==2.1 full-text extraction of the fixed-SHA PDF, case-insensitive literal keyword search over body text, figure captions and table text; figure pages 3-5 additionally inspected visually",
+    "search": {
+      "keywords": [
+        "fwhm",
+        "bandwidth",
+        "band width",
+        "bandpass",
+        "band-pass",
+        "passband",
+        "pass band",
+        "half-width",
+        "halfwidth",
+        "half width",
+        "central wavelength",
+        "center wavelength",
+        "centre wavelength",
+        "wavelength shift",
+        "wavelength offset",
+        "interference filter",
+        "response curve",
+        "filter response",
+        "spectral response",
+        "transmission curve",
+        "transmission profile",
+        "spectral transmission",
+        "filter transmission",
+        "spectral bandpass"
+      ],
+      "scope": "full extracted text of all 5 pages (body, figure captions, table text); figure raster content covered by manual page inspection recorded in the task progress log",
+      "normalization": "lowercase; hyphenated line breaks joined; whitespace collapsed; each keyword matched on three forms (as-is, hyphen-stripped, hyphen-to-space) so natively hyphenated spelling variants (band-width, response-curve) are covered; recorded count is the max of the three forms",
+      "hit_counts": {
+        "fwhm": 0,
+        "bandwidth": 0,
+        "band width": 0,
+        "bandpass": 0,
+        "band-pass": 0,
+        "passband": 0,
+        "pass band": 0,
+        "half-width": 0,
+        "halfwidth": 0,
+        "half width": 0,
+        "central wavelength": 0,
+        "center wavelength": 0,
+        "centre wavelength": 0,
+        "wavelength shift": 0,
+        "wavelength offset": 0,
+        "interference filter": 0,
+        "response curve": 0,
+        "filter response": 0,
+        "spectral response": 0,
+        "transmission curve": 0,
+        "transmission profile": 0,
+        "spectral transmission": 0,
+        "filter transmission": 0,
+        "spectral bandpass": 0
+      }
+    },
+    "filter_statements_present": [
+      {
+        "page_one_based": 1,
+        "section": "abstract",
+        "quote": "three narrow spectral bands with effective wavelengths equal to 503, 677, and 867 nm"
+      },
+      {
+        "page_one_based": 2,
+        "section": "2. Observations",
+        "quote": "SAO observations were conducted by two CCD-cameras with narrow filters with the effective wavelengths 503 and 677 nm."
+      },
+      {
+        "page_one_based": 2,
+        "section": "2. Observations",
+        "quote": "Data obtained at 677 and 867 nm were also used to correct the effects of weak \u201cred tail\u201d of 503 nm filter."
+      }
+    ],
+    "approximation_grade": "Assumed rectangular and Gaussian passbands, FWHM 10/20/40 nm probe envelope; filter width and shape not measured and not stated in the paper",
+    "source_pdf_sha256": "366b6bd302937530f52d8fc3768be26ebb75657dba5072a3bd07d0733b67c043",
+    "upgrade_note": "Requesting the measured filter response curves from the authors is recorded as an upgrade path only; no external contact was made"
+  },
   "missing_information": [
     "Filter response curves and FWHM",
     "Pointwise measurement uncertainties",

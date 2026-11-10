@@ -1,0 +1,354 @@
+{
+  "task": "filter-response-2011",
+  "observable_definition": {
+    "published_quantity": "in-eclipse over out-of-eclipse brightness of the same lunar element through the filter",
+    "band_observable": "T_band(theta) = integral R(lambda)*S(lambda)*T(lambda,theta) dlambda / integral R(lambda)*S(lambda) dlambda",
+    "T_source": "eclipse.transport.transmission_profile (E_lambda/F_lambda)",
+    "S_source": "eclipse.spectra.solar_irradiance (AM0); weights of the out-of-eclipse reference",
+    "albedo_assumption": "lunar albedo treated as grey inside each narrow band; same assumption level as the committed monochromatic comparison",
+    "sensitivity_variant": "R(lambda)-only weighting at the nominal width, main variant; quantifies the S(lambda)-weighting choice"
+  },
+  "provenance": {
+    "observations_dir": "validation/observations/ugolnikov2011",
+    "source_pdf_sha256": "366b6bd302937530f52d8fc3768be26ebb75657dba5072a3bd07d0733b67c043",
+    "filter_branch": "C",
+    "filter_information_authority": "validation/observations/ugolnikov2011/source.json filter_information",
+    "filter_approximation_grade": "Assumed rectangular and Gaussian passbands, FWHM 10/20/40 nm probe envelope; filter width and shape not measured and not stated in the paper",
+    "geometry_source": "validation/observations/ugolnikov2011/geometry.json",
+    "adopted_geometry": {
+      "moon_distance_m": 374394876.7789723,
+      "sun_distance_m": 151955452087.65973
+    },
+    "production_module_sha256": {
+      "aerosol.py": "bc1ea10ece29c229184188d95b1626f9ac735b1a420a71a8aea268d50933242c",
+      "atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
+      "rays.py": "a1e6073ad757aa107b4103ee212c4e624ed52740b5fb3fb6728d1d3d69b4a449",
+      "spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e",
+      "transport.py": "2fe71592186d8bc373ef541ea71274e13204a3df5b99b4f84c8db61a71db8b87",
+      "validation/filter_response_2011.py": "931cb97f87d1fedb1d0f3079ea8b64ad79ec73b409e463f0c4894579a00dbd8f",
+      "validation/compare_observations.py": "fbb2aaaaff2ec395027064a346b9cf227d72115da0e8aa9f7d310a52263406ec"
+    },
+    "fitted_parameters": [],
+    "adjudicated_rtol": null,
+    "adjudication_reference": null
+  },
+  "model_variants": {
+    "molecular": "Molecular v1 (no aerosols)",
+    "fixed_opac": "Fixed OPAC free-troposphere prior"
+  },
+  "band_variants": {
+    "shapes": [
+      "rect",
+      "gauss"
+    ],
+    "widths_nm": [
+      10.0,
+      20.0,
+      40.0
+    ],
+    "nominal_width_nm": 20.0,
+    "figure_draws": "nominal width only, both shapes; full envelope not drawn",
+    "gaussian_truncation_sigma": 3.0,
+    "gaussian_truncated_tail_fraction": 0.0026997960632601913
+  },
+  "grid": {
+    "503": {
+      "union_point_count": 205,
+      "union_half_extent_nm": 51.0
+    },
+    "677": {
+      "union_point_count": 205,
+      "union_half_extent_nm": 51.0
+    }
+  },
+  "grid_convergence": {
+    "base_step_nm": 1.0,
+    "refined_step_nm": 0.5,
+    "max_relative_change_base_to_refined": 0.0009084592661428026,
+    "threshold": 0.001,
+    "within_threshold": true,
+    "termination_reason": "converged within threshold at the first refinement"
+  },
+  "definition_sensitivity_R_weight_only": {
+    "variant": "fixed_opac gauss20 R-only weighting",
+    "max_abs_ratio_difference_vs_main_definition": 0.09287015261084441
+  },
+  "monochromatic_cross_check": {
+    "status": "reproduced",
+    "threshold_reproduce": 1e-12,
+    "threshold_adjudicate": 1e-09,
+    "references": {
+      "round2_molecular": {
+        "reference": "validation/results/round2/analysis.json",
+        "field": "records[].molecular_prediction",
+        "point_count": 18,
+        "max_relative_difference": 0.0
+      },
+      "round2_fixed_opac": {
+        "reference": "validation/results/round2/analysis.json",
+        "field": "records[].fixed_opac_prediction",
+        "point_count": 18,
+        "max_relative_difference": 0.0
+      },
+      "observations2011_model_event_300du": {
+        "reference": "validation/results/observations2011/comparison.json",
+        "field": "bands[].innermost_readout/outermost_readout.model_event_300du",
+        "point_count": 4,
+        "max_relative_difference": 0.0
+      }
+    },
+    "adjudicated_rtol": null,
+    "adjudication_reference": null
+  },
+  "per_band": {
+    "503": {
+      "readout_count": 8,
+      "angle_range_deg": [
+        0.4,
+        0.575
+      ],
+      "mono_ratio_range_fixed_opac": [
+        1.0809978065710706,
+        2.985723134939512
+      ],
+      "mono_ratio_range_molecular": [
+        1.1543750559169386,
+        4.071841772297395
+      ],
+      "band_vs_mono_max_abs_difference": {
+        "molecular_rect10": {
+          "max_abs_difference": 0.043413673794663765,
+          "outer_max_abs_difference": 0.043413673794663765
+        },
+        "molecular_rect20": {
+          "max_abs_difference": 0.11753873142622773,
+          "outer_max_abs_difference": 0.11753873142622773
+        },
+        "molecular_rect40": {
+          "max_abs_difference": 0.14652981644841567,
+          "outer_max_abs_difference": 0.14652981644841567
+        },
+        "molecular_gauss10": {
+          "max_abs_difference": 0.06324220940166203,
+          "outer_max_abs_difference": 0.06324220940166203
+        },
+        "molecular_gauss20": {
+          "max_abs_difference": 0.11799722049198813,
+          "outer_max_abs_difference": 0.11799722049198813
+        },
+        "molecular_gauss40": {
+          "max_abs_difference": 0.08385513487682417,
+          "outer_max_abs_difference": 0.08385513487682417
+        },
+        "fixed_opac_rect10": {
+          "max_abs_difference": 0.03220036285743211,
+          "outer_max_abs_difference": 0.03220036285743211
+        },
+        "fixed_opac_rect20": {
+          "max_abs_difference": 0.08734373478561652,
+          "outer_max_abs_difference": 0.08734373478561652
+        },
+        "fixed_opac_rect40": {
+          "max_abs_difference": 0.10771962362826626,
+          "outer_max_abs_difference": 0.10771962362826626
+        },
+        "fixed_opac_gauss10": {
+          "max_abs_difference": 0.04695014284973276,
+          "outer_max_abs_difference": 0.04695014284973276
+        },
+        "fixed_opac_gauss20": {
+          "max_abs_difference": 0.08731042315536053,
+          "outer_max_abs_difference": 0.08731042315536053
+        },
+        "fixed_opac_gauss40": {
+          "max_abs_difference": 0.059242481440927364,
+          "outer_max_abs_difference": 0.059242481440927364
+        }
+      },
+      "band_vs_mono_envelope_max": 0.14652981644841567,
+      "main_variant_envelope_max": 0.10771962362826626,
+      "outer_band_effect_max": 0.14652981644841567,
+      "main_variant_outer_effect_max": 0.10771962362826626,
+      "outer_mono_deviation_max": 1.9857231349395121,
+      "outermost_band_minus_mono": {
+        "mono_ratio": 1.0809978065710706,
+        "mono_deviation_from_unity": 0.08099780657107059,
+        "main_variant_signed_range": [
+          0.005743067848382966,
+          0.03367247257801931
+        ],
+        "all_variant_signed_range": [
+          0.005743067848382966,
+          0.03561547683203514
+        ],
+        "main_variant_max_abs_shift_over_deviation": 0.415720795457267,
+        "all_variant_max_abs_shift_over_deviation": 0.43970915188653603
+      },
+      "outermost_deviation_ratio_best_main_variant": 1.0709039922376635,
+      "outermost_deviation_ratio_best_all_variants": 1.0408063553353246,
+      "outer_toward_unity_reduction": {
+        "semantic": "positive = the band shift moves the model/observed ratio toward unity at that readout",
+        "main_variant": {
+          "max_deviation_reduction": -0.005557515251987555,
+          "max_deviation_reduction_fraction": -0.016215937806663555
+        },
+        "all_variants": {
+          "max_deviation_reduction": -0.005557515251987555,
+          "max_deviation_reduction_fraction": -0.014132783200677417
+        },
+        "nominal_width_max_deviation_reduction_fraction": -0.04396908190225629
+      },
+      "definition_sensitivity_R_weight_only": {
+        "signed_range_all_readouts": [
+          0.03142709913927888,
+          0.09287015261084441
+        ],
+        "outer_max_abs": 0.09287015261084441
+      },
+      "outermost_classification": "band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.07)"
+    },
+    "677": {
+      "readout_count": 10,
+      "angle_range_deg": [
+        0.15,
+        0.575
+      ],
+      "mono_ratio_range_fixed_opac": [
+        0.9736756331854489,
+        3.7989138269337714
+      ],
+      "mono_ratio_range_molecular": [
+        1.092092126411941,
+        7.098170594384539
+      ],
+      "band_vs_mono_max_abs_difference": {
+        "molecular_rect10": {
+          "max_abs_difference": 0.0032978450077623123,
+          "outer_max_abs_difference": 0.00273478358404855
+        },
+        "molecular_rect20": {
+          "max_abs_difference": 0.016685134444743177,
+          "outer_max_abs_difference": 0.011016913734170242
+        },
+        "molecular_rect40": {
+          "max_abs_difference": 0.02391160585374852,
+          "outer_max_abs_difference": 0.014382193464437698
+        },
+        "molecular_gauss10": {
+          "max_abs_difference": 0.007412718774168603,
+          "outer_max_abs_difference": 0.005128511861661522
+        },
+        "molecular_gauss20": {
+          "max_abs_difference": 0.012025151031417547,
+          "outer_max_abs_difference": 0.011616682154958813
+        },
+        "molecular_gauss40": {
+          "max_abs_difference": 0.07619900796226986,
+          "outer_max_abs_difference": 0.01717943159498514
+        },
+        "fixed_opac_rect10": {
+          "max_abs_difference": 0.0019369028952980205,
+          "outer_max_abs_difference": 0.0019369028952980205
+        },
+        "fixed_opac_rect20": {
+          "max_abs_difference": 0.007949445290597046,
+          "outer_max_abs_difference": 0.007849486728397803
+        },
+        "fixed_opac_rect40": {
+          "max_abs_difference": 0.024809015029669812,
+          "outer_max_abs_difference": 0.010571609007888672
+        },
+        "fixed_opac_gauss10": {
+          "max_abs_difference": 0.0036743388893780704,
+          "outer_max_abs_difference": 0.0036489674035633524
+        },
+        "fixed_opac_gauss20": {
+          "max_abs_difference": 0.008241483983371767,
+          "outer_max_abs_difference": 0.008241483983371767
+        },
+        "fixed_opac_gauss40": {
+          "max_abs_difference": 0.06390894394350966,
+          "outer_max_abs_difference": 0.013108926130783516
+        }
+      },
+      "band_vs_mono_envelope_max": 0.07619900796226986,
+      "main_variant_envelope_max": 0.06390894394350966,
+      "outer_band_effect_max": 0.01717943159498514,
+      "main_variant_outer_effect_max": 0.013108926130783516,
+      "outer_mono_deviation_max": 0.6832148555227773,
+      "outermost_band_minus_mono": {
+        "mono_ratio": 0.9736756331854489,
+        "mono_deviation_from_unity": -0.02632436681455108,
+        "main_variant_signed_range": [
+          -0.012717133238162037,
+          -0.0015116859789540138
+        ],
+        "all_variant_signed_range": [
+          -0.014457819839512442,
+          -0.0015116859789540138
+        ],
+        "main_variant_max_abs_shift_over_deviation": 0.48309360402668844,
+        "all_variant_max_abs_shift_over_deviation": 0.5492181423152304
+      },
+      "outermost_deviation_ratio_best_main_variant": 1.0574253500417876,
+      "outermost_deviation_ratio_best_all_variants": 0.843006993075167,
+      "outer_toward_unity_reduction": {
+        "semantic": "positive = the band shift moves the model/observed ratio toward unity at that readout",
+        "main_variant": {
+          "max_deviation_reduction": 0.013108926130783516,
+          "max_deviation_reduction_fraction": 0.21740041563587528
+        },
+        "all_variants": {
+          "max_deviation_reduction": 0.01717943159498514,
+          "max_deviation_reduction_fraction": 0.21740041563587528
+        },
+        "nominal_width_max_deviation_reduction_fraction": 0.12045709834116328
+      },
+      "definition_sensitivity_R_weight_only": {
+        "signed_range_all_readouts": [
+          -0.005051598519061784,
+          0.0177780450575189
+        ],
+        "outer_max_abs": 0.005051598519061784
+      },
+      "outermost_classification": "band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.06)",
+      "innermost_angle_deg": 0.15,
+      "innermost_mono_deviation": 2.7581427343334504,
+      "innermost_band_effect_max": 0.06390894394350966,
+      "innermost_classification": "band definition cannot account for the innermost deep-point residual"
+    }
+  },
+  "shape_vs_width": {
+    "max_shape_effect_same_width": 0.048477142187338895,
+    "shape_effect_by_width": {
+      "10": 0.014749779992300649,
+      "20": 0.010361790280801308,
+      "40": 0.048477142187338895
+    },
+    "max_width_effect_10_to_40nm": 0.07551926077083415,
+    "shape_over_width_ratio": 0.6419175941677248,
+    "threshold": 0.1,
+    "shape_approximation_adequate": false,
+    "statement": "shape effect is not negligible against the width effect: the assumed band shape is a material limitation of the envelope"
+  },
+  "conclusion": {
+    "outer_residuals": {
+      "503": {
+        "statement": "Band-integrated ratios differ from the main-variant monochromatic prediction by at most 0.108 in model/observed ratio across the {10,20,40} nm rectangular/Gaussian envelope (both model variants together: 0.147); outer-region (theta >= 0.4 deg) main-variant monochromatic ratios deviate from unity by up to 1.99. band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.07)"
+      },
+      "677": {
+        "statement": "Band-integrated ratios differ from the main-variant monochromatic prediction by at most 0.0639 in model/observed ratio across the {10,20,40} nm rectangular/Gaussian envelope (both model variants together: 0.0762); outer-region (theta >= 0.4 deg) main-variant monochromatic ratios deviate from unity by up to 0.683. band definition changes the outermost model/observed deviation only marginally (best variant deviation ratio 1.06)"
+      }
+    },
+    "innermost_deep_point": "band definition cannot account for the innermost deep-point residual",
+    "shape_vs_width": "shape effect is not negligible against the width effect: the assumed band shape is a material limitation of the envelope",
+    "definition_sensitivity": "R-only versus R*S weighting changes the nominal band ratio by at most 0.0929; the S(lambda)-weighting choice is quantified above"
+  },
+  "limitations": [
+    "Digitized smoothed published curves, not independent exposures; graph readout allowances are not observational errors",
+    "Filter width and shape are assumed probes (branch C envelope), not measured properties",
+    "Lunar albedo treated as grey within each passband",
+    "Representative geocentric plane distance; no per-readout timing or topocentric geometry",
+    "Two bands and one event do not validate full visible colour"
+  ]
+}
