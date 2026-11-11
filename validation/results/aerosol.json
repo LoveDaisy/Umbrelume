@@ -1,0 +1,231 @@
+{
+  "pass": true,
+  "checks": {
+    "straight_bessel": {
+      "pass": true,
+      "profiles": [
+        {
+          "scale_height_m": 2000.0,
+          "tangent_altitude_m": [
+            0.0,
+            5000.0,
+            11000.0,
+            25000.0
+          ],
+          "bessel_tau550": [
+            7.074566947905343,
+            0.5809435945518882,
+            0.02893708097460641,
+            2.6416122031468615e-05
+          ],
+          "production_tau550": [
+            7.07456694794857,
+            0.5809435945471715,
+            0.028937080974456842,
+            2.641612203153991e-05
+          ],
+          "relative_difference": [
+            6.1102234383270115e-12,
+            8.118949956781307e-12,
+            5.168754313444879e-12,
+            2.6989521728637555e-12
+          ],
+          "pass": true
+        },
+        {
+          "scale_height_m": 5000.0,
+          "tangent_altitude_m": [
+            0.0,
+            5000.0,
+            11000.0,
+            25000.0
+          ],
+          "bessel_tau550": [
+            4.475138725826656,
+            1.6469570448304494,
+            0.49628713771801075,
+            0.03021231603256946
+          ],
+          "production_tau550": [
+            4.475138725824639,
+            1.6469570448022535,
+            0.49628713769613536,
+            0.030212316011004076
+          ],
+          "relative_difference": [
+            4.5075054799781356e-13,
+            1.71199721066273e-11,
+            4.4078074523667965e-11,
+            7.137944679769248e-10
+          ],
+          "pass": true
+        }
+      ]
+    },
+    "curved_cartesian": {
+      "pass": true,
+      "profile": {
+        "layers": [
+          {
+            "aod550": 0.013,
+            "bottom_m": 2000.0,
+            "top_m": 12000.0,
+            "scale_height_m": 8000.0,
+            "angstrom_visible": 1.58,
+            "angstrom_blue": 1.21,
+            "break_nm": 500.0
+          },
+          {
+            "aod550": 0.005,
+            "bottom_m": 12000.0,
+            "top_m": 35000.0,
+            "scale_height_m": 99000.0,
+            "angstrom_visible": 1.14,
+            "angstrom_blue": 0.74,
+            "break_nm": 500.0
+          }
+        ]
+      },
+      "rays": [
+        {
+          "tangent_altitude_m": 1000.0,
+          "production_tau550": 0.9470336249532841,
+          "cartesian_reference": {
+            "tau550": 0.9470336249545699,
+            "bending_rad": 0.017523203484739756,
+            "max_invariant_relative_error": 4.764744154783784e-12,
+            "max_direction_norm_error": 4.440892098500626e-16,
+            "accepted_steps": 520
+          },
+          "relative_or_zero_absolute_difference": 1.357691736814104e-12,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 2000.0,
+          "production_tau550": 1.3612150863777244,
+          "cartesian_reference": {
+            "tau550": 1.3612150863154602,
+            "bending_rad": 0.01596530980538467,
+            "max_invariant_relative_error": 8.384404281969182e-13,
+            "max_direction_norm_error": 1.3322676295501878e-15,
+            "accepted_steps": 510
+          },
+          "relative_or_zero_absolute_difference": 4.57416327037663e-11,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 5000.0,
+          "production_tau550": 0.9092775786208956,
+          "cartesian_reference": {
+            "tau550": 0.909277578652653,
+            "bending_rad": 0.011956737426344014,
+            "max_invariant_relative_error": 3.254063685176334e-13,
+            "max_direction_norm_error": 4.440892098500626e-16,
+            "accepted_steps": 507
+          },
+          "relative_or_zero_absolute_difference": 3.492595102017049e-11,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 11000.0,
+          "production_tau550": 0.36852705100926747,
+          "cartesian_reference": {
+            "tau550": 0.36852705097291105,
+            "bending_rad": 0.006721430685821249,
+            "max_invariant_relative_error": 7.429612480791548e-13,
+            "max_direction_norm_error": 1.1102230246251565e-15,
+            "accepted_steps": 494
+          },
+          "relative_or_zero_absolute_difference": 9.865330774516679e-11,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 12000.0,
+          "production_tau550": 0.2512210335170899,
+          "cartesian_reference": {
+            "tau550": 0.2512210335157505,
+            "bending_rad": 0.005787219185648994,
+            "max_invariant_relative_error": 1.071365218763276e-13,
+            "max_direction_norm_error": 5.551115123125783e-16,
+            "accepted_steps": 466
+          },
+          "relative_or_zero_absolute_difference": 5.331735053459852e-12,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 13000.0,
+          "production_tau550": 0.24317929541699485,
+          "cartesian_reference": {
+            "tau550": 0.2431792954170275,
+            "bending_rad": 0.004923593035737682,
+            "max_invariant_relative_error": 2.728928194528635e-13,
+            "max_direction_norm_error": 4.440892098500626e-16,
+            "accepted_steps": 460
+          },
+          "relative_or_zero_absolute_difference": 1.3433698597964394e-13,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 25000.0,
+          "production_tau550": 0.14843142033110585,
+          "cartesian_reference": {
+            "tau550": 0.1484314203225009,
+            "bending_rad": 0.0007233799066513495,
+            "max_invariant_relative_error": 1.0347278589506459e-13,
+            "max_direction_norm_error": 6.661338147750939e-16,
+            "accepted_steps": 428
+          },
+          "relative_or_zero_absolute_difference": 5.79725156768518e-11,
+          "pass": true
+        },
+        {
+          "tangent_altitude_m": 35000.0,
+          "production_tau550": 0.0,
+          "cartesian_reference": {
+            "tau550": 0.0,
+            "bending_rad": 0.00014998908033812014,
+            "max_invariant_relative_error": 1.4099832412739488e-13,
+            "max_direction_norm_error": 6.661338147750939e-16,
+            "accepted_steps": 392
+          },
+          "relative_or_zero_absolute_difference": 0.0,
+          "pass": true
+        }
+      ]
+    },
+    "global_energy": {
+      "pass": true,
+      "wavelength_nm": [
+        450.0,
+        550.0,
+        677.0
+      ],
+      "receiver_deficit_m2": [
+        129150415226618.75,
+        129327005438440.33,
+        129009519438862.64
+      ],
+      "pupil_deficit_m2": [
+        129150415345279.14,
+        129327005573010.86,
+        129009519600154.88
+      ],
+      "relative_difference": [
+        9.187767213703069e-10,
+        1.040544761465867e-09,
+        1.2502351376397769e-09
+      ],
+      "radius_samples": 2049,
+      "profile": {
+        "aod550": 0.013,
+        "bottom_m": 2000.0,
+        "top_m": 12000.0,
+        "scale_height_m": 8000.0,
+        "angstrom_visible": 1.58,
+        "angstrom_blue": 1.21,
+        "break_nm": 500.0
+      }
+    }
+  },
+  "scope": "Numerical transport closure; not aerosol-profile or observational validation"
+}
