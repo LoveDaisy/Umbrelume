@@ -1,0 +1,10 @@
+{
+  "scope": "Independent literature prior-source survey for the low-troposphere aerosol increment (task-prior-source-survey). Purpose: evidence collection and coverage assessment only — no default change, no new-default proposal, no decision. Three justification lanes are evaluated on their own evidence: (1) fixed higher prior, (2) documented range/distribution, (3) keep current default with the standing gap. Values here are collected independently of the four eclipse events; they never enter the model default. Coverage is not justification: a source covering a retrieval-spec dimension is recorded as covered/partial, never as justifying a specific default value.",
+  "source_convention": "Pinned-source contract inherited from validation/results/extinction_gap_diagnosis/prior_parameters.json: every numeric value carries a pinned source with file_name + sha256 (64-hex, verified against the downloaded bytes) + printed location (page/table); rows or fields that could not be obtained carry status unavailable + a search_log.md pointer, never values from memory. Extension for non-PDF sources (online databases / data products): pin the exported/downloaded byte artefact (sha256 + bytes) plus the retrieval URL and the access date; an interactive source from which no bytes can be exported is recorded unavailable with its search trail — a bare URL without pinned bytes is not a valid source. Downloaded bytes are cached in outputs/prior_source_survey/raw/ (git-ignored); the repository commits only these JSON/md records, and anyone can re-download and verify via the recorded sha256.",
+  "retrieval_spec_reference": {
+    "product": "validation/results/atmosphere_inversion/inversion.json",
+    "sha256": null,
+    "note": "The dimensions being surveyed are referenced by json-path into this committed product (see coverage_matrix.json); the sha256 is recorded at coverage-matrix build time, not here, so this file does not drift when the matrix is built."
+  },
+  "sources": []
+}
