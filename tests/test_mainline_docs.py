@@ -1,6 +1,7 @@
 """MAINLINE evidence addresses: text/JSON only, no observational solver imports."""
 import json
 from pathlib import Path
+import re
 
 import pytest
 
@@ -16,6 +17,49 @@ def test_mainline_product_fields():
 
 def test_mainline_local_links():
     assert check_local_links(MAINLINE.read_text(), MAINLINE.parent)
+
+
+EXPECTED_IMAGES = {
+    "../figures/mainline/l1_molecular.png",
+    "../figures/mainline/l2_free_troposphere.png",
+    "../figures/mainline/l25_stratosphere.png",
+    "../figures/mainline/transmission_ladder.png",
+    "../figures/mainline/shadow_profile.png",
+    "../figures/multiple_events/comparison.png",
+    "../figures/filter_response_2011/comparison.png",
+    "../figures/dec2011/comparison.png",
+}
+
+
+def check_mainline_images(text):
+    # Reuse the local-link resolver (including missing-image failures), but
+    # require actual embeds too: ordinary links or zero images cannot pass.
+    check_local_links(text, MAINLINE.parent)
+    targets = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", text)
+    assert set(targets) == EXPECTED_IMAGES
+    assert len(targets) == len(EXPECTED_IMAGES)
+    assert re.findall(r"\*\*图 (\d+) ·", text) == [str(i) for i in range(1, 9)]
+
+
+def test_mainline_embeds_expected_figures_and_numbered_captions():
+    check_mainline_images(MAINLINE.read_text())
+    assert "equal-Y 色条已逐半径移除亮度" in MAINLINE.read_text()
+    assert "历史 v0.2" in MAINLINE.read_text()
+    assert "假设响应包络" in MAINLINE.read_text()
+    assert "不是置信区间" in MAINLINE.read_text()
+
+
+def test_mainline_images_missing_embed_and_bad_path_fail():
+    text = MAINLINE.read_text()
+    for broken in (text.replace("![", "["), text.replace(
+            "../figures/mainline/l1_molecular.png", "../figures/mainline/missing.png")):
+        with pytest.raises(AssertionError):
+            check_mainline_images(broken)
+
+
+def test_mainline_figure_readme_links():
+    readme = ROOT / "figures/mainline/README.md"
+    assert check_local_links(readme.read_text(), readme.parent)
 
 
 def test_field_resolver_nested_arrays_and_all_wildcard_branches(tmp_path):
