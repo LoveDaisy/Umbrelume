@@ -1,0 +1,336 @@
+{
+  "scope": "Independent literature prior-source survey for the low-troposphere aerosol increment (task-prior-source-survey). Purpose: evidence collection and coverage assessment only — no default change, no new-default proposal, no decision. Three justification lanes are evaluated on their own evidence: (1) fixed higher prior, (2) documented range/distribution, (3) keep current default with the standing gap. Values here are collected independently of the four eclipse events; they never enter the model default. Coverage is not justification: a source covering a retrieval-spec dimension is recorded as covered/partial, never as justifying a specific default value.",
+  "source_convention": "Pinned-source contract inherited from validation/results/extinction_gap_diagnosis/prior_parameters.json: every numeric value carries a pinned source with file_name + sha256 (64-hex, verified against the downloaded bytes) + printed location (page/table); rows or fields that could not be obtained carry status unavailable + a search_log.md pointer, never values from memory. Extension for non-PDF sources (online databases / data products): pin the exported/downloaded byte artefact (sha256 + bytes) plus the retrieval URL and the access date; an interactive source from which no bytes can be exported is recorded unavailable with its search trail — a bare URL without pinned bytes is not a valid source. Downloaded bytes are cached in outputs/prior_source_survey/raw/ (git-ignored); the repository commits only these JSON/md records, and anyone can re-download and verify via the recorded sha256.",
+  "retrieval_spec_reference": {
+    "product": "validation/results/atmosphere_inversion/inversion.json",
+    "sha256": null,
+    "note": "The dimensions being surveyed are referenced by json-path into this committed product (see coverage_matrix.json); the sha256 is recorded at coverage-matrix build time, not here, so this file does not drift when the matrix is built."
+  },
+  "sources": [
+    {
+      "name": "opac1998_bams_paper_mpg_copy",
+      "role": "OPAC canonical paper (secondary byte artifact; the repo-pinned canonical copy lives in prior_parameters.json contract, sha256 68a20ba9..., 121916 bytes, hosted at lweb.cfa.harvard.edu). This MPG-repository copy independently re-downloads the same paper for the survey; all printed locations in this survey cite the paper's printed pagination.",
+      "status": "available",
+      "citation": "Hess, M., Koepke, P., & Schult, I. (1998). Optical Properties of Aerosols and Clouds: The Software Package OPAC. Bull. Am. Meteorol. Soc., 79(5), 831-844.",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "opac_hess1998_bams.pdf",
+        "sha256": "207aa8f7da4d2d2974879288b58fc7752a1a09485d2ccf58589462468fdd36af",
+        "bytes": 14943986,
+        "url": "https://pure.mpg.de/rest/items/item_3365752/component/file_3365754/content",
+        "location": "whole paper; Sec. 3 (dataset, 61 wavelengths 0.25-40 um, eight RH classes), Table 1c (printed p. 837), Table 3 (printed p. 840), Table 4-5 (printed p. 841-843)"
+      },
+      "search_notes": null
+    },
+    {
+      "name": "opac1998_component_data_files",
+      "role": "The per-component per-RH optical-property ASCII files of the OPAC 1998 (v3.1) distribution - the dataset whose absence caused the 11 `unavailable` RH-variant rows in prior_parameters.json. The four water-uptaking components (WASO water-soluble, SUSO sulfate droplets, SSAM/SSCM sea salt acc./coa.) carry the humidity growth axis used by humidity_growth.json.",
+      "status": "partial",
+      "citation": "OPAC v3.1 (1998) component data files, distributed per Hess, Koepke & Schult (1998); redistributed by GEISA/AERIS (portal geisa.aeris-data.fr/opac, which documents the classic BAMS98 dataset), recovered via web.archive.org captures of the ESPRI distribution servers.",
+      "retrieved_date": "2026-11-11",
+      "version_verification": "Identified as the original 1998 dataset, not OPAC 2015: (1) each file contains the 61-wavelength grid 0.25-40 um exactly as described in BAMS98 Sec. 2; (2) dry-state microphysical parameters in the file headers match BAMS98 Table 1c verbatim (WASO sigma 2.24, dry rmod 0.0212 um; SUSO sigma 2.03, dry rmod 0.0695 um; checked on every retrieved file); (3) native OPAC ASCII format (header + 9-column optical table normalized ext.nor=1 at 0.55 um + scattering-angle x wavelength phase function). Caveat recorded honestly: no independent Mie-recomputation was performed; identification rests on these three structural/parameter checks plus the documented GEISA portal provenance (the '2011'/'2015' strings are GEISA redistribution path labels, not dataset versions; GEISA also publishes a separate genuine OPAC 2015 entry which was NOT used).",
+      "source": null,
+      "files": [
+        {
+          "file_name": "inso00",
+          "sha256": "752abb463a0d9c6907ca79ec18f1d8a8170d65758f92839381c16bcc854a418d",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/inso00",
+          "retrieved_url": "http://web.archive.org/web/20250119095723id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/inso00",
+          "wayback_capture_timestamp": "20250119095723",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "micm00",
+          "sha256": "f1df7b555acedc46c14dd6915044a7bb8406ee278f3ea864598b55960057ddff",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/micm00",
+          "retrieved_url": "http://web.archive.org/web/20250118021403id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/micm00",
+          "wayback_capture_timestamp": "20250118021403",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "mitr00",
+          "sha256": "b53f0103cfaa5349d778aec31447e6de65ae9788387b53412cc7210186e0b3f6",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/mitr00",
+          "retrieved_url": "http://web.archive.org/web/20250118013411id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/mitr00",
+          "wayback_capture_timestamp": "20250118013411",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam00",
+          "sha256": "5d750cad26ade3ae33ec83f8ce00bb819be1f247a1abc0cf314a9767aeaf2236",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam00",
+          "retrieved_url": "http://web.archive.org/web/20220925135955id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam00",
+          "wayback_capture_timestamp": "20220925135955",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam50",
+          "sha256": "8a6fbfcc8366bc19a8c9f446381f5254cd616ef427b5c67e1eb0daa992560fbc",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam50",
+          "retrieved_url": "http://web.archive.org/web/20220925141050id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam50",
+          "wayback_capture_timestamp": "20220925141050",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam70",
+          "sha256": "7a261823ed201842101a7bb0779cc35fbb0506e2df2e73a66ab2e08286a9c71f",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam70",
+          "retrieved_url": "http://web.archive.org/web/20220925134741id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam70",
+          "wayback_capture_timestamp": "20220925134741",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam80",
+          "sha256": "49ea20ec46d4a72b57aaecef5b90ef1920af9ce6740f2e65361ce92ab0c33fe5",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam80",
+          "retrieved_url": "http://web.archive.org/web/20220925144420id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam80",
+          "wayback_capture_timestamp": "20220925144420",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam90",
+          "sha256": "ccc000781b06231a3e682c5839bb65a2bcc9d5253090ce782ed6753e0494d0b2",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam90",
+          "retrieved_url": "http://web.archive.org/web/20220925154033id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam90",
+          "wayback_capture_timestamp": "20220925154033",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam95",
+          "sha256": "f22226e83b08b498691b7c2b349b5fcbd2cf489d0217437f2900413897a07afa",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam95",
+          "retrieved_url": "http://web.archive.org/web/20220925140510id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam95",
+          "wayback_capture_timestamp": "20220925140510",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam98",
+          "sha256": "134bd94be9ceaa84bffac6a41c815672cb38104c98b87a3dea4561336251a3ee",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam98",
+          "retrieved_url": "http://web.archive.org/web/20220925152308id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam98",
+          "wayback_capture_timestamp": "20220925152308",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "ssam99",
+          "sha256": "f0d9d51dd88c958cd918a7782af49972cfb833bb75a14056ce9ac7df443fc6de",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam99",
+          "retrieved_url": "http://web.archive.org/web/20220925150507id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/ssam99",
+          "wayback_capture_timestamp": "20220925150507",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "sscm00",
+          "sha256": "3a8f78b5a51f4520b55095033f399e5cfef432ad47cb47ad0da8205f8646ded7",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm00",
+          "retrieved_url": "http://web.archive.org/web/20250119101249id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm00",
+          "wayback_capture_timestamp": "20250119101249",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "sscm50",
+          "sha256": "4037babf32ad3e216c39bac98dfa4767818a1c881ab848854812a2ebddf2321a",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm50",
+          "retrieved_url": "http://web.archive.org/web/20250114162555id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm50",
+          "wayback_capture_timestamp": "20250114162555",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "sscm80",
+          "sha256": "2f40f1187d0f8de86917c253c84d67a1f438ef81f7eebfed54f1a39b7a44a966",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm80",
+          "retrieved_url": "http://web.archive.org/web/20250114142614id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm80",
+          "wayback_capture_timestamp": "20250114142614",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "sscm90",
+          "sha256": "4c1c5db72a13bbffc4bd39bc0ac3a3b5a0fca069e3040d6dd9776fd3ea921488",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm90",
+          "retrieved_url": "http://web.archive.org/web/20250119104235id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm90",
+          "wayback_capture_timestamp": "20250119104235",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "sscm95",
+          "sha256": "8aaf95205f63b9225d3a4eb0ee431898b4320f2819d78e76b94063814c4ae554",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm95",
+          "retrieved_url": "http://web.archive.org/web/20250119095813id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/sscm95",
+          "wayback_capture_timestamp": "20250119095813",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso00",
+          "sha256": "10346786ba97c7917f7c0de9a59932ef708c93f46866c9ebecbc7f50642f0d9c",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso00",
+          "retrieved_url": "http://web.archive.org/web/20250119104428id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso00",
+          "wayback_capture_timestamp": "20250119104428",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso70",
+          "sha256": "7e9bc6f3f6195481ac20c5df4daf691a4a7d55546c7e74a67c9f4ceef4b1b5d0",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso70",
+          "retrieved_url": "http://web.archive.org/web/20250114104144id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso70",
+          "wayback_capture_timestamp": "20250114104144",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso80",
+          "sha256": "b34bc717edf87cc287ca1458b28ecab6e96bdfa488d9c6aecd9849cea75ae63a",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso80",
+          "retrieved_url": "http://web.archive.org/web/20250119103346id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso80",
+          "wayback_capture_timestamp": "20250119103346",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso95",
+          "sha256": "64bf4ecc98ce5683645251f677b50af496263ad1eb6b99982c93b6038f4e13e2",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso95",
+          "retrieved_url": "http://web.archive.org/web/20250114213534id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso95",
+          "wayback_capture_timestamp": "20250114213534",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso98",
+          "sha256": "2d6e1245335de548d853125308c999d33c298e0a350bf3051ad6d8b646083f97",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso98",
+          "retrieved_url": "http://web.archive.org/web/20250119095259id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/suso98",
+          "wayback_capture_timestamp": "20250119095259",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "suso99",
+          "sha256": "0faf8cfd28c20f4547c148c8bf1ee27cbbd5f86a3c34bd351d593508803ad744",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/suso99",
+          "retrieved_url": "http://web.archive.org/web/20231202114826id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/suso99",
+          "wayback_capture_timestamp": "20231202114826",
+          "location": "component data file (sulfate droplets 99% RH), same format as sibling entries"
+        },
+        {
+          "file_name": "waso00",
+          "sha256": "4d7244f93841f2884aa7ead7c27e0f8344cbb6a7af02c184dfecbc1d4b0015ce",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso00",
+          "retrieved_url": "http://web.archive.org/web/20250114213156id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso00",
+          "wayback_capture_timestamp": "20250114213156",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "waso50",
+          "sha256": "eab5e8e27a470b3ee6c350698a1d6e4b34f407d3b3ae28f1fda20a237039579e",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso50",
+          "retrieved_url": "http://web.archive.org/web/20250119103645id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso50",
+          "wayback_capture_timestamp": "20250119103645",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "waso70",
+          "sha256": "33a13edffc37e6d8348ae5521fd03f8d36311878f2436649c7f3c9f02a2bbb80",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso70",
+          "retrieved_url": "http://web.archive.org/web/20250117230131id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso70",
+          "wayback_capture_timestamp": "20250117230131",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        },
+        {
+          "file_name": "waso99",
+          "sha256": "bd8209c423030b555910dbb4b1beb54f3d70301c60ca434db0f484573ef430fc",
+          "bytes": 76795,
+          "original_url": "https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso99",
+          "retrieved_url": "http://web.archive.org/web/20250117235247id_/https://aeris-geisa.ipsl.fr/geisa_files/2011/Aerosols/OPAC/waso99",
+          "wayback_capture_timestamp": "20250117235247",
+          "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
+        }
+      ],
+      "missing_files": {
+        "names": [
+          "waso80",
+          "waso90",
+          "waso95",
+          "waso98",
+          "suso50",
+          "suso90",
+          "sscm70",
+          "sscm98",
+          "sscm99",
+          "soot00",
+          "minm00",
+          "miam00"
+        ],
+        "reason": "not captured by web.archive.org on either ESPRI host (404 from wayback for all 12, tried across 2022/2023/2024/2025 timestamps); direct ESPRI download impossible from this network (TCP connect OK, TLS handshake times out on both aeris-geisa.ipsl.fr and cds-espri.ipsl.upmc.fr); FlexAOD mirror (bundles data/gads/optdat) under server maintenance (HTTP maintenance page); see search_log.md entries W1.3-W1.7",
+        "impact": "RH growth curves remain constructible from the retrieved files: SUSO has 00/70/80/95/98/99 (6 of 8), WASO has 00/50/70/99 (4 of 8 incl. both endpoints), SSAM has all 8 (both endpoints), SSCM has 00/50/80/90/95 (5 of 8; the high-RH endpoint classes 98/99 are missing, so no SSCM dry->99% growth is asserted). Full dry->99% endpoint pairs exist only for SUSO/WASO/SSAM. Missing are mid-RH points for WASO (80/90/95/98) and SUSO (50/90), SSCM 70/98/99, plus 3 non-hygroscopic components."
+      },
+      "search_notes": "search_log.md W1.3-W1.7 (dead-path evidence for LMU FTP, wayback FTP gaps, ESPRI TLS, FlexAOD maintenance)"
+    },
+    {
+      "name": "aeronet_v3_gsfc_2011_lev20",
+      "role": "Mid-latitude (39.0 N) site AOD time series, Level 2.0 (cloud-cleared, quality assured, pre/post-field calibration applied), calendar year 2011, all retrievals. Serves the AOD-distribution coverage dimension: near-550nm channels (500/551/560 nm) directly comparable to the retrieval-spec AOD550 pool without wavelength conversion, and 440-870/440-675/500-870 Angstrom pairs cover the alpha dimensions. Independent of the four eclipse events.",
+      "status": "available",
+      "citation": "AERONET Version 3 Direct Sun product, site GSFC (NASA Goddard Space Flight Center, 38.9925 N, 76.8398 W, 87 m), AOD Level 2.0, year 2011, retrieved via the AERONET Data Download (Version 3 Direct Sun) web service. Data use per aeronet.gsfc.nasa.gov data usage guidelines (cite the site and PI: PI=Pawan_Gupta_and_Elena_Lind as recorded in the file header).",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "aeronet_gsfc_2011_lev20_daily.csv",
+        "sha256": "f44fba2d714f9274238225828356744806a3f010f6e83dd01103b3ba6e1a236a",
+        "bytes": 7205149,
+        "url": "https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2011&month=1&day=1&year2=2011&month2=12&day2=31&AOD20=1&AVG=10&if_no_html=1",
+        "location": "CSV: header lines 1-5 (product/level/PI declaration), then one row per retrieval; columns AOD_500nm / AOD_551nm / AOD_560nm / AOD_440nm etc. (-999 = missing), 440-870 / 440-675 / 500-870 Angstrom_Exponent, Site_Latitude/Longitude/Elevation"
+      },
+      "search_notes": null
+    },
+    {
+      "name": "dubovik2002_aeronet_types",
+      "role": "AERONET-based aerosol-type optical property climatology at 12 worldwide sites: per-site observed AOD ranges (tau at 440 nm for urban/biomass; tau at 1020 nm for dust/oceanic rows), Angstrom exponent ranges, SSA. Serves: AOD-distribution coverage (site-level observed ranges incl. clean-marine low end at Lanai) and alpha-envelope comparison (alpha computed on the 440/870 pair - different pair than the spec's blue/visible pairs; recorded as caveat).",
+      "status": "available",
+      "citation": "Dubovik, O., Holben, B. N., Eck, T. F., Smirnov, A., Kaufman, Y. J., King, M. D., Tanre, D., & Slutsker, I. (2002). Variability of Absorption and Optical Properties of Key Aerosol Types Observed in Worldwide Locations. J. Atmos. Sci., 59, 590-608.",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "dubovik2002_jas.pdf",
+        "sha256": "6a8875b1969bbf6486f865d03895e5bd77498163999ea7d56f73812617ab97f5",
+        "bytes": 968053,
+        "url": "https://data.giss.nasa.gov/gacp/publications/special/dubovik3.pdf",
+        "location": "Table 1 (PDF pp. 44/48 of the GISS-hosted preprint layout), rows 'Urban/Industrial & Mixed' (GSFC 0.1<=tau440<=1.0, mean 0.24; Creteil 0.1-0.9; Mexico City 0.1-1.8; Maldives 0.1-0.7; alpha: GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives 0.4-2.0), 'Biomass burning' (tau440: Amazonian 0.1-3.0, Cerrado 0.1-2.1, African Savanna 0.1-1.5, Boreal Forest 0.1-3.5; alpha: 1.2-2.1, 1.2-2.1, 1.4-2.2, 1.0-2.3), 'Desert Dust & Oceanic' (Lanai/Hawaii 0.01<=tau1020<=0.2, mean 0.04; Cape Verde 0.1-2.0; alpha: Bahrain 0-1.6, Solar Village 0.1-0.9, Cape Verde -0.1-0.7, Lanai 0-1.55)"
+      },
+      "search_notes": null
+    },
+    {
+      "name": "winker2013_calipso_3d",
+      "role": "CALIPSO lidar global climatology of aerosol vertical distribution and AOD (532 nm). Serves: layer-geometry context via the H63 column statistic (altitude below which 63% of column AOD lies; equals the exponential scale height only for an UNTRUNCATED profile, so comparison against the spec's 10-km-truncated layer requires the conversion in coverage_matrix.json derived_comparisons, which crosses definitions and does not certify or exclude the profile) and clean-ocean AOD levels. Values read from figures are approximate figure reads, flagged as such.",
+      "status": "available",
+      "citation": "Winker, D. M., Tackett, J. L., Getzewich, B. J., Liu, Z., Vaughan, M. A., & Rogers, R. R. (2013). The global 3-D distribution of tropospheric aerosols: a view from CALIPSO. Atmos. Chem. Phys., 13, 3345-3361.",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "winker2013_acp_3d.pdf",
+        "sha256": "4b150733884da4d0d76eca3b63cd98225c481577a891c161431c5302e1f06233",
+        "bytes": 5463282,
+        "url": "https://acp.copernicus.org/articles/13/3345/2013/acp-13-3345-2013.pdf",
+        "location": "Sec. 5 (H63 metric definition, printed p. 3351-3352); Fig. 9 (printed p. 3352): seasonal mean H63 maps, colorbar 0-5 km, oceans ~1-2 km, most land 1.5-3 km, max ~4.5-5 km over deserts/elevated source regions, polar high values stated spurious in text; Fig. 10 (same page): seasonal mean AOD 532 nm maps, ocean background ~0.05-0.1, land source regions up to 0.9-1.0"
+      },
+      "figure_read_caveat": "H63 and AOD values quoted from Fig. 9/10 are read off published color maps (approximate, bin resolution ~0.5 km / ~0.1 AOD); no tabulated numeric values exist in the paper text.",
+      "search_notes": null
+    }
+  ]
+}

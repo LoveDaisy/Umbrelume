@@ -1,0 +1,290 @@
+{
+  "scope": "Humidity-growth quantitative table (plan Step 5): f(RH) growth factors of the OPAC-pinned component classes, extracted from the pinned 1998 component data files recovered in this survey. Purpose is the magnitude comparison against the cross-event inversion pool ratio R=7.110 ONLY - this table makes no claim about whether the humidity axis explains any event, and no conclusion is drawn.",
+  "method": {
+    "extraction": "ext.coef at wavelength 0.550 um read from each pinned OPAC component file's optical table (the files' extinction is normalized ext.nor=1 at 0.55 um and is expressed per 1 particle/cm3). Growth factor g(RH) = ext550(RH)/ext550(RH=0%). At fixed number density N and fixed layer geometry, column AOD550 scales linearly with ext550(RH), so g(RH) is also the AOD growth factor per component at fixed N.",
+    "conversion_notes": "OPAC aerosol types (as used by the pinned prior_parameters contract) are mixtures of components; type-level humidity growth depends on the mixture composition and is NOT computed here. The low-layer increment of the production model is a 0-10 km layer; applying g(RH) as an AOD multiplier assumes the layer's number density profile is held fixed while particle wet size changes - the OPAC files' own construction (same dry size distribution, RH-dependent wet radius).",
+    "inputs": "validation/results/prior_source_survey/sources.json entry opac1998_component_data_files (26 pinned files, sha256 per file); version identification (original 1998 dataset) recorded there."
+  },
+  "pool_comparison_anchor": {
+    "reference": "validation/results/atmosphere_inversion/inversion.json retrieval_spec.aod550_pool",
+    "pool_values_aod550": {
+      "june_2011": 0.025865877276886398,
+      "hst_2019": 0.12036025043776977,
+      "dec_2011": 0.18391557805870665,
+      "event_1990_02_09": 0.07278811248646479
+    },
+    "pool_ratio_R": 7.11035531831942,
+    "comparison_statement": "Magnitude comparison only: the full-humidity-axis growth (dry -> 99% RH) spans x12.1-x18.6 for the three components with both endpoints pinned (SUSO x16.98, WASO x12.14, SSAM x18.58); SSCM's high end is pinned at 95% (x8.17) and no SSCM dry->99% growth is asserted. The 50% -> 99% span is x7.4-x7.6 (WASO/SSAM, the two components with the 50% and 99% files both pinned), the same order as R=7.110; the moderate spans are much smaller (50% -> 80%: x1.49-x1.52 for SSAM/SSCM; 50% -> 90%: x2.07-x2.17; 70% -> 98%: x3.92-x4.04). Whether an ambient-RH difference between eclipse events could span the pool is not assessed here; the table only states which RH spans produce which growth factors."
+  },
+  "components": [
+    {
+      "component": "SUSO",
+      "opac_component_class": "sulfate droplets (75% H2SO4)",
+      "status": "partial",
+      "per_rh": {
+        "0": {
+          "ext_coef_550nm_per_particle_1km": 7.120000000000001e-05,
+          "growth_factor_vs_dry": 1.0,
+          "source": {
+            "file_name": "suso00",
+            "sha256": "10346786ba97c7917f7c0de9a59932ef708c93f46866c9ebecbc7f50642f0d9c",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "70": {
+          "ext_coef_550nm_per_particle_1km": 0.0002159,
+          "growth_factor_vs_dry": 3.0323033707865163,
+          "source": {
+            "file_name": "suso70",
+            "sha256": "7e9bc6f3f6195481ac20c5df4daf691a4a7d55546c7e74a67c9f4ceef4b1b5d0",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "80": {
+          "ext_coef_550nm_per_particle_1km": 0.0002629,
+          "growth_factor_vs_dry": 3.692415730337078,
+          "source": {
+            "file_name": "suso80",
+            "sha256": "b34bc717edf87cc287ca1458b28ecab6e96bdfa488d9c6aecd9849cea75ae63a",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "95": {
+          "ext_coef_550nm_per_particle_1km": 0.0005288000000000001,
+          "growth_factor_vs_dry": 7.426966292134831,
+          "source": {
+            "file_name": "suso95",
+            "sha256": "64bf4ecc98ce5683645251f677b50af496263ad1eb6b99982c93b6038f4e13e2",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "98": {
+          "ext_coef_550nm_per_particle_1km": 0.0008457000000000001,
+          "growth_factor_vs_dry": 11.877808988764045,
+          "source": {
+            "file_name": "suso98",
+            "sha256": "2d6e1245335de548d853125308c999d33c298e0a350bf3051ad6d8b646083f97",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "99": {
+          "ext_coef_550nm_per_particle_1km": 0.001209,
+          "growth_factor_vs_dry": 16.980337078651683,
+          "source": {
+            "file_name": "suso99",
+            "sha256": "0faf8cfd28c20f4547c148c8bf1ee27cbbd5f86a3c34bd351d593508803ad744",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        }
+      },
+      "missing_rh_files": [
+        50,
+        90
+      ],
+      "search_notes": "search_log.md W1.6"
+    },
+    {
+      "component": "WASO",
+      "opac_component_class": "water-soluble",
+      "status": "partial",
+      "per_rh": {
+        "0": {
+          "ext_coef_550nm_per_particle_1km": 3.905e-06,
+          "growth_factor_vs_dry": 1.0,
+          "source": {
+            "file_name": "waso00",
+            "sha256": "4d7244f93841f2884aa7ead7c27e0f8344cbb6a7af02c184dfecbc1d4b0015ce",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "50": {
+          "ext_coef_550nm_per_particle_1km": 6.366e-06,
+          "growth_factor_vs_dry": 1.6302176696542894,
+          "source": {
+            "file_name": "waso50",
+            "sha256": "eab5e8e27a470b3ee6c350698a1d6e4b34f407d3b3ae28f1fda20a237039579e",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "70": {
+          "ext_coef_550nm_per_particle_1km": 7.913e-06,
+          "growth_factor_vs_dry": 2.0263764404609477,
+          "source": {
+            "file_name": "waso70",
+            "sha256": "33a13edffc37e6d8348ae5521fd03f8d36311878f2436649c7f3c9f02a2bbb80",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "99": {
+          "ext_coef_550nm_per_particle_1km": 4.740000000000001e-05,
+          "growth_factor_vs_dry": 12.138284250960309,
+          "source": {
+            "file_name": "waso99",
+            "sha256": "bd8209c423030b555910dbb4b1beb54f3d70301c60ca434db0f484573ef430fc",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        }
+      },
+      "missing_rh_files": [
+        80,
+        90,
+        95,
+        98
+      ],
+      "search_notes": "search_log.md W1.6"
+    },
+    {
+      "component": "SSAM",
+      "opac_component_class": "sea salt (accumulation mode)",
+      "status": "available",
+      "per_rh": {
+        "0": {
+          "ext_coef_550nm_per_particle_1km": 0.001028,
+          "growth_factor_vs_dry": 1.0,
+          "source": {
+            "file_name": "ssam00",
+            "sha256": "5d750cad26ade3ae33ec83f8ce00bb819be1f247a1abc0cf314a9767aeaf2236",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "50": {
+          "ext_coef_550nm_per_particle_1km": 0.002513,
+          "growth_factor_vs_dry": 2.444552529182879,
+          "source": {
+            "file_name": "ssam50",
+            "sha256": "8a6fbfcc8366bc19a8c9f446381f5254cd616ef427b5c67e1eb0daa992560fbc",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "70": {
+          "ext_coef_550nm_per_particle_1km": 0.0031360000000000003,
+          "growth_factor_vs_dry": 3.050583657587549,
+          "source": {
+            "file_name": "ssam70",
+            "sha256": "7a261823ed201842101a7bb0779cc35fbb0506e2df2e73a66ab2e08286a9c71f",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "80": {
+          "ext_coef_550nm_per_particle_1km": 0.003743,
+          "growth_factor_vs_dry": 3.641050583657587,
+          "source": {
+            "file_name": "ssam80",
+            "sha256": "49ea20ec46d4a72b57aaecef5b90ef1920af9ce6740f2e65361ce92ab0c33fe5",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "90": {
+          "ext_coef_550nm_per_particle_1km": 0.005203,
+          "growth_factor_vs_dry": 5.061284046692607,
+          "source": {
+            "file_name": "ssam90",
+            "sha256": "ccc000781b06231a3e682c5839bb65a2bcc9d5253090ce782ed6753e0494d0b2",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "95": {
+          "ext_coef_550nm_per_particle_1km": 0.007487000000000001,
+          "growth_factor_vs_dry": 7.283073929961089,
+          "source": {
+            "file_name": "ssam95",
+            "sha256": "f22226e83b08b498691b7c2b349b5fcbd2cf489d0217437f2900413897a07afa",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "98": {
+          "ext_coef_550nm_per_particle_1km": 0.012669999999999999,
+          "growth_factor_vs_dry": 12.324902723735407,
+          "source": {
+            "file_name": "ssam98",
+            "sha256": "134bd94be9ceaa84bffac6a41c815672cb38104c98b87a3dea4561336251a3ee",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "99": {
+          "ext_coef_550nm_per_particle_1km": 0.0191,
+          "growth_factor_vs_dry": 18.57976653696498,
+          "source": {
+            "file_name": "ssam99",
+            "sha256": "f0d9d51dd88c958cd918a7782af49972cfb833bb75a14056ce9ac7df443fc6de",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        }
+      },
+      "missing_rh_files": [],
+      "search_notes": null
+    },
+    {
+      "component": "SSCM",
+      "opac_component_class": "sea salt (coarse mode)",
+      "status": "partial",
+      "per_rh": {
+        "0": {
+          "ext_coef_550nm_per_particle_1km": 0.05667,
+          "growth_factor_vs_dry": 1.0,
+          "source": {
+            "file_name": "sscm00",
+            "sha256": "3a8f78b5a51f4520b55095033f399e5cfef432ad47cb47ad0da8205f8646ded7",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "50": {
+          "ext_coef_550nm_per_particle_1km": 0.1439,
+          "growth_factor_vs_dry": 2.5392623963296277,
+          "source": {
+            "file_name": "sscm50",
+            "sha256": "4037babf32ad3e216c39bac98dfa4767818a1c881ab848854812a2ebddf2321a",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "80": {
+          "ext_coef_550nm_per_particle_1km": 0.21850000000000003,
+          "growth_factor_vs_dry": 3.8556555496735494,
+          "source": {
+            "file_name": "sscm80",
+            "sha256": "2f40f1187d0f8de86917c253c84d67a1f438ef81f7eebfed54f1a39b7a44a966",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "90": {
+          "ext_coef_550nm_per_particle_1km": 0.31160000000000004,
+          "growth_factor_vs_dry": 5.498500088230105,
+          "source": {
+            "file_name": "sscm90",
+            "sha256": "4c1c5db72a13bbffc4bd39bc0ac3a3b5a0fca069e3040d6dd9776fd3ea921488",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        },
+        "95": {
+          "ext_coef_550nm_per_particle_1km": 0.463,
+          "growth_factor_vs_dry": 8.170107640727016,
+          "source": {
+            "file_name": "sscm95",
+            "sha256": "8aaf95205f63b9225d3a4eb0ee431898b4320f2819d78e76b94063814c4ae554",
+            "location": "optical table, wavelength row 0.550 um (line 23 of 198), column ext.coef [1/km] (per 1 particle/cm3)"
+          }
+        }
+      },
+      "missing_rh_files": [
+        70,
+        98,
+        99
+      ],
+      "search_notes": "search_log.md W1.6"
+    }
+  ],
+  "key_transitions": {
+    "definition": "ext550(RH2)/ext550(RH1) for the spans named; computed only where both endpoint files are pinned",
+    "SUSO_70_to_98": 3.9170912459471987,
+    "SUSO_dry_to_99": 16.980337078651683,
+    "WASO_50_to_99": 7.445805843543828,
+    "WASO_dry_to_99": 12.138284250960309,
+    "SSAM_50_to_80": 1.4894548348587344,
+    "SSAM_50_to_90": 2.070433744528452,
+    "SSAM_50_to_99": 7.600477516912057,
+    "SSAM_dry_to_99": 18.57976653696498,
+    "SSCM_50_to_80": 1.5184155663655319,
+    "SSCM_50_to_90": 2.165392633773454,
+    "SSCM_50_to_95": 3.217512161223072
+  }
+}
