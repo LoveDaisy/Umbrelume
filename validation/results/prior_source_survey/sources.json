@@ -276,6 +276,52 @@
         "impact": "RH growth curves remain constructible from the retrieved files: SUSO has 00/70/80/95/98/99 (6 of 8), WASO has 00/50/70/99 (4 of 8 incl. both endpoints), SSAM has all 8, SSCM has 00/50/80/90/95. Missing are mid-RH points for WASO (80/90/95/98) and SUSO (50/90) plus 3 non-hygroscopic components."
       },
       "search_notes": "search_log.md W1.3-W1.7 (dead-path evidence for LMU FTP, wayback FTP gaps, ESPRI TLS, FlexAOD maintenance)"
+    },
+    {
+      "name": "aeronet_v3_gsfc_2011_lev20",
+      "role": "Mid-latitude (39.0 N) site AOD time series, Level 2.0 (cloud-cleared, quality assured, pre/post-field calibration applied), calendar year 2011, all retrievals. Serves the AOD-distribution coverage dimension: near-550nm channels (500/551/560 nm) directly comparable to the retrieval-spec AOD550 pool without wavelength conversion, and 440-870/440-675/500-870 Angstrom pairs cover the alpha dimensions. Independent of the four eclipse events.",
+      "status": "available",
+      "citation": "AERONET Version 3 Direct Sun product, site GSFC (NASA Goddard Space Flight Center, 38.9925 N, 76.8398 W, 87 m), AOD Level 2.0, year 2011, retrieved via the AERONET Data Download (Version 3 Direct Sun) web service. Data use per aeronet.gsfc.nasa.gov data usage guidelines (cite the site and PI: PI=Pawan_Gupta_and_Elena_Lind as recorded in the file header).",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "aeronet_gsfc_2011_lev20_daily.csv",
+        "sha256": "f44fba2d714f9274238225828356744806a3f010f6e83dd01103b3ba6e1a236a",
+        "bytes": 7205149,
+        "url": "https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2011&month=1&day=1&year2=2011&month2=12&day2=31&AOD20=1&AVG=10&if_no_html=1",
+        "location": "CSV: header lines 1-5 (product/level/PI declaration), then one row per retrieval; columns AOD_500nm / AOD_551nm / AOD_560nm / AOD_440nm etc. (-999 = missing), 440-870 / 440-675 / 500-870 Angstrom_Exponent, Site_Latitude/Longitude/Elevation"
+      },
+      "search_notes": null
+    },
+    {
+      "name": "dubovik2002_aeronet_types",
+      "role": "AERONET-based aerosol-type optical property climatology at 12 worldwide sites: per-site observed AOD ranges (tau at 440 nm for urban/biomass; tau at 1020 nm for dust/oceanic rows), Angstrom exponent ranges, SSA. Serves: AOD-distribution coverage (site-level observed ranges incl. clean-marine low end at Lanai) and alpha-envelope comparison (alpha computed on the 440/870 pair - different pair than the spec's blue/visible pairs; recorded as caveat).",
+      "status": "available",
+      "citation": "Dubovik, O., Holben, B. N., Eck, T. F., Smirnov, A., Kaufman, Y. J., King, M. D., Tanre, D., & Slutsker, I. (2002). Variability of Absorption and Optical Properties of Key Aerosol Types Observed in Worldwide Locations. J. Atmos. Sci., 59, 590-608.",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "dubovik2002_jas.pdf",
+        "sha256": "6a8875b1969bbf6486f865d03895e5bd77498163999ea7d56f73812617ab97f5",
+        "bytes": 968053,
+        "url": "https://data.giss.nasa.gov/gacp/publications/special/dubovik3.pdf",
+        "location": "Table 1 (PDF pp. 44/48 of the GISS-hosted preprint layout), rows 'Urban/Industrial & Mixed' (GSFC 0.1<=tau440<=1.0, mean 0.24; Creteil 0.1-0.9; Mexico City 0.1-1.8; Maldives 0.1-0.7), 'Desert Dust & Oceanic' (Lanai/Hawaii 0.01<=tau1020<=0.2, mean 0.04; Cape Verde 0.1-2.0), alpha ranges per site (urban 1.0-2.5, oceanic 0-1.55)"
+      },
+      "search_notes": null
+    },
+    {
+      "name": "winker2013_calipso_3d",
+      "role": "CALIPSO lidar global climatology of aerosol vertical distribution and AOD (532 nm). Serves: layer-geometry comparison via the H63 extinction scale-height metric (63% of AOD below this altitude - for an exponential profile H63 equals the scale height) and clean-ocean AOD levels. Values read from figures are approximate figure reads, flagged as such.",
+      "status": "available",
+      "citation": "Winker, D. M., Tackett, J. L., Getzewich, B. J., Liu, Z., Vaughan, M. A., & Rogers, R. R. (2013). The global 3-D distribution of tropospheric aerosols: a view from CALIPSO. Atmos. Chem. Phys., 13, 3345-3361.",
+      "retrieved_date": "2026-11-11",
+      "source": {
+        "file_name": "winker2013_acp_3d.pdf",
+        "sha256": "4b150733884da4d0d76eca3b63cd98225c481577a891c161431c5302e1f06233",
+        "bytes": 5463282,
+        "url": "https://acp.copernicus.org/articles/13/3345/2013/acp-13-3345-2013.pdf",
+        "location": "Sec. 5 (H63 metric definition, printed p. 3351-3352); Fig. 9 (printed p. 3352): seasonal mean H63 maps, colorbar 0-5 km, oceans ~1-2 km, most land 1.5-3 km, max ~4.5-5 km over deserts/elevated source regions, polar high values stated spurious in text; Fig. 10 (same page): seasonal mean AOD 532 nm maps, ocean background ~0.05-0.1, land source regions up to 0.9-1.0"
+      },
+      "figure_read_caveat": "H63 and AOD values quoted from Fig. 9/10 are read off published color maps (approximate, bin resolution ~0.5 km / ~0.1 AOD); no tabulated numeric values exist in the paper text.",
+      "search_notes": null
     }
   ]
 }

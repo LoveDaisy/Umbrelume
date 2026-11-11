@@ -58,6 +58,41 @@
 - 证据：返回 2500 字节 HTML（title: Maintenance）
 - 放弃理由：预算闸（该维度候选源第 3 个：ESPRI 直连 / wayback / FlexAOD）；wayback 已提供 25 文件，缺失文件不再追
 
+### [W2.1] 2026-11-11 Dubovik et al. 2002（AERONET 类型气候学）
+- 动作：curl https://data.giss.nasa.gov/gacp/publications/special/dubovik3.pdf
+- 结果：取得 968 KB PDF（51 页，JAS 排版稿），Table 1 逐站点 τ 范围/α 范围提取成功
+- 证据：sha256 6a8875b1969bbf6486f865d03895e5bd77498163999ea7d56f73812617ab97f5（sources.json `dubovik2002_aeronet_types`）
+
+### [W2.2] 2026-11-11 Holben et al. 2001（AERONET 气候学奠基论文）
+- 动作：WebSearch 找开放 PDF
+- 结果：无开放直链（AGU/Wiley 付费墙；ResearchGate 页存在但不可靠直下）
+- 放弃理由：Dubovik 2002 已覆盖同维度（站点级 τ/α 范围），Holben 2001 增量边际；预算闸（第 2 个候选）
+
+### [W2.3] 2026-11-11 AERONET v3 web service 站点数据（GSFC 2011）
+- 动作：旧 cgi 端点（data_plot_aod_v3）404 → 经 /new_web/data.html 定位现行端点 print_web_data_v3 → 下载 GSFC 2011 全年 AOD Level 2.0
+- 结果：7,205,149 字节 CSV，含 AOD_500/551/560 nm（近 550 nm 直接可比池值域，无需波长换算）+ 440-870/440-675/500-870 α 对 + 站址元数据
+- 证据：sha256 f44fba2d714f9274238225828356744806a3f010f6e83dd01103b3ba6e1a236a（sources.json `aeronet_v3_gsfc_2011_lev20`）
+- 类比判据落定：四事件季节跨 Jun/Dec/Jan/Feb、观测站纬度带 ~29°S–50°N（ESO La Silla 至俄罗斯中纬度）→ 选取全年 39.0°N 中纬度站点；GSFC 为连续多年 L2.0 数据的代表站
+
+### [W2.4] 2026-11-11 MODIS 全球 AOD 分布产品
+- 动作：未发起检索
+- 放弃理由：预算闸（AOD 分布维度第 4 个候选；Dubovik 2002 + AERONET 站点文件已构成站点级分布证据，MODIS 全球栅格产品对 pool 值域判定增量边际）。如实记录「预算内未穷尽」
+
+### [W3.1] 2026-11-11 McClatchey et al. 1972（AFCRL-72-0497，经典标准大气气溶胶廓线）
+- 动作：WebSearch 定位 → curl https://apps.dtic.mil/sti/pdfs/AD0753075.pdf（两次 UA 尝试）→ wayback 无存档
+- 结果：DTIC 返回 "The request is blocked"（主动拦截）；wayback 对该 PDF 无 capture
+- 放弃理由：预算闸（垂直几何维度经典报告路径 2 次尝试失败）；转开放获取卫星气候学路径（W3.3）
+
+### [W3.2] 2026-11-11 Elterman 1968（AFCRL-68-0153）
+- 动作：WebSearch 找直链
+- 结果：无直接 PDF（NTRS/DTIC 仅有引用文献）
+- 放弃理由：同 W3.1 预算闸
+
+### [W3.3] 2026-11-11 Winker et al. 2013（CALIPSO 全球 3-D 垂直分布，ACP 开放获取）
+- 动作：Yu et al. 2010/Koffi 线索纠偏（JGR 付费墙）→ 改 Winker 2013 → curl acp.copernicus.org 直下
+- 结果：取得 5.46 MB PDF（17 页）；Sec. 5 定义 H63（63% AOD 所在高度，与指数层标高构造等价）；Fig. 9 渲染读图：全球 H63 典型 1–3 km（海洋 1–2 km）、极值 ~4.5–5 km、极地高值文中明示 spurious；Fig. 10：海洋背景 AOD532 ~0.05–0.1
+- 证据：sha256 4b150733884da4d0d76eca3b63cd98225c481577a891c161431c5302e1f06233（sources.json `winker2013_calipso_3d`）；读图值已在该条目 figure_read_caveat 标注近似性质
+
 ### [W1.8] 2026-11-11 OPAC BAMS98 论文独立重下载
 - 动作：curl https://pure.mpg.de/rest/items/item_3365752/component/file_3365754/content
 - 结果：取得 14.9 MB 扫描版 PDF（14 页，MPG 仓库版）
