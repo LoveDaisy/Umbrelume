@@ -31,12 +31,69 @@ link is mechanical, not documentary.
 These are published background-model/climatology parameters. They are
 **not measurements of any eclipse atmosphere** and are not inferred from
 eclipse brightness curves. The free-troposphere optical values refer to the
-paper's 50% relative-humidity case; no humidity growth is simulated (the
-humidified-scaling prior is unavailable in the pinned source and stays out).
+paper's 50% relative-humidity case, which is also the model default (the
+`--rh` reference state below); the humidified-scaling prior was unavailable
+when this file was first written and is now supplied by the recovered OPAC
+component data (see the humidity axis section).
 The OPAC mixing-layer and transported-dust components are separate; none is
 added here. The wide low-layer increment (antarctic-type proxy, 0–10 km) was
 discriminated **against** as a default component: it is a menu-selection
 effect that strongly worsens the shape axis (see the standing gap below).
+
+## Humidity axis (free troposphere)
+
+The free-troposphere layer carries an optional, pinned humidity growth
+(`eclipse/aerosol.py` `ft_growth_factor`, task-humidity-axis). The OPAC 1998
+WASO component's 550 nm extinction per particle is pinned at three
+relative-humidity knots from the recovered component files
+(`validation/results/prior_source_survey/humidity_growth.json`, sha256 per
+knot): ext550 = 6.366e-6 (50%), 7.913e-6 (70%), 4.740e-5 (99%) km⁻¹ per
+(particle cm⁻³). The growth composes into a column-AOD factor
+
+```text
+f(RH) = (E_waso(RH) + q_rest) / 0.013,
+E_waso(RH) = 0.6 * 730 * e_waso(RH) * 8*(exp(-2/8) - exp(-12/8)) km,
+q_rest    = 0.013 - E_waso(50%) = 6.0495e-4 (4.65% of the reference),
+```
+
+with the paper's FT composition (Sec 5a, printed p. 842: WASO number mixing
+ratio 0.6 of a 730 particles cm⁻³ sea-level density) and vertical geometry
+(Table 5 FT row H = 8 km; Table 3 FT row 2–12 km). The non-growing
+soot+insoluble remainder is pinned by subtraction (`q_rest`): those
+components are hydrophobic (pinned only as 00 files), so their extinction
+does not grow with RH. f(70%) = 1.2317 and f(99%) = 7.1459. Every value,
+quote and ruling is transcribed in
+`validation/results/prior_source_survey/humidity_axis_priors.json` (sha256-
+anchored; pytest recomputes the chain).
+
+Semantics and scope:
+
+- **Reference state is bit-exact**: f(50%) is exactly 1.0, so the default
+  output (and every committed snapshot) is unchanged; the growth is a
+  column-AOD rescaling only — the layer's vertical shape and its broken
+  power law never change with RH.
+- **Domain and interpolation**: RH ∈ [0.5, 0.99], fail loud outside; between
+  knots the pinned ext550 values are interpolated linearly in RH (the
+  preregistered semantics; a log-RH alternative is recorded as a sensitivity
+  bracket in the A/B re-inversion product). The sub-reference direction is
+  deliberately not implemented — no discriminator consumes it.
+- **Interface**: `--rh` (default 0.5) acts on the free-troposphere layer of
+  `--aerosol opac` / `opac-ft` only, in composition with `--aod550` (the
+  override stays the 50% reference base; the effective FT AOD is
+  `base × f(RH)`, composed once at the factory). It is rejected with
+  `calibrated:<name>` and `none`. Metadata records `rh`, the growth factor,
+  the reference base and the knot sha256s in the FT layer's source record.
+- **Layer scope rulings**: the stratospheric background carries no humidity
+  parameter (Table 3 declares RH states only for boundary aerosols and the
+  FT; the pinned SUSO data has no knots below 70%, so low-RH growth would
+  need unpinned fabrication). Calibration-lane increment layers stay pinned
+  at the 50% reference state so a share measurement attributes humidity to
+  the prior, never to the calibrated increment.
+- **Limitation**: this is a 550 nm scalar column-AOD axis. Real humidification
+  also changes particle size and thus flattens the spectral slope; that
+  wavelength-resolved response is not simulated (it would entangle the pinned
+  power-law shape) and is recorded as the shape-axis cost in the A/B
+  re-inversion's sensitivity appendix.
 
 ## Definition and units
 
@@ -106,12 +163,18 @@ Interface mapping (names and semantics stable across the change):
   `aerosol_preset` keeps the requested choice string, so the actual medium is
   identified by `aerosol_aod_source == "Disabled"` — read all three fields,
   never `aerosol_preset` alone.
+- `--rh R` applies the pinned free-troposphere humidity growth (see the
+  humidity axis section above); the default 0.5 is the published reference
+  state and leaves every output bit-exact unchanged.
 
 Saved ray tables (`rays.npz`) carry the new key `aerosol_layer_taus` (a 2-D
 `(n_layers, n_tangent)` stack) whenever the run has an aerosol component, and
 keep the historical zero-array key `aerosol_tau550` only for the molecular-only
 runs. Metadata records both layers' parameters with their
-`prior_parameters.json` row references and the OPAC sha256.
+`prior_parameters.json` row references and the OPAC sha256; the
+free-troposphere layer's source record additionally carries the humidity-axis
+provenance (`rh`, the growth factor, the 50% reference base and the knot
+sha256s).
 
 ## Evidence and interpretation
 

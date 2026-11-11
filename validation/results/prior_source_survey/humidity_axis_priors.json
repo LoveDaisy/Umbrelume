@@ -1,0 +1,131 @@
+{
+  "scope": "Humidity-axis transcription product (task-humidity-axis): the OPAC 1998 free-troposphere composition and pinned WASO humidity-growth knots behind eclipse/aerosol.py's ft_growth_factor, with the preregistered interpolation semantics, layer-scope rulings and the R_RH verdict band consumed by validation/humidity_axis_inversion.py. Every value is a transcription or a mechanical derivation from pinned sources; no eclipse observation enters this product and no claim is made about whether humidity explains any event.",
+  "source_convention": "quotes are verbatim text extracted from the pinned OPAC paper (sha256 below) via the task's extraction; locations give the printed page and the extraction file line anchors. The pinned PDF bytes are authoritative over the extraction text.",
+  "opac_pdf": {
+    "file_name": "opac1998.pdf",
+    "sha256": "68a20ba9488db1e0f65a9976d4ee46e6c879f89054fcff583ba67bb5d68d425c",
+    "bytes": 121916,
+    "url": "https://lweb.cfa.harvard.edu/HITRAN/HITRAN2012/Aerosols/papers/hess_opac_1998.pdf"
+  },
+  "ft_composition": {
+    "quote_sec5a_p842": "The aerosol in the free troposphere is modeled by the continental components at a relative humidity of 50%, with a dominant part of the water-soluble component (n_i = 0.6 and m_i = 0.949), a certain part of soot (n_i = 0.4 and m_i = 0.0189), and some insoluble particles (n_i = 0.00017 and m_i = 0.032), which can be assumed for the Northern Hemisphere. A hypothetical number density of 730 particles cm-3 at sea level is assumed, allowing the use of (5d) for the description of height distributions, resulting, for example, in a number density of 390 particles cm-3 (M = 0.49 mg m-3) at a height of 5 km.",
+    "location": "Sec 5a, printed p. 842 (extraction lines 2286-2310)",
+    "number_mixing_ratios": {
+      "waso": 0.6,
+      "soot": 0.4,
+      "insoluble": 0.00017
+    },
+    "sea_level_number_density_per_cm3": 730.0,
+    "nongrowing_remainder_evidence": {
+      "quote_sec4_p842": "Mineral aerosol particles are assumed not to enlarge with increasing relative humidity.",
+      "location": "Sec 4, printed p. 842 (extraction lines 884-886)",
+      "dataset_structure": "SOOT and INSO are pinned only as 00 files (no RH variants) in the sources.json enumeration of the 38 OPAC component files; the growth math carries their share as the RH-independent remainder q_rest (pinned by subtraction against the published 50%-RH total).",
+      "note": "the subtraction avoids the unrecovered soot00/insoluble00 files; it is exact only under their RH-independence, which the dataset structure and the paper's construction support"
+    }
+  },
+  "table3_rh_semantics": {
+    "quote_sec5a_p842": "They are valid for a relative humidity of 80% in the case of the boundary aerosols and of 50% for the free troposphere.",
+    "location": "Sec 5a, printed p. 842 (extraction lines 2344-2349)",
+    "ft_row": {
+      "quote": "Free troposphere--0.013--0.934--1.211.58 (2-12 km)",
+      "location": "Table 3, printed p. 840-841 (extraction line 1991); the FT row is a background layer with no boundary-aerosol columns and no RH qualifier beyond the 50% reference stated in Sec 5a",
+      "aod550": 0.013,
+      "layer_km": [2, 12]
+    },
+    "stratosphere_row": {
+      "quote": "Stratosphere--0.005--1.000--0.741.14 (12-35 km)",
+      "location": "Table 3, printed p. 841 (extraction line 1993)",
+      "comment": "no RH state is declared for the stratospheric background row anywhere in the paper"
+    }
+  },
+  "ft_vertical_profile_evidence": {
+    "table5_ft_row": {
+      "quote": "Free troposphere--8",
+      "location": "Table 5 FT row (extraction line 2525): H_ft = 8 km"
+    },
+    "sec5b_upper_boundary": {
+      "quote": "For the proposed aerosol types, the upper boundary of this layer is always situated at 12 km.",
+      "location": "Sec 5b, printed p. 842-843 (extraction lines 2457-2459)"
+    },
+    "table3_layer_bounds": {
+      "quote": "(2-12 km)",
+      "location": "Table 3 FT row (extraction line 1992)"
+    },
+    "repo_geometry_comparison": {
+      "repo_layer_bottom_m": 2000.0,
+      "repo_layer_top_m": 12000.0,
+      "repo_scale_height_m": 8000.0,
+      "comparison": "paper FT layer bounds (2-12 km) and scale height (8 km) equal the repository free-troposphere layer exactly (mechanical gate: tests/test_aerosol_humidity.py::test_ft_geometry_matches_repo_layer)",
+      "profile_reference_note": "the paper's FT profile references N(0)=730 particles/cm3 at sea level, N(z)=N(0)*exp(-z/8km); the repository layer is the bottom-referenced shifted exponential normalized to the same column AOD 0.013. The humidity growth enters as a column-AOD ratio f_FT(rh) = (E_waso(rh)+q_rest)/0.013 whose numerator and denominator share the same geometry and composition, so the ratio is invariant to the profile reference level; per-particle water uptake multiplies the extinction by the same factor at every altitude, so the repository's committed vertical shape is preserved and only the column AOD is rescaled (J1).",
+      "verdict": "consistent"
+    }
+  },
+  "waso_growth_knots": {
+    "source_product": "validation/results/prior_source_survey/humidity_growth.json (WASO component)",
+    "extraction": "ext.coef at 0.550 um from each pinned wasoNN file's optical table, per 1 particle/cm3 (row location recorded per knot in humidity_growth.json)",
+    "per_rh": {
+      "0.5": {
+        "ext_coef_550nm_per_particle_1km": 6.366e-06,
+        "sha256": "eab5e8e27a470b3ee6c350698a1d6e4b34f407d3b3ae28f1fda20a237039579e",
+        "file_name": "waso50"
+      },
+      "0.7": {
+        "ext_coef_550nm_per_particle_1km": 7.913e-06,
+        "sha256": "33a13edffc37e6d8348ae5521fd03f8d36311878f2436649c7f3c9f02a2bbb80",
+        "file_name": "waso70"
+      },
+      "0.99": {
+        "ext_coef_550nm_per_particle_1km": 4.740000000000001e-05,
+        "sha256": "bd8209c423030b555910dbb4b1beb54f3d70301c60ca434db0f484573ef430fc",
+        "file_name": "waso99"
+      }
+    },
+    "missing_between_knots": "the 80-98% WASO files are among the 12 unrecoverable component files (humidity_growth.json missing_rh_files); the 70-99% segment therefore carries the preregistered interpolation, and the sensitivity appendix of the A/B re-inversion records the log-RH alternative bracket"
+  },
+  "q_rest_derivation": {
+    "formula": "E_waso(rh) = n_waso * N(0) * e_waso(rh) * H * (exp(-bottom/H) - exp(-top/H)), with n_waso=0.6, N(0)=730 particles/cm3, e_waso the pinned ext550 knots, H=8 km, bottom=2 km, top=12 km; q_rest = 0.013 - E_waso(50%)",
+    "e_waso_50": 0.012395046746088918,
+    "e_waso_70": 0.015407163823720016,
+    "e_waso_99": 0.0922911114930278,
+    "geometry_factor_km": 4.445364983383801,
+    "q_rest": 0.0006049532539110815,
+    "q_rest_fraction_of_reference": 0.04653486568546781,
+    "gate": "0 < q_rest < 0.013 enforced at import of eclipse/aerosol.py (fail loud); pytest recomputes the chain from the pinned knots",
+    "values_are": "exact float results of the eclipse/aerosol.py implementation chain (the authoritative computation); pytest asserts identity"
+  },
+  "ft_growth_factor_pinned": {
+    "0.5": 1.0,
+    "0.7": 1.2317013136639305,
+    "0.99": 7.145851134379914,
+    "definition": "f_FT(rh) = (E_waso(rh) + q_rest)/0.013; monotone nondecreasing on the pinned domain"
+  },
+  "interpolation_semantics": {
+    "rule": "linear interpolation of the pinned per-particle ext550 knots in RH, then composition into the layer factor: f_FT(rh) = (E_waso(rh) + q_rest)/0.013",
+    "domain": [0.5, 0.99],
+    "outside_domain": "fail loud (ValueError); the sub-reference direction is not implemented - no discriminator consumes it and the paper defines the FT composite reference state only at 50%",
+    "lerp_form": "v0 + w*(v1-v0), w = (x-x0)/(x1-x0)"
+  },
+  "layer_scope_rulings": {
+    "increment_layers": {
+      "ruling": "calibration-lane increment layers stay pinned at the 50% reference state (f=1): the (B-A) share measurement requires the humidity axis to be an attribute of the prior only, not of the calibrated increment - the same RH must not act twice through a calibrated artifact (J3)",
+      "antarctic_switch_rule": "dormant (not triggered): the antarctic-type composition files (SUSO 6/8, SSAM 8/8, MITR 00 recovered) have pinned knots making synthesis feasible, and no increment layer consumes humidity under this ruling. Fallback chain preregistered for any follow-up task that humidifies increment layers: synthesize the antarctic composition first (Table 4 row, mass values at RH 50%: sulfate SUSO n_j=0.998, sea salt accumulation SSAM n_j=0.109e-2, mineral transported MITR n_j=0.123e-3; the SUSO 50% knot is missing and would need interpolation), switch to a WASO-class morphology only if synthesis proves infeasible"
+    },
+    "stratosphere_background": {
+      "ruling": "no humidity parameter: Table 3 declares RH states only for boundary aerosols (80%) and the free troposphere (50%), the stratosphere row carries none; the pinned SUSO data has no knots between 0 and 70% (50%/90% missing) so any low-RH stratospheric growth would need unpinned fabrication; stratospheric water vapor is decoupled from tropospheric event meteorology (J4)"
+    }
+  },
+  "r_rh_band": {
+    "structural_domain": "[1, infinity): R_RH is a max/min ratio of positive residuals; values below 1 are structurally unreachable and not preregistered",
+    "compatible_upper": 2.0,
+    "partially_consistent_upper": 10.0,
+    "verdicts": {
+      "compatible": "R_RH <= 2.0",
+      "partially_consistent": "2.0 < R_RH <= 10.0",
+      "tension": "R_RH > 10.0"
+    },
+    "band_edge_source": "descriptive transcription of the mechanical edges imported from validation/extinction_gap_diagnosis.py (VERDICT_COMPATIBLE[1], VERDICT_TENSION[1]); the consumer asserts edge-value equality at import and applies the verdict through the imported constants only",
+    "participation_rule": "per ladder point: events with a positive inverted residual participate; zero-increment, over-closed and unclosed events are listed separately with their status; fewer than 2 participating events -> mechanical status degenerate, no band verdict",
+    "evidence_grade_note": "a ratio over n participating events is reported with n_participating; a 2-event ratio is not a 4-event R and carries weaker evidence",
+    "interpretation_note": "preregistered budget expectation, FALSIFIED by the machine results of the A/B re-inversion: the plan-phase linear AOD budget predicted R_RH(70%) > R=7.110, arguing that the same absolute FT growth increment is removed from every event's baseline so the residual ratio first widens and then narrows. The measured value (A/B product r_rh['0.7']) is 7.023 < 7.110 because the per-event absorption effectiveness of the FT humidification against the antarctic-form increment is not 1:1 (measured ratios are recorded in the A/B product's humidity_sufficiency.effectiveness account); the equal-absolute-removal premise does not hold. Neither the expectation nor its falsification is a red flag by itself; the band verdicts are applied mechanically to the measured residuals."
+  }
+}

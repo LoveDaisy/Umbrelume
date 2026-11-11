@@ -1,0 +1,1922 @@
+{
+  "scope": "A/B preregistered humidity-axis re-inversion (task-humidity-axis): how much of the R=7.110 cross-event spread of the task-5 low-layer increment pool can the pinned OPAC humidity growth absorb? Variant A (RH-only) root-finds the free-troposphere humidity per event on the pinned domain [0.5, 0.99]; variant B ladders the task-5 inversion machine verbatim over the pinned RH knots {50, 70, 99}% for the residual antarctic-form increment. Calibration lane: every value is relative to the humidified production baseline and is calibrated, not a physical prior; nothing here enters the default model. The preregistered block (verbatim module constant, pytest-pinned; the R_RH band generated from humidity_axis_priors.json) is written before results; B(50%) reproduces the committed task-5 pool bitwise before any other result; the R_RH verdicts are the mechanical application of the preregistered bands with the preregistered participation rule.",
+  "preregistered": {
+    "baseline": "every value is relative to the PRODUCTION two-layer default (fixed_opac_strat) whose free-troposphere layer carries the pinned humidity growth (eclipse/aerosol.py ft_growth_factor; f(0.5) exactly 1.0, q_rest gate enforced at import); the increment (variant B) is the task-5 antarctic-form extra column; a zero increment restores the humidified baseline bitwise and at rh=0.5 the humidified table is bitwise the production table",
+    "ladder": {
+      "knots_rh": [
+        0.5,
+        0.7,
+        0.99
+      ],
+      "knot_source": "pinned WASO ext550 knots (humidity_axis_priors.json waso_growth_knots; sha256 per knot)",
+      "semantics": "variant B evaluates the task-5 inversion machine verbatim at each knot (table override; same objective, splits, morphology, bracket, root finder); the ladder carries the joint (rh, a_res) family through per-knot scalar roots - the task-5 closure target reduces per event to a single scalar (brentq on one AOD), so a 2-parameter joint root is not recoverable and this realization is preregistered",
+      "interpolation": "between knots the FT growth is the pinned linear-in-RH interpolation (eclipse/aerosol.py); the ladder itself never interpolates"
+    },
+    "variant_a": {
+      "free_parameter": "rh in [0.5, 0.99] (pinned domain), zero increment",
+      "objective": "g(rh) = fit-subset median ln(P(rh)/O) with P through the humidified table; monotone nonincreasing in rh (more humidity -> more extinction -> every prediction decreases)",
+      "root_finder": "scipy.optimize.brentq on [0.5, 0.99], xtol=1e-12",
+      "branch_unclosed": "g(0.99) > 0 -> the pinned growth range cannot close the event; status unclosed, not forced; its accounts evaluate the before-state at the reference and the after-state at the domain top (the closest achievable humidity-only state)",
+      "branch_closed_at_reference": "g(0.5) <= 0 -> the reference state already closes the event; status closed_at_reference (not expected: all four task-5 pools are positive)",
+      "branch_dark": "a dark g evaluation inside the domain fails loud (the pinned growth range is far from the underflow cliff)",
+      "status_vocabulary": [
+        "rh_inverted",
+        "closed_at_reference",
+        "unclosed"
+      ]
+    },
+    "variant_b": {
+      "free_parameters": "(rh, a_res) jointly, realized as the ladder: rh takes the pinned knot values, a_res is the per-knot scalar root of the task-5 objective",
+      "branch_over_closed": "g(0) < 0 at a knot: the humidified baseline is already darker than the fit subset, so the closure equation has no nonnegative root; the residual is 0 (nothing applied) and the status is over_closed - the humidity axis alone overshoots this event at this knot",
+      "branch_zero_increment": "g(0) == 0 at a knot: status zero_increment (task-5 convention)",
+      "status_vocabulary": [
+        "inverted",
+        "zero_increment",
+        "unclosed",
+        "over_closed"
+      ]
+    },
+    "b50_reproduction_gate": "B(50%) must reproduce the committed task-5 pool (validation/results/atmosphere_inversion/inversion.json retrieval_spec.aod550_pool) BITWISE for every event, before any other result is produced; f(0.5)==1.0 exactly makes the humidified table bitwise the production table, so the gate proves the machine reproduction, not an assumption",
+    "r_rh_band": {
+      "structural_domain": "[1, infinity): R_RH is a max/min ratio of positive residuals; values below 1 are structurally unreachable and not preregistered",
+      "compatible_upper": 2.0,
+      "partially_consistent_upper": 10.0,
+      "verdicts": {
+        "compatible": "R_RH <= 2.0",
+        "partially_consistent": "2.0 < R_RH <= 10.0",
+        "tension": "R_RH > 10.0"
+      },
+      "band_edge_source": "descriptive transcription of the mechanical edges imported from validation/extinction_gap_diagnosis.py (VERDICT_COMPATIBLE[1], VERDICT_TENSION[1]); the consumer asserts edge-value equality at import and applies the verdict through the imported constants only",
+      "participation_rule": "per ladder point: events with a positive inverted residual participate; zero-increment, over-closed and unclosed events are listed separately with their status; fewer than 2 participating events -> mechanical status degenerate, no band verdict",
+      "evidence_grade_note": "a ratio over n participating events is reported with n_participating; a 2-event ratio is not a 4-event R and carries weaker evidence",
+      "interpretation_note": "preregistered budget expectation, FALSIFIED by the machine results of the A/B re-inversion: the plan-phase linear AOD budget predicted R_RH(70%) > R=7.110, arguing that the same absolute FT growth increment is removed from every event's baseline so the residual ratio first widens and then narrows. The measured value (A/B product r_rh['0.7']) is 7.023 < 7.110 because the per-event absorption effectiveness of the FT humidification against the antarctic-form increment is not 1:1 (measured ratios are recorded in the A/B product's humidity_sufficiency.effectiveness account); the equal-absolute-removal premise does not hold. Neither the expectation nor its falsification is a red flag by itself; the band verdicts are applied mechanically to the measured residuals."
+    },
+    "share_table": {
+      "definition": "share(rh, event) = 1 - a_res(rh, event)/a_pool(event) for inverted knots; a_res == 0 -> share capped at 1.0; over_closed and unclosed knots carry no share (listed with their status)",
+      "reading": "share is a measured absorption share under the preregistered semantics, not a causal claim that humidity explains the event; the residual event-specificity stays a separate account"
+    },
+    "humidity_sufficiency": {
+      "criterion": "f_req = (a_pool + 0.013)/0.013 <= f_FT(0.99) -> humidity-sufficient; otherwise humidity-insufficient",
+      "pool_source": "committed task-5 retrieval_spec.aod550_pool"
+    },
+    "holdout_accounts": "per variant per ladder point per event: fit (g0 -> g at the root), holdout (before/after median and RMS), shape ledger (committed aggregation structure); the before-state is the production reference baseline (rh=0.5, bitwise the task-5 baseline) for BOTH variants and the after-state is the variant's terminal state - variant A: rh* (or the domain top when unclosed), variant B: the knot's root state (over-closed knots evaluate at the zero increment, the applied model state); the 1990 event carries no event-internal holdout and its preregistered holdout account is the 1990 row of each variant's cross-event prediction matrix (task-5 discipline; states without an applicable applied state carry None)",
+    "anchoring": "production-baseline anchoring gates (atmosphere_inversion.run_anchoring_gates) plus per-table humidified path identity (production grid bitwise, stratosphere tau bitwise, FT tau linear within 1e-12, full bitwise equality at rh=0.5), enforced inside the table factory so every evaluation walks a verified path"
+  },
+  "anchoring": {
+    "production_baseline": {
+      "reproduction": {
+        "rule": "abs_diff <= max(1e-06 * |committed|, 1e-09) per readout (tolerances imported from extinction_gap_diagnosis)",
+        "worst_relative_diff": {
+          "june_2011": 0.0,
+          "hst_2019": 0.0,
+          "dec_2011": 0.0,
+          "event_1990_02_09": 0.0
+        },
+        "verdict": "within_tolerance"
+      },
+      "chain_identity": {
+        "exact_leg": "committed_prediction/observed == committed model_to_observed bitwise",
+        "exact_leg_1990": "observed = prediction/model_to_observed recovers the record's own observed_minimum_to_reference bitwise",
+        "kernel_leg_worst_relative_dev": {
+          "june_2011": 9.143770515392077e-16,
+          "hst_2019": 1.8886618398780333e-15,
+          "dec_2011": 5.37479753564266e-16,
+          "event_1990_02_09": 4.244865419969838e-16
+        },
+        "budget": 1e-12,
+        "verdict": "within_tolerance"
+      },
+      "anchored_readout_counts": {
+        "june_2011": {
+          "fit": 10,
+          "holdout": 8
+        },
+        "hst_2019": {
+          "fit": 510,
+          "holdout": 510
+        },
+        "dec_2011": {
+          "fit": 5,
+          "holdout": 2
+        },
+        "event_1990_02_09": {
+          "fit": 1,
+          "holdout": 0
+        }
+      },
+      "moment_gate": "zeroth-moment gate over the committed variants passed (build_height_stats, single source)"
+    },
+    "humidified_path_identity": {
+      "0.5": {
+        "rh": 0.5,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 0.0,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": true
+      },
+      "0.7": {
+        "rh": 0.7,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 6.1248064412672e-16,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      },
+      "0.99": {
+        "rh": 0.99,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 2.5776430525591153e-15,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      },
+      "0.7571504657442972": {
+        "rh": 0.7571504657442972,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 8.429334557661327e-16,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      },
+      "0.8166209354892434": {
+        "rh": 0.8166209354892434,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 1.4335963751578707e-15,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      },
+      "0.840338121570576": {
+        "rh": 0.840338121570576,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 1.7665931612031186e-15,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      },
+      "0.7836097556336116": {
+        "rh": 0.7836097556336116,
+        "grid_bitwise": true,
+        "stratosphere_tau_bitwise": true,
+        "ft_tau_max_rel_dev_from_linear": 1.1170677100101967e-15,
+        "ft_tau_linear_rtol_budget": 1e-12,
+        "bitwise_production_table": false
+      }
+    }
+  },
+  "variant_a": {
+    "june_2011": {
+      "fit": {
+        "ln_residual_median_before": 0.4501090938496115,
+        "ln_residual_median_after": -1.5785983631388945e-16,
+        "readout_count": 10
+      },
+      "holdout": {
+        "readout_count": 8,
+        "ln_residual_median_before": 0.1414915250651978,
+        "ln_residual_median_after": -0.03296426884855249,
+        "ln_rms_before": 0.42939692861713635,
+        "ln_rms_after": 0.2597363952594855
+      },
+      "shape": {
+        "metric": "503_over_677_transmission_ratio_model_over_observed",
+        "median_base": 1.0230596103982648,
+        "median_new": 1.0924322580867443,
+        "disagreement_closed_fraction": -3.0084050203077064,
+        "verdict": "excluded_leaning",
+        "involves_holdout_bands": true,
+        "by_angle": [
+          {
+            "shadow_angle_deg": 0.4,
+            "base_ratio": 1.64498483435903,
+            "new_ratio": 1.6669527490302523,
+            "shape_factor": 1.0133544785413064,
+            "disagreement_closed_fraction": -0.03405958326609855,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.45,
+            "base_ratio": 1.1657585848198122,
+            "new_ratio": 1.2367643662058942,
+            "shape_factor": 1.0609095076036323,
+            "disagreement_closed_fraction": -0.42836865109139804,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.5,
+            "base_ratio": 0.9613380170683362,
+            "new_ratio": 1.0363381712190902,
+            "shape_factor": 1.0780164237959422,
+            "disagreement_closed_fraction": 0.06010585946098449,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.55,
+            "base_ratio": 0.973387971632726,
+            "new_ratio": 1.0456880698925544,
+            "shape_factor": 1.074276753326379,
+            "disagreement_closed_fraction": -0.7168202762303879,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.575,
+            "base_ratio": 1.0230596103982648,
+            "new_ratio": 1.0924322580867443,
+            "shape_factor": 1.0678089985992836,
+            "disagreement_closed_fraction": -3.0084050203077064,
+            "verdict": "excluded_leaning"
+          }
+        ]
+      },
+      "status": "rh_inverted",
+      "rh_star": 0.7571504657442972,
+      "g_at_reference": 0.4501090938496115,
+      "g_at_domain_top": -1.176644180082421,
+      "g_at_root": -1.5785983631388945e-16
+    },
+    "hst_2019": {
+      "fit": {
+        "ln_residual_median_before": 0.9949255354731079,
+        "ln_residual_median_after": 4.742062184549464e-13,
+        "readout_count": 510
+      },
+      "holdout": {
+        "readout_count": 510,
+        "ln_residual_median_before": 0.7936997030290669,
+        "ln_residual_median_after": -0.16408436879215854,
+        "ln_rms_before": 0.7817856633668575,
+        "ln_rms_after": 0.2805890601066639
+      },
+      "shape": {
+        "metrics_by_dataset": {
+          "ody902030": {
+            "430_over_570": {
+              "base_slope": 0.5091747336683897,
+              "new_slope": 0.5210770653571625,
+              "disagreement_closed_fraction": 0.024249631193051343,
+              "verdict": "excluded_leaning"
+            },
+            "500_over_570": {
+              "base_slope": 0.5785080157566416,
+              "new_slope": 0.5759690367251966,
+              "disagreement_closed_fraction": -0.00602378960065588,
+              "verdict": "excluded_leaning"
+            }
+          },
+          "ody902040": {
+            "430_over_570": {
+              "base_slope": 0.9111780017204386,
+              "new_slope": 0.9765026714270425,
+              "disagreement_closed_fraction": 0.7354559790582373,
+              "verdict": "compatible"
+            },
+            "500_over_570": {
+              "base_slope": 0.7167848513962254,
+              "new_slope": 0.7305508314531807,
+              "disagreement_closed_fraction": 0.048606086661749336,
+              "verdict": "excluded_leaning"
+            }
+          }
+        },
+        "involves_holdout_bands": true,
+        "aggregation": "committed band-median structure over the full window grid"
+      },
+      "status": "rh_inverted",
+      "rh_star": 0.8166209354892434,
+      "g_at_reference": 0.9949255354731079,
+      "g_at_domain_top": -1.0891826243137026,
+      "g_at_root": 4.742062184549464e-13
+    },
+    "dec_2011": {
+      "fit": {
+        "ln_residual_median_before": 0.2340053949209479,
+        "ln_residual_median_after": -5.551115123125785e-16,
+        "readout_count": 5
+      },
+      "holdout": {
+        "readout_count": 2,
+        "ln_residual_median_before": 0.3387313726832135,
+        "ln_residual_median_after": 0.2667272692899867,
+        "ln_rms_before": 0.343430709393424,
+        "ln_rms_after": 0.2796487918333522
+      },
+      "shape": {
+        "metrics": {
+          "450_to750_transmission_ratio_model_over_observed": {
+            "base_ratio": 1.2164331772408636,
+            "new_ratio": 1.4762206785343557,
+            "shape_factor": 1.2135649587285566,
+            "disagreement_closed_fraction": -1.2003127459723069,
+            "verdict": "excluded_leaning"
+          },
+          "500_to750_transmission_ratio_model_over_observed": {
+            "base_ratio": 1.0861995844029602,
+            "new_ratio": 1.247869238802021,
+            "shape_factor": 1.1488397314089602,
+            "disagreement_closed_fraction": -1.8755270749717086,
+            "verdict": "excluded_leaning"
+          }
+        },
+        "involves_holdout_bands": true
+      },
+      "status": "rh_inverted",
+      "rh_star": 0.840338121570576,
+      "g_at_reference": 0.2340053949209479,
+      "g_at_domain_top": -0.12680687279496916,
+      "g_at_root": -5.551115123125785e-16
+    },
+    "event_1990_02_09": {
+      "fit": {
+        "ln_residual_median_before": 0.25491253297144895,
+        "ln_residual_median_after": -3.330669073875525e-14,
+        "readout_count": 1
+      },
+      "holdout": null,
+      "shape": null,
+      "status": "rh_inverted",
+      "rh_star": 0.7836097556336116,
+      "g_at_reference": 0.25491253297144895,
+      "g_at_domain_top": -0.25828295630785497,
+      "g_at_root": -3.330669073875525e-14
+    },
+    "cross_event_prediction_matrix": {
+      "states": {
+        "june_2011": {
+          "rh": 0.7571504657442972,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "hst_2019": {
+          "rh": 0.8166209354892434,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "dec_2011": {
+          "rh": 0.840338121570576,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "event_1990_02_09": {
+          "rh": 0.7836097556336116,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        }
+      },
+      "matrix": {
+        "june_2011": {
+          "june_2011": -1.5785983631388945e-16,
+          "hst_2019": -0.3685196928411487,
+          "dec_2011": -0.47779226109816864,
+          "event_1990_02_09": -0.15038532637062266
+        },
+        "hst_2019": {
+          "june_2011": 0.43762486837742365,
+          "hst_2019": 4.742062184549464e-13,
+          "dec_2011": -0.17090874594845062,
+          "event_1990_02_09": 0.23581720374436776
+        },
+        "dec_2011": {
+          "june_2011": 0.11062615163455031,
+          "hst_2019": 0.027867059631488156,
+          "dec_2011": -5.551115123125785e-16,
+          "event_1990_02_09": 0.07134966826585555
+        },
+        "event_1990_02_09": {
+          "june_2011": 0.05801294077226345,
+          "hst_2019": -0.06158047011042027,
+          "dec_2011": -0.09958744930077822,
+          "event_1990_02_09": -3.330669073875525e-14
+        }
+      },
+      "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+    }
+  },
+  "variant_b": {
+    "ladder": {
+      "0.5": {
+        "june_2011": {
+          "status": "inverted",
+          "aod550": 0.025865877276886398,
+          "g0": 0.4501090938496115
+        },
+        "hst_2019": {
+          "status": "inverted",
+          "aod550": 0.12036025043776977,
+          "g0": 0.9949255354731079
+        },
+        "dec_2011": {
+          "status": "inverted",
+          "aod550": 0.18391557805870665,
+          "g0": 0.2340053949209479
+        },
+        "event_1990_02_09": {
+          "status": "inverted",
+          "aod550": 0.07278811248646479,
+          "g0": 0.25491253297144895
+        }
+      },
+      "0.7": {
+        "june_2011": {
+          "status": "inverted",
+          "aod550": 0.02230951279560747,
+          "g0": 0.3729461457946689
+        },
+        "hst_2019": {
+          "status": "inverted",
+          "aod550": 0.10823395394684761,
+          "g0": 0.8970544037126185
+        },
+        "dec_2011": {
+          "status": "inverted",
+          "aod550": 0.15668822628381435,
+          "g0": 0.21114618455838635
+        },
+        "event_1990_02_09": {
+          "status": "inverted",
+          "aod550": 0.061745304575863094,
+          "g0": 0.21676896599988393
+        }
+      },
+      "0.99": {
+        "june_2011": {
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -1.176644180082421
+        },
+        "hst_2019": {
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -1.0891826243137026
+        },
+        "dec_2011": {
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -0.12680687279496916
+        },
+        "event_1990_02_09": {
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -0.25828295630785497
+        }
+      }
+    },
+    "accounts": {
+      "0.5": {
+        "june_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.4501090938496115,
+            "ln_residual_median_after": -2.905661822261152e-17,
+            "readout_count": 10
+          },
+          "holdout": {
+            "readout_count": 8,
+            "ln_residual_median_before": 0.1414915250651978,
+            "ln_residual_median_after": 0.07422587502551871,
+            "ln_rms_before": 0.42939692861713635,
+            "ln_rms_after": 0.3514109120370438
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.0230596103982648,
+            "median_new": 1.0939084333035303,
+            "disagreement_closed_fraction": -3.0724206385809922,
+            "verdict": "excluded_leaning",
+            "involves_holdout_bands": true,
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.64498483435903,
+                "new_ratio": 1.963830044466161,
+                "shape_factor": 1.1938286623969814,
+                "disagreement_closed_fraction": -0.4943452824344177,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.1657585848198122,
+                "new_ratio": 1.351262272564458,
+                "shape_factor": 1.1591270183726063,
+                "disagreement_closed_fraction": -1.1191196398442806,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 0.9613380170683362,
+                "new_ratio": 1.0778568576085872,
+                "shape_factor": 1.1212048607997247,
+                "disagreement_closed_fraction": -1.0137833526594204,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 0.973387971632726,
+                "new_ratio": 1.0565423936832004,
+                "shape_factor": 1.0854278298826665,
+                "disagreement_closed_fraction": -1.1246931238331666,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.0230596103982648,
+                "new_ratio": 1.0939084333035303,
+                "shape_factor": 1.0692519010477648,
+                "disagreement_closed_fraction": -3.0724206385809922,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          },
+          "status": "inverted",
+          "aod550": 0.025865877276886398,
+          "g0": 0.4501090938496115,
+          "rh": 0.5,
+          "physical_anchor": {
+            "inverted_aod550": 0.025865877276886398,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 0.6806809809706947,
+            "ratio_to_spectrum_max": 0.04138540364301824,
+            "within_pinned_range": false,
+            "bracketed_by": [
+              null,
+              "maritime_tropical"
+            ]
+          }
+        },
+        "hst_2019": {
+          "fit": {
+            "ln_residual_median_before": 0.9949255354731079,
+            "ln_residual_median_after": 6.16017653554124e-14,
+            "readout_count": 510
+          },
+          "holdout": {
+            "readout_count": 510,
+            "ln_residual_median_before": 0.7936997030290669,
+            "ln_residual_median_after": 0.13678722749509392,
+            "ln_rms_before": 0.7817856633668575,
+            "ln_rms_after": 0.28814268900291695
+          },
+          "shape": {
+            "metrics_by_dataset": {
+              "ody902030": {
+                "430_over_570": {
+                  "base_slope": 0.5091747336683897,
+                  "new_slope": 1.1079521284427913,
+                  "disagreement_closed_fraction": 0.7800599605443763,
+                  "verdict": "compatible"
+                },
+                "500_over_570": {
+                  "base_slope": 0.5785080157566416,
+                  "new_slope": 0.8324883588018541,
+                  "disagreement_closed_fraction": 0.6025745507382436,
+                  "verdict": "compatible"
+                }
+              },
+              "ody902040": {
+                "430_over_570": {
+                  "base_slope": 0.9111780017204386,
+                  "new_slope": 1.8657547563987107,
+                  "disagreement_closed_fraction": -8.747075872733742,
+                  "verdict": "excluded_leaning"
+                },
+                "500_over_570": {
+                  "base_slope": 0.7167848513962254,
+                  "new_slope": 1.021117854950642,
+                  "disagreement_closed_fraction": 0.9254352916687154,
+                  "verdict": "compatible"
+                }
+              }
+            },
+            "involves_holdout_bands": true,
+            "aggregation": "committed band-median structure over the full window grid"
+          },
+          "status": "inverted",
+          "aod550": 0.12036025043776977,
+          "g0": 0.9949255354731079,
+          "rh": 0.5,
+          "physical_anchor": {
+            "inverted_aod550": 0.12036025043776977,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 3.167375011520257,
+            "ratio_to_spectrum_max": 0.19257640070043164,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "maritime_polluted",
+              "continental_average"
+            ]
+          }
+        },
+        "dec_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.2340053949209479,
+            "ln_residual_median_after": 8.881784197001248e-16,
+            "readout_count": 5
+          },
+          "holdout": {
+            "readout_count": 2,
+            "ln_residual_median_before": 0.3387313726832135,
+            "ln_residual_median_after": 0.30400761196836285,
+            "ln_rms_before": 0.343430709393424,
+            "ln_rms_after": 0.31330510210222967
+          },
+          "shape": {
+            "metrics": {
+              "450_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.2164331772408636,
+                "new_ratio": 1.6030636326530991,
+                "shape_factor": 1.3178394527919717,
+                "disagreement_closed_fraction": -1.7863733293623607,
+                "verdict": "excluded_leaning"
+              },
+              "500_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.0861995844029602,
+                "new_ratio": 1.3776761576778063,
+                "shape_factor": 1.2683453183560727,
+                "disagreement_closed_fraction": -3.381415064744054,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "involves_holdout_bands": true
+          },
+          "status": "inverted",
+          "aod550": 0.18391557805870665,
+          "g0": 0.2340053949209479,
+          "rh": 0.5,
+          "physical_anchor": {
+            "inverted_aod550": 0.18391557805870665,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 4.8398836331238595,
+            "ratio_to_spectrum_max": 0.29426492489393064,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "continental_average",
+              "desert"
+            ]
+          }
+        },
+        "event_1990_02_09": {
+          "fit": {
+            "ln_residual_median_before": 0.25491253297144895,
+            "ln_residual_median_after": 4.440892098500625e-16,
+            "readout_count": 1
+          },
+          "holdout": null,
+          "shape": null,
+          "status": "inverted",
+          "aod550": 0.07278811248646479,
+          "g0": 0.25491253297144895,
+          "rh": 0.5,
+          "physical_anchor": {
+            "inverted_aod550": 0.07278811248646479,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 1.9154766443806523,
+            "ratio_to_spectrum_max": 0.11646097997834366,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "antarctic",
+              "maritime_clean"
+            ]
+          }
+        }
+      },
+      "0.7": {
+        "june_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.4501090938496115,
+            "ln_residual_median_after": -2.7820627745978044e-16,
+            "readout_count": 10
+          },
+          "holdout": {
+            "readout_count": 8,
+            "ln_residual_median_before": 0.1414915250651978,
+            "ln_residual_median_after": 0.053805926867672625,
+            "ln_rms_before": 0.42939692861713635,
+            "ln_rms_after": 0.33231463854985915
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.0230596103982648,
+            "median_new": 1.095128213502176,
+            "disagreement_closed_fraction": -3.1253174645714936,
+            "verdict": "excluded_leaning",
+            "involves_holdout_bands": true,
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.64498483435903,
+                "new_ratio": 1.9202865360668706,
+                "shape_factor": 1.1673582004876732,
+                "disagreement_closed_fraction": -0.4268343797283676,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.1657585848198122,
+                "new_ratio": 1.3358635692871434,
+                "shape_factor": 1.1459178484142356,
+                "disagreement_closed_fraction": -1.0262212642092945,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 0.9613380170683362,
+                "new_ratio": 1.0732786871544975,
+                "shape_factor": 1.1164425707697816,
+                "disagreement_closed_fraction": -0.8953680488664991,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 0.973387971632726,
+                "new_ratio": 1.0564283474703915,
+                "shape_factor": 1.085310665693122,
+                "disagreement_closed_fraction": -1.1204076101085116,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.0230596103982648,
+                "new_ratio": 1.095128213502176,
+                "shape_factor": 1.0704441875834154,
+                "disagreement_closed_fraction": -3.1253174645714936,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          },
+          "status": "inverted",
+          "aod550": 0.02230951279560747,
+          "g0": 0.3729461457946689,
+          "rh": 0.7,
+          "physical_anchor": {
+            "inverted_aod550": 0.02230951279560747,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 0.5870924419896703,
+            "ratio_to_spectrum_max": 0.03569522047297195,
+            "within_pinned_range": false,
+            "bracketed_by": [
+              null,
+              "maritime_tropical"
+            ]
+          }
+        },
+        "hst_2019": {
+          "fit": {
+            "ln_residual_median_before": 0.9949255354731079,
+            "ln_residual_median_after": 5.17884346518116e-14,
+            "readout_count": 510
+          },
+          "holdout": {
+            "readout_count": 510,
+            "ln_residual_median_before": 0.7936997030290669,
+            "ln_residual_median_after": 0.10516790131523436,
+            "ln_rms_before": 0.7817856633668575,
+            "ln_rms_after": 0.2728894814631378
+          },
+          "shape": {
+            "metrics_by_dataset": {
+              "ody902030": {
+                "430_over_570": {
+                  "base_slope": 0.5091747336683897,
+                  "new_slope": 1.0488711847163086,
+                  "disagreement_closed_fraction": 0.9004305848360904,
+                  "verdict": "compatible"
+                },
+                "500_over_570": {
+                  "base_slope": 0.5785080157566416,
+                  "new_slope": 0.8101005912091809,
+                  "disagreement_closed_fraction": 0.549459026767218,
+                  "verdict": "compatible"
+                }
+              },
+              "ody902040": {
+                "430_over_570": {
+                  "base_slope": 0.9111780017204386,
+                  "new_slope": 1.784266268126082,
+                  "disagreement_closed_fraction": -7.82963999140906,
+                  "verdict": "excluded_leaning"
+                },
+                "500_over_570": {
+                  "base_slope": 0.7167848513962254,
+                  "new_slope": 0.997723358742552,
+                  "disagreement_closed_fraction": 0.9919614424981446,
+                  "verdict": "compatible"
+                }
+              }
+            },
+            "involves_holdout_bands": true,
+            "aggregation": "committed band-median structure over the full window grid"
+          },
+          "status": "inverted",
+          "aod550": 0.10823395394684761,
+          "g0": 0.8970544037126185,
+          "rh": 0.7,
+          "physical_anchor": {
+            "inverted_aod550": 0.10823395394684761,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 2.848261945969674,
+            "ratio_to_spectrum_max": 0.17317432631495616,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "maritime_polluted",
+              "continental_average"
+            ]
+          }
+        },
+        "dec_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.2340053949209479,
+            "ln_residual_median_after": -2.2204460492503136e-16,
+            "readout_count": 5
+          },
+          "holdout": {
+            "readout_count": 2,
+            "ln_residual_median_before": 0.3387313726832135,
+            "ln_residual_median_after": 0.30074533947311477,
+            "ln_rms_before": 0.343430709393424,
+            "ln_rms_after": 0.31029451572437083
+          },
+          "shape": {
+            "metrics": {
+              "450_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.2164331772408636,
+                "new_ratio": 1.592421528242891,
+                "shape_factor": 1.3090908387214917,
+                "disagreement_closed_fraction": -1.737202936237444,
+                "verdict": "excluded_leaning"
+              },
+              "500_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.0861995844029602,
+                "new_ratio": 1.366813939849492,
+                "shape_factor": 1.2583451139882127,
+                "disagreement_closed_fraction": -3.255402649445899,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "involves_holdout_bands": true
+          },
+          "status": "inverted",
+          "aod550": 0.15668822628381435,
+          "g0": 0.21114618455838635,
+          "rh": 0.7,
+          "physical_anchor": {
+            "inverted_aod550": 0.15668822628381435,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 4.123374375889851,
+            "ratio_to_spectrum_max": 0.250701162054103,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "continental_average",
+              "desert"
+            ]
+          }
+        },
+        "event_1990_02_09": {
+          "fit": {
+            "ln_residual_median_before": 0.25491253297144895,
+            "ln_residual_median_after": -1.3322676295501888e-15,
+            "readout_count": 1
+          },
+          "holdout": null,
+          "shape": null,
+          "status": "inverted",
+          "aod550": 0.061745304575863094,
+          "g0": 0.21676896599988393,
+          "rh": 0.7,
+          "physical_anchor": {
+            "inverted_aod550": 0.061745304575863094,
+            "pinned_rows": [
+              {
+                "candidate": "maritime_tropical",
+                "aod550_boundary_layer_only": 0.038
+              },
+              {
+                "candidate": "arctic",
+                "aod550_boundary_layer_only": 0.045
+              },
+              {
+                "candidate": "continental_clean",
+                "aod550_boundary_layer_only": 0.046
+              },
+              {
+                "candidate": "antarctic",
+                "aod550_boundary_layer_only": 0.065517
+              },
+              {
+                "candidate": "maritime_clean",
+                "aod550_boundary_layer_only": 0.078
+              },
+              {
+                "candidate": "maritime_polluted",
+                "aod550_boundary_layer_only": 0.099
+              },
+              {
+                "candidate": "continental_average",
+                "aod550_boundary_layer_only": 0.133
+              },
+              {
+                "candidate": "desert",
+                "aod550_boundary_layer_only": 0.275169
+              },
+              {
+                "candidate": "continental_polluted",
+                "aod550_boundary_layer_only": 0.309
+              },
+              {
+                "candidate": "urban",
+                "aod550_boundary_layer_only": 0.625
+              }
+            ],
+            "ratio_to_spectrum_min": 1.6248764362069237,
+            "ratio_to_spectrum_max": 0.09879248732138095,
+            "within_pinned_range": true,
+            "bracketed_by": [
+              "continental_clean",
+              "antarctic"
+            ]
+          }
+        }
+      },
+      "0.99": {
+        "june_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.4501090938496115,
+            "ln_residual_median_after": -1.176644180082421,
+            "readout_count": 10
+          },
+          "holdout": {
+            "readout_count": 8,
+            "ln_residual_median_before": 0.1414915250651978,
+            "ln_residual_median_after": -0.3571713111419326,
+            "ln_rms_before": 0.42939692861713635,
+            "ln_rms_after": 0.3640681499414161
+          },
+          "shape": {
+            "metric": "503_over_677_transmission_ratio_model_over_observed",
+            "median_base": 1.0230596103982648,
+            "median_new": 1.293373575289352,
+            "disagreement_closed_fraction": -11.722399477808542,
+            "verdict": "excluded_leaning",
+            "involves_holdout_bands": true,
+            "by_angle": [
+              {
+                "shadow_angle_deg": 0.4,
+                "base_ratio": 1.64498483435903,
+                "new_ratio": 1.7993670452592774,
+                "shape_factor": 1.0938502335557412,
+                "disagreement_closed_fraction": -0.23935789289320034,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.45,
+                "base_ratio": 1.1657585848198122,
+                "new_ratio": 1.5427674236155886,
+                "shape_factor": 1.323402155218998,
+                "disagreement_closed_fraction": -2.274445327858003,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.5,
+                "base_ratio": 0.9613380170683362,
+                "new_ratio": 1.293373575289352,
+                "shape_factor": 1.345388981113615,
+                "disagreement_closed_fraction": -6.588166799615494,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.55,
+                "base_ratio": 0.973387971632726,
+                "new_ratio": 1.2553478372561628,
+                "shape_factor": 1.2896685328363855,
+                "disagreement_closed_fraction": -8.595203857898143,
+                "verdict": "excluded_leaning"
+              },
+              {
+                "shadow_angle_deg": 0.575,
+                "base_ratio": 1.0230596103982648,
+                "new_ratio": 1.2810103142552662,
+                "shape_factor": 1.2521365336244525,
+                "disagreement_closed_fraction": -11.18625594283294,
+                "verdict": "excluded_leaning"
+              }
+            ]
+          },
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -1.176644180082421,
+          "rh": 0.99,
+          "physical_anchor": null
+        },
+        "hst_2019": {
+          "fit": {
+            "ln_residual_median_before": 0.9949255354731079,
+            "ln_residual_median_after": -1.0891826243137026,
+            "readout_count": 510
+          },
+          "holdout": {
+            "readout_count": 510,
+            "ln_residual_median_before": 0.7936997030290669,
+            "ln_residual_median_after": -1.3153243248838749,
+            "ln_rms_before": 0.7817856633668575,
+            "ln_rms_after": 1.3761791622274535
+          },
+          "shape": {
+            "metrics_by_dataset": {
+              "ody902030": {
+                "430_over_570": {
+                  "base_slope": 0.5091747336683897,
+                  "new_slope": 0.4851504838421176,
+                  "disagreement_closed_fraction": -0.04894664450717343,
+                  "verdict": "excluded_leaning"
+                },
+                "500_over_570": {
+                  "base_slope": 0.5785080157566416,
+                  "new_slope": 0.5491409333645153,
+                  "disagreement_closed_fraction": -0.06967411834615218,
+                  "verdict": "excluded_leaning"
+                }
+              },
+              "ody902040": {
+                "430_over_570": {
+                  "base_slope": 0.9111780017204386,
+                  "new_slope": 0.9617745695995422,
+                  "disagreement_closed_fraction": 0.5696400538057502,
+                  "verdict": "compatible"
+                },
+                "500_over_570": {
+                  "base_slope": 0.7167848513962254,
+                  "new_slope": 0.7180300273950103,
+                  "disagreement_closed_fraction": 0.004396572728978437,
+                  "verdict": "excluded_leaning"
+                }
+              }
+            },
+            "involves_holdout_bands": true,
+            "aggregation": "committed band-median structure over the full window grid"
+          },
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -1.0891826243137026,
+          "rh": 0.99,
+          "physical_anchor": null
+        },
+        "dec_2011": {
+          "fit": {
+            "ln_residual_median_before": 0.2340053949209479,
+            "ln_residual_median_after": -0.12680687279496916,
+            "readout_count": 5
+          },
+          "holdout": {
+            "readout_count": 2,
+            "ln_residual_median_before": 0.3387313726832135,
+            "ln_residual_median_after": 0.23403349132492515,
+            "ln_rms_before": 0.343430709393424,
+            "ln_rms_after": 0.253092706294752
+          },
+          "shape": {
+            "metrics": {
+              "450_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.2164331772408636,
+                "new_ratio": 1.6722702713366864,
+                "shape_factor": 1.3747325398751133,
+                "disagreement_closed_fraction": -2.106133171942173,
+                "verdict": "excluded_leaning"
+              },
+              "500_to750_transmission_ratio_model_over_observed": {
+                "base_ratio": 1.0861995844029602,
+                "new_ratio": 1.3791572090351027,
+                "shape_factor": 1.2697088351338024,
+                "disagreement_closed_fraction": -3.3985967178524144,
+                "verdict": "excluded_leaning"
+              }
+            },
+            "involves_holdout_bands": true
+          },
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -0.12680687279496916,
+          "rh": 0.99,
+          "physical_anchor": null
+        },
+        "event_1990_02_09": {
+          "fit": {
+            "ln_residual_median_before": 0.25491253297144895,
+            "ln_residual_median_after": -0.25828295630785497,
+            "readout_count": 1
+          },
+          "holdout": null,
+          "shape": null,
+          "status": "over_closed",
+          "aod550": 0.0,
+          "g0": -0.25828295630785497,
+          "rh": 0.99,
+          "physical_anchor": null
+        }
+      }
+    },
+    "prediction_matrices": {
+      "0.5": {
+        "states": {
+          "june_2011": {
+            "rh": 0.5,
+            "aod550": 0.025865877276886398,
+            "status": "inverted"
+          },
+          "hst_2019": {
+            "rh": 0.5,
+            "aod550": 0.12036025043776977,
+            "status": "inverted"
+          },
+          "dec_2011": {
+            "rh": 0.5,
+            "aod550": 0.18391557805870665,
+            "status": "inverted"
+          },
+          "event_1990_02_09": {
+            "rh": 0.5,
+            "aod550": 0.07278811248646479,
+            "status": "inverted"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -2.905661822261152e-17,
+            "hst_2019": -0.6992634767315388,
+            "dec_2011": -0.8899801853776776,
+            "event_1990_02_09": -0.4520902501254841
+          },
+          "hst_2019": {
+            "june_2011": 0.6301430054162623,
+            "hst_2019": 6.16017653554124e-14,
+            "dec_2011": -0.21591094635511174,
+            "event_1990_02_09": 0.2716854409015779
+          },
+          "dec_2011": {
+            "june_2011": 0.15448957019032364,
+            "hst_2019": 0.02844260904354316,
+            "dec_2011": 8.881784197001248e-16,
+            "event_1990_02_09": 0.0711189202797502
+          },
+          "event_1990_02_09": {
+            "june_2011": 0.11867183127501116,
+            "hst_2019": -0.05255788709410308,
+            "dec_2011": -0.08477382079844147,
+            "event_1990_02_09": 4.440892098500625e-16
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+      },
+      "0.7": {
+        "states": {
+          "june_2011": {
+            "rh": 0.7,
+            "aod550": 0.02230951279560747,
+            "status": "inverted"
+          },
+          "hst_2019": {
+            "rh": 0.7,
+            "aod550": 0.10823395394684761,
+            "status": "inverted"
+          },
+          "dec_2011": {
+            "rh": 0.7,
+            "aod550": 0.15668822628381435,
+            "status": "inverted"
+          },
+          "event_1990_02_09": {
+            "rh": 0.7,
+            "aod550": 0.061745304575863094,
+            "status": "inverted"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -2.7820627745978044e-16,
+            "hst_2019": -0.6870049747138798,
+            "dec_2011": -0.8613684881135102,
+            "event_1990_02_09": -0.42644664327223625
+          },
+          "hst_2019": {
+            "june_2011": 0.5857312281340765,
+            "hst_2019": 5.17884346518116e-14,
+            "dec_2011": -0.19519423872310065,
+            "event_1990_02_09": 0.27259499098731044
+          },
+          "dec_2011": {
+            "june_2011": 0.14494692392865685,
+            "hst_2019": 0.025706915267476243,
+            "dec_2011": -2.2204460492503136e-16,
+            "event_1990_02_09": 0.07181690343012713
+          },
+          "event_1990_02_09": {
+            "june_2011": 0.10491289537306443,
+            "hst_2019": -0.057534817735030136,
+            "dec_2011": -0.0869832179905944,
+            "event_1990_02_09": -1.3322676295501888e-15
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+      },
+      "0.99": {
+        "states": {
+          "june_2011": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "hst_2019": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "dec_2011": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "event_1990_02_09": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -1.176644180082421,
+            "hst_2019": -1.176644180082421,
+            "dec_2011": -1.176644180082421,
+            "event_1990_02_09": -1.176644180082421
+          },
+          "hst_2019": {
+            "june_2011": -1.0891826243137026,
+            "hst_2019": -1.0891826243137026,
+            "dec_2011": -1.0891826243137026,
+            "event_1990_02_09": -1.0891826243137026
+          },
+          "dec_2011": {
+            "june_2011": -0.12680687279496916,
+            "hst_2019": -0.12680687279496916,
+            "dec_2011": -0.12680687279496916,
+            "event_1990_02_09": -0.12680687279496916
+          },
+          "event_1990_02_09": {
+            "june_2011": -0.25828295630785497,
+            "hst_2019": -0.25828295630785497,
+            "dec_2011": -0.25828295630785497,
+            "event_1990_02_09": -0.25828295630785497
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+      }
+    }
+  },
+  "b50_reproduction_gate": {
+    "rule": "B(50%) must reproduce the committed task-5 pool (validation/results/atmosphere_inversion/inversion.json retrieval_spec.aod550_pool) BITWISE for every event, before any other result is produced; f(0.5)==1.0 exactly makes the humidified table bitwise the production table, so the gate proves the machine reproduction, not an assumption",
+    "per_event": {
+      "june_2011": {
+        "ladder_b50_aod550": 0.025865877276886398,
+        "ladder_b50_status": "inverted",
+        "committed_pool": 0.025865877276886398,
+        "bitwise_equal": true
+      },
+      "hst_2019": {
+        "ladder_b50_aod550": 0.12036025043776977,
+        "ladder_b50_status": "inverted",
+        "committed_pool": 0.12036025043776977,
+        "bitwise_equal": true
+      },
+      "dec_2011": {
+        "ladder_b50_aod550": 0.18391557805870665,
+        "ladder_b50_status": "inverted",
+        "committed_pool": 0.18391557805870665,
+        "bitwise_equal": true
+      },
+      "event_1990_02_09": {
+        "ladder_b50_aod550": 0.07278811248646479,
+        "ladder_b50_status": "inverted",
+        "committed_pool": 0.07278811248646479,
+        "bitwise_equal": true
+      }
+    },
+    "verdict": "bitwise_equal"
+  },
+  "share_table": {
+    "0.5": {
+      "june_2011": {
+        "status": "inverted",
+        "a_res": 0.025865877276886398,
+        "share": 0.0
+      },
+      "hst_2019": {
+        "status": "inverted",
+        "a_res": 0.12036025043776977,
+        "share": 0.0
+      },
+      "dec_2011": {
+        "status": "inverted",
+        "a_res": 0.18391557805870665,
+        "share": 0.0
+      },
+      "event_1990_02_09": {
+        "status": "inverted",
+        "a_res": 0.07278811248646479,
+        "share": 0.0
+      }
+    },
+    "0.7": {
+      "june_2011": {
+        "status": "inverted",
+        "a_res": 0.02230951279560747,
+        "share": 0.13749251352309155
+      },
+      "hst_2019": {
+        "status": "inverted",
+        "a_res": 0.10823395394684761,
+        "share": 0.10075001046289656
+      },
+      "dec_2011": {
+        "status": "inverted",
+        "a_res": 0.15668822628381435,
+        "share": 0.14804266208597738
+      },
+      "event_1990_02_09": {
+        "status": "inverted",
+        "a_res": 0.061745304575863094,
+        "share": 0.15171169485477654
+      }
+    },
+    "0.99": {
+      "june_2011": {
+        "status": "over_closed",
+        "a_res": 0.0,
+        "share": null
+      },
+      "hst_2019": {
+        "status": "over_closed",
+        "a_res": 0.0,
+        "share": null
+      },
+      "dec_2011": {
+        "status": "over_closed",
+        "a_res": 0.0,
+        "share": null
+      },
+      "event_1990_02_09": {
+        "status": "over_closed",
+        "a_res": 0.0,
+        "share": null
+      }
+    }
+  },
+  "r_rh": {
+    "0.5": {
+      "n_participating": 4,
+      "participating_residuals": {
+        "june_2011": 0.025865877276886398,
+        "hst_2019": 0.12036025043776977,
+        "dec_2011": 0.18391557805870665,
+        "event_1990_02_09": 0.07278811248646479
+      },
+      "listed_separately": {},
+      "structural_domain": "[1, infinity): R_RH is a max/min ratio of positive residuals; values below 1 are structurally unreachable and not preregistered",
+      "participation_rule": "per ladder point: events with a positive inverted residual participate; zero-increment, over-closed and unclosed events are listed separately with their status; fewer than 2 participating events -> mechanical status degenerate, no band verdict",
+      "R_RH": 7.11035531831942,
+      "verdict": "partially_consistent",
+      "band_edges": {
+        "compatible_upper": 2.0,
+        "partially_consistent_upper": 10.0
+      },
+      "evidence_grade_note": "ratio over 4 participating events; a 4-event ratio is not a 4-event R (weaker evidence grade)",
+      "interpretation_note": "preregistered budget expectation, FALSIFIED by the machine results of the A/B re-inversion: the plan-phase linear AOD budget predicted R_RH(70%) > R=7.110, arguing that the same absolute FT growth increment is removed from every event's baseline so the residual ratio first widens and then narrows. The measured value (A/B product r_rh['0.7']) is 7.023 < 7.110 because the per-event absorption effectiveness of the FT humidification against the antarctic-form increment is not 1:1 (measured ratios are recorded in the A/B product's humidity_sufficiency.effectiveness account); the equal-absolute-removal premise does not hold. Neither the expectation nor its falsification is a red flag by itself; the band verdicts are applied mechanically to the measured residuals.",
+      "raw_task5_R_reference": 7.11035531831942
+    },
+    "0.7": {
+      "n_participating": 4,
+      "participating_residuals": {
+        "june_2011": 0.02230951279560747,
+        "hst_2019": 0.10823395394684761,
+        "dec_2011": 0.15668822628381435,
+        "event_1990_02_09": 0.061745304575863094
+      },
+      "listed_separately": {},
+      "structural_domain": "[1, infinity): R_RH is a max/min ratio of positive residuals; values below 1 are structurally unreachable and not preregistered",
+      "participation_rule": "per ladder point: events with a positive inverted residual participate; zero-increment, over-closed and unclosed events are listed separately with their status; fewer than 2 participating events -> mechanical status degenerate, no band verdict",
+      "R_RH": 7.02338180664639,
+      "verdict": "partially_consistent",
+      "band_edges": {
+        "compatible_upper": 2.0,
+        "partially_consistent_upper": 10.0
+      },
+      "evidence_grade_note": "ratio over 4 participating events; a 4-event ratio is not a 4-event R (weaker evidence grade)",
+      "interpretation_note": "preregistered budget expectation, FALSIFIED by the machine results of the A/B re-inversion: the plan-phase linear AOD budget predicted R_RH(70%) > R=7.110, arguing that the same absolute FT growth increment is removed from every event's baseline so the residual ratio first widens and then narrows. The measured value (A/B product r_rh['0.7']) is 7.023 < 7.110 because the per-event absorption effectiveness of the FT humidification against the antarctic-form increment is not 1:1 (measured ratios are recorded in the A/B product's humidity_sufficiency.effectiveness account); the equal-absolute-removal premise does not hold. Neither the expectation nor its falsification is a red flag by itself; the band verdicts are applied mechanically to the measured residuals.",
+      "raw_task5_R_reference": 7.11035531831942
+    },
+    "0.99": {
+      "n_participating": 0,
+      "participating_residuals": {},
+      "listed_separately": {
+        "june_2011": "over_closed",
+        "hst_2019": "over_closed",
+        "dec_2011": "over_closed",
+        "event_1990_02_09": "over_closed"
+      },
+      "structural_domain": "[1, infinity): R_RH is a max/min ratio of positive residuals; values below 1 are structurally unreachable and not preregistered",
+      "participation_rule": "per ladder point: events with a positive inverted residual participate; zero-increment, over-closed and unclosed events are listed separately with their status; fewer than 2 participating events -> mechanical status degenerate, no band verdict",
+      "R_RH": null,
+      "verdict": "degenerate",
+      "evidence_grade_note": "a ratio over n participating events is reported with n_participating; a 2-event ratio is not a 4-event R and carries weaker evidence"
+    }
+  },
+  "humidity_sufficiency": {
+    "preregistered_proxy": {
+      "grade": "linear_aod_budget_proxy: assumes the antarctic-form increment and the FT humidification are interchangeable 1:1 in AOD550; this product's own machine results falsified that premise (see effectiveness and proxy_vs_model), so these values are retained for audit only and are NOT the sufficiency verdict",
+      "criterion": "f_req = (a_pool + 0.013)/0.013 <= f_FT(0.99) -> humidity-sufficient; otherwise humidity-insufficient",
+      "per_event": {
+        "june_2011": {
+          "a_pool": 0.025865877276886398,
+          "f_required": 2.9896828674528,
+          "f_ft_at_domain_top": 7.145851134379914,
+          "verdict": "humidity_sufficient"
+        },
+        "hst_2019": {
+          "a_pool": 0.12036025043776977,
+          "f_required": 10.258480802905368,
+          "f_ft_at_domain_top": 7.145851134379914,
+          "verdict": "humidity_insufficient"
+        },
+        "dec_2011": {
+          "a_pool": 0.18391557805870665,
+          "f_required": 15.147352158362052,
+          "f_ft_at_domain_top": 7.145851134379914,
+          "verdict": "humidity_insufficient"
+        },
+        "event_1990_02_09": {
+          "a_pool": 0.07278811248646479,
+          "f_required": 6.599085575881907,
+          "f_ft_at_domain_top": 7.145851134379914,
+          "verdict": "humidity_sufficient"
+        }
+      }
+    },
+    "model_verdict": {
+      "basis": "variant A machine results: the humidified baseline alone closes the fit subset within the pinned domain (rh*), or the domain-top residual stays positive (unclosed)",
+      "per_event": {
+        "june_2011": {
+          "verdict": "humidity_sufficient",
+          "basis": {
+            "status": "rh_inverted",
+            "rh_star": 0.7571504657442972,
+            "g_at_reference": 0.4501090938496115,
+            "g_at_domain_top": -1.176644180082421
+          }
+        },
+        "hst_2019": {
+          "verdict": "humidity_sufficient",
+          "basis": {
+            "status": "rh_inverted",
+            "rh_star": 0.8166209354892434,
+            "g_at_reference": 0.9949255354731079,
+            "g_at_domain_top": -1.0891826243137026
+          }
+        },
+        "dec_2011": {
+          "verdict": "humidity_sufficient",
+          "basis": {
+            "status": "rh_inverted",
+            "rh_star": 0.840338121570576,
+            "g_at_reference": 0.2340053949209479,
+            "g_at_domain_top": -0.12680687279496916
+          }
+        },
+        "event_1990_02_09": {
+          "verdict": "humidity_sufficient",
+          "basis": {
+            "status": "rh_inverted",
+            "rh_star": 0.7836097556336116,
+            "g_at_reference": 0.25491253297144895,
+            "g_at_domain_top": -0.25828295630785497
+          }
+        }
+      }
+    },
+    "proxy_vs_model": {
+      "june_2011": {
+        "proxy": "humidity_sufficient",
+        "model": "humidity_sufficient",
+        "agree": true,
+        "effectiveness_ratio_at_0_7_knot": 1.1806860057630495
+      },
+      "hst_2019": {
+        "proxy": "humidity_insufficient",
+        "model": "humidity_sufficient",
+        "agree": false,
+        "effectiveness_ratio_at_0_7_knot": 4.025838364974505
+      },
+      "dec_2011": {
+        "proxy": "humidity_insufficient",
+        "model": "humidity_sufficient",
+        "agree": false,
+        "effectiveness_ratio_at_0_7_knot": 9.039274063113597
+      },
+      "event_1990_02_09": {
+        "proxy": "humidity_sufficient",
+        "model": "humidity_sufficient",
+        "agree": true,
+        "effectiveness_ratio_at_0_7_knot": 3.666128382793937
+      }
+    },
+    "effectiveness": {
+      "definition": "absorbed increment AOD550 (a_pool - residual at the 0.7 knot) per unit extra FT AOD550 (0.013*(f(0.7)-1)); measured on this product's own machine results",
+      "per_event": {
+        "june_2011": {
+          "absorbed_increment_aod550": 0.0035563644812789293,
+          "extra_ft_aod550": 0.0030121170776310968,
+          "ratio": 1.1806860057630495
+        },
+        "hst_2019": {
+          "absorbed_increment_aod550": 0.012126296490922159,
+          "extra_ft_aod550": 0.0030121170776310968,
+          "ratio": 4.025838364974505
+        },
+        "dec_2011": {
+          "absorbed_increment_aod550": 0.0272273517748923,
+          "extra_ft_aod550": 0.0030121170776310968,
+          "ratio": 9.039274063113597
+        },
+        "event_1990_02_09": {
+          "absorbed_increment_aod550": 0.011042807910601693,
+          "extra_ft_aod550": 0.0030121170776310968,
+          "ratio": 3.666128382793937
+        }
+      }
+    }
+  },
+  "sensitivity_appendix": {
+    "log_rh_interpolation_bracket": {
+      "semantics": "the pinned ext550 knots interpolated linearly in log(RH) (validation-side alternative; the production axis stays linear-in-RH); exact knot queries return the pinned knot value, so closure statuses at the domain endpoints are identical under both semantics",
+      "per_event": {
+        "june_2011": {
+          "status": "rh_inverted",
+          "rh_star_log": 0.749487653680517,
+          "rh_star_linear": 0.7571504657442972,
+          "bracket": [
+            0.749487653680517,
+            0.7571504657442972
+          ]
+        },
+        "hst_2019": {
+          "status": "rh_inverted",
+          "rh_star_log": 0.8047022682776762,
+          "rh_star_linear": 0.8166209354892434,
+          "bracket": [
+            0.8047022682776762,
+            0.8166209354892434
+          ]
+        },
+        "dec_2011": {
+          "status": "rh_inverted",
+          "rh_star_log": 0.8278404933987331,
+          "rh_star_linear": 0.840338121570576,
+          "bracket": [
+            0.8278404933987331,
+            0.840338121570576
+          ]
+        },
+        "event_1990_02_09": {
+          "status": "rh_inverted",
+          "rh_star_log": 0.7735694891263982,
+          "rh_star_linear": 0.7836097556336116,
+          "bracket": [
+            0.7735694891263982,
+            0.7836097556336116
+          ]
+        }
+      }
+    },
+    "j3_dormant_ruling": {
+      "ruling": "calibration-lane increment layers stay pinned at the 50% reference state (f=1): the (B-A) share measurement requires the humidity axis to be an attribute of the prior only, not of the calibrated increment - the same RH must not act twice through a calibrated artifact (J3)",
+      "antarctic_switch_rule": "dormant (not triggered): the antarctic-type composition files (SUSO 6/8, SSAM 8/8, MITR 00 recovered) have pinned knots making synthesis feasible, and no increment layer consumes humidity under this ruling. Fallback chain preregistered for any follow-up task that humidifies increment layers: synthesize the antarctic composition first (Table 4 row, mass values at RH 50%: sulfate SUSO n_j=0.998, sea salt accumulation SSAM n_j=0.109e-2, mineral transported MITR n_j=0.123e-3; the SUSO 50% knot is missing and would need interpolation), switch to a WASO-class morphology only if synthesis proves infeasible"
+    },
+    "j4_stratosphere_ruling": {
+      "ruling": "no humidity parameter: Table 3 declares RH states only for boundary aerosols (80%) and the free troposphere (50%), the stratosphere row carries none; the pinned SUSO data has no knots between 0 and 70% (50%/90% missing) so any low-RH stratospheric growth would need unpinned fabrication; stratospheric water vapor is decoupled from tropospheric event meteorology (J4)"
+    },
+    "scalar_axis_limitation": "the humidity axis is a 550 nm scalar column-AOD factor: real humidification also enlarges particles and flattens the spectral slope (Angstrom decrease), which would change the shape axis beyond this model's fixed per-layer power laws; that wavelength-resolved response is not simulated (it would entangle the pinned spectral rows) and the shape ledgers above carry the resulting cost as measured, not modeled",
+    "rh_star_interpretation_grade": "a closed RH* is the arithmetic amount of humidity the closure equation requires under the preregistered semantics; until an independent meteorological check (e.g. ERA5 along the limb path) is available it must not be cited as an observed humidity"
+  },
+  "findings": [
+    {
+      "code": "over_closed",
+      "event": "june_2011",
+      "rh": 0.99,
+      "detail": "g(0) = -1.17664 < 0 at this knot: the humidified baseline alone is darker than the fit subset; no nonnegative increment root exists and the residual is 0 (preregistered over_closed)"
+    },
+    {
+      "code": "over_closed",
+      "event": "hst_2019",
+      "rh": 0.99,
+      "detail": "g(0) = -1.08918 < 0 at this knot: the humidified baseline alone is darker than the fit subset; no nonnegative increment root exists and the residual is 0 (preregistered over_closed)"
+    },
+    {
+      "code": "over_closed",
+      "event": "dec_2011",
+      "rh": 0.99,
+      "detail": "g(0) = -0.126807 < 0 at this knot: the humidified baseline alone is darker than the fit subset; no nonnegative increment root exists and the residual is 0 (preregistered over_closed)"
+    },
+    {
+      "code": "over_closed",
+      "event": "event_1990_02_09",
+      "rh": 0.99,
+      "detail": "g(0) = -0.258283 < 0 at this knot: the humidified baseline alone is darker than the fit subset; no nonnegative increment root exists and the residual is 0 (preregistered over_closed)"
+    },
+    {
+      "code": "r_rh_degenerate",
+      "rh_label": "0.99",
+      "detail": "fewer than 2 participating events (0); no band verdict (preregistered branch)"
+    }
+  ]
+}
