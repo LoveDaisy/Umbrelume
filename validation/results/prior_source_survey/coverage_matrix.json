@@ -1,0 +1,200 @@
+{
+  "scope": "Coverage matrix (plan Step 6): retrieval-spec dimensions x pinned sources. Verdicts restricted to covered/partial/unavailable where covered means the source reports values or a distribution that contains the dimension's retrieval value range. Coverage is NOT justification: no cell implies a default value is justified, and no recommendation column exists. Verdicts cite the source's own reported quantities; wavelength/pair mismatches are recorded as caveats rather than silently converted. Unavailable cells carry search_log pointers.",
+  "dimension_source": {
+    "product": "validation/results/atmosphere_inversion/inversion.json",
+    "sha256": "77b4b95986c5bedc84af13454bfc513581b31073388022b3be4f720d913aefcb",
+    "note": "Dimension values are referenced by json-path from this committed product; the schema gate test re-asserts equality against the live file."
+  },
+  "branch_rule_status": {
+    "json_path": "retrieval_spec.branch_rule_fired",
+    "value": false,
+    "note": "The >0.625 volcanic/stratospheric branch rule is NOT triggered (pool max 0.184); no volcanic/stratospheric-perturbation sources were collected, by design of the spec itself."
+  },
+  "matrix": [
+    {
+      "json_path": "retrieval_spec.aod550_pool",
+      "value": {
+        "june_2011": 0.025865877276886398,
+        "hst_2019": 0.12036025043776977,
+        "dec_2011": 0.18391557805870665,
+        "event_1990_02_09": 0.07278811248646479
+      },
+      "cells": [
+        {
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "verdict": "covered",
+          "basis": "AOD_500nm distribution over 6677 Level-2.0 retrievals (GSFC, 39.0N, calendar 2011): min 0.0222, P10 0.0535, median 0.1163, P75 0.2056, max 1.3022. The pool band [0.0259, 0.1839] is inside the observed range at both ends; 71.3% of retrievals fall inside the band, 0.2% below its floor. Wavelength 500 vs 550 conversion in derived_comparisons (direction: tau500 slightly overestimates tau550 for the site's alpha).",
+          "location": "sources.json aeronet_v3_gsfc_2011_lev20 (sha f44fba2d...); distribution summary computed from the pinned CSV, method in derived_comparisons[0]"
+        },
+        {
+          "source": "dubovik2002_aeronet_types",
+          "verdict": "partial",
+          "basis": "Site-level observed tau ranges, tabulated at 440 nm (urban/biomass rows) and 1020 nm (dust/oceanic rows), not 550: Lanai (clean oceanic) 0.01<=tau1020<=0.2 mean 0.04 brackets the pool band low end after the documented conversion; GSFC urban 0.1<=tau440<=1.0 mean 0.24 covers the pool top region. Ranges are not distributions and wavelengths differ from 550.",
+          "location": "sources.json dubovik2002_aeronet_types -> Table 1 rows; conversion in derived_comparisons[1]"
+        },
+        {
+          "source": "winker2013_calipso_3d",
+          "verdict": "partial",
+          "basis": "Fig. 10 figure read (approximate): ocean background AOD532 ~0.05-0.1 typical across seasons, land source regions 0.1-1.0. Overlaps the pool band but figure-read resolution (~0.1) is coarser than the pool band width; 532 vs 550 nm offset (~4% for alpha~1) recorded.",
+          "location": "sources.json winker2013_calipso_3d -> Fig. 10 (printed p. 3352); figure_read_caveat"
+        },
+        {
+          "source": "opac1998_component_data_files",
+          "verdict": "unavailable",
+          "basis": "Per-particle extinction coefficients only (per 1 particle/cm3); AOD requires number-density profiles and type mixtures, which the files do not carry. This source covers the humidity-variant dimension (see that row), not AOD levels.",
+          "location": "sources.json opac1998_component_data_files; search_log.md W1.6"
+        },
+        {
+          "source": "opac1998_bams_paper_mpg_copy",
+          "verdict": "partial",
+          "basis": "The incumbent source (pinned in prior_parameters.json): Table 3 boundary-layer types tau(0.55um) at 80% RH span [0.038, 0.625] including FT+stratosphere per its header note. Covers the pool top (0.184) but NOT the June floor (0.0259 < 0.038 - the standing physical_range_exceeded finding). Recorded as incumbent baseline, not independent support.",
+          "location": "prior_parameters.json source_convention + tau rows; opac1998.pdf Table 3, printed page 840"
+        }
+      ],
+      "note": "Pool ratio R=7.110 (= 0.1839/0.0259) is the variability measure; see humidity_growth.json for the humidity-axis magnitude comparison and derived_comparisons[2] for the site-distribution dynamic-range comparison."
+    },
+    {
+      "json_path": "retrieval_spec.aod550_range",
+      "value": [
+        0.00258658772768864,
+        1.8391557805870664
+      ],
+      "cells": [
+        {
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "verdict": "partial",
+          "basis": "Observed range [0.0222, 1.3022] covers the envelope's middle but neither end: floor 0.00259 is ~8x below the site minimum; top 1.839 exceeds the site maximum 1.3022.",
+          "location": "sources.json aeronet_v3_gsfc_2011_lev20"
+        },
+        {
+          "source": "dubovik2002_aeronet_types",
+          "verdict": "partial",
+          "basis": "Reported maxima exceed the envelope top after conversion (African Savanna biomass tau440 up to 3.5; desert rows tau1020 up to 2.0), but no reported minimum reaches the envelope floor 0.00259 (Lanai clean-marine tau1020 min 0.01 converts to ~0.014-0.02 at 550).",
+          "location": "sources.json dubovik2002_aeronet_types -> Table 1; conversion in derived_comparisons[1]"
+        }
+      ],
+      "note": "The envelope is a pre-registered retrieval search bound (one decade beyond the pool in log space), not an observed climatology; its floor is expected to sit below observed clean conditions."
+    },
+    {
+      "json_path": "retrieval_spec.alpha_blue_range",
+      "value": [
+        0.2,
+        1.11
+      ],
+      "cells": [
+        {
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "verdict": "partial",
+          "basis": "Site Angstrom distribution (440-870 pair): min 0.206, P10 1.298, median 1.728, max 2.318 (n=6683). The envelope [0.2, 1.11] blue / [0.17, 1.42] visible touches the site minimum but lies almost entirely below the site's P10 - i.e. the spec's alpha values sit at the low-alpha tail of this urban site's distribution. Spectral-pair mismatch: spec pairs are 0.35-0.5 um (blue) and 0.5-0.8 um (visible); the site pair is 440-870 nm.",
+          "location": "sources.json aeronet_v3_gsfc_2011_lev20; distribution summary in derived_comparisons[0]"
+        },
+        {
+          "source": "dubovik2002_aeronet_types",
+          "verdict": "partial",
+          "basis": "Per-site alpha ranges (440-870 pair): urban 1.0-2.5, biomass 1.0-2.3, dust -0.1-1.6, oceanic 0-1.55. The dust and oceanic ranges bracket both envelopes; the urban range does not reach below 1.0. Pair mismatch as above.",
+          "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
+        }
+      ]
+    },
+    {
+      "json_path": "retrieval_spec.alpha_visible_range",
+      "value": [
+        0.17,
+        1.42
+      ],
+      "cells": [
+        {
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "verdict": "partial",
+          "basis": "Site Angstrom distribution (440-870 pair): min 0.206, P10 1.298, median 1.728, max 2.318 (n=6683). The envelope [0.2, 1.11] blue / [0.17, 1.42] visible touches the site minimum but lies almost entirely below the site's P10 - i.e. the spec's alpha values sit at the low-alpha tail of this urban site's distribution. Spectral-pair mismatch: spec pairs are 0.35-0.5 um (blue) and 0.5-0.8 um (visible); the site pair is 440-870 nm.",
+          "location": "sources.json aeronet_v3_gsfc_2011_lev20; distribution summary in derived_comparisons[0]"
+        },
+        {
+          "source": "dubovik2002_aeronet_types",
+          "verdict": "partial",
+          "basis": "Per-site alpha ranges (440-870 pair): urban 1.0-2.5, biomass 1.0-2.3, dust -0.1-1.6, oceanic 0-1.55. The dust and oceanic ranges bracket both envelopes; the urban range does not reach below 1.0. Pair mismatch as above.",
+          "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
+        }
+      ]
+    },
+    {
+      "json_path": "retrieval_spec.layer_geometry",
+      "value": {
+        "class": "0-10 km exponential layer",
+        "scale_height_m": 8000.0,
+        "source_row": "antarctic/scale_height_m"
+      },
+      "cells": [
+        {
+          "source": "winker2013_calipso_3d",
+          "verdict": "unavailable",
+          "basis": "No pinned source reports extinction scale heights reaching the spec's 8000 m. The CALIPSO H63 climatology (equivalent to the exponential-profile scale height by construction: 63% of AOD below one scale height) is figure-read as ~1-2 km over oceans, 1.5-3 km over most land, max ~4.5-5 km over deserts/elevated source regions (Fig. 9, colorbar 0-5 km); the paper states polar high values are spurious. The spec's 8 km lies above the entire observed range. The exponential-FORM equivalence (H63 vs scale height) is supported; the spec's specific H value is not documented by any source collected here.",
+          "location": "sources.json winker2013_calipso_3d -> Sec. 5 + Fig. 9 (printed p. 3352); figure_read_caveat; search_log.md W3.1-W3.3 (classic standard-atmosphere reports blocked, trail recorded)"
+        },
+        {
+          "source": "opac1998_bams_paper_mpg_copy",
+          "verdict": "partial",
+          "basis": "Incumbent source: Table 5 height profiles (printed p. 843) carry the 0-10 km exponential family with per-type scale heights (the pinned antarctic row H=8 km is one member). Documents the form's origin but is not independent support - it is where the current default comes from.",
+          "location": "prior_parameters.json layer_geometry.source_row; opac1998.pdf Table 5"
+        }
+      ],
+      "note": "Additional classic independent candidates (McClatchey et al. 1972 AFCRL-72-0497, Elterman 1968 AFCRL-68-0153) were identified as the right reference class but their PDFs are access-blocked (DTIC gate; no wayback captures) - search_log.md W3.1/W3.2."
+    },
+    {
+      "json_path": "humidity_variants (per-component RH-dependent AOD of the pinned component classes; the dimension behind the 11 `unavailable` rows in prior_parameters.json)",
+      "value": {
+        "pinned_components": [
+          "SUSO sulfate droplets",
+          "WASO water-soluble",
+          "SSAM sea salt acc.",
+          "SSCM sea salt coa."
+        ],
+        "rh_classes_of_distribution": [
+          0,
+          50,
+          70,
+          80,
+          90,
+          95,
+          98,
+          99
+        ]
+      },
+      "cells": [
+        {
+          "source": "opac1998_component_data_files",
+          "verdict": "partial",
+          "basis": "Recovered from GEISA/ESPRI via wayback captures, version-identified as the original 1998 dataset (61-wavelength grid + Table 1c dry parameters verbatim + native format). 26/38 component files pinned: SUSO 6/8 (00/70/80/95/98/99), WASO 4/8 (00/50/70/99), SSAM 8/8, SSCM 5/8 (00/50/80/90/95), plus 3 dry-only components. All four hygroscopic components have both endpoints; growth curves constructible with mid-RH gaps (12 files not archived anywhere reachable). Quantified in humidity_growth.json.",
+          "location": "sources.json opac1998_component_data_files (per-file sha256 + capture timestamps); humidity_growth.json; search_log.md W1.3-W1.7"
+        },
+        {
+          "source": "opac1998_bams_paper_mpg_copy",
+          "verdict": "unavailable",
+          "basis": "The paper tabulates types at 80% RH only (Table 3); per-RH values explicitly live in the data files, not the paper (Sec. 2/3). This is the original root cause of the 11 `unavailable` rows.",
+          "location": "opac1998.pdf Sec. 2-3; prior_parameters.json search_notes of the unavailable rows; search_log.md W1.2/W1.8 (paper retrieval + official RH-class documentation records)"
+        }
+      ]
+    }
+  ],
+  "derived_comparisons": [
+    {
+      "name": "gsfc_distribution_summary",
+      "method": "Percentiles computed from the pinned CSV (AERONET L2.0, -999 filtered): AOD_500nm n=6677 min 0.0222 P10 0.0535 P25 0.0767 median 0.1163 P75 0.2056 P90 0.3729 max 1.3022; AOD_440nm n=6680 min 0.0251 P10 0.0639 median 0.1404 P75 0.2511 P90 0.4524 max 1.4052; alpha(440-870) n=6683 min 0.206 P10 1.298 median 1.728 max 2.318. AOD_551/560 channels are empty in this export; AOD_500nm used as the near-550 channel.",
+      "pool_band_fraction": "71.3% of AOD500 retrievals inside [0.0259, 0.1839]; 0.2% below the floor.",
+      "dynamic_range_note": "Site distribution P90/P10 = 0.3729/0.0535 = 6.97 - the same order as the pool ratio R=7.110; recorded as a magnitude comparison, not an explanation."
+    },
+    {
+      "name": "wavelength_conversions",
+      "method": "tau(550) from tau(440): tau550 = tau440 * (550/440)^(-alpha); from tau(1020): tau550 = tau1020 * (550/1020)^(-alpha); from AOD532: ~tau550 for alpha~1 (within ~4%). Conversions require an alpha assumption; where used in a verdict the assumed alpha and its source range are stated in that cell's basis.",
+      "examples": {
+        "lanai_low_end": "tau1020=0.01 with oceanic alpha range 0-1.55 (Dubovik Table 1) gives tau550 ~ 0.010-0.014; tau1020=0.2 gives ~0.20-0.28",
+        "gsfc_median": "tau440 median 0.1404 with alpha 1.5-1.9 (site's own 440-675 P25-P75 band) gives tau550 ~ 0.086-0.100"
+      }
+    },
+    {
+      "name": "humidity_axis_vs_pool",
+      "pointer": "validation/results/prior_source_survey/humidity_growth.json",
+      "statement": "Full-axis growth dry->99%: x12.1-x18.6 by component; 50%->99%: x7.4-x7.6; moderate spans 50->80% x1.49-x1.52, 50->90% x2.07-x2.17, 70->98% x3.92-x4.04. Pool ratio R=7.110. Magnitude comparison only."
+    }
+  ]
+}

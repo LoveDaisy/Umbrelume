@@ -84,3 +84,18 @@ These are **calibrated values, not physical priors**: they never enter the
 default model, and every consumer must carry the forced
 `calibrated_not_physical_prior` provenance marker. The name-to-event mapping
 lives solely in each entry's `event` field.
+
+## Independent prior-source survey
+
+The literature and data sources evaluated for the low-layer aerosol
+increment's justification lanes (fixed prior / documented range / keep
+current) are pinned in
+`validation/results/prior_source_survey/sources.json` — per-file SHA-256,
+byte count, retrieval URL and printed location, with `search_log.md`
+recording every dead end. The pinned artefacts include the OPAC 1998
+component data files recovered via GEISA/ESPRI Internet-Archive captures
+(26 of 38 files, version-identified as the original 1998 distribution
+against the pinned Hess, Koepke and Schult paper), an AERONET Level-2.0
+site-year export, and open-access climatology papers. The survey changed
+no default; its conclusion section is
+[docs/PRIOR_SOURCE_SURVEY.md](../../docs/PRIOR_SOURCE_SURVEY.md).
