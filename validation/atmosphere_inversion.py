@@ -820,8 +820,13 @@ def run_anchoring_gates() -> dict:
 # --- Inversion -------------------------------------------------------------------
 
 
-def _fit_g(fit_kernel: EventKernel, a: float, form: str) -> float | None:
+def _fit_g(fit_kernel: EventKernel, a: float, form: str,
+           table=None) -> float | None:
     """g(a) of the preregistered objective, or None when the model is dark.
+
+    ``table`` overrides the production two-layer table (the humidity-axis
+    ladder consumes this to evaluate the same objective on a humidified
+    baseline; the default restores the committed path bitwise).
 
     None means at least one fit-subset prediction underflowed to <= 0 at this
     increment: the model transmits no measurable light, so the residual is
@@ -829,7 +834,7 @@ def _fit_g(fit_kernel: EventKernel, a: float, form: str) -> float | None:
     only thing that can push the summed weights negative). The preregistered
     branch_dark_top rule consumes this.
     """
-    predictions = event_predictions(fit_kernel, a, form)
+    predictions = event_predictions(fit_kernel, a, form, table=table)
     for readout in fit_kernel.scalars:
         if not predictions[readout.readout_id] > 0:
             return None
@@ -839,16 +844,19 @@ def _fit_g(fit_kernel: EventKernel, a: float, form: str) -> float | None:
     return fit_median(fit_kernel, predictions)
 
 
-def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dict:
+def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str,
+                 table=None) -> dict:
     """One event's preregistered inversion: bracket checks, then brentq.
 
     The g evaluations walk the fit-restricted kernel (bitwise-equal to the
     full kernel's fit values, asserted against the full evaluation of g(0));
-    the product-side predictions come from the full kernel.
+    the product-side predictions come from the full kernel. ``table``
+    overrides the production two-layer table throughout (humidity-axis
+    ladder use; the default is the committed production path bitwise).
     """
-    p0 = event_predictions(kernel, 0.0, form)
+    p0 = event_predictions(kernel, 0.0, form, table=table)
     g0_full = fit_median(kernel, p0)
-    g0 = _fit_g(fit_kernel, 0.0, form)
+    g0 = _fit_g(fit_kernel, 0.0, form, table=table)
     if g0 is None:
         raise RuntimeError(f"{kernel.event}: g(0) dark - impossible: the baseline "
                            f"predictions are positive")
@@ -860,7 +868,7 @@ def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dic
                 "aod550": 0.0, "g0": g0, "g_bracket_high": None,
                 "bracket_high_used": 0.0}
 
-    g_high = _fit_g(fit_kernel, FIT_BRACKET_HIGH, form)
+    g_high = _fit_g(fit_kernel, FIT_BRACKET_HIGH, form, table=table)
     if g_high is not None and g_high > 0.0:
         return {"p0": p0, "preds_root": None, "status": STATUS_UNCLOSED,
                 "aod550": None, "g0": g0, "g_bracket_high": g_high,
@@ -873,7 +881,7 @@ def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dic
         g_bracket = None
         for _ in range(60):
             probe /= 2.0
-            g_bracket = _fit_g(fit_kernel, probe, form)
+            g_bracket = _fit_g(fit_kernel, probe, form, table=table)
             if g_bracket is not None:
                 break
         if g_bracket is None:
@@ -885,9 +893,9 @@ def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dic
                                f"the underflow-cliff argument; investigate")
         bracket_high_used = probe
         g_high = g_bracket
-    root = float(brentq(lambda a: _fit_g(fit_kernel, a, form),
+    root = float(brentq(lambda a: _fit_g(fit_kernel, a, form, table=table),
                         0.0, bracket_high_used, xtol=BRENTQ_XTOL))
-    preds_root = event_predictions(kernel, root, form)
+    preds_root = event_predictions(kernel, root, form, table=table)
     return {"p0": p0, "preds_root": preds_root, "status": STATUS_INVERTED,
             "aod550": root, "g0": g0, "g_bracket_high": g_high,
             "bracket_high_used": bracket_high_used}
