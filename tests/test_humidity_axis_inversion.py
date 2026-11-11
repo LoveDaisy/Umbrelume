@@ -139,7 +139,8 @@ def test_variant_a_account_contrast_semantics(product):
     reference baseline (equal to B(50%)'s reference accounts bitwise), after
     == the rh* closure; the contrast is non-vacuous (r1 Major 2/3)."""
     b50_accounts = product["variant_b"]["accounts"]["0.5"]
-    for event, account in product["variant_a"].items():
+    for event in EVENT_ORDER:
+        account = product["variant_a"][event]
         if account["status"] != "rh_inverted":
             continue
         fit = account["fit"]
@@ -175,7 +176,8 @@ def test_variant_a_statuses_and_domain(product):
     """Variant A statuses stay inside the preregistered vocabulary and any
     closed RH* lies in the pinned domain."""
     vocabulary = set(hai.PREREGISTERED["variant_a"]["status_vocabulary"])
-    for event, account in product["variant_a"].items():
+    for event in EVENT_ORDER:
+        account = product["variant_a"][event]
         assert account["status"] in vocabulary, event
         if account["status"] == "rh_inverted":
             assert 0.5 <= account["rh_star"] <= 0.99, event
@@ -201,6 +203,57 @@ def test_humidified_path_identity_records(product):
             <= record["ft_tau_linear_rtol_budget"], label
         rh = float(label)
         assert record["bitwise_production_table"] == (rh == 0.5), label
+
+
+def test_b_accounts_share_reference_baseline(product):
+    """Every B account's before-state is the production reference baseline -
+    bitwise equal across all knots and to variant A's before-state - and the
+    after-state is the knot's applied state (over_closed keeps the humidity
+    change visible, r2 Major 2/3)."""
+    for event in EVENT_ORDER:
+        a_before = product["variant_a"][event]["fit"]["ln_residual_median_before"]
+        for label, accounts in product["variant_b"]["accounts"].items():
+            account = accounts[event]
+            assert account["fit"]["ln_residual_median_before"] == a_before, \
+                (label, event)
+            if account["status"] == "over_closed":
+                # the applied state is the humidified zero-increment baseline:
+                # before (reference) != after (humidified), the humidity change
+                # stays visible
+                assert account["fit"]["ln_residual_median_after"] \
+                    == account["g0"], (label, event)
+                assert account["g0"] < 0 < account["fit"][
+                    "ln_residual_median_before"], (label, event)
+                shape = account["shape"]
+                reference_shape = product["variant_a"][event]["shape"]
+                # 1990 carries no shape metric (preregistered None)
+                if reference_shape is not None and "median_base" in shape:
+                    assert shape["median_base"] == reference_shape["median_base"], \
+                        (label, event)
+                    assert shape["median_new"] != shape["median_base"], (label, event)
+
+
+def test_1990_holdout_carried_by_prediction_matrices(product, task5):
+    """1990 has no event-internal holdout; its preregistered holdout account
+    is the 1990 row of each variant's cross-event prediction matrix (task-5
+    discipline). B(50%)'s matrix must equal the committed task-5 matrix
+    bitwise (same applied states, same machine)."""
+    a_matrix = product["variant_a"]["cross_event_prediction_matrix"]
+    assert a_matrix["states"]["event_1990_02_09"]["status"] == "rh_inverted"
+    row = a_matrix["matrix"]["event_1990_02_09"]
+    assert len(row) == len(EVENT_ORDER)
+    assert all(isinstance(value, float) for value in row.values())
+    for event in EVENT_ORDER:
+        assert abs(a_matrix["matrix"][event][event]) < 1e-6, event
+    for label, matrix in product["variant_b"]["prediction_matrices"].items():
+        row = matrix["matrix"]["event_1990_02_09"]
+        assert all(isinstance(value, float) for value in row.values()), label
+    # B(50%) runs the task-5 machine on the task-5 states: the matrix must
+    # reproduce the committed task-5 prediction matrix bitwise
+    b50_matrix = product["variant_b"]["prediction_matrices"]["0.5"]["matrix"]
+    for event_i, task5_row in task5["cross_event"]["prediction_matrix"].items():
+        for event_j, value in task5_row.items():
+            assert b50_matrix[event_i][event_j] == value, (event_i, event_j)
 
 
 def test_log_rh_bracket_statuses_match_linear(product):

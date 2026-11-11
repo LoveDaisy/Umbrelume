@@ -59,7 +59,7 @@
       "criterion": "f_req = (a_pool + 0.013)/0.013 <= f_FT(0.99) -> humidity-sufficient; otherwise humidity-insufficient",
       "pool_source": "committed task-5 retrieval_spec.aod550_pool"
     },
-    "holdout_accounts": "per variant per ladder point per event: fit (g0 -> g at the root), holdout (before/after median and RMS), shape ledger (committed aggregation structure); the before-state is the production reference baseline (rh=0.5, bitwise the task-5 baseline) and the after-state is the variant's terminal state - variant A: rh* (or the domain top when unclosed), variant B: the knot's root state (over-closed knots evaluate at the zero increment, the applied model state)",
+    "holdout_accounts": "per variant per ladder point per event: fit (g0 -> g at the root), holdout (before/after median and RMS), shape ledger (committed aggregation structure); the before-state is the production reference baseline (rh=0.5, bitwise the task-5 baseline) for BOTH variants and the after-state is the variant's terminal state - variant A: rh* (or the domain top when unclosed), variant B: the knot's root state (over-closed knots evaluate at the zero increment, the applied model state); the 1990 event carries no event-internal holdout and its preregistered holdout account is the 1990 row of each variant's cross-event prediction matrix (task-5 discipline; states without an applicable applied state carry None)",
     "anchoring": "production-baseline anchoring gates (atmosphere_inversion.run_anchoring_gates) plus per-table humidified path identity (production grid bitwise, stratosphere tau bitwise, FT tau linear within 1e-12, full bitwise equality at rh=0.5), enforced inside the table factory so every evaluation walks a verified path"
   },
   "anchoring": {
@@ -339,6 +339,57 @@
       "g_at_reference": 0.25491253297144895,
       "g_at_domain_top": -0.25828295630785497,
       "g_at_root": -3.330669073875525e-14
+    },
+    "cross_event_prediction_matrix": {
+      "states": {
+        "june_2011": {
+          "rh": 0.7571504657442972,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "hst_2019": {
+          "rh": 0.8166209354892434,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "dec_2011": {
+          "rh": 0.840338121570576,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        },
+        "event_1990_02_09": {
+          "rh": 0.7836097556336116,
+          "aod550": 0.0,
+          "status": "rh_inverted"
+        }
+      },
+      "matrix": {
+        "june_2011": {
+          "june_2011": -1.5785983631388945e-16,
+          "hst_2019": -0.3685196928411487,
+          "dec_2011": -0.47779226109816864,
+          "event_1990_02_09": -0.15038532637062266
+        },
+        "hst_2019": {
+          "june_2011": 0.43762486837742365,
+          "hst_2019": 4.742062184549464e-13,
+          "dec_2011": -0.17090874594845062,
+          "event_1990_02_09": 0.23581720374436776
+        },
+        "dec_2011": {
+          "june_2011": 0.11062615163455031,
+          "hst_2019": 0.027867059631488156,
+          "dec_2011": -5.551115123125785e-16,
+          "event_1990_02_09": 0.07134966826585555
+        },
+        "event_1990_02_09": {
+          "june_2011": 0.05801294077226345,
+          "hst_2019": -0.06158047011042027,
+          "dec_2011": -0.09958744930077822,
+          "event_1990_02_09": -3.330669073875525e-14
+        }
+      },
+      "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
     }
   },
   "variant_b": {
@@ -794,63 +845,63 @@
       "0.7": {
         "june_2011": {
           "fit": {
-            "ln_residual_median_before": 0.3729461457946689,
+            "ln_residual_median_before": 0.4501090938496115,
             "ln_residual_median_after": -2.7820627745978044e-16,
             "readout_count": 10
           },
           "holdout": {
             "readout_count": 8,
-            "ln_residual_median_before": 0.1086287735156112,
+            "ln_residual_median_before": 0.1414915250651978,
             "ln_residual_median_after": 0.053805926867672625,
-            "ln_rms_before": 0.3952250228652941,
+            "ln_rms_before": 0.42939692861713635,
             "ln_rms_after": 0.33231463854985915
           },
           "shape": {
             "metric": "503_over_677_transmission_ratio_model_over_observed",
-            "median_base": 1.0346808564120125,
-            "median_new": 1.0951282135021763,
-            "disagreement_closed_fraction": -1.7429603344289548,
+            "median_base": 1.0230596103982648,
+            "median_new": 1.095128213502176,
+            "disagreement_closed_fraction": -3.1253174645714936,
             "verdict": "excluded_leaning",
             "involves_holdout_bands": true,
             "by_angle": [
               {
                 "shadow_angle_deg": 0.4,
-                "base_ratio": 1.6474308467365066,
-                "new_ratio": 1.9202865360668708,
-                "shape_factor": 1.1656249728908987,
-                "disagreement_closed_fraction": -0.42144375836545805,
+                "base_ratio": 1.64498483435903,
+                "new_ratio": 1.9202865360668706,
+                "shape_factor": 1.1673582004876732,
+                "disagreement_closed_fraction": -0.4268343797283676,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.45,
-                "base_ratio": 1.17617151906055,
-                "new_ratio": 1.3358635692871432,
-                "shape_factor": 1.1357727573221166,
-                "disagreement_closed_fraction": -0.9064578149644456,
+                "base_ratio": 1.1657585848198122,
+                "new_ratio": 1.3358635692871434,
+                "shape_factor": 1.1459178484142356,
+                "disagreement_closed_fraction": -1.0262212642092945,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.5,
-                "base_ratio": 0.9730832192662083,
-                "new_ratio": 1.0732786871544977,
-                "shape_factor": 1.1029670082727823,
-                "disagreement_closed_fraction": -1.7224164687162127,
+                "base_ratio": 0.9613380170683362,
+                "new_ratio": 1.0732786871544975,
+                "shape_factor": 1.1164425707697816,
+                "disagreement_closed_fraction": -0.8953680488664991,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.55,
-                "base_ratio": 0.9852653651370326,
-                "new_ratio": 1.0564283474703913,
-                "shape_factor": 1.0722272241077522,
-                "disagreement_closed_fraction": -2.829640028081906,
+                "base_ratio": 0.973387971632726,
+                "new_ratio": 1.0564283474703915,
+                "shape_factor": 1.085310665693122,
+                "disagreement_closed_fraction": -1.1204076101085116,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.575,
-                "base_ratio": 1.0346808564120125,
-                "new_ratio": 1.0951282135021763,
-                "shape_factor": 1.0584212578357528,
-                "disagreement_closed_fraction": -1.7429603344289548,
+                "base_ratio": 1.0230596103982648,
+                "new_ratio": 1.095128213502176,
+                "shape_factor": 1.0704441875834154,
+                "disagreement_closed_fraction": -3.1253174645714936,
                 "verdict": "excluded_leaning"
               }
             ]
@@ -914,44 +965,44 @@
         },
         "hst_2019": {
           "fit": {
-            "ln_residual_median_before": 0.8970544037126185,
+            "ln_residual_median_before": 0.9949255354731079,
             "ln_residual_median_after": 5.17884346518116e-14,
             "readout_count": 510
           },
           "holdout": {
             "readout_count": 510,
-            "ln_residual_median_before": 0.7076906370032556,
+            "ln_residual_median_before": 0.7936997030290669,
             "ln_residual_median_after": 0.10516790131523436,
-            "ln_rms_before": 0.6921289731340365,
+            "ln_rms_before": 0.7817856633668575,
             "ln_rms_after": 0.2728894814631378
           },
           "shape": {
             "metrics_by_dataset": {
               "ody902030": {
                 "430_over_570": {
-                  "base_slope": 0.512299811514739,
+                  "base_slope": 0.5091747336683897,
                   "new_slope": 1.0488711847163086,
-                  "disagreement_closed_fraction": 0.8997925654527699,
+                  "disagreement_closed_fraction": 0.9004305848360904,
                   "verdict": "compatible"
                 },
                 "500_over_570": {
-                  "base_slope": 0.5791420934678346,
+                  "base_slope": 0.5785080157566416,
                   "new_slope": 0.8101005912091809,
-                  "disagreement_closed_fraction": 0.5487802276175,
+                  "disagreement_closed_fraction": 0.549459026767218,
                   "verdict": "compatible"
                 }
               },
               "ody902040": {
                 "430_over_570": {
-                  "base_slope": 0.9206179101225513,
+                  "base_slope": 0.9111780017204386,
                   "new_slope": 1.784266268126082,
-                  "disagreement_closed_fraction": -8.879637451430728,
+                  "disagreement_closed_fraction": -7.82963999140906,
                   "verdict": "excluded_leaning"
                 },
                 "500_over_570": {
-                  "base_slope": 0.7190561946011796,
+                  "base_slope": 0.7167848513962254,
                   "new_slope": 0.997723358742552,
-                  "disagreement_closed_fraction": 0.9918964532632563,
+                  "disagreement_closed_fraction": 0.9919614424981446,
                   "verdict": "compatible"
                 }
               }
@@ -1018,31 +1069,31 @@
         },
         "dec_2011": {
           "fit": {
-            "ln_residual_median_before": 0.21114618455838635,
+            "ln_residual_median_before": 0.2340053949209479,
             "ln_residual_median_after": -2.2204460492503136e-16,
             "readout_count": 5
           },
           "holdout": {
             "readout_count": 2,
-            "ln_residual_median_before": 0.3309366466073815,
+            "ln_residual_median_before": 0.3387313726832135,
             "ln_residual_median_after": 0.30074533947311477,
-            "ln_rms_before": 0.3362573444141095,
+            "ln_rms_before": 0.343430709393424,
             "ln_rms_after": 0.31029451572437083
           },
           "shape": {
             "metrics": {
               "450_to750_transmission_ratio_model_over_observed": {
-                "base_ratio": 1.237528097749114,
-                "new_ratio": 1.5924215282428908,
-                "shape_factor": 1.2867760587733539,
-                "disagreement_closed_fraction": -1.4941113655893807,
+                "base_ratio": 1.2164331772408636,
+                "new_ratio": 1.592421528242891,
+                "shape_factor": 1.3090908387214917,
+                "disagreement_closed_fraction": -1.737202936237444,
                 "verdict": "excluded_leaning"
               },
               "500_to750_transmission_ratio_model_over_observed": {
-                "base_ratio": 1.0985083507829538,
-                "new_ratio": 1.3668139398494923,
-                "shape_factor": 1.2442453795415442,
-                "disagreement_closed_fraction": -2.723683697209626,
+                "base_ratio": 1.0861995844029602,
+                "new_ratio": 1.366813939849492,
+                "shape_factor": 1.2583451139882127,
+                "disagreement_closed_fraction": -3.255402649445899,
                 "verdict": "excluded_leaning"
               }
             },
@@ -1107,7 +1158,7 @@
         },
         "event_1990_02_09": {
           "fit": {
-            "ln_residual_median_before": 0.21676896599988393,
+            "ln_residual_median_before": 0.25491253297144895,
             "ln_residual_median_after": -1.3322676295501888e-15,
             "readout_count": 1
           },
@@ -1174,63 +1225,63 @@
       "0.99": {
         "june_2011": {
           "fit": {
-            "ln_residual_median_before": -1.176644180082421,
+            "ln_residual_median_before": 0.4501090938496115,
             "ln_residual_median_after": -1.176644180082421,
             "readout_count": 10
           },
           "holdout": {
             "readout_count": 8,
-            "ln_residual_median_before": -0.3571713111419326,
+            "ln_residual_median_before": 0.1414915250651978,
             "ln_residual_median_after": -0.3571713111419326,
-            "ln_rms_before": 0.3640681499414161,
+            "ln_rms_before": 0.42939692861713635,
             "ln_rms_after": 0.3640681499414161
           },
           "shape": {
             "metric": "503_over_677_transmission_ratio_model_over_observed",
-            "median_base": 1.293373575289352,
+            "median_base": 1.0230596103982648,
             "median_new": 1.293373575289352,
-            "disagreement_closed_fraction": 0.0,
+            "disagreement_closed_fraction": -11.722399477808542,
             "verdict": "excluded_leaning",
             "involves_holdout_bands": true,
             "by_angle": [
               {
                 "shadow_angle_deg": 0.4,
-                "base_ratio": 1.7993670452592774,
+                "base_ratio": 1.64498483435903,
                 "new_ratio": 1.7993670452592774,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "shape_factor": 1.0938502335557412,
+                "disagreement_closed_fraction": -0.23935789289320034,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.45,
-                "base_ratio": 1.5427674236155886,
+                "base_ratio": 1.1657585848198122,
                 "new_ratio": 1.5427674236155886,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "shape_factor": 1.323402155218998,
+                "disagreement_closed_fraction": -2.274445327858003,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.5,
-                "base_ratio": 1.293373575289352,
+                "base_ratio": 0.9613380170683362,
                 "new_ratio": 1.293373575289352,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "shape_factor": 1.345388981113615,
+                "disagreement_closed_fraction": -6.588166799615494,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.55,
-                "base_ratio": 1.2553478372561628,
+                "base_ratio": 0.973387971632726,
                 "new_ratio": 1.2553478372561628,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "shape_factor": 1.2896685328363855,
+                "disagreement_closed_fraction": -8.595203857898143,
                 "verdict": "excluded_leaning"
               },
               {
                 "shadow_angle_deg": 0.575,
-                "base_ratio": 1.2810103142552662,
+                "base_ratio": 1.0230596103982648,
                 "new_ratio": 1.2810103142552662,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "shape_factor": 1.2521365336244525,
+                "disagreement_closed_fraction": -11.18625594283294,
                 "verdict": "excluded_leaning"
               }
             ]
@@ -1243,44 +1294,44 @@
         },
         "hst_2019": {
           "fit": {
-            "ln_residual_median_before": -1.0891826243137026,
+            "ln_residual_median_before": 0.9949255354731079,
             "ln_residual_median_after": -1.0891826243137026,
             "readout_count": 510
           },
           "holdout": {
             "readout_count": 510,
-            "ln_residual_median_before": -1.3153243248838749,
+            "ln_residual_median_before": 0.7936997030290669,
             "ln_residual_median_after": -1.3153243248838749,
-            "ln_rms_before": 1.3761791622274535,
+            "ln_rms_before": 0.7817856633668575,
             "ln_rms_after": 1.3761791622274535
           },
           "shape": {
             "metrics_by_dataset": {
               "ody902030": {
                 "430_over_570": {
-                  "base_slope": 0.4851504838421176,
+                  "base_slope": 0.5091747336683897,
                   "new_slope": 0.4851504838421176,
-                  "disagreement_closed_fraction": 0.0,
+                  "disagreement_closed_fraction": -0.04894664450717343,
                   "verdict": "excluded_leaning"
                 },
                 "500_over_570": {
-                  "base_slope": 0.5491409333645153,
+                  "base_slope": 0.5785080157566416,
                   "new_slope": 0.5491409333645153,
-                  "disagreement_closed_fraction": 0.0,
+                  "disagreement_closed_fraction": -0.06967411834615218,
                   "verdict": "excluded_leaning"
                 }
               },
               "ody902040": {
                 "430_over_570": {
-                  "base_slope": 0.9617745695995422,
+                  "base_slope": 0.9111780017204386,
                   "new_slope": 0.9617745695995422,
-                  "disagreement_closed_fraction": 0.0,
-                  "verdict": "excluded_leaning"
+                  "disagreement_closed_fraction": 0.5696400538057502,
+                  "verdict": "compatible"
                 },
                 "500_over_570": {
-                  "base_slope": 0.7180300273950103,
+                  "base_slope": 0.7167848513962254,
                   "new_slope": 0.7180300273950103,
-                  "disagreement_closed_fraction": 0.0,
+                  "disagreement_closed_fraction": 0.004396572728978437,
                   "verdict": "excluded_leaning"
                 }
               }
@@ -1296,31 +1347,31 @@
         },
         "dec_2011": {
           "fit": {
-            "ln_residual_median_before": -0.12680687279496916,
+            "ln_residual_median_before": 0.2340053949209479,
             "ln_residual_median_after": -0.12680687279496916,
             "readout_count": 5
           },
           "holdout": {
             "readout_count": 2,
-            "ln_residual_median_before": 0.23403349132492515,
+            "ln_residual_median_before": 0.3387313726832135,
             "ln_residual_median_after": 0.23403349132492515,
-            "ln_rms_before": 0.253092706294752,
+            "ln_rms_before": 0.343430709393424,
             "ln_rms_after": 0.253092706294752
           },
           "shape": {
             "metrics": {
               "450_to750_transmission_ratio_model_over_observed": {
-                "base_ratio": 1.6722702713366866,
-                "new_ratio": 1.6722702713366866,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "base_ratio": 1.2164331772408636,
+                "new_ratio": 1.6722702713366864,
+                "shape_factor": 1.3747325398751133,
+                "disagreement_closed_fraction": -2.106133171942173,
                 "verdict": "excluded_leaning"
               },
               "500_to750_transmission_ratio_model_over_observed": {
-                "base_ratio": 1.379157209035103,
-                "new_ratio": 1.379157209035103,
-                "shape_factor": 1.0,
-                "disagreement_closed_fraction": 0.0,
+                "base_ratio": 1.0861995844029602,
+                "new_ratio": 1.3791572090351027,
+                "shape_factor": 1.2697088351338024,
+                "disagreement_closed_fraction": -3.3985967178524144,
                 "verdict": "excluded_leaning"
               }
             },
@@ -1334,7 +1385,7 @@
         },
         "event_1990_02_09": {
           "fit": {
-            "ln_residual_median_before": -0.25828295630785497,
+            "ln_residual_median_before": 0.25491253297144895,
             "ln_residual_median_after": -0.25828295630785497,
             "readout_count": 1
           },
@@ -1346,6 +1397,161 @@
           "rh": 0.99,
           "physical_anchor": null
         }
+      }
+    },
+    "prediction_matrices": {
+      "0.5": {
+        "states": {
+          "june_2011": {
+            "rh": 0.5,
+            "aod550": 0.025865877276886398,
+            "status": "inverted"
+          },
+          "hst_2019": {
+            "rh": 0.5,
+            "aod550": 0.12036025043776977,
+            "status": "inverted"
+          },
+          "dec_2011": {
+            "rh": 0.5,
+            "aod550": 0.18391557805870665,
+            "status": "inverted"
+          },
+          "event_1990_02_09": {
+            "rh": 0.5,
+            "aod550": 0.07278811248646479,
+            "status": "inverted"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -2.905661822261152e-17,
+            "hst_2019": -0.6992634767315388,
+            "dec_2011": -0.8899801853776776,
+            "event_1990_02_09": -0.4520902501254841
+          },
+          "hst_2019": {
+            "june_2011": 0.6301430054162623,
+            "hst_2019": 6.16017653554124e-14,
+            "dec_2011": -0.21591094635511174,
+            "event_1990_02_09": 0.2716854409015779
+          },
+          "dec_2011": {
+            "june_2011": 0.15448957019032364,
+            "hst_2019": 0.02844260904354316,
+            "dec_2011": 8.881784197001248e-16,
+            "event_1990_02_09": 0.0711189202797502
+          },
+          "event_1990_02_09": {
+            "june_2011": 0.11867183127501116,
+            "hst_2019": -0.05255788709410308,
+            "dec_2011": -0.08477382079844147,
+            "event_1990_02_09": 4.440892098500625e-16
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+      },
+      "0.7": {
+        "states": {
+          "june_2011": {
+            "rh": 0.7,
+            "aod550": 0.02230951279560747,
+            "status": "inverted"
+          },
+          "hst_2019": {
+            "rh": 0.7,
+            "aod550": 0.10823395394684761,
+            "status": "inverted"
+          },
+          "dec_2011": {
+            "rh": 0.7,
+            "aod550": 0.15668822628381435,
+            "status": "inverted"
+          },
+          "event_1990_02_09": {
+            "rh": 0.7,
+            "aod550": 0.061745304575863094,
+            "status": "inverted"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -2.7820627745978044e-16,
+            "hst_2019": -0.6870049747138798,
+            "dec_2011": -0.8613684881135102,
+            "event_1990_02_09": -0.42644664327223625
+          },
+          "hst_2019": {
+            "june_2011": 0.5857312281340765,
+            "hst_2019": 5.17884346518116e-14,
+            "dec_2011": -0.19519423872310065,
+            "event_1990_02_09": 0.27259499098731044
+          },
+          "dec_2011": {
+            "june_2011": 0.14494692392865685,
+            "hst_2019": 0.025706915267476243,
+            "dec_2011": -2.2204460492503136e-16,
+            "event_1990_02_09": 0.07181690343012713
+          },
+          "event_1990_02_09": {
+            "june_2011": 0.10491289537306443,
+            "hst_2019": -0.057534817735030136,
+            "dec_2011": -0.0869832179905944,
+            "event_1990_02_09": -1.3322676295501888e-15
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
+      },
+      "0.99": {
+        "states": {
+          "june_2011": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "hst_2019": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "dec_2011": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          },
+          "event_1990_02_09": {
+            "rh": 0.99,
+            "aod550": 0.0,
+            "status": "over_closed"
+          }
+        },
+        "matrix": {
+          "june_2011": {
+            "june_2011": -1.176644180082421,
+            "hst_2019": -1.176644180082421,
+            "dec_2011": -1.176644180082421,
+            "event_1990_02_09": -1.176644180082421
+          },
+          "hst_2019": {
+            "june_2011": -1.0891826243137026,
+            "hst_2019": -1.0891826243137026,
+            "dec_2011": -1.0891826243137026,
+            "event_1990_02_09": -1.0891826243137026
+          },
+          "dec_2011": {
+            "june_2011": -0.12680687279496916,
+            "hst_2019": -0.12680687279496916,
+            "dec_2011": -0.12680687279496916,
+            "event_1990_02_09": -0.12680687279496916
+          },
+          "event_1990_02_09": {
+            "june_2011": -0.25828295630785497,
+            "hst_2019": -0.25828295630785497,
+            "dec_2011": -0.25828295630785497,
+            "event_1990_02_09": -0.25828295630785497
+          }
+        },
+        "note": "cell (i, j): event i's fit-subset median ln residual under event j's applied state (the humidified table at the state's rh plus its applied increment); the diagonal is the event's own applied state; the 1990 row is its preregistered holdout account (no event-internal holdout); states without an applicable applied state carry None and never fabricate closure"
       }
     }
   },

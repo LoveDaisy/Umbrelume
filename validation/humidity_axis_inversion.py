@@ -207,11 +207,16 @@ PREREGISTERED = {
                         "at the root), holdout (before/after median and RMS), "
                         "shape ledger (committed aggregation structure); the "
                         "before-state is the production reference baseline "
-                        "(rh=0.5, bitwise the task-5 baseline) and the "
-                        "after-state is the variant's terminal state - variant "
-                        "A: rh* (or the domain top when unclosed), variant B: "
-                        "the knot's root state (over-closed knots evaluate at "
-                        "the zero increment, the applied model state)",
+                        "(rh=0.5, bitwise the task-5 baseline) for BOTH "
+                        "variants and the after-state is the variant's terminal "
+                        "state - variant A: rh* (or the domain top when "
+                        "unclosed), variant B: the knot's root state (over-"
+                        "closed knots evaluate at the zero increment, the "
+                        "applied model state); the 1990 event carries no "
+                        "event-internal holdout and its preregistered holdout "
+                        "account is the 1990 row of each variant's cross-event "
+                        "prediction matrix (task-5 discipline; states without "
+                        "an applicable applied state carry None)",
     "anchoring": "production-baseline anchoring gates "
                  "(atmosphere_inversion.run_anchoring_gates) plus per-table "
                  "humidified path identity (production grid bitwise, "
@@ -317,21 +322,16 @@ def invert_event_rh(kernel, fit_kernel) -> dict:
     if g_top > 0.0:
         return {"status": "unclosed", "rh_star": None,
                 "g_at_reference": g_reference, "g_at_domain_top": g_top,
-                "p0": event_predictions_at(kernel, RH_MIN),
                 "preds_root": event_predictions_at(kernel, RH_MAX)}
     if g_reference <= 0.0:
         return {"status": STATUS_CLOSED_AT_REFERENCE, "rh_star": RH_MIN,
                 "g_at_reference": g_reference, "g_at_domain_top": g_top,
-                "p0": event_predictions_at(kernel, RH_MIN),
                 "preds_root": event_predictions_at(kernel, RH_MIN)}
     rh_star = float(brentq(lambda rh: _g_rh(fit_kernel, rh),
                            RH_MIN, RH_MAX, xtol=ai.BRENTQ_XTOL))
-    # The three accounts measure what humidity CHANGED: the before-state is the
-    # production reference baseline (rh=0.5, bitwise the task-5 baseline), the
-    # after-state is the rh* closure. Binding both ends to the closure state
-    # would make the fit/holdout/shape contrasts vacuous (code-review r1
-    # Major 2/3).
-    p0 = event_predictions_at(kernel, RH_MIN)
+    # The three accounts measure what humidity CHANGED: the before-state is
+    # supplied by the caller (the shared production reference baseline), the
+    # after-state is the rh* closure (code-review r1 Major 2/3, r2 Major 2/3).
     preds_root = event_predictions_at(kernel, rh_star)
     g_root = ai.fit_median(kernel, preds_root)
     if abs(g_root) > 1e-9:
@@ -340,7 +340,7 @@ def invert_event_rh(kernel, fit_kernel) -> dict:
                            f"assumption violated")
     return {"status": STATUS_RH_INVERTED, "rh_star": rh_star,
             "g_at_reference": g_reference, "g_at_domain_top": g_top,
-            "p0": p0, "preds_root": preds_root, "g_at_root": g_root}
+            "preds_root": preds_root, "g_at_root": g_root}
 
 
 # --- Variant B: ladder over the pinned knots --------------------------------------
@@ -361,14 +361,14 @@ def ladder_point(kernel, fit_kernel, rh: float) -> dict:
                            f"humidified baseline is far from the underflow "
                            f"cliff; investigate")
     if g0 < 0.0:
-        p0 = event_predictions_at(kernel, rh)
+        applied = event_predictions_at(kernel, rh)
         return {"status": STATUS_OVER_CLOSED, "aod550": 0.0, "g0": g0,
-                "p0": p0, "preds_root": p0, "bracket_high_used": None,
+                "preds_root": applied, "bracket_high_used": None,
                 "g_bracket_high": None, "rh": rh}
     if g0 == 0.0:
-        p0 = event_predictions_at(kernel, rh)
+        applied = event_predictions_at(kernel, rh)
         return {"status": ai.STATUS_ZERO_INCREMENT, "aod550": 0.0, "g0": g0,
-                "p0": p0, "preds_root": p0, "bracket_high_used": 0.0,
+                "preds_root": applied, "bracket_high_used": 0.0,
                 "g_bracket_high": None, "rh": rh}
     result = ai.invert_event(kernel, fit_kernel, ai.MAIN_FORM, table=table)
     result["rh"] = rh
@@ -542,6 +542,46 @@ def b50_reproduction_gate(b50: dict) -> dict:
             "per_event": per_event, "verdict": "bitwise_equal"}
 
 
+# --- Cross-event prediction matrix (1990 holdout carrier) --------------------------
+
+
+def prediction_matrix_ab(kernels: dict, fit_kernels: dict, states: dict) -> dict:
+    """Cross-event prediction matrix for one variant's applied states.
+
+    Cell (i, j) = event i's fit-subset median ln residual under event j's
+    applied state (humidified table at the state's rh + its applied
+    increment); the diagonal is the event's own applied state. The 1990 row
+    is its preregistered holdout account (no event-internal holdout), the
+    task-5 discipline. States without an applicable applied state carry None
+    and never fabricate closure.
+    """
+    matrix = {}
+    for event_i in EVENT_ORDER:
+        fit_kernel = fit_kernels[event_i]
+        row = {}
+        for event_j in EVENT_ORDER:
+            state = states[event_j]
+            if state["aod550"] is None:
+                row[event_j] = None
+                continue
+            preds = ai.event_predictions(
+                fit_kernel, state["aod550"], ai.MAIN_FORM,
+                table=humidified_table(state["rh"]))
+            row[event_j] = ai.fit_median(fit_kernel, preds)
+        matrix[event_i] = row
+    return {"states": {event: {"rh": state["rh"], "aod550": state["aod550"],
+                               "status": state["status"]}
+                       for event, state in states.items()},
+            "matrix": matrix,
+            "note": "cell (i, j): event i's fit-subset median ln residual "
+                    "under event j's applied state (the humidified table at "
+                    "the state's rh plus its applied increment); the diagonal "
+                    "is the event's own applied state; the 1990 row is its "
+                    "preregistered holdout account (no event-internal "
+                    "holdout); states without an applicable applied state "
+                    "carry None and never fabricate closure"}
+
+
 # --- Accounts per variant and knot ---------------------------------------------------
 
 
@@ -706,6 +746,12 @@ def build_product() -> tuple:
     fit_kernels = ai.fit_restricted_kernels()
     pool = committed_pool()
     ledger = []
+    # The uniform before-state of every account and ledger row: the production
+    # reference baseline (rh=0.5, bitwise the task-5 baseline) - shared by
+    # both variants so the same schema carries the same semantics everywhere
+    # (code-review r2 Major 2/3).
+    reference_p0 = {event: event_predictions_at(kernels[event], RH_MIN)
+                    for event in EVENT_ORDER}
 
     # Variant B, knot 0.5 first: the bitwise reproduction gate precedes every
     # other result (preregistered).
@@ -719,13 +765,15 @@ def build_product() -> tuple:
             event: ladder_point(kernels[event], fit_kernels[event], rh)
             for event in EVENT_ORDER}
 
-    # Variant B per-knot accounts
-    variant_b = {"ladder": {}, "accounts": {}}
+    # Variant B per-knot accounts (before = the shared production reference;
+    # after = the knot's final applied state)
+    variant_b = {"ladder": {}, "accounts": {}, "prediction_matrices": {}}
     for label, knot in ladder.items():
         per_event = {}
         for event, result in knot.items():
             kernel = kernels[event]
-            account = event_account(kernel, result["p0"], result["preds_root"])
+            account = event_account(kernel, reference_p0[event],
+                                    result["preds_root"])
             account.update({"status": result["status"], "aod550": result["aod550"],
                             "g0": result["g0"], "rh": result["rh"],
                             "physical_anchor":
@@ -739,21 +787,28 @@ def build_product() -> tuple:
                               f"subset; no nonnegative increment root exists and "
                               f"the residual is 0 (preregistered over_closed)"})
             per_event[event] = account
-            ledger.extend(_ledger_rows_ab(kernel, result["p0"],
+            ledger.extend(_ledger_rows_ab(kernel, reference_p0[event],
                                           result["preds_root"], "B", label))
         variant_b["ladder"][label] = {
             event: {"status": result["status"], "aod550": result["aod550"],
                     "g0": result["g0"]}
             for event, result in knot.items()}
         variant_b["accounts"][label] = per_event
+        variant_b["prediction_matrices"][label] = prediction_matrix_ab(
+            kernels, fit_kernels,
+            {event: {"rh": result["rh"], "aod550": result["aod550"],
+                     "status": result["status"]}
+             for event, result in knot.items()})
 
-    # Variant A
+    # Variant A (before = the shared production reference; after = rh* closure,
+    # or the domain top when unclosed)
     a_raw = {}
     variant_a = {}
     for event in EVENT_ORDER:
         a_raw[event] = invert_event_rh(kernels[event], fit_kernels[event])
         result = a_raw[event]
-        account = event_account(kernels[event], result["p0"], result["preds_root"])
+        account = event_account(kernels[event], reference_p0[event],
+                                result["preds_root"])
         account.update({"status": result["status"], "rh_star": result["rh_star"],
                         "g_at_reference": result["g_at_reference"],
                         "g_at_domain_top": result["g_at_domain_top"]})
@@ -767,8 +822,14 @@ def build_product() -> tuple:
                           f"an increment; recorded unclosed, not forced"})
         variant_a[event] = account
         ledger.extend(_ledger_rows_ab(
-            kernels[event], result["p0"], result["preds_root"], "A",
+            kernels[event], reference_p0[event], result["preds_root"], "A",
             "unclosed" if result["rh_star"] is None else repr(result["rh_star"])))
+    a_states = {event: {"rh": a_raw[event]["rh_star"],
+                        "aod550": 0.0 if a_raw[event]["rh_star"] is not None else None,
+                        "status": a_raw[event]["status"]}
+                for event in EVENT_ORDER}
+    variant_a["cross_event_prediction_matrix"] = prediction_matrix_ab(
+        kernels, fit_kernels, a_states)
 
     r_rh = {label: r_rh_account(knot) for label, knot in ladder.items()}
     for label, account in r_rh.items():
@@ -826,9 +887,9 @@ def write_products(out: Path) -> dict:
                              else ("" if value is None else value) for value in row])
     return {
         "b50_gate": product["b50_reproduction_gate"]["verdict"],
-        "variant_a": {event: {"status": account["status"],
-                              "rh_star": account["rh_star"]}
-                      for event, account in product["variant_a"].items()},
+        "variant_a": {event: {"status": product["variant_a"][event]["status"],
+                              "rh_star": product["variant_a"][event]["rh_star"]}
+                      for event in EVENT_ORDER},
         "variant_b": {label: {event: {"status": record["status"],
                                       "aod550": record["aod550"]}
                               for event, record in knot.items()}
