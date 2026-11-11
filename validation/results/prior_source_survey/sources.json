@@ -221,6 +221,15 @@
           "location": "component data file: header lines 1-10 (size distribution params incl. dry mode radius), optical table lines 18-78 (61 wavelengths 0.25-40 um: ext/sca/abs coef, SSA, asymmetry, ext.nor normalized at 0.55um, refractive index), phase-function table (scattering angle x 61 wavelengths)"
         },
         {
+          "file_name": "suso99",
+          "sha256": "0faf8cfd28c20f4547c148c8bf1ee27cbbd5f86a3c34bd351d593508803ad744",
+          "bytes": 76795,
+          "original_url": "https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/suso99",
+          "retrieved_url": "http://web.archive.org/web/20231202114826id_/https://cds-espri.ipsl.upmc.fr/espri/pubipsl/aerosols/optdat/suso99",
+          "wayback_capture_timestamp": "20231202114826",
+          "location": "component data file (sulfate droplets 99% RH), same format as sibling entries"
+        },
+        {
           "file_name": "waso00",
           "sha256": "4d7244f93841f2884aa7ead7c27e0f8344cbb6a7af02c184dfecbc1d4b0015ce",
           "bytes": 76795,
