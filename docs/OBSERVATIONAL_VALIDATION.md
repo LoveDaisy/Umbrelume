@@ -245,6 +245,63 @@ antarctic 型）打在红核占优的 2–12 km 质量上，f(450)/f(750) > 1，
 更远；作用于高层的平流层候选命中 >12 km 质量占优的蓝色核，反而改善。任何「下一个物理增量」的
 形状轴代价都必须按此机制用 kernel 评估，不能按谱斜率手推。
 
+## 跨事件所需大气反演（校准车道，2026-11 增补）
+
+亮度 standing gap 的跨事件终审用「反演」回答：把每个事件**拟合子集**的亮度残差
+在生产默认双层基线上闭合所需的低层增量 AOD550 连续求根出来（层形态与谱律钉死
+antarctic 文献行，AOD 是唯一自由参数）。这是**校准车道**：一切值相对生产默认基线，
+`calibrated, not a physical prior`，永不进默认；拟合/留出划分、目标函数、判别准则
+与检索规格全部预注册（`inversion.json:preregistered` 块与模块常量逐字一致，
+pytest 钉定），判别结果由预注册带机械判定，不做人工修饰。
+
+- **反演基线锚定（独立链路证据）**：生产双层 P(0) 对 committed 生产预测逐读数
+  **位等**复制（`inversion.json:anchoring.reproduction.worst_relative_diff`），
+  committed 变体比值链在矩容差内复核
+  （`inversion.json:anchoring.chain_identity.kernel_leg_worst_relative_dev`）。
+- **四事件反演值**（拟合子集中位 ln 残差闭零；划分见预注册块）：
+  June（`inversion.json:events.june_2011.aod550`）、
+  HST（`inversion.json:events.hst_2019.aod550`）、
+  Dec（`inversion.json:events.dec_2011.aod550`）、
+  1990（`inversion.json:events.event_1990_02_09.aod550`）。
+- **跨事件一致性终审**（预注册判别量 R = max/min，带边复用判别表词汇）：
+  `inversion.json:cross_event.verdict`，R =
+  `inversion.json:cross_event.R`。终审落在**张力带**：四事件所需增量相差约一个
+  数量级以内但明显不齐——既非统一系统性缺口，也非完全事件特异。机制层佐证在
+  跨事件预测矩阵（`inversion.json:cross_event.prediction_matrix`，事件 i 用事件 j
+  的增量重算拟合残差直接可读）；辅助散布量只描述不承载判定
+  （`inversion.json:cross_event.geometric_mean`）。
+- **形状轴联合价签**（代价账本，涉留出波段已声明、不隐藏）：June 503/677 中位
+  `inversion.json:events.june_2011.shape.disagreement_closed_fraction`
+  （负值 = 恶化）；Dec 两比值
+  `inversion.json:events.dec_2011.shape.metrics.450_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`
+  与 `...500_to750_transmission_ratio_model_over_observed.disagreement_closed_fraction`；
+  HST 两 dataset 两斜率带
+  `inversion.json:events.hst_2019.shape.metrics_by_dataset.ody902030.430_over_570.disagreement_closed_fraction`
+  等。主形态增量**恶化 June/Dec 形状**、HST 两 dataset 方向相反——与判别表的
+  机制发现（形状响应由贡献核高度分布 × 成分作用带决定）一致。
+- **物理合理范围锚点**（报告义务，无 pass/fail 阈值）：四值对 10 个已钉
+  boundary-layer 行谱系的位置与比值
+  （`inversion.json:events.june_2011.physical_anchor.pinned_rows` 等）；
+  June 主形态值低于谱系下界，越界如实记 finding
+  （`inversion.json:findings[0].code`），不隐藏。
+- **形态敏感性附表**（主结论只由主形态承载）：desert（0–6 km）与
+  continental_average（0–2 km）层几何在多数事件**闭不开**
+  （`inversion.json:form_sensitivity.forms`）——闭合所需量与层几何强耦合，
+  检索规格必须同时覆盖值域与层几何。
+- **检索规格**（后续「独立先验来源普查」任务的输入，生成规则预注册）：
+  AOD 值域 `inversion.json:retrieval_spec.aod550_range`、α 包络
+  `inversion.json:retrieval_spec.alpha_blue_range` 与
+  `inversion.json:retrieval_spec.alpha_visible_range`、层几何与来源类型
+  `inversion.json:retrieval_spec.source_types`。
+- **渲染 preset（数据层，永不进默认）**：`eclipse/data/calibrated_presets.json`
+  注册表按事件命名（june2011/dec2011/hst2019/feb1990，名字↔事件映射唯一经
+  registry `event` 字段），完整大气 = 生产默认双层 + 反演增量第三层；
+  `--aerosol calibrated:<name>` 可选载，provenance 强制含本产物的 sha256 锚与
+  「not a physical prior」标记；默认路径零注册表 IO，默认输出逐位不变。
+- **复现**：`uv run python -m validation.atmosphere_inversion --out <new-dir>`
+  （确定性产物，连跑两次 byte-identical；产物 schema、预注册逐字一致、判别
+  机械重导与注册表锚由 pytest 钉定）。
+
 ## 其他已核实的公开参照
 
 | 参照 | 公开程度与可比较内容 | 当前限制 |

@@ -69,3 +69,18 @@ a532555ff4d5bd8071b7aabed80aa0c167ddf6fd6e2d51c3cfe1916d265e793c  solar_am0.csv
 The model is dry, horizontally homogeneous, and cloud free. A finite top
 leaves a tiny residual air density immediately below the vacuum interface;
 the continuous interior gradient does not include that cutoff's jump.
+
+## Calibration-lane preset registry
+
+`calibrated_presets.json` is a data-layer registry of rendering presets built
+from the cross-event atmospheric inversion (calibration lane; see
+`docs/OBSERVATIONAL_VALIDATION.md`, section 跨事件所需大气反演). Each entry is
+a complete atmosphere: the production two-layer OPAC default plus one
+inverted low-layer increment whose AOD is fitted to that event's brightness
+residual. The values are mechanically anchored to the committed inversion
+product (`validation/results/atmosphere_inversion/inversion.json`, whose
+sha256 each entry carries), and the pytest gate re-derives the anchor.
+These are **calibrated values, not physical priors**: they never enter the
+default model, and every consumer must carry the forced
+`calibrated_not_physical_prior` provenance marker. The name-to-event mapping
+lives solely in each entry's `event` field.
