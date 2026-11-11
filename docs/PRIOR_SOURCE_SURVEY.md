@@ -33,25 +33,33 @@ both, following the committed retrieval spec
    the *classic* BAMS98 dataset alongside a separate OPAC 2015 entry; only
    the classic files were used.
 2. **The humidity growth is quantified** (`humidity_growth.json`): at fixed
-   number density, the full axis (dry → 99% RH) spans ×12.1–×18.6 across the
-   four hygroscopic components; 50% → 99% spans ×7.4–×7.6, the same order as
-   R = 7.110; moderate spans are much smaller (50 → 80%: ×1.5; 50 → 90%:
-   ×2.1; 70 → 98%: ×3.9–4.0). Magnitude comparison only — no conclusion.
+   number density, the full axis (dry → 99% RH) spans ×12.1–×18.6 for the
+   three components with both endpoints pinned (SUSO ×16.98, WASO ×12.14,
+   SSAM ×18.58; SSCM's high end is pinned at 95%, ×8.17); 50% → 99% spans
+   ×7.4–×7.6, the same order as R = 7.110; moderate spans are much smaller
+   (50 → 80%: ×1.5; 50 → 90%: ×2.1; 70 → 98%: ×3.9–4.0). Magnitude
+   comparison only — no conclusion.
 3. **A mid-latitude site distribution brackets the pool band.** GSFC (39.0°N)
    Level-2.0 AOD500, calendar 2011, n = 6677: min 0.0222, median 0.1163,
    P75 0.2056; 71.3% of retrievals fall inside the pool band and the site's
    P90/P10 dynamic range is 6.97 — the same order as R (comparison, not
    explanation).
 4. **Clean-marine low end is documented independently** (Dubovik et al. 2002,
-   Table 1, Lanai: τ(1020) 0.01–0.2, mean 0.04): the June inverted value
-   0.0259 sits at the documented clean tail, below the OPAC boundary-layer
-   family floor 0.038 but not below all independent observations.
-5. **The 0–10 km exponential layer with H = 8 km has no independent support
-   in what was reachable.** The CALIPSO H63 climatology (Winker et al. 2013,
-   figure-read) shows extinction scale heights of ~1–3 km typical, at most
-   ~5 km; no collected source documents 8 km. The classic standard-atmosphere
-   reports (McClatchey 1972, Elterman 1968) are access-blocked; trail in
-   `search_log.md` W3.1–W3.3.
+   Table 1, Lanai: τ(1020) 0.01–0.2, mean 0.04) — conditionally: the
+   Lanai-derived marginal envelope spans the June inverted value 0.0259 only
+   for α up to ≈1.54 of the documented oceanic range [0, 1.55], so the value
+   sits at or beyond the documented clean tail rather than clearly inside it.
+   It is below the OPAC boundary-layer family floor 0.038.
+5. **The 0–10 km exponential layer with H = 8 km is not directly documented
+   by any reachable independent source.** The CALIPSO H63 climatology
+   (Winker et al. 2013, figure-read) shows full-column extinction scale
+   heights of ~1–3 km typical, at most ~5 km; converting the spec's
+   truncated layer to that metric gives an H63-equivalent of ≈4775 m,
+   which overlaps the observed upper extreme — but the comparison crosses
+   definitions (truncated layer vs full column, sea-level reference with
+   terrain contributions) and neither certifies nor excludes the profile.
+   The classic standard-atmosphere reports (McClatchey 1972, Elterman 1968)
+   are access-blocked; trail in `search_log.md` W3.1–W3.3.
 
 ## Where the evidence lives
 

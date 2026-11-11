@@ -9,9 +9,21 @@
     {
       "lane": "fixed_higher_prior",
       "existing_evidence": [
-        {"evidence": "Independent mid-latitude site climatology: GSFC (39.0N) Level-2.0 AOD_500nm median 0.1163 (P25 0.0767, P75 0.2056) over 6677 retrievals in calendar 2011 - specific published values exist in the pool's neighbourhood [0.0259, 0.1839].", "source": "aeronet_v3_gsfc_2011_lev20", "pointer": "coverage_matrix.json derived_comparisons[0]"},
-        {"evidence": "Per-site type climatologies report specific means (GSFC urban tau(440) mean 0.24; Lanai clean-marine tau(1020) mean 0.04) that convert to tau(550) inside/near the pool band.", "source": "dubovik2002_aeronet_types", "pointer": "coverage_matrix.json cells retrieval_spec.aod550_pool"},
-        {"evidence": "The incumbent OPAC family itself already contains higher members (Table 3 BL types tau(0.55um) up to 0.625 at 80% RH), i.e. a 'higher fixed prior' would be a choice among already-published type values, not a new number.", "source": "opac1998_bams_paper_mpg_copy", "pointer": "prior_parameters.json (incumbent contract)"}
+        {
+          "evidence": "Independent mid-latitude site climatology: GSFC (39.0N) Level-2.0 AOD_500nm median 0.1163 (P25 0.0767, P75 0.2056) over 6677 retrievals in calendar 2011 - specific published values exist in the pool's neighbourhood [0.0259, 0.1839].",
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "pointer": "coverage_matrix.json derived_comparisons[0]"
+        },
+        {
+          "evidence": "Per-site type climatologies report specific means (GSFC urban tau(440) mean 0.24; Lanai clean-marine tau(1020) mean 0.04) that convert to tau(550) inside/near the pool band.",
+          "source": "dubovik2002_aeronet_types",
+          "pointer": "coverage_matrix.json cells retrieval_spec.aod550_pool"
+        },
+        {
+          "evidence": "The incumbent OPAC family itself already contains higher members (Table 3 BL types tau(0.55um) up to 0.625 at 80% RH), i.e. a 'higher fixed prior' would be a choice among already-published type values, not a new number.",
+          "source": "opac1998_bams_paper_mpg_copy",
+          "pointer": "prior_parameters.json (incumbent contract)"
+        }
       ],
       "gaps": [
         "The cross-event inversion already showed a single fixed value cannot cover all four events (R=7.110, partially_consistent, criterion preregistered): any fixed prior misfits at least some events by construction.",
@@ -27,10 +39,26 @@
     {
       "lane": "documented_range",
       "existing_evidence": [
-        {"evidence": "Site AOD distribution: 71.3% of GSFC 2011 Level-2.0 retrievals fall inside the pool band; the site's dynamic range P90/P10 = 6.97 is the same order as the pool ratio R=7.110 (magnitude comparison only).", "source": "aeronet_v3_gsfc_2011_lev20", "pointer": "coverage_matrix.json derived_comparisons[0]"},
-        {"evidence": "The humidity axis is now quantified from the recovered OPAC 1998 component files (26/38 pinned, version-identified): full-axis growth dry->99% RH spans x12.1-x18.6 by component; 50%->99% spans x7.4-x7.6, the same order as R; moderate spans 50->80% x1.5, 50->90% x2.1, 70->98% x3.9-4.0.", "source": "opac1998_component_data_files", "pointer": "humidity_growth.json"},
-        {"evidence": "Clean-marine low end is documented independently (Lanai tau(1020) 0.01-0.2, mean 0.04), so a documented range can span from clean-marine levels up through urban levels with pinned sources at both ends.", "source": "dubovik2002_aeronet_types", "pointer": "coverage_matrix.json cell retrieval_spec.aod550_pool (Lanai row)"},
-        {"evidence": "Global vertical/amount context exists (CALIPSO H63 and AOD maps, figure-read approximate).", "source": "winker2013_calipso_3d", "pointer": "coverage_matrix.json cells; figure_read_caveat"}
+        {
+          "evidence": "Site AOD distribution: 71.3% of GSFC 2011 Level-2.0 retrievals fall inside the pool band; the site's dynamic range P90/P10 = 6.97 is the same order as the pool ratio R=7.110 (magnitude comparison only).",
+          "source": "aeronet_v3_gsfc_2011_lev20",
+          "pointer": "coverage_matrix.json derived_comparisons[0]"
+        },
+        {
+          "evidence": "The humidity axis is now quantified from the recovered OPAC 1998 component files (26/38 pinned, version-identified): full-axis growth dry->99% RH spans x12.1-x18.6 for the three components with both endpoints (SUSO/WASO/SSAM; SSCM is pinned to 95%, x8.17); 50%->99% spans x7.4-x7.6 (WASO/SSAM), the same order as R; moderate spans 50->80% x1.5, 50->90% x2.1, 70->98% x3.9-4.0.",
+          "source": "opac1998_component_data_files",
+          "pointer": "humidity_growth.json"
+        },
+        {
+          "evidence": "Clean-marine low end is documented independently (Lanai tau(1020) 0.01-0.2, mean 0.04), so a documented range can span from clean-marine levels up through urban levels with pinned sources at both ends; the Lanai-derived marginal envelope spans the June pool value only for alpha up to ~1.54 of the documented oceanic range (conditional, see coverage_matrix.json worked examples).",
+          "source": "dubovik2002_aeronet_types",
+          "pointer": "coverage_matrix.json cell retrieval_spec.aod550_pool (Lanai row)"
+        },
+        {
+          "evidence": "Global vertical/amount context exists (CALIPSO H63 and AOD maps, figure-read approximate).",
+          "source": "winker2013_calipso_3d",
+          "pointer": "coverage_matrix.json cells; figure_read_caveat"
+        }
       ],
       "gaps": [
         "Distribution evidence is site/type-conditioned, not eclipse-geometry-conditioned: no source gives an AOD distribution for a 0-10 km grazing-increment layer at the events' latitudes/seasons.",
@@ -47,10 +75,26 @@
     {
       "lane": "keep_current",
       "existing_evidence": [
-        {"evidence": "Clean-atmosphere low values are independently real but rare at mid-latitude sites: GSFC 2011 has 0.2% of retrievals below the pool floor 0.0259 (min 0.0222), and the clean-marine row brackets that level - the June inverted value is at the documented clean tail, not outside all independent observations.", "source": "aeronet_v3_gsfc_2011_lev20 + dubovik2002_aeronet_types", "pointer": "coverage_matrix.json cells retrieval_spec.aod550_pool"},
-        {"evidence": "The calibration lane already carries event-specific atmospheres with forced provenance (four calibrated: presets, registry-anchored to the committed inversion product), and the lane-separation discipline is in place.", "source": "validation/results/atmosphere_inversion/inversion.json", "pointer": "eclipse/data/SOURCES.md calibration-lane section"},
-        {"evidence": "The standing gap is explicitly documented (brightness closures in the tension band on all four events) - the current default's known limitation is on the record, not hidden.", "source": "docs/physics/AEROSOL.md standing-gap paragraph", "pointer": "docs/physics/AEROSOL.md"},
-        {"evidence": "The humidity axis that was the survey's origin gap is now pinned and quantified, so keeping the current default does not leave the known gap undocumented - the evidence exists for any later lane switch.", "source": "opac1998_component_data_files", "pointer": "humidity_growth.json"}
+        {
+          "evidence": "Clean-atmosphere low values are independently real but rare at mid-latitude sites: GSFC 2011 has 0.2% of retrievals below the pool floor 0.0259 (min 0.0222). Whether the clean-marine row covers the June value depends on the unobserved alpha of low-AOD samples (marginal envelope spans it only for alpha <= ~1.54) - the June value sits at or beyond the documented clean tail, not clearly inside it.",
+          "source": "aeronet_v3_gsfc_2011_lev20 + dubovik2002_aeronet_types",
+          "pointer": "coverage_matrix.json cells retrieval_spec.aod550_pool"
+        },
+        {
+          "evidence": "The calibration lane already carries event-specific atmospheres with forced provenance (four calibrated: presets, registry-anchored to the committed inversion product), and the lane-separation discipline is in place.",
+          "source": "validation/results/atmosphere_inversion/inversion.json",
+          "pointer": "eclipse/data/SOURCES.md calibration-lane section"
+        },
+        {
+          "evidence": "The standing gap is explicitly documented (brightness closures in the tension band on all four events) - the current default's known limitation is on the record, not hidden.",
+          "source": "docs/physics/AEROSOL.md standing-gap paragraph",
+          "pointer": "docs/physics/AEROSOL.md"
+        },
+        {
+          "evidence": "The humidity axis that was the survey's origin gap is now pinned and quantified, so keeping the current default does not leave the known gap undocumented - the evidence exists for any later lane switch.",
+          "source": "opac1998_component_data_files",
+          "pointer": "humidity_growth.json"
+        }
       ],
       "gaps": [
         "The June floor 0.0259 remains below the OPAC BL-family floor 0.038 (physical_range_exceeded finding stands); no collected source reports values at the envelope floor 0.00259.",

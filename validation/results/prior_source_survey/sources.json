@@ -282,7 +282,7 @@
           "miam00"
         ],
         "reason": "not captured by web.archive.org on either ESPRI host (404 from wayback for all 12, tried across 2022/2023/2024/2025 timestamps); direct ESPRI download impossible from this network (TCP connect OK, TLS handshake times out on both aeris-geisa.ipsl.fr and cds-espri.ipsl.upmc.fr); FlexAOD mirror (bundles data/gads/optdat) under server maintenance (HTTP maintenance page); see search_log.md entries W1.3-W1.7",
-        "impact": "RH growth curves remain constructible from the retrieved files: SUSO has 00/70/80/95/98/99 (6 of 8), WASO has 00/50/70/99 (4 of 8 incl. both endpoints), SSAM has all 8, SSCM has 00/50/80/90/95. Missing are mid-RH points for WASO (80/90/95/98) and SUSO (50/90) plus 3 non-hygroscopic components."
+        "impact": "RH growth curves remain constructible from the retrieved files: SUSO has 00/70/80/95/98/99 (6 of 8), WASO has 00/50/70/99 (4 of 8 incl. both endpoints), SSAM has all 8 (both endpoints), SSCM has 00/50/80/90/95 (5 of 8; the high-RH endpoint classes 98/99 are missing, so no SSCM dry->99% growth is asserted). Full dry->99% endpoint pairs exist only for SUSO/WASO/SSAM. Missing are mid-RH points for WASO (80/90/95/98) and SUSO (50/90), SSCM 70/98/99, plus 3 non-hygroscopic components."
       },
       "search_notes": "search_log.md W1.3-W1.7 (dead-path evidence for LMU FTP, wayback FTP gaps, ESPRI TLS, FlexAOD maintenance)"
     },
@@ -318,7 +318,7 @@
     },
     {
       "name": "winker2013_calipso_3d",
-      "role": "CALIPSO lidar global climatology of aerosol vertical distribution and AOD (532 nm). Serves: layer-geometry comparison via the H63 extinction scale-height metric (63% of AOD below this altitude - for an exponential profile H63 equals the scale height) and clean-ocean AOD levels. Values read from figures are approximate figure reads, flagged as such.",
+      "role": "CALIPSO lidar global climatology of aerosol vertical distribution and AOD (532 nm). Serves: layer-geometry context via the H63 column statistic (altitude below which 63% of column AOD lies; equals the exponential scale height only for an UNTRUNCATED profile, so comparison against the spec's 10-km-truncated layer requires the conversion in coverage_matrix.json derived_comparisons, which crosses definitions and does not certify or exclude the profile) and clean-ocean AOD levels. Values read from figures are approximate figure reads, flagged as such.",
       "status": "available",
       "citation": "Winker, D. M., Tackett, J. L., Getzewich, B. J., Liu, Z., Vaughan, M. A., & Rogers, R. R. (2013). The global 3-D distribution of tropospheric aerosols: a view from CALIPSO. Atmos. Chem. Phys., 13, 3345-3361.",
       "retrieved_date": "2026-11-11",

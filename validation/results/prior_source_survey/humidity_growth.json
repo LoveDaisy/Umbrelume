@@ -14,7 +14,7 @@
       "event_1990_02_09": 0.07278811248646479
     },
     "pool_ratio_R": 7.11035531831942,
-    "comparison_statement": "Magnitude comparison only: the full-humidity-axis growth (dry -> 99% RH) spans x12.1-x18.6 depending on component; the 50% -> 99% span is x7.4-x7.6 (WASO/SSAM, the two components with the 50% and 99% files both pinned), the same order as R=7.110; the moderate spans are much smaller (50% -> 80%: x1.49-x1.52 for SSAM/SSCM; 50% -> 90%: x2.07-x2.17; 70% -> 98%: x3.92-x4.04). Whether an ambient-RH difference between eclipse events could span the pool is not assessed here; the table only states which RH spans produce which growth factors."
+    "comparison_statement": "Magnitude comparison only: the full-humidity-axis growth (dry -> 99% RH) spans x12.1-x18.6 for the three components with both endpoints pinned (SUSO x16.98, WASO x12.14, SSAM x18.58); SSCM's high end is pinned at 95% (x8.17) and no SSCM dry->99% growth is asserted. The 50% -> 99% span is x7.4-x7.6 (WASO/SSAM, the two components with the 50% and 99% files both pinned), the same order as R=7.110; the moderate spans are much smaller (50% -> 80%: x1.49-x1.52 for SSAM/SSCM; 50% -> 90%: x2.07-x2.17; 70% -> 98%: x3.92-x4.04). Whether an ambient-RH difference between eclipse events could span the pool is not assessed here; the table only states which RH spans produce which growth factors."
   },
   "components": [
     {

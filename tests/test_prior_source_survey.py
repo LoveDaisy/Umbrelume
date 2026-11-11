@@ -97,3 +97,46 @@ def test_survey_products_present_and_default_untouched_claims_consistent():
         assert lane["existing_evidence"] and lane["gaps"] and lane["what_this_lane_still_needs"], lane["lane"]
         # no recommendation column: lane objects must not carry verdict/recommendation keys
         assert not any(k.startswith("recommend") for k in lane), lane["lane"]
+
+
+def test_coverage_matrix_complete_over_frozen_sources():
+    matrix = _load(SURVEY / "coverage_matrix.json")
+    sources = _load(SURVEY / "sources.json")
+    frozen = {e["name"] for e in sources["sources"]}
+    dims = matrix["matrix"]
+    assert len(dims) == 6, "five retrieval-spec dimensions plus the humidity-variant dimension"
+    paths = [d["json_path"] for d in dims]
+    assert sum(p.startswith("retrieval_spec.") for p in paths) == 5
+    assert sum(p.startswith("humidity_variants") for p in paths) == 1
+    for d in dims:
+        got = [c["source"] for c in d["cells"]]
+        assert len(got) == len(set(got)), f"duplicate source cell in {d['json_path']}"
+        assert set(got) == frozen, f"incomplete source set in {d['json_path']}: missing {frozen - set(got)}"
+
+
+def test_worked_derived_examples_recompute():
+    """The delivered conversions and geometric derivations must recompute from
+    their own stated formula and inputs (numeric contract, not just SHA format)."""
+    import math
+
+    matrix = _load(SURVEY / "coverage_matrix.json")
+    examples = {}
+    for entry in matrix["derived_comparisons"]:
+        for w in entry.get("worked_examples", []):
+            examples[w["id"]] = w
+    assert {"lanai_low", "lanai_high", "gsfc_median", "h63_target_layer"} <= set(examples)
+
+    for eid in ("lanai_low", "lanai_high", "gsfc_median"):
+        ex = examples[eid]
+        tau = ex["inputs"]["tau"]
+        wl = ex["inputs"]["wavelength_nm"]
+        a0, a1 = ex["inputs"]["alpha_range"]
+        recomputed = sorted(tau * (550.0 / wl) ** (-a) for a in (a0, a1))
+        stored = ex["outputs"]["tau550_range"]
+        for got, want in zip(recomputed, stored):
+            assert abs(got - want) <= 5e-4 * max(1.0, want), f"{eid}: {got} vs {want}"
+
+    ex = examples["h63_target_layer"]
+    H, top = ex["inputs"]["H_m"], ex["inputs"]["top_m"]
+    h63 = -H * math.log(1 - 0.63 * (1 - math.exp(-top / H)))
+    assert abs(ex["outputs"]["h63_m"] - h63) <= 1.0, f"h63: {ex['outputs']['h63_m']} vs {h63}"
