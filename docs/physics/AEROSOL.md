@@ -196,15 +196,35 @@ region, with the discrimination table's numbers serving as the preregistered
 prediction (checked item by item in
 `validation/results/stratosphere_background/preregistered_check.json`).
 
-**Standing gap (owner ruling 2026-11-11):** the brightness residual is NOT
-closed by this component. All four events' brightness closures remain in the
-tension band (+0.19 to +0.44 of the committed log-residual). The wide low-layer
-increment (antarctic-type proxy, 0–10 km, AOD550 about 0.066) closes the
-brightness axis on three of four events but strongly worsens the shape axis
-and carries a menu-selection effect; it stays in the calibration-diagnosis
-lane and out of the default. Closing the brightness residual therefore needs
-a separately discriminated direction (event-dependent profiles, cloud, source
-structure), not a widening of this component.
+**Standing gap (owner rulings 2026-11-11, updated 2026-11-12):** the brightness
+residual is NOT closed by the stratospheric component itself — all four events'
+closures remain in the tension band (+0.19 to +0.44 of the committed
+log-residual). The wide low-layer increment (antarctic-type proxy, 0–10 km,
+AOD550 about 0.066) closes the brightness axis on three of four events but
+strongly worsens the shape axis and carries a menu-selection effect; it stays
+in the calibration-diagnosis lane and out of the default.
+
+Update (2026-11-12, task-humidity-axis, owner+user ruling): the cross-event
+brightness residual closes in the calibration lane on a **single FT structure
+with per-event relative humidity** — variant A of
+`validation/results/humidity_axis/inversion_ab.json` inverts one free
+parameter per event: RH* = 75.7% (June 2011), 78.4% (Feb 1990), 81.7% (HST
+2019), 84.0% (Dec 2011), all four `rh_inverted`, spread 8.3 percentage
+points. The earlier R = 7.1 cross-event spread of antarctic-morphology
+increments is therefore largely a **morphology artifact**: the FT layer's
+unit-AOD effectiveness on the fit paths is systematically higher than the
+0–10 km increment's (the plan's J9 linear budget was falsified by the machine
+and confirmed by three independent links; no parameter was adjusted). A
+*uniform* humidity does not reconcile the events (R_RH ladder: 7.02 at
+RH = 0.7 with all four still positive; all events over-closed at RH = 0.99) —
+the events genuinely sampled different humid states, but the required
+differences are modest. The remaining content of this gap: (a) the fitted RH*
+are calibration quantities, not measured atmospheric states — an ERA5
+cross-check (CDS authentication pending) would upgrade them to
+prediction-checked values; (b) continuous RH* positions rely on interpolation
+across the unrecovered WASO 80–98% files; (c) the 550 nm scalar axis does not
+model the spectral shape response of humidification. No default change follows
+from a calibrated closure without independent justification.
 
 The default OPAC components are independently chosen forward-model priors.
 Any subsequent AOD calibration against eclipse curves must be separately
