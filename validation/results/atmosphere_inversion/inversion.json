@@ -371,7 +371,7 @@
         "ln_rms_after": 0.28814268900291695
       },
       "baseline_contrast": {
-        "fit_ln_residual_median_fixed_opac_committed": 1.1637743356994812,
+        "fit_ln_residual_median_fixed_opac_committed": 1.1719856163004247,
         "fit_ln_residual_median_production_two_layer": 0.9949255354731079,
         "note": "monitoring contrast only (plan risk 1); the inversion baseline is the production two-layer default"
       },

@@ -465,3 +465,40 @@ def test_calibrated_registry_anchors_to_committed_product():
         assert layer["break_nm"] == 500.0
         assert provenance["fit_holdout_split"] \
             == ai.PREREGISTERED["fit_holdout_split"][event]
+
+
+def test_committed_baseline_contrast_matches_direct_committed_ratios():
+    """Independent-path pin for the monitoring contrast (code-review round 2
+    Major 1: the flag/row mispairing shipped a wrong HST value while every
+    other test stayed green). The contrast median is recomputed here straight
+    from the committed comparison products with the preregistered split - no
+    shared pairing machinery with the module's chain rows."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    fit_wavelengths = {"june_2011": [ai.JUNE_FIT_WL_NM],
+                       "dec_2011": list(ai.DEC_FIT_WL_NM)}
+
+    def direct_fit_median(event):
+        if event == "june_2011":
+            ratios = [record["fixed_opac_model_to_observed"]
+                      for record in egd.june_records()
+                      if record["wavelength_nm"] in fit_wavelengths[event]]
+        elif event == "dec_2011":
+            ratios = [record["fixed_opac_model_to_observed"]
+                      for record in egd.dec_comparison()["records"]
+                      if record["wavelength_nm"] in fit_wavelengths[event]]
+        elif event == "hst_2019":
+            ratios = []
+            _, grid_rows = egd.hst_grid_data()
+            for dataset in egd.hst_comparison()["grouping"]["umbral_in_eclipse"]:
+                for row in grid_rows:
+                    wl = float(row["wavelength_nm"])
+                    if ai.HST_FIT_WINDOW_NM[0] <= wl <= ai.HST_FIT_WINDOW_NM[1]:
+                        ratios.append(float(row[f"{dataset}_fixed_opac_model_to_observed"]))
+        else:
+            ratios = [egd.mv1990_record("fixed_opac")["model_to_observed"]]
+        return float(np.median(np.log(ratios)))
+
+    for event in ai.EVENT_ORDER:
+        contrast = product["events"][event]["baseline_contrast"]
+        direct = direct_fit_median(event)
+        assert contrast["fit_ln_residual_median_fixed_opac_committed"] == direct, event

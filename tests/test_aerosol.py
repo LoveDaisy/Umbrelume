@@ -220,10 +220,12 @@ def test_overlapping_supports_tau_and_transmission_composition():
     """Overlapping supports (J3 contract revision): at matched tangent heights
     each layer's tau in a 3-layer column equals the single-layer table's tau
     bitwise (the per-layer segment quadrature depends only on that layer's own
-    support), and the column transmission equals the product of the
-    single-layer transmissions. The calibration presets' increment layer
-    overlaps the default free troposphere, so the sum invariant must hold for
-    arbitrary support layouts."""
+    support), and the composed column's transmission is strictly darker than
+    the disjoint two-layer default: extinction composes additively in tau over
+    the receiver quadrature, so a product-of-single-layer-transmissions
+    identity is deliberately NOT asserted. The calibration presets' increment
+    layer overlaps the default free troposphere, so the sum invariant must
+    hold for arbitrary support layouts."""
     from eclipse.atmosphere import Atmosphere
     from eclipse.rays import build_ray_table
     from eclipse.transport import Geometry, transmission_profile
@@ -248,9 +250,10 @@ def test_overlapping_supports_tau_and_transmission_composition():
             assert len(single_index) == 1, height
             assert table.aerosol_layer_taus[index][column_index] \
                 == single.aerosol_layer_taus[0][single_index]
-    # The documented AOD-sum invariant (arithmetic anchor of this column).
+    # The documented AOD-sum invariant (bitwise arithmetic anchor: same-order
+    # float addition is exactly reproducible).
     assert sum(layer.aod550 for layer in column.layers) \
-        == pytest.approx(0.013 + 0.005 + 0.025865877276886398, abs=0.0)
+        == 0.013 + 0.005 + 0.025865877276886398
     # The overlapping third layer only ever adds extinction: the composed
     # column is strictly darker than the disjoint two-layer default at the
     # same receiver (transmission sums per-layer tau over the receiver

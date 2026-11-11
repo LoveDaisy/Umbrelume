@@ -59,9 +59,9 @@ from .compare_hst2019 import (
 )
 from .extinction_gap_diagnosis import (
     EVENT_ORDER, MOMENT_TOLERANCE, MV1990_APERTURE_ORDER, MV1990_EVENT,
-    MV1990_RESPONSE, MV1990_WAVELENGTH_STEP_NM, PREREGISTERED_FLOOR_ABSOLUTE,
+    MV1990_WAVELENGTH_STEP_NM, PREREGISTERED_FLOOR_ABSOLUTE,
     PREREGISTERED_RELATIVE_TOLERANCE, PRODUCTION_VARIANT, ROOT,
-    VARIANTS, VERDICT_COMPATIBLE, VERDICT_TENSION, build_height_stats,
+    VERDICT_COMPATIBLE, VERDICT_TENSION, build_height_stats,
     closure_verdict, dec_comparison, dec_time_weights, hst_comparison,
     hst_grid_data, hst_members, june_geometry, june_records, kernel_weights,
     mv1990_analysis, mv1990_record, prior_row, prior_rows, ray_table,
@@ -687,10 +687,19 @@ def _kernel_chain_predictions(kernel: EventKernel, table) -> list:
 
 
 def _committed_subset_flags(kernel: EventKernel) -> list:
-    """Fit/holdout flags flattened in the same order as the chain rows."""
+    """Fit/holdout flags flattened in the same order as the chain rows.
+
+    Row kernels expand per WINDOW row (``_committed_chain_rows`` slices the
+    window via ``fit_mask | holdout_mask``), not per full-grid row - the two
+    expansions must agree row for row or the committed-contrast pairing
+    silently misaligns (code-review round 2 Major 1). The window partition is
+    asserted in the kernel builder.
+    """
     flags = [readout.subset for readout in kernel.scalars]
     for row_kernel in kernel.rows:
-        flags.extend("fit" if m else "holdout" for m in row_kernel.fit_mask)
+        window = row_kernel.fit_mask | row_kernel.holdout_mask
+        flags.extend("fit" if m else "holdout"
+                     for m in row_kernel.fit_mask[window])
     return flags
 
 
@@ -1034,6 +1043,10 @@ def committed_fit_median(kernel: EventKernel) -> float:
     """Fit-subset median ln of the committed fixed_opac model_to_observed."""
     ratios = _committed_chain_rows(kernel)[0]
     flags = _committed_subset_flags(kernel)
+    if len(flags) != len(ratios):
+        raise RuntimeError(f"{kernel.event}: committed fit/holdout flags "
+                           f"({len(flags)}) and chain rows ({len(ratios)}) "
+                           f"misaligned - the contrast would silently mispair")
     values = [math.log(ratio) for (_, _, ratio), flag in zip(ratios, flags)
               if flag == "fit"]
     return float(np.median(values))

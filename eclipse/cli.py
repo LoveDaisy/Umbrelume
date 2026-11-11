@@ -102,7 +102,7 @@ def load_calibrated_preset(name: str) -> tuple[AerosolColumn, dict]:
             raise ValueError(f"calibrated preset {name!r}: 'event' must be a "
                              f"non-empty string (the sole name-to-event mapping)")
         layer = AerosolProfile(**entry["increment_layer"])
-    except (TypeError, AttributeError) as error:
+    except (TypeError, AttributeError, KeyError) as error:
         raise ValueError(f"calibrated preset {name!r}: malformed registry entry "
                          f"({error})") from None
     column = AerosolColumn((*AerosolColumn.opac_default().layers, layer))

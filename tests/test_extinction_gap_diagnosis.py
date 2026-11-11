@@ -239,7 +239,8 @@ def test_docs_field_paths_resolve_into_products():
     results_root = ROOT/"validation/results"
     pattern = re.compile(r"`([a-z_0-9]+\.json:[^`]+)`")
     paths = []
-    for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md", "ROUND2.md"]:
+    for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md",
+                 "ROUND2.md", "ROADMAP.md"]:
         paths += pattern.findall((ROOT/"docs"/name).read_text())
     assert len(paths) >= 12
     for path in paths:
