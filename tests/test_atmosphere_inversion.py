@@ -337,10 +337,38 @@ def test_committed_cross_event_verdict_is_mechanical():
     assert cross["inverted_aod550"] == recomputed["inverted_aod550"]
     assert cross["degenerate_events"] == recomputed["degenerate_events"]
     for event, row in cross["prediction_matrix"].items():
-        assert abs(row[event]) <= 1e-9
+        if row[event] is not None:  # diagonal ~0 only for inverted events
+            assert abs(row[event]) <= 1e-9
         for value in row.values():
             if value is not None:
                 assert np.isfinite(value)
+
+
+def test_committed_retrieval_range_contains_pool_and_sensitivity_schema():
+    """Plan Step 2/3 test points: the generated AOD range contains every
+    pooled inversion value, and the sensitivity cells carry a stable schema."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    spec = product["retrieval_spec"]
+    pool = spec["aod550_pool"]
+    assert set(pool) == set(ai.EVENT_ORDER)
+    for value in pool.values():
+        if value is not None:
+            assert spec["aod550_range"][0] <= value <= spec["aod550_range"][1]
+    unclosed = {event for event, status in spec["excluded_events"].items()}
+    for event, value in pool.items():
+        if event in unclosed:
+            assert value is None
+    forms = product["form_sensitivity"]["forms"]
+    assert set(forms) == set(ai.SENSITIVITY_FORMS)
+    for cells in forms.values():
+        assert set(cells) == set(ai.EVENT_ORDER)
+        for cell in cells.values():
+            assert set(cell) == {"status", "aod550",
+                                 "holdout_ln_rms_before", "holdout_ln_rms_after"}
+            assert cell["status"] in ai.PREREGISTERED["objective"]["status_vocabulary"]
+            assert cell["aod550"] is None or cell["aod550"] >= 0
+            for key in ("holdout_ln_rms_before", "holdout_ln_rms_after"):
+                assert cell[key] is None or cell[key] >= 0
 
 
 def test_committed_shape_and_holdout_declarations():

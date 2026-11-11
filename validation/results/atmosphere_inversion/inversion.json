@@ -657,6 +657,7 @@
       "event_1990_02_09": 0.07278811248646479
     },
     "degenerate_events": {},
+    "rule": "R = max/min over the four events' main-form inverted AOD550",
     "geometric_mean": 0.08034749057701761,
     "geometric_std_population": 2.0793203720372593,
     "band_edges": {

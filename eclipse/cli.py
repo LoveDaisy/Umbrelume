@@ -66,21 +66,45 @@ def load_calibrated_preset(name: str) -> tuple[AerosolColumn, dict]:
 
     Only the ``calibrated:<name>`` branch of ``--aerosol`` ever touches the
     registry; the default path performs no registry IO. Provenance is
-    mandatory: an entry without the ``kind='calibrated'`` and
-    ``calibrated_not_physical_prior=true`` markers fails loud. The
-    name-to-event mapping lives solely in the entry's ``event`` field.
+    mandatory at field level: an entry without the ``kind='calibrated'`` and
+    ``calibrated_not_physical_prior=true`` markers, or without ``sha256`` /
+    ``inversion_product``, fails loud here (the sha-vs-file equality itself is
+    anchored pytest-side). The name-to-event mapping lives solely in the
+    entry's ``event`` field. Any malformed structure surfaces as a ValueError
+    carrying the preset name, so the CLI fails through its one parser.error
+    path.
     """
-    registry = json.loads(CALIBRATED_PRESETS_JSON.read_text())
-    entry = (registry or {}).get("presets", {}).get(name)
+    try:
+        registry = json.loads(CALIBRATED_PRESETS_JSON.read_text())
+    except (OSError, ValueError) as error:
+        raise ValueError(f"calibrated preset registry is unreadable ({error})") from None
+    try:
+        presets = (registry or {}).get("presets") or {}
+        entry = presets.get(name)
+    except AttributeError as error:
+        raise ValueError(f"calibrated preset registry is malformed ({error})") from None
     if entry is None:
         raise KeyError(f"calibrated preset {name!r} is not in "
                        f"eclipse/data/calibrated_presets.json")
-    provenance = entry.get("provenance") or {}
-    if (provenance.get("kind") != "calibrated"
-            or provenance.get("calibrated_not_physical_prior") is not True):
-        raise ValueError(f"calibrated preset {name!r}: provenance must carry "
-                         f"kind='calibrated' and calibrated_not_physical_prior=true")
-    layer = AerosolProfile(**entry["increment_layer"])
+    try:
+        provenance = entry.get("provenance") or {}
+        if (provenance.get("kind") != "calibrated"
+                or provenance.get("calibrated_not_physical_prior") is not True):
+            raise ValueError(f"calibrated preset {name!r}: provenance must carry "
+                             f"kind='calibrated' and "
+                             f"calibrated_not_physical_prior=true")
+        for field in ("sha256", "inversion_product"):
+            if not provenance.get(field):
+                raise ValueError(f"calibrated preset {name!r}: provenance field "
+                                 f"{field!r} is missing (mandatory provenance, "
+                                 f"lane discipline)")
+        if not isinstance(entry.get("event"), str) or not entry["event"]:
+            raise ValueError(f"calibrated preset {name!r}: 'event' must be a "
+                             f"non-empty string (the sole name-to-event mapping)")
+        layer = AerosolProfile(**entry["increment_layer"])
+    except (TypeError, AttributeError) as error:
+        raise ValueError(f"calibrated preset {name!r}: malformed registry entry "
+                         f"({error})") from None
     column = AerosolColumn((*AerosolColumn.opac_default().layers, layer))
     source = {"source_class": "calibrated_registry",
               "registry_path": "eclipse/data/calibrated_presets.json",

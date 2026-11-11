@@ -16,7 +16,7 @@
         "kind": "calibrated",
         "calibrated_not_physical_prior": true,
         "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
-        "sha256": "3c6becbe2212af729cd0506f28484ea0f4167d0e0a7a20a6e6a402da57c56613",
+        "sha256": "4df97d11416af945043e464d540804ae2197e141b2a8a8049c9e068bd043c763",
         "fit_holdout_split": {
           "fit": {
             "wavelength_nm": 677.0,
@@ -48,7 +48,7 @@
         "kind": "calibrated",
         "calibrated_not_physical_prior": true,
         "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
-        "sha256": "3c6becbe2212af729cd0506f28484ea0f4167d0e0a7a20a6e6a402da57c56613",
+        "sha256": "4df97d11416af945043e464d540804ae2197e141b2a8a8049c9e068bd043c763",
         "fit_holdout_split": {
           "fit": {
             "wavelength_nm": [
@@ -88,7 +88,7 @@
         "kind": "calibrated",
         "calibrated_not_physical_prior": true,
         "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
-        "sha256": "3c6becbe2212af729cd0506f28484ea0f4167d0e0a7a20a6e6a402da57c56613",
+        "sha256": "4df97d11416af945043e464d540804ae2197e141b2a8a8049c9e068bd043c763",
         "fit_holdout_split": {
           "fit": {
             "window_nm": [
@@ -131,7 +131,7 @@
         "kind": "calibrated",
         "calibrated_not_physical_prior": true,
         "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
-        "sha256": "3c6becbe2212af729cd0506f28484ea0f4167d0e0a7a20a6e6a402da57c56613",
+        "sha256": "4df97d11416af945043e464d540804ae2197e141b2a8a8049c9e068bd043c763",
         "fit_holdout_split": {
           "fit": {
             "readout_count": 1,

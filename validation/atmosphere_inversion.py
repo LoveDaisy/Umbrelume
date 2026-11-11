@@ -443,7 +443,8 @@ def hst_event_kernel() -> EventKernel:
         observed = np.array([float(row[f"{dataset}_obs_ratio"]) for row in rows])
         window = ((wavelengths >= UMBRAL_QUANTITATIVE_MIN_NM)
                   & (wavelengths <= G430L_MAX_NM))
-        fit = window & (wavelengths >= HST_FIT_WINDOW_NM[0])
+        fit = (window & (wavelengths >= HST_FIT_WINDOW_NM[0])
+               & (wavelengths <= HST_FIT_WINDOW_NM[1]))
         holdout = window & (wavelengths < HST_HOLDOUT_WINDOW_NM[1])
         if (int(fit.sum()) != HST_FIT_ROW_COUNT
                 or int(holdout.sum()) != HST_HOLDOUT_ROW_COUNT):
@@ -848,13 +849,13 @@ def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dic
     if g0 <= 0.0:
         return {"p0": p0, "preds_root": p0, "status": STATUS_ZERO_INCREMENT,
                 "aod550": 0.0, "g0": g0, "g_bracket_high": None,
-                "bracket_high_used": 0.0, "root": 0.0}
+                "bracket_high_used": 0.0}
 
     g_high = _fit_g(fit_kernel, FIT_BRACKET_HIGH, form)
     if g_high is not None and g_high > 0.0:
         return {"p0": p0, "preds_root": None, "status": STATUS_UNCLOSED,
                 "aod550": None, "g0": g0, "g_bracket_high": g_high,
-                "bracket_high_used": FIT_BRACKET_HIGH, "root": None}
+                "bracket_high_used": FIT_BRACKET_HIGH}
     bracket_high_used = FIT_BRACKET_HIGH
     if g_high is None:
         # Preregistered branch_dark_top: geometric halving to the first finite
@@ -880,7 +881,7 @@ def invert_event(kernel: EventKernel, fit_kernel: EventKernel, form: str) -> dic
     preds_root = event_predictions(kernel, root, form)
     return {"p0": p0, "preds_root": preds_root, "status": STATUS_INVERTED,
             "aod550": root, "g0": g0, "g_bracket_high": g_high,
-            "bracket_high_used": bracket_high_used, "root": root}
+            "bracket_high_used": bracket_high_used}
 
 
 def holdout_account(kernel: EventKernel, p0: dict, preds_root: dict | None) -> dict | None:
@@ -1062,6 +1063,7 @@ def consistency_verdict(events: dict) -> dict:
     logs = np.log(aods)
     return {"verdict": verdict, "R": r_value, "inverted_aod550": values,
             "degenerate_events": {},
+            "rule": PREREGISTERED["consistency_criterion"]["statistic"],
             "geometric_mean": float(np.exp(np.mean(logs))),
             "geometric_std_population": float(np.exp(np.std(logs))),
             "band_edges": {"systematic_gap_upper": VERDICT_COMPATIBLE[1],

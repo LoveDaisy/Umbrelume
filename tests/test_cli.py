@@ -159,3 +159,44 @@ def test_cli_default_and_opac_ft_paths_never_touch_registry(tmp_path, monkeypatc
     metadata = json.loads((tmp_path/"default"/"metadata.json").read_text())
     assert metadata["aerosol_preset"] == "opac"
     assert [layer["aod550"] for layer in metadata["aerosol"]["layers"]] == [.013, .005]
+
+
+def test_cli_calibrated_provenance_negative_paths_fail_loud(tmp_path, monkeypatch):
+    """Major review round 1 fix: the loader's provenance gate is field-level
+    and its rejection paths are test-covered (marker missing/false, sha256
+    missing/empty, malformed event, structurally broken entry)."""
+    import eclipse.cli as cli_module
+    registry = json.loads(cli_module.CALIBRATED_PRESETS_JSON.read_text())
+    entry = json.loads(json.dumps(registry["presets"]["june2011"]))
+    common = ["--no-plots", "--radial-step-km", "1000", "--wavelength-step-nm",
+              "50", "--height-step-m", "500"]
+
+    def use(preset_entry):
+        path = tmp_path/"registry.json"
+        path.write_text(json.dumps({"presets": {"june2011": preset_entry}}))
+        monkeypatch.setattr(cli_module, "CALIBRATED_PRESETS_JSON", path)
+
+    def broken(mutate):
+        variant = json.loads(json.dumps(entry))
+        mutate(variant)
+        use(variant)
+        with pytest.raises(SystemExit):
+            main(["simulate", "--out", str(tmp_path/"out"), "--aerosol",
+                  "calibrated:june2011", *common])
+
+    broken(lambda e: e["provenance"].pop("calibrated_not_physical_prior"))
+    broken(lambda e: e["provenance"].__setitem__("calibrated_not_physical_prior", False))
+    broken(lambda e: e["provenance"].pop("sha256"))
+    broken(lambda e: e["provenance"].__setitem__("sha256", ""))
+    broken(lambda e: e["provenance"].pop("inversion_product"))
+    broken(lambda e: e.pop("event"))
+    broken(lambda e: e.__setitem__("event", ""))
+    broken(lambda e: e.pop("increment_layer"))
+    broken(lambda e: e.__setitem__("increment_layer", {"aod550": 0.1, "unknown_key": 1}))
+    # A structurally broken registry file also exits through parser.error.
+    path = tmp_path/"registry.json"
+    path.write_text('{"presets": null}')
+    monkeypatch.setattr(cli_module, "CALIBRATED_PRESETS_JSON", path)
+    with pytest.raises(SystemExit):
+        main(["simulate", "--out", str(tmp_path/"out"), "--aerosol",
+              "calibrated:june2011", *common])

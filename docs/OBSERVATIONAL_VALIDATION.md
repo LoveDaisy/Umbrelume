@@ -258,7 +258,9 @@ pytest 钉定），判别结果由预注册带机械判定，不做人工修饰�
   **位等**复制（`inversion.json:anchoring.reproduction.worst_relative_diff`），
   committed 变体比值链在矩容差内复核
   （`inversion.json:anchoring.chain_identity.kernel_leg_worst_relative_dev`）。
-- **四事件反演值**（拟合子集中位 ln 残差闭零；划分见预注册块）：
+- **四事件反演值**（拟合子集中位 ln 残差闭零；划分见预注册块；
+  产物字段 `g_at_bracket_high` 一律相对 `bracket_high_used`——dark-top 减半
+  分支触发时是首个有限点的 g 值，不是预注册 bracket 顶 2.0 处）：
   June（`inversion.json:events.june_2011.aod550`）、
   HST（`inversion.json:events.hst_2019.aod550`）、
   Dec（`inversion.json:events.dec_2011.aod550`）、
@@ -282,8 +284,10 @@ pytest 钉定），判别结果由预注册带机械判定，不做人工修饰�
 - **物理合理范围锚点**（报告义务，无 pass/fail 阈值）：四值对 10 个已钉
   boundary-layer 行谱系的位置与比值
   （`inversion.json:events.june_2011.physical_anchor.pinned_rows` 等）；
-  June 主形态值低于谱系下界，越界如实记 finding
-  （`inversion.json:findings[0].code`），不隐藏。
+  June 主形态值低于谱系下界（机械源：
+  `inversion.json:events.june_2011.physical_anchor.within_pinned_range`，
+  逐值重导测试钉定），越界如实记入 findings
+  （`inversion.json:findings`），不隐藏。
 - **形态敏感性附表**（主结论只由主形态承载）：desert（0–6 km）与
   continental_average（0–2 km）层几何在多数事件**闭不开**
   （`inversion.json:form_sensitivity.forms`）——闭合所需量与层几何强耦合，
