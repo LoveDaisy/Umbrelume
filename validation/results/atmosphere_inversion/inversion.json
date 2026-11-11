@@ -1,0 +1,825 @@
+{
+  "scope": "Cross-event inversion of the low-layer aerosol increment required to close each event's fit-subset brightness residual on top of the production two-layer default (fixed_opac_strat). Calibration lane: every value is relative to the production default baseline and is calibrated, not a physical prior; nothing here enters the default model. Splits, objective, consistency criterion, morphologies and retrieval rules are preregistered in the 'preregistered' block (verbatim module constant, pytest-pinned); the cross-event verdict is the mechanical application of the preregistered bands.",
+  "preregistered": {
+    "baseline": "every value in this product is relative to the PRODUCTION two-layer default (fixed_opac_strat: AerosolColumn.opac_default()) with zero increment; the committed fixed_opac variant appears only as a monitoring contrast, never as the inversion baseline",
+    "fit_holdout_split": {
+      "june_2011": {
+        "fit": {
+          "wavelength_nm": 677.0,
+          "readout_count": 10
+        },
+        "holdout": {
+          "wavelength_nm": 503.0,
+          "readout_count": 8
+        },
+        "source": "ROUND2 calibration split reuse (677 fit / 503 withheld)"
+      },
+      "dec_2011": {
+        "fit": {
+          "wavelength_nm": [
+            550.0,
+            600.0,
+            650.0,
+            700.0,
+            750.0
+          ],
+          "readout_count": 5
+        },
+        "holdout": {
+          "wavelength_nm": [
+            450.0,
+            500.0
+          ],
+          "readout_count": 2
+        }
+      },
+      "hst_2019": {
+        "fit": {
+          "window_nm": [
+            500.0,
+            570.0
+          ],
+          "window_row_count": 255
+        },
+        "holdout": {
+          "window_nm": [
+            430.0,
+            500.0
+          ],
+          "upper_exclusive": true,
+          "window_row_count": 255
+        },
+        "pool": {
+          "datasets": "grouping.umbral_in_eclipse (committed)",
+          "umbral_dataset_count": 2,
+          "row_pools_jointly": true
+        }
+      },
+      "event_1990_02_09": {
+        "fit": {
+          "readout_count": 1,
+          "definition": "single whole-disk broadband readout"
+        },
+        "holdout": "cross-event prediction matrix rows are its holdout account (no event-internal holdout)"
+      }
+    },
+    "objective": {
+      "definition": "g(a) = median over the fit subset of ln(P(a)/O); P(a) is the production two-layer baseline kernel prediction with an extra increment column of the pinned morphology at AOD550 = a, built through exactly the committed kernel adapters, solar scaling and observed-ratio benchmarks",
+      "monotonicity": "g is nonincreasing in a (each ln ratio decreases with more extinction; the median preserves monotonicity)",
+      "root_finder": "scipy.optimize.brentq on [0.0, 2.0], xtol=1e-12",
+      "branch_zero_increment": "g(0) <= 0 -> required increment is 0; recorded as status zero_increment with a finding, not an error",
+      "branch_unclosed": "g(2.0) > 0 -> the preregistered bracket cannot close the event; recorded as status unclosed with a finding; no forced closure at any larger AOD (lane discipline)",
+      "branch_dark_top": "if any fit-subset P(a) underflows to <= 0 at the bracket top (the model transmits no measurable light; the vacuum branch carries ~1e-16 float noise), the top is 'dark' and the event is closable within the preregistered bracket; the finite bracket top is found by geometric halving, and the first finite point is guaranteed negative: tau*a there is within a factor 2 of the underflow cliff (~745), hence P << O; brentq then runs on [0, a_finite] and monotonicity leaves the root unchanged (every a <= a_finite has P > 0 because the underflow cliff is monotone in a)",
+      "status_vocabulary": [
+        "inverted",
+        "zero_increment",
+        "unclosed"
+      ]
+    },
+    "observation_sources": {
+      "june_2011": {
+        "product": "validation/results/round2/analysis.json",
+        "field": "records[*].observed_curve_brightness"
+      },
+      "dec_2011": {
+        "product": "validation/results/dec2011/comparison.json",
+        "field": "records[*].observed_curve_ratio"
+      },
+      "hst_2019": {
+        "product": "validation/results/hst2019/comparison.csv",
+        "field": "rows[*].{dataset}_obs_ratio"
+      },
+      "event_1990_02_09": {
+        "product": "validation/results/multiple_events/analysis.json",
+        "field": "observed = prediction / model_to_observed (variant=fixed_opac, exact same-record recovery)"
+      }
+    },
+    "consistency_criterion": {
+      "statistic": "R = max/min over the four events' main-form inverted AOD550",
+      "systematic_gap": "R <= 2.0",
+      "partially_consistent": "2.0 < R <= 10.0",
+      "event_specific": "R > 10.0",
+      "band_edge_source": "VERDICT_COMPATIBLE[1] / VERDICT_TENSION[1] imported from extinction_gap_diagnosis (single verdict vocabulary)",
+      "degenerate_branch": "any event without a valid inversion value (zero increment or unclosed) -> not_applicable + findings[] record (the max/min ratio degenerates)",
+      "auxiliary": "geometric mean and population geometric standard deviation describe the spread only and never carry the verdict"
+    },
+    "morphologies": {
+      "main": {
+        "form": "antarctic",
+        "rows": {
+          "layer_bottom_m": 0.0,
+          "layer_top_m": 10000.0,
+          "scale_height_m": 8000.0,
+          "angstrom_0.35_to_0.5um": 0.34,
+          "angstrom_0.5_to_0.8um": 0.73
+        }
+      },
+      "sensitivity": [
+        {
+          "form": "desert",
+          "rows": {
+            "layer_bottom_m": 0.0,
+            "layer_top_m": 6000.0,
+            "scale_height_m": 2000.0,
+            "angstrom_0.35_to_0.5um": 0.2,
+            "angstrom_0.5_to_0.8um": 0.17
+          }
+        },
+        {
+          "form": "continental_average",
+          "rows": {
+            "layer_bottom_m": 0.0,
+            "layer_top_m": 2000.0,
+            "scale_height_m": 8000.0,
+            "angstrom_0.35_to_0.5um": 1.11,
+            "angstrom_0.5_to_0.8um": 1.42
+          }
+        }
+      ],
+      "discipline": "layer geometry and spectral law are pinned prior_parameters.json rows (nonnegative Angstrom exponents, direct AerosolProfile); AOD550 is the only free parameter, applied as a unit-AOD column scaled linearly; the main conclusion is carried by the main form only and the sensitivity forms enter the appendix table only"
+    },
+    "prediction_matrix": "event i re-evaluates its fit-subset median ln residual with event j's (j != i) inverted AOD550 on the main form; the diagonal is the event's own root (approximately zero by construction); the 1990 row is its holdout account",
+    "shape_ledger": {
+      "june_2011": "503/677 model-over-observed transmission ratios at the paired angles carrying both bands",
+      "dec_2011": "450|500 over 750 transmission ratio model-over-observed",
+      "hst_2019": "the two committed slope bands, full-window-grid band-median aggregation (same committed aggregation structure)",
+      "event_1990_02_09": null,
+      "declaration": "the shape axis is a cost ledger, not a fit object; its metrics naturally involve holdout bands and this involvement is declared, not hidden; closure semantics reuse shape_closed_fraction (negative = worsening); the baseline is the production default at zero increment"
+    },
+    "physical_anchor": {
+      "reference": "the 10 pinned aod550_boundary_layer_only rows of prior_parameters.json",
+      "spectrum_min": 0.038,
+      "spectrum_max": 0.625,
+      "obligation": "report the inverted value's ratio to the spectrum bounds and its bracketing pinned rows; out-of-range values are recorded in findings[], never hidden (report obligation, no pass/fail threshold)"
+    },
+    "retrieval_spec_rules": {
+      "aod550_range": "[min/10, max*10] over events with valid inversion values; a zero-increment event enters min as 0; unclosed events are excluded from the range and recorded in findings[]",
+      "spectral_coverage": "sensitivity-morphology Angstrom envelope (alpha_blue in [0.2, 1.11], alpha_visible in [0.17, 1.42]) union the main form's values",
+      "layer_geometry": "0-10 km class exponential layer, scale height of the pinned row in use (main form: antarctic/scale_height_m)",
+      "source_types": "boundary-layer / lower-tropospheric aerosol optical types (OPAC-like) with humidity variants (the RH rows' unavailable status in the pinned source is the known gap)",
+      "branch_rule": "any inversion value above the pinned boundary-layer upper bound (0.625) appends volcanic / stratospheric-perturbation source types"
+    },
+    "dimensional_form": {
+      "statement": "P(a) is built through exactly the kernel adapters, solar scaling and observed-ratio benchmarks that produced the committed predictions; per readout residual = ln(P(a)/O) with O recovered from committed fields only",
+      "mechanical_criterion": "P(0)/O reproduces the committed *_model_to_observed per readout within MOMENT_TOLERANCE (the kernel re-sums its terms, so exact bitwise equality holds only at the committed-value level, which is asserted separately); a zero increment restores the baseline prediction bitwise"
+    }
+  },
+  "anchoring": {
+    "reproduction": {
+      "rule": "abs_diff <= max(1e-06 * |committed|, 1e-09) per readout (tolerances imported from extinction_gap_diagnosis)",
+      "worst_relative_diff": {
+        "june_2011": 0.0,
+        "hst_2019": 0.0,
+        "dec_2011": 0.0,
+        "event_1990_02_09": 0.0
+      },
+      "verdict": "within_tolerance"
+    },
+    "chain_identity": {
+      "exact_leg": "committed_prediction/observed == committed model_to_observed bitwise",
+      "exact_leg_1990": "observed = prediction/model_to_observed recovers the record's own observed_minimum_to_reference bitwise",
+      "kernel_leg_worst_relative_dev": {
+        "june_2011": 9.143770515392077e-16,
+        "hst_2019": 1.8886618398780333e-15,
+        "dec_2011": 5.37479753564266e-16,
+        "event_1990_02_09": 4.244865419969838e-16
+      },
+      "budget": 1e-12,
+      "verdict": "within_tolerance"
+    },
+    "anchored_readout_counts": {
+      "june_2011": {
+        "fit": 10,
+        "holdout": 8
+      },
+      "hst_2019": {
+        "fit": 510,
+        "holdout": 510
+      },
+      "dec_2011": {
+        "fit": 5,
+        "holdout": 2
+      },
+      "event_1990_02_09": {
+        "fit": 1,
+        "holdout": 0
+      }
+    },
+    "moment_gate": "zeroth-moment gate over the committed variants passed (build_height_stats, single source)"
+  },
+  "events": {
+    "june_2011": {
+      "morphology": "antarctic",
+      "observation_source": {
+        "product": "validation/results/round2/analysis.json",
+        "field": "records[*].observed_curve_brightness"
+      },
+      "readout_counts": {
+        "fit": 10,
+        "holdout": 8
+      },
+      "g0": 0.4501090938496115,
+      "g_at_bracket_high": -1.1558850222158652,
+      "bracket_high_used": 1.0,
+      "status": "inverted",
+      "aod550": 0.025865877276886398,
+      "fit": {
+        "ln_residual_median_before": 0.4501090938496115,
+        "ln_residual_median_after": -2.905661822261152e-17,
+        "readout_count": 10
+      },
+      "holdout": {
+        "readout_count": 8,
+        "ln_residual_median_before": 0.1414915250651978,
+        "ln_residual_median_after": 0.07422587502551871,
+        "ln_rms_before": 0.42939692861713635,
+        "ln_rms_after": 0.3514109120370438
+      },
+      "baseline_contrast": {
+        "fit_ln_residual_median_fixed_opac_committed": 0.5831933050790713,
+        "fit_ln_residual_median_production_two_layer": 0.4501090938496115,
+        "note": "monitoring contrast only (plan risk 1); the inversion baseline is the production two-layer default"
+      },
+      "shape": {
+        "metric": "503_over_677_transmission_ratio_model_over_observed",
+        "median_base": 1.0230596103982648,
+        "median_new": 1.0939084333035303,
+        "disagreement_closed_fraction": -3.0724206385809922,
+        "verdict": "excluded_leaning",
+        "involves_holdout_bands": true,
+        "by_angle": [
+          {
+            "shadow_angle_deg": 0.4,
+            "base_ratio": 1.64498483435903,
+            "new_ratio": 1.963830044466161,
+            "shape_factor": 1.1938286623969814,
+            "disagreement_closed_fraction": -0.4943452824344177,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.45,
+            "base_ratio": 1.1657585848198122,
+            "new_ratio": 1.351262272564458,
+            "shape_factor": 1.1591270183726063,
+            "disagreement_closed_fraction": -1.1191196398442806,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.5,
+            "base_ratio": 0.9613380170683362,
+            "new_ratio": 1.0778568576085872,
+            "shape_factor": 1.1212048607997247,
+            "disagreement_closed_fraction": -1.0137833526594204,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.55,
+            "base_ratio": 0.973387971632726,
+            "new_ratio": 1.0565423936832004,
+            "shape_factor": 1.0854278298826665,
+            "disagreement_closed_fraction": -1.1246931238331666,
+            "verdict": "excluded_leaning"
+          },
+          {
+            "shadow_angle_deg": 0.575,
+            "base_ratio": 1.0230596103982648,
+            "new_ratio": 1.0939084333035303,
+            "shape_factor": 1.0692519010477648,
+            "disagreement_closed_fraction": -3.0724206385809922,
+            "verdict": "excluded_leaning"
+          }
+        ]
+      },
+      "physical_anchor": {
+        "inverted_aod550": 0.025865877276886398,
+        "pinned_rows": [
+          {
+            "candidate": "maritime_tropical",
+            "aod550_boundary_layer_only": 0.038
+          },
+          {
+            "candidate": "arctic",
+            "aod550_boundary_layer_only": 0.045
+          },
+          {
+            "candidate": "continental_clean",
+            "aod550_boundary_layer_only": 0.046
+          },
+          {
+            "candidate": "antarctic",
+            "aod550_boundary_layer_only": 0.065517
+          },
+          {
+            "candidate": "maritime_clean",
+            "aod550_boundary_layer_only": 0.078
+          },
+          {
+            "candidate": "maritime_polluted",
+            "aod550_boundary_layer_only": 0.099
+          },
+          {
+            "candidate": "continental_average",
+            "aod550_boundary_layer_only": 0.133
+          },
+          {
+            "candidate": "desert",
+            "aod550_boundary_layer_only": 0.275169
+          },
+          {
+            "candidate": "continental_polluted",
+            "aod550_boundary_layer_only": 0.309
+          },
+          {
+            "candidate": "urban",
+            "aod550_boundary_layer_only": 0.625
+          }
+        ],
+        "ratio_to_spectrum_min": 0.6806809809706947,
+        "ratio_to_spectrum_max": 0.04138540364301824,
+        "within_pinned_range": false,
+        "bracketed_by": [
+          null,
+          "maritime_tropical"
+        ]
+      }
+    },
+    "hst_2019": {
+      "morphology": "antarctic",
+      "observation_source": {
+        "product": "validation/results/hst2019/comparison.csv",
+        "field": "rows[*].{dataset}_obs_ratio"
+      },
+      "readout_counts": {
+        "fit": 510,
+        "holdout": 510
+      },
+      "g0": 0.9949255354731079,
+      "g_at_bracket_high": -0.5439423989743284,
+      "bracket_high_used": 2.0,
+      "status": "inverted",
+      "aod550": 0.12036025043776977,
+      "fit": {
+        "ln_residual_median_before": 0.9949255354731079,
+        "ln_residual_median_after": 6.16017653554124e-14,
+        "readout_count": 510
+      },
+      "holdout": {
+        "readout_count": 510,
+        "ln_residual_median_before": 0.7936997030290669,
+        "ln_residual_median_after": 0.13678722749509392,
+        "ln_rms_before": 0.7817856633668575,
+        "ln_rms_after": 0.28814268900291695
+      },
+      "baseline_contrast": {
+        "fit_ln_residual_median_fixed_opac_committed": 1.1637743356994812,
+        "fit_ln_residual_median_production_two_layer": 0.9949255354731079,
+        "note": "monitoring contrast only (plan risk 1); the inversion baseline is the production two-layer default"
+      },
+      "shape": {
+        "metrics_by_dataset": {
+          "ody902030": {
+            "430_over_570": {
+              "base_slope": 0.5091747336683897,
+              "new_slope": 1.1079521284427913,
+              "disagreement_closed_fraction": 0.7800599605443763,
+              "verdict": "compatible"
+            },
+            "500_over_570": {
+              "base_slope": 0.5785080157566416,
+              "new_slope": 0.8324883588018541,
+              "disagreement_closed_fraction": 0.6025745507382436,
+              "verdict": "compatible"
+            }
+          },
+          "ody902040": {
+            "430_over_570": {
+              "base_slope": 0.9111780017204386,
+              "new_slope": 1.8657547563987107,
+              "disagreement_closed_fraction": -8.747075872733742,
+              "verdict": "excluded_leaning"
+            },
+            "500_over_570": {
+              "base_slope": 0.7167848513962254,
+              "new_slope": 1.021117854950642,
+              "disagreement_closed_fraction": 0.9254352916687154,
+              "verdict": "compatible"
+            }
+          }
+        },
+        "involves_holdout_bands": true,
+        "aggregation": "committed band-median structure over the full window grid"
+      },
+      "physical_anchor": {
+        "inverted_aod550": 0.12036025043776977,
+        "pinned_rows": [
+          {
+            "candidate": "maritime_tropical",
+            "aod550_boundary_layer_only": 0.038
+          },
+          {
+            "candidate": "arctic",
+            "aod550_boundary_layer_only": 0.045
+          },
+          {
+            "candidate": "continental_clean",
+            "aod550_boundary_layer_only": 0.046
+          },
+          {
+            "candidate": "antarctic",
+            "aod550_boundary_layer_only": 0.065517
+          },
+          {
+            "candidate": "maritime_clean",
+            "aod550_boundary_layer_only": 0.078
+          },
+          {
+            "candidate": "maritime_polluted",
+            "aod550_boundary_layer_only": 0.099
+          },
+          {
+            "candidate": "continental_average",
+            "aod550_boundary_layer_only": 0.133
+          },
+          {
+            "candidate": "desert",
+            "aod550_boundary_layer_only": 0.275169
+          },
+          {
+            "candidate": "continental_polluted",
+            "aod550_boundary_layer_only": 0.309
+          },
+          {
+            "candidate": "urban",
+            "aod550_boundary_layer_only": 0.625
+          }
+        ],
+        "ratio_to_spectrum_min": 3.167375011520257,
+        "ratio_to_spectrum_max": 0.19257640070043164,
+        "within_pinned_range": true,
+        "bracketed_by": [
+          "maritime_polluted",
+          "continental_average"
+        ]
+      }
+    },
+    "dec_2011": {
+      "morphology": "antarctic",
+      "observation_source": {
+        "product": "validation/results/dec2011/comparison.json",
+        "field": "records[*].observed_curve_ratio"
+      },
+      "readout_counts": {
+        "fit": 5,
+        "holdout": 2
+      },
+      "g0": 0.2340053949209479,
+      "g_at_bracket_high": -0.03962325105090619,
+      "bracket_high_used": 2.0,
+      "status": "inverted",
+      "aod550": 0.18391557805870665,
+      "fit": {
+        "ln_residual_median_before": 0.2340053949209479,
+        "ln_residual_median_after": 8.881784197001248e-16,
+        "readout_count": 5
+      },
+      "holdout": {
+        "readout_count": 2,
+        "ln_residual_median_before": 0.3387313726832135,
+        "ln_residual_median_after": 0.30400761196836285,
+        "ln_rms_before": 0.343430709393424,
+        "ln_rms_after": 0.31330510210222967
+      },
+      "baseline_contrast": {
+        "fit_ln_residual_median_fixed_opac_committed": 0.4084114287723906,
+        "fit_ln_residual_median_production_two_layer": 0.2340053949209479,
+        "note": "monitoring contrast only (plan risk 1); the inversion baseline is the production two-layer default"
+      },
+      "shape": {
+        "metrics": {
+          "450_to750_transmission_ratio_model_over_observed": {
+            "base_ratio": 1.2164331772408636,
+            "new_ratio": 1.6030636326530991,
+            "shape_factor": 1.3178394527919717,
+            "disagreement_closed_fraction": -1.7863733293623607,
+            "verdict": "excluded_leaning"
+          },
+          "500_to750_transmission_ratio_model_over_observed": {
+            "base_ratio": 1.0861995844029602,
+            "new_ratio": 1.3776761576778063,
+            "shape_factor": 1.2683453183560727,
+            "disagreement_closed_fraction": -3.381415064744054,
+            "verdict": "excluded_leaning"
+          }
+        },
+        "involves_holdout_bands": true
+      },
+      "physical_anchor": {
+        "inverted_aod550": 0.18391557805870665,
+        "pinned_rows": [
+          {
+            "candidate": "maritime_tropical",
+            "aod550_boundary_layer_only": 0.038
+          },
+          {
+            "candidate": "arctic",
+            "aod550_boundary_layer_only": 0.045
+          },
+          {
+            "candidate": "continental_clean",
+            "aod550_boundary_layer_only": 0.046
+          },
+          {
+            "candidate": "antarctic",
+            "aod550_boundary_layer_only": 0.065517
+          },
+          {
+            "candidate": "maritime_clean",
+            "aod550_boundary_layer_only": 0.078
+          },
+          {
+            "candidate": "maritime_polluted",
+            "aod550_boundary_layer_only": 0.099
+          },
+          {
+            "candidate": "continental_average",
+            "aod550_boundary_layer_only": 0.133
+          },
+          {
+            "candidate": "desert",
+            "aod550_boundary_layer_only": 0.275169
+          },
+          {
+            "candidate": "continental_polluted",
+            "aod550_boundary_layer_only": 0.309
+          },
+          {
+            "candidate": "urban",
+            "aod550_boundary_layer_only": 0.625
+          }
+        ],
+        "ratio_to_spectrum_min": 4.8398836331238595,
+        "ratio_to_spectrum_max": 0.29426492489393064,
+        "within_pinned_range": true,
+        "bracketed_by": [
+          "continental_average",
+          "desert"
+        ]
+      }
+    },
+    "event_1990_02_09": {
+      "morphology": "antarctic",
+      "observation_source": {
+        "product": "validation/results/multiple_events/analysis.json",
+        "field": "observed = prediction / model_to_observed (variant=fixed_opac, exact same-record recovery)"
+      },
+      "readout_counts": {
+        "fit": 1,
+        "holdout": 0
+      },
+      "g0": 0.25491253297144895,
+      "g_at_bracket_high": -0.1257430614733654,
+      "bracket_high_used": 2.0,
+      "status": "inverted",
+      "aod550": 0.07278811248646479,
+      "fit": {
+        "ln_residual_median_before": 0.25491253297144895,
+        "ln_residual_median_after": 4.440892098500625e-16,
+        "readout_count": 1
+      },
+      "holdout": null,
+      "baseline_contrast": {
+        "fit_ln_residual_median_fixed_opac_committed": 0.45061027138224796,
+        "fit_ln_residual_median_production_two_layer": 0.25491253297144895,
+        "note": "monitoring contrast only (plan risk 1); the inversion baseline is the production two-layer default"
+      },
+      "shape": null,
+      "physical_anchor": {
+        "inverted_aod550": 0.07278811248646479,
+        "pinned_rows": [
+          {
+            "candidate": "maritime_tropical",
+            "aod550_boundary_layer_only": 0.038
+          },
+          {
+            "candidate": "arctic",
+            "aod550_boundary_layer_only": 0.045
+          },
+          {
+            "candidate": "continental_clean",
+            "aod550_boundary_layer_only": 0.046
+          },
+          {
+            "candidate": "antarctic",
+            "aod550_boundary_layer_only": 0.065517
+          },
+          {
+            "candidate": "maritime_clean",
+            "aod550_boundary_layer_only": 0.078
+          },
+          {
+            "candidate": "maritime_polluted",
+            "aod550_boundary_layer_only": 0.099
+          },
+          {
+            "candidate": "continental_average",
+            "aod550_boundary_layer_only": 0.133
+          },
+          {
+            "candidate": "desert",
+            "aod550_boundary_layer_only": 0.275169
+          },
+          {
+            "candidate": "continental_polluted",
+            "aod550_boundary_layer_only": 0.309
+          },
+          {
+            "candidate": "urban",
+            "aod550_boundary_layer_only": 0.625
+          }
+        ],
+        "ratio_to_spectrum_min": 1.9154766443806523,
+        "ratio_to_spectrum_max": 0.11646097997834366,
+        "within_pinned_range": true,
+        "bracketed_by": [
+          "antarctic",
+          "maritime_clean"
+        ]
+      }
+    }
+  },
+  "cross_event": {
+    "verdict": "partially_consistent",
+    "R": 7.11035531831942,
+    "inverted_aod550": {
+      "june_2011": 0.025865877276886398,
+      "hst_2019": 0.12036025043776977,
+      "dec_2011": 0.18391557805870665,
+      "event_1990_02_09": 0.07278811248646479
+    },
+    "degenerate_events": {},
+    "geometric_mean": 0.08034749057701761,
+    "geometric_std_population": 2.0793203720372593,
+    "band_edges": {
+      "systematic_gap_upper": 2.0,
+      "partially_consistent_upper": 10.0
+    },
+    "prediction_matrix": {
+      "june_2011": {
+        "june_2011": -2.905661822261152e-17,
+        "hst_2019": -0.6992634767315388,
+        "dec_2011": -0.8899801853776776,
+        "event_1990_02_09": -0.4520902501254841
+      },
+      "hst_2019": {
+        "june_2011": 0.6301430054162623,
+        "hst_2019": 6.16017653554124e-14,
+        "dec_2011": -0.21591094635511174,
+        "event_1990_02_09": 0.2716854409015779
+      },
+      "dec_2011": {
+        "june_2011": 0.15448957019032364,
+        "hst_2019": 0.02844260904354316,
+        "dec_2011": 8.881784197001248e-16,
+        "event_1990_02_09": 0.0711189202797502
+      },
+      "event_1990_02_09": {
+        "june_2011": 0.11867183127501116,
+        "hst_2019": -0.05255788709410308,
+        "dec_2011": -0.08477382079844147,
+        "event_1990_02_09": 4.440892098500625e-16
+      }
+    },
+    "matrix_note": "event i rows: fit-subset median ln residual under event j's inverted AOD550; the diagonal is the event's own root; the 1990 row is its holdout account"
+  },
+  "form_sensitivity": {
+    "forms": {
+      "desert": {
+        "june_2011": {
+          "status": "inverted",
+          "aod550": 0.4827655846724412,
+          "holdout_ln_rms_before": 0.42939692861713635,
+          "holdout_ln_rms_after": 0.4175312564036495
+        },
+        "hst_2019": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": 0.7817856633668575,
+          "holdout_ln_rms_after": null
+        },
+        "dec_2011": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": 0.343430709393424,
+          "holdout_ln_rms_after": null
+        },
+        "event_1990_02_09": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": null,
+          "holdout_ln_rms_after": null
+        }
+      },
+      "continental_average": {
+        "june_2011": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": 0.42939692861713635,
+          "holdout_ln_rms_after": null
+        },
+        "hst_2019": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": 0.7817856633668575,
+          "holdout_ln_rms_after": null
+        },
+        "dec_2011": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": 0.343430709393424,
+          "holdout_ln_rms_after": null
+        },
+        "event_1990_02_09": {
+          "status": "unclosed",
+          "aod550": null,
+          "holdout_ln_rms_before": null,
+          "holdout_ln_rms_after": null
+        }
+      }
+    },
+    "scope": "appendix only: the main conclusion is carried by the antarctic main form; objective, splits and root finder identical to the preregistered contract"
+  },
+  "retrieval_spec": {
+    "aod550_pool": {
+      "june_2011": 0.025865877276886398,
+      "hst_2019": 0.12036025043776977,
+      "dec_2011": 0.18391557805870665,
+      "event_1990_02_09": 0.07278811248646479
+    },
+    "excluded_events": {},
+    "alpha_blue_range": [
+      0.2,
+      1.11
+    ],
+    "alpha_visible_range": [
+      0.17,
+      1.42
+    ],
+    "alpha_envelope_source": "pinned morphology rows (main + sensitivity forms)",
+    "layer_geometry": {
+      "class": "0-10 km exponential layer",
+      "scale_height_m": 8000.0,
+      "source_row": "antarctic/scale_height_m"
+    },
+    "source_types": [
+      "boundary-layer / lower-tropospheric aerosol optical types (OPAC-like)",
+      "humidity variants (RH rows unavailable in the pinned source; known gap)"
+    ],
+    "branch_rule_fired": false,
+    "aod550_range": [
+      0.00258658772768864,
+      1.8391557805870664
+    ]
+  },
+  "findings": [
+    {
+      "code": "physical_range_exceeded",
+      "event": "june_2011",
+      "detail": "inverted AOD550 0.0258659 lies outside the pinned boundary-layer spectrum [0.038, 0.625]"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "hst_2019",
+      "detail": "sensitivity form desert: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "dec_2011",
+      "detail": "sensitivity form desert: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "event_1990_02_09",
+      "detail": "sensitivity form desert: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "june_2011",
+      "detail": "sensitivity form continental_average: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "hst_2019",
+      "detail": "sensitivity form continental_average: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "dec_2011",
+      "detail": "sensitivity form continental_average: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    },
+    {
+      "code": "sensitivity_unclosed",
+      "event": "event_1990_02_09",
+      "detail": "sensitivity form continental_average: g(2) > 0 - the pinned layer geometry cannot close this event within the preregistered bracket (appendix only; does not affect the main-form conclusion)"
+    }
+  ]
+}

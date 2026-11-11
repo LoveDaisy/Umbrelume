@@ -7,6 +7,7 @@ inversion baseline's independent evidence: the production two-layer P(0)
 reproduces the committed predictions bitwise and the committed-variant chain
 identity holds within the moment tolerance.
 """
+import csv
 import json
 from pathlib import Path
 
@@ -285,3 +286,117 @@ def test_fit_restricted_hst_kernel_matches_full_grid_bitwise():
         np.testing.assert_array_equal(
             full[row_kernel.readout_id][row_kernel.fit_mask],
             restricted[row_kernel.readout_id])
+
+
+# --- Committed product schema (M2: Step 2+3 command products) -------------------
+
+PRODUCT_PATH = ROOT/"validation/results/atmosphere_inversion/inversion.json"
+LEDGER_PATH = ROOT/"validation/results/atmosphere_inversion/ledger.csv"
+
+EVENT_FIELDS = {"morphology", "observation_source", "readout_counts", "g0",
+                "g_at_bracket_high", "bracket_high_used", "status", "aod550",
+                "fit", "holdout", "baseline_contrast", "shape", "physical_anchor"}
+
+
+def test_committed_product_preregistered_verbatim():
+    """The product carries the preregistered block verbatim (plan M2)."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    assert product["preregistered"] == ai.PREREGISTERED
+
+
+def test_committed_product_schema_and_anchoring():
+    """Product structure, event fields and anchoring verdicts."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    assert set(product) == {"scope", "preregistered", "anchoring", "events",
+                            "cross_event", "form_sensitivity", "retrieval_spec",
+                            "findings"}
+    assert set(product["events"]) == set(ai.EVENT_ORDER)
+    for event, record in product["events"].items():
+        assert EVENT_FIELDS <= set(record)
+        assert record["status"] in ai.PREREGISTERED["objective"]["status_vocabulary"]
+        assert record["morphology"] == ai.MAIN_FORM
+        if record["status"] == ai.STATUS_INVERTED:
+            assert record["aod550"] > 0
+            assert record["physical_anchor"]["inverted_aod550"] == record["aod550"]
+        assert record["fit"]["readout_count"] == record["readout_counts"]["fit"]
+    anchoring = product["anchoring"]
+    assert anchoring["reproduction"]["verdict"] == "within_tolerance"
+    assert anchoring["chain_identity"]["verdict"] == "within_tolerance"
+
+
+def test_committed_cross_event_verdict_is_mechanical():
+    """The cross-event verdict re-derives mechanically from the product's own
+    event values (never hand-written); the matrix diagonal is root-level."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    events = {event: {"status": record["status"], "aod550": record["aod550"]}
+              for event, record in product["events"].items()}
+    recomputed = ai.consistency_verdict(events)
+    cross = product["cross_event"]
+    assert cross["verdict"] == recomputed["verdict"]
+    assert cross["R"] == recomputed["R"]
+    assert cross["inverted_aod550"] == recomputed["inverted_aod550"]
+    assert cross["degenerate_events"] == recomputed["degenerate_events"]
+    for event, row in cross["prediction_matrix"].items():
+        assert abs(row[event]) <= 1e-9
+        for value in row.values():
+            if value is not None:
+                assert np.isfinite(value)
+
+
+def test_committed_shape_and_holdout_declarations():
+    """1990 has no shape metric and no event-internal holdout; the other
+    events declare the holdout-band involvement of their shape metrics."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    events = product["events"]
+    assert events["event_1990_02_09"]["shape"] is None
+    assert events["event_1990_02_09"]["holdout"] is None
+    for event in ("june_2011", "dec_2011", "hst_2019"):
+        shape = events[event]["shape"]
+        if shape is not None:
+            assert shape["involves_holdout_bands"] is True
+
+
+def test_committed_findings_are_mechanical_consequences():
+    """Findings re-derive from the product's own values: the main-form
+    out-of-range anchor obligation and the sensitivity bracket branches."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    findings = product["findings"]
+    known = {"physical_range_exceeded", "zero_increment", "unclosed",
+             "consistency_degenerate", "retrieval_range_degenerate",
+             "sensitivity_unclosed", "sensitivity_zero_increment"}
+    assert all(item["code"] in known for item in findings)
+    # Anchor obligation: every out-of-range main-form value carries a finding.
+    out_of_range = {event for event, record in product["events"].items()
+                    if record["physical_anchor"] is not None
+                    and record["physical_anchor"]["within_pinned_range"] is False}
+    recorded = {item["event"] for item in findings
+                if item["code"] == "physical_range_exceeded"}
+    assert recorded == out_of_range
+    # Sensitivity: every unclosed sensitivity cell carries a finding.
+    unclosed_cells = sum(
+        1 for form in product["form_sensitivity"]["forms"].values()
+        for cell in form.values() if cell["status"] == ai.STATUS_UNCLOSED)
+    assert sum(1 for item in findings
+               if item["code"] == "sensitivity_unclosed") == unclosed_cells
+
+
+def test_committed_ledger_rows_match_events():
+    """Ledger rows: one per readout (HST per window row), subsets partition."""
+    product = json.loads(PRODUCT_PATH.read_text())
+    with LEDGER_PATH.open() as stream:
+        rows = list(csv.DictReader(stream))
+    assert len(rows) == 1046  # 18 + 2*510 + 7 + 1
+    per_event = {}
+    for row in rows:
+        per_event.setdefault(row["event"], []).append(row)
+    assert {event: len(items) for event, items in per_event.items()} == {
+        "june_2011": 18, "hst_2019": 1020, "dec_2011": 7,
+        "event_1990_02_09": 1}
+    for event, items in per_event.items():
+        fit = sum(1 for item in items if item["subset"] == "fit")
+        holdout = sum(1 for item in items if item["subset"] == "holdout")
+        assert (fit, holdout) == (
+            product["events"][event]["readout_counts"]["fit"],
+            product["events"][event]["readout_counts"]["holdout"])
+        for item in items:
+            assert item["subset"] in ("fit", "holdout")
