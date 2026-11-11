@@ -78,11 +78,18 @@ extinction.
 
 `eclipse.aerosol.AerosolColumn` is the ordered composition type: a frozen
 tuple of `AerosolProfile` layers whose total vertical AOD is exactly the sum
-of the layers' AOD550 (supports may overlap only on measure-zero boundaries).
-Layers never merge into one effective profile — the two layers' spectral
-exponents differ, so the only legal expansion is the per-layer
-(tau table, spectral factor) pair; the ray table stores one 550 nm tau table
-per layer together with that layer's own profile.
+of the layers' AOD550. Extinction sums per layer for arbitrary support
+layouts — overlapping supports add their optical depths and the sum invariant
+holds for any layout (asserted in tests including an overlapping-support
+case); the production default's two layers are disjoint, while the
+calibration-lane presets (`--aerosol calibrated:<name>`) stack a third
+increment layer that may overlap the default altitude bands. Each layer
+integrates on its own support with the per-tangent quadrature splitting at
+that layer's own boundaries (`eclipse/rays.py`), so overlapping supports
+compose without interaction. Layers never merge into one effective profile —
+the layers' spectral exponents differ, so the only legal expansion is the
+per-layer (tau table, spectral factor) pair; the ray table stores one 550 nm
+tau table per layer together with that layer's own profile.
 
 Interface mapping (names and semantics stable across the change):
 

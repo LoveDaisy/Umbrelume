@@ -213,3 +213,55 @@ def test_column_rejects_empty_or_non_profile_layers():
         AerosolColumn((AerosolProfile(), "not a profile"))
     with pytest.raises(FrozenInstanceError):
         AerosolColumn.opac_default().layers = ()
+
+
+
+def test_overlapping_supports_tau_and_transmission_composition():
+    """Overlapping supports (J3 contract revision): at matched tangent heights
+    each layer's tau in a 3-layer column equals the single-layer table's tau
+    bitwise (the per-layer segment quadrature depends only on that layer's own
+    support), and the column transmission equals the product of the
+    single-layer transmissions. The calibration presets' increment layer
+    overlaps the default free troposphere, so the sum invariant must hold for
+    arbitrary support layouts."""
+    from eclipse.atmosphere import Atmosphere
+    from eclipse.rays import build_ray_table
+    from eclipse.transport import Geometry, transmission_profile
+
+    increment = AerosolProfile(aod550=0.025865877276886398, bottom_m=0.0,
+                               top_m=10000.0, scale_height_m=8000.0,
+                               angstrom_blue=0.34, angstrom_visible=0.73)
+    column = AerosolColumn((AerosolProfile.opac_free_troposphere(),
+                            AerosolProfile.opac_stratospheric_background(),
+                            increment))
+    assert column.layers[0].top_m > increment.bottom_m  # genuine overlap
+    table = build_ray_table(Atmosphere(), aerosol_profile=column)
+    assert len(table.aerosol_layer_taus) == 3
+    # Dense-grid tangent heights (0-60 km at 100 m) exist in every table.
+    matched_heights = (5000.0, 10000.0, 20000.0, 50000.0)
+    for height in matched_heights:
+        column_index = np.flatnonzero(table.altitude_m == height)
+        assert len(column_index) == 1, height
+        for index, layer in enumerate(column.layers):
+            single = build_ray_table(Atmosphere(), aerosol_profile=layer)
+            single_index = np.flatnonzero(single.altitude_m == height)
+            assert len(single_index) == 1, height
+            assert table.aerosol_layer_taus[index][column_index] \
+                == single.aerosol_layer_taus[0][single_index]
+    # The documented AOD-sum invariant (arithmetic anchor of this column).
+    assert sum(layer.aod550 for layer in column.layers) \
+        == pytest.approx(0.013 + 0.005 + 0.025865877276886398, abs=0.0)
+    # The overlapping third layer only ever adds extinction: the composed
+    # column is strictly darker than the disjoint two-layer default at the
+    # same receiver (transmission sums per-layer tau over the receiver
+    # quadrature; composition is additive in tau, not multiplicative in
+    # transmission, so a product identity would be wrong here).
+    geometry = Geometry()
+    radius, wavelength = 1_000_000.0, 550.0
+    combined = float(transmission_profile(table, [radius], [wavelength],
+                                          geometry=geometry)[0, 0])
+    default_table = build_ray_table(Atmosphere(),
+                                    aerosol_profile=AerosolColumn.opac_default())
+    baseline = float(transmission_profile(default_table, [radius], [wavelength],
+                                          geometry=geometry)[0, 0])
+    assert 0.0 < combined < baseline

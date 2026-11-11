@@ -400,3 +400,40 @@ def test_committed_ledger_rows_match_events():
             product["events"][event]["readout_counts"]["holdout"])
         for item in items:
             assert item["subset"] in ("fit", "holdout")
+
+
+def test_calibrated_registry_anchors_to_committed_product():
+    """Registry values anchor mechanically to the committed inversion product
+    (plan Step 4): preset AOD == the product's event value, morphology rows ==
+    the pinned main form, provenance sha == the committed file's actual sha;
+    any regeneration that breaks the anchor fails loud instead of silently
+    drifting. The preset-name-to-event mapping lives solely in the registry's
+    'event' field (review round 2 item 4)."""
+    import hashlib
+
+    import eclipse.cli as cli_module
+
+    registry = json.loads(cli_module.CALIBRATED_PRESETS_JSON.read_text())
+    product = json.loads(PRODUCT_PATH.read_text())
+    sha = hashlib.sha256(PRODUCT_PATH.read_bytes()).hexdigest()
+    assert set(registry["presets"]) == {"june2011", "dec2011", "hst2019", "feb1990"}
+    rows = ai.MORPHOLOGY_ROWS[ai.MAIN_FORM]
+    for name, entry in registry["presets"].items():
+        provenance = entry["provenance"]
+        assert provenance["kind"] == "calibrated"
+        assert provenance["calibrated_not_physical_prior"] is True
+        assert provenance["inversion_product"] \
+            == "validation/results/atmosphere_inversion/inversion.json"
+        assert provenance["sha256"] == sha
+        event = entry["event"]
+        assert event in ai.EVENT_ORDER
+        layer = entry["increment_layer"]
+        assert layer["aod550"] == product["events"][event]["aod550"]
+        assert layer["bottom_m"] == rows["layer_bottom_m"]
+        assert layer["top_m"] == rows["layer_top_m"]
+        assert layer["scale_height_m"] == rows["scale_height_m"]
+        assert layer["angstrom_blue"] == rows["angstrom_0.35_to_0.5um"]
+        assert layer["angstrom_visible"] == rows["angstrom_0.5_to_0.8um"]
+        assert layer["break_nm"] == 500.0
+        assert provenance["fit_holdout_split"] \
+            == ai.PREREGISTERED["fit_holdout_split"][event]

@@ -36,20 +36,56 @@ def _nonnegative(value):
 
 
 def _aerosol_layer_metadata(aerosol_prior, layer_sources):
-    """Per-layer metadata records with their pinned prior_parameters.json rows.
+    """Per-layer metadata records with their pinned provenance.
 
     ``layer_sources`` is produced by the same construction branch that built
-    ``aerosol_prior``, so every layer pairs with its own provenance. The OPAC
-    PDF sha256 identifies the source paper recorded next to those rows in
-    sources.json.
+    ``aerosol_prior``, so every layer pairs with its own provenance. OPAC
+    layers carry their prior_parameters.json rows and the OPAC PDF sha256; a
+    calibration-lane layer carries the registry's own provenance verbatim
+    (``source_class == "calibrated_registry"``).
     """
     layers = (aerosol_prior.layers if isinstance(aerosol_prior, AerosolColumn)
               else (aerosol_prior,))
-    return [{**asdict(layer),
-             "source": {**source,
-                        "prior_parameters_json": PRIOR_PARAMETERS_JSON,
-                        "opac1998_sha256": OPAC_PDF_SHA256}}
-            for layer, source in zip(layers, layer_sources, strict=True)]
+    records = []
+    for layer, source in zip(layers, layer_sources, strict=True):
+        if source.get("source_class") == "calibrated_registry":
+            records.append({**asdict(layer), "source": source})
+        else:
+            records.append({**asdict(layer),
+                            "source": {**source,
+                                       "prior_parameters_json": PRIOR_PARAMETERS_JSON,
+                                       "opac1998_sha256": OPAC_PDF_SHA256}})
+    return records
+
+
+CALIBRATED_PRESETS_JSON = Path(__file__).parent/"data"/"calibrated_presets.json"
+
+
+def load_calibrated_preset(name: str) -> tuple[AerosolColumn, dict]:
+    """Lazy loader for one calibration-lane preset.
+
+    Only the ``calibrated:<name>`` branch of ``--aerosol`` ever touches the
+    registry; the default path performs no registry IO. Provenance is
+    mandatory: an entry without the ``kind='calibrated'`` and
+    ``calibrated_not_physical_prior=true`` markers fails loud. The
+    name-to-event mapping lives solely in the entry's ``event`` field.
+    """
+    registry = json.loads(CALIBRATED_PRESETS_JSON.read_text())
+    entry = (registry or {}).get("presets", {}).get(name)
+    if entry is None:
+        raise KeyError(f"calibrated preset {name!r} is not in "
+                       f"eclipse/data/calibrated_presets.json")
+    provenance = entry.get("provenance") or {}
+    if (provenance.get("kind") != "calibrated"
+            or provenance.get("calibrated_not_physical_prior") is not True):
+        raise ValueError(f"calibrated preset {name!r}: provenance must carry "
+                         f"kind='calibrated' and calibrated_not_physical_prior=true")
+    layer = AerosolProfile(**entry["increment_layer"])
+    column = AerosolColumn((*AerosolColumn.opac_default().layers, layer))
+    source = {"source_class": "calibrated_registry",
+              "registry_path": "eclipse/data/calibrated_presets.json",
+              "preset": name, "event": entry.get("event"), **provenance}
+    return column, source
 
 
 def main(argv=None):
@@ -59,11 +95,14 @@ def main(argv=None):
     run.add_argument("--out", type=Path, default=Path("outputs/current"))
     run.add_argument("--ozone-du", type=_nonnegative, default=300.0)
     run.add_argument("--density-scale", type=_nonnegative, default=1.0)
-    run.add_argument("--aerosol", choices=["opac", "opac-ft", "none"], default="opac",
+    run.add_argument("--aerosol", default="opac",
                      help="Aerosol preset: two-layer OPAC default (free troposphere "
                           "2-12 km + stratospheric background 12-35 km), "
-                          "free-troposphere-only (historical preset), or "
-                          "molecular-only counterfactual")
+                          "free-troposphere-only (historical preset), "
+                          "molecular-only counterfactual, or 'calibrated:<name>' "
+                          "to load a calibration-lane preset from "
+                          "eclipse/data/calibrated_presets.json (calibrated, "
+                          "not a physical prior; never a default)")
     run.add_argument("--aod550", type=_nonnegative,
                      help="Override the free-troposphere layer's 550 nm vertical AOD "
                           "(default 0.013; the stratospheric layer stays at 0.005); "
@@ -84,13 +123,29 @@ def main(argv=None):
         parser.error("--wavelength-step-nm must be at most 100")
     if not args.no_plots and args.radius_max_km < args.moon_offset_km + 1737.4:
         parser.error("--radius-max-km must cover the entire lunar disk")
+    calibrated_name = None
+    if args.aerosol.startswith("calibrated:"):
+        calibrated_name = args.aerosol[len("calibrated:"):]
+        if not calibrated_name:
+            parser.error("--aerosol calibrated:<name> requires a preset name")
+    elif args.aerosol not in ("opac", "opac-ft", "none"):
+        parser.error("--aerosol must be opac, opac-ft, none, or calibrated:<name>")
+    if args.aerosol == "none" and args.aod550 is not None:
+        parser.error("--aod550 requires --aerosol opac or opac-ft")
+    if calibrated_name is not None and args.aod550 is not None:
+        parser.error("--aod550 cannot be combined with --aerosol "
+                     "calibrated:<name>: the preset fully determines the column")
     radius = np.linspace(0, args.radius_max_km*1000,
                          int(np.ceil(args.radius_max_km/args.radial_step_km))+1)
     wl = np.linspace(380, 780, int(np.ceil(400/args.wavelength_step_nm))+1)
     atmosphere = Atmosphere(ozone_du=args.ozone_du, density_scale=args.density_scale)
-    if args.aerosol == "none" and args.aod550 is not None:
-        parser.error("--aod550 requires --aerosol opac or opac-ft")
-    if args.aerosol == "none" or args.aod550 == 0:
+    if calibrated_name is not None:
+        try:
+            aerosol_prior, preset_source = load_calibrated_preset(calibrated_name)
+        except (KeyError, ValueError) as error:
+            parser.error(str(error))
+        layer_sources = (*OPAC_DEFAULT_LAYER_SOURCES, preset_source)
+    elif args.aerosol == "none" or args.aod550 == 0:
         # AOD=0 is the molecular-only counterfactual: the whole aerosol
         # component is disabled and reproduces --aerosol none exactly.
         aerosol_prior, layer_sources = None, ()
@@ -104,6 +159,11 @@ def main(argv=None):
         layer_sources = (FREE_TROPOSPHERE_SOURCE,)
     if aerosol_prior is None:
         aerosol_text = "No aerosol extinction"
+    elif calibrated_name is not None:
+        aerosol_text = (f"Calibrated preset '{calibrated_name}': the production "
+                        f"two-layer OPAC default plus an inversion increment fitted "
+                        f"to the {preset_source['event']} brightness residual; "
+                        f"calibrated, not a physical prior, and never a default")
     elif args.aerosol == "opac":
         aerosol_text = ("OPAC free-troposphere (2-12 km) and stratospheric-background "
                         "(12-35 km) aerosol extinction only; no boundary-layer component")
@@ -129,6 +189,8 @@ def main(argv=None):
                     if aerosol_prior is not None else None),
         "aerosol_preset": args.aerosol,
         "aerosol_aod_source": ("Disabled" if aerosol_prior is None else
+                                "Calibrated inversion increment; not an independent "
+                                "prior" if calibrated_name is not None else
                                 "OPAC literature prior" if args.aod550 is None else
                                 "User override; not an independent prior"),
         "geometry": asdict(geometry),
