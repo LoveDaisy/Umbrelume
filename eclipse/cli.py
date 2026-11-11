@@ -14,7 +14,8 @@ from . import __version__
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
 from .aerosol import (
     AerosolColumn, AerosolProfile, FREE_TROPOSPHERE_SOURCE, OPAC_DEFAULT_LAYER_SOURCES,
-    OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON,
+    OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON, RH_MAX, RH_MIN, ft_growth_factor,
+    ft_humidity_provenance,
 )
 from .color import spectrum_to_xyz
 from .report import write_report
@@ -35,14 +36,18 @@ def _nonnegative(value):
     return number
 
 
-def _aerosol_layer_metadata(aerosol_prior, layer_sources):
+def _aerosol_layer_metadata(aerosol_prior, layer_sources, rh=0.5,
+                            ft_aod550_base=0.013):
     """Per-layer metadata records with their pinned provenance.
 
     ``layer_sources`` is produced by the same construction branch that built
     ``aerosol_prior``, so every layer pairs with its own provenance. OPAC
     layers carry their prior_parameters.json rows and the OPAC PDF sha256; a
     calibration-lane layer carries the registry's own provenance verbatim
-    (``source_class == "calibrated_registry"``).
+    (``source_class == "calibrated_registry"``). The free-troposphere layer's
+    source record additionally carries the humidity-axis provenance at the
+    effective ``rh`` (the 50% reference default included, so the schema is
+    uniform; old consumers ignore the new keys).
     """
     layers = (aerosol_prior.layers if isinstance(aerosol_prior, AerosolColumn)
               else (aerosol_prior,))
@@ -51,10 +56,12 @@ def _aerosol_layer_metadata(aerosol_prior, layer_sources):
         if source.get("source_class") == "calibrated_registry":
             records.append({**asdict(layer), "source": source})
         else:
-            records.append({**asdict(layer),
-                            "source": {**source,
-                                       "prior_parameters_json": PRIOR_PARAMETERS_JSON,
-                                       "opac1998_sha256": OPAC_PDF_SHA256}})
+            record_source = {**source,
+                             "prior_parameters_json": PRIOR_PARAMETERS_JSON,
+                             "opac1998_sha256": OPAC_PDF_SHA256}
+            if source.get("candidate") == FREE_TROPOSPHERE_SOURCE["candidate"]:
+                record_source.update(ft_humidity_provenance(rh, ft_aod550_base))
+            records.append({**asdict(layer), "source": record_source})
     return records
 
 
@@ -131,6 +138,12 @@ def main(argv=None):
                      help="Override the free-troposphere layer's 550 nm vertical AOD "
                           "(default 0.013; the stratospheric layer stays at 0.005); "
                           "0 disables the whole aerosol component")
+    run.add_argument("--rh", type=float, default=None,
+                     help="Free-troposphere relative humidity for the pinned OPAC "
+                          "humidity growth (finite, within [0.5, 0.99]; default "
+                          "0.5 = the published 50%% reference state, bit-exact "
+                          "unchanged). Legal only with --aerosol opac or opac-ft; "
+                          "it acts on the free-troposphere layer only")
     run.add_argument("--moon-distance-km", type=_positive, default=384400.0)
     run.add_argument("--moon-offset-km", type=_nonnegative, default=2860.0,
                      help="Moon center's distance from the shadow axis")
@@ -159,6 +172,18 @@ def main(argv=None):
     if calibrated_name is not None and args.aod550 is not None:
         parser.error("--aod550 cannot be combined with --aerosol "
                      "calibrated:<name>: the preset fully determines the column")
+    if args.rh is not None:
+        if not np.isfinite(args.rh) or not RH_MIN <= args.rh <= RH_MAX:
+            parser.error(f"--rh must be finite within [{RH_MIN}, {RH_MAX}] "
+                         f"(the pinned humidity domain)")
+        if calibrated_name is not None:
+            parser.error("--rh cannot be combined with --aerosol calibrated:<name>: "
+                         "the preset fully determines the column")
+        if args.aerosol == "none" or args.aod550 == 0:
+            parser.error("--rh requires a nonzero free-troposphere aerosol "
+                         "component (--aerosol opac or opac-ft)")
+    rh = 0.5 if args.rh is None else args.rh
+    ft_aod550_base = 0.013 if args.aod550 is None else args.aod550
     radius = np.linspace(0, args.radius_max_km*1000,
                          int(np.ceil(args.radius_max_km/args.radial_step_km))+1)
     wl = np.linspace(380, 780, int(np.ceil(400/args.wavelength_step_nm))+1)
@@ -174,12 +199,11 @@ def main(argv=None):
         # component is disabled and reproduces --aerosol none exactly.
         aerosol_prior, layer_sources = None, ()
     elif args.aerosol == "opac":
-        aerosol_prior = AerosolColumn.opac_default(
-            ft_aod550=.013 if args.aod550 is None else args.aod550)
+        aerosol_prior = AerosolColumn.opac_default(ft_aod550=ft_aod550_base, rh=rh)
         layer_sources = OPAC_DEFAULT_LAYER_SOURCES
     else:
         aerosol_prior = AerosolProfile.opac_free_troposphere(
-            aod550=.013 if args.aod550 is None else args.aod550)
+            aod550=ft_aod550_base, rh=rh)
         layer_sources = (FREE_TROPOSPHERE_SOURCE,)
     if aerosol_prior is None:
         aerosol_text = "No aerosol extinction"
@@ -194,6 +218,10 @@ def main(argv=None):
     else:
         aerosol_text = ("OPAC free-troposphere aerosol extinction only; no boundary "
                         "layer or stratospheric aerosol preset")
+    if rh != 0.5:
+        aerosol_text += (f"; free-troposphere humidity growth at rh={rh:g} "
+                         f"(pinned OPAC WASO growth, factor "
+                         f"{ft_growth_factor(rh):.6g} on the 50% reference state)")
     geometry = Geometry(moon_distance_m=args.moon_distance_km*1000)
     start = time.perf_counter()
     result = simulate(radius, wl, atmosphere=atmosphere, geometry=geometry,
@@ -209,7 +237,9 @@ def main(argv=None):
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "model": "Finite-distance paraxial annular transport with spherical refracted ray tables",
         "atmosphere": asdict(atmosphere),
-        "aerosol": ({"layers": _aerosol_layer_metadata(aerosol_prior, layer_sources)}
+        "aerosol": ({"layers": _aerosol_layer_metadata(aerosol_prior, layer_sources,
+                                                       rh=rh,
+                                                       ft_aod550_base=ft_aod550_base)}
                     if aerosol_prior is not None else None),
         "aerosol_preset": args.aerosol,
         "aerosol_aod_source": ("Disabled" if aerosol_prior is None else

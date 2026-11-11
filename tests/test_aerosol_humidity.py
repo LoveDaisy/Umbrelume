@@ -236,3 +236,80 @@ def test_priors_product_transcription_contract():
     assert PRIORS["ft_vertical_profile_evidence"]["sec5b_upper_boundary"][
         "quote"].startswith("For the proposed aerosol types")
     assert PRIORS["opac_pdf"]["sha256"] == OPAC_PDF_SHA256
+
+
+# --- CLI --rh (plan Step 2) -------------------------------------------------------
+
+
+CLI_COMMON = ["--no-plots", "--radial-step-km", "1000", "--wavelength-step-nm",
+              "50", "--height-step-m", "500"]
+
+
+def _run_cli(tmp_path, *extra):
+    from eclipse.cli import main
+    out = tmp_path/"out"
+    main(["simulate", "--out", str(out), *CLI_COMMON, *extra])
+    metadata = json.loads((out/"metadata.json").read_text())
+    return metadata, np.load(out/"rays.npz")
+
+
+def test_cli_default_metadata_carries_reference_humidity(tmp_path):
+    """The default run's FT source record carries the humidity provenance at
+    the 50% reference: rh=0.5, factor exactly 1.0, effective AOD unchanged -
+    schema extension only, numerical sections untouched."""
+    metadata, rays = _run_cli(tmp_path)
+    ft_source = metadata["aerosol"]["layers"][0]["source"]
+    assert ft_source["rh"] == 0.5
+    assert ft_source["ft_growth_factor"] == 1.0
+    assert ft_source["ft_aod550_reference_base"] == 0.013
+    assert ft_source["humidity_growth_json"] == HUMIDITY_GROWTH_JSON
+    assert ft_source["humidity_axis_priors_json"] == HUMIDITY_AXIS_PRIORS_JSON
+    for rh, sha256 in WASO_EXT550_SHA256.items():
+        assert ft_source["waso_ext550_sha256"][f"{rh:g}"] == sha256
+    assert metadata["aerosol"]["layers"][0]["aod550"] == 0.013
+    assert metadata["aerosol"]["layers"][1]["aod550"] == 0.005
+    # the stratosphere source record gains no humidity keys
+    assert "rh" not in metadata["aerosol"]["layers"][1]["source"]
+    assert "humidity" not in metadata["approximations"][3]
+    assert rays["aerosol_layer_taus"].shape[0] == 2
+
+
+def test_cli_explicit_rh_grows_free_troposphere_only(tmp_path):
+    factor = ft_growth_factor(0.7)
+    metadata, rays = _run_cli(tmp_path, "--rh", "0.7")
+    layers = metadata["aerosol"]["layers"]
+    assert layers[0]["aod550"] == 0.013*factor
+    assert layers[0]["source"]["rh"] == 0.7
+    assert layers[0]["source"]["ft_growth_factor"] == factor
+    assert layers[1]["aod550"] == 0.005
+    assert "rh" not in layers[1]["source"]
+    assert "humidity growth at rh=0.7" in metadata["approximations"][3]
+    # the FT layer tau carries the growth, the stratosphere tau is unchanged:
+    # the table shape and landing map stay identical
+    assert rays["aerosol_layer_taus"].shape[0] == 2
+
+
+def test_cli_opac_ft_accepts_rh(tmp_path):
+    factor = ft_growth_factor(0.9)
+    metadata, rays = _run_cli(tmp_path, "--aerosol", "opac-ft", "--rh", "0.9")
+    layers = metadata["aerosol"]["layers"]
+    assert len(layers) == 1
+    assert layers[0]["aod550"] == 0.013*factor
+    assert layers[0]["source"]["rh"] == 0.9
+    assert rays["aerosol_layer_taus"].shape[0] == 1
+
+
+@pytest.mark.parametrize("argv", [
+    ("--aerosol", "calibrated:june2011", "--rh", "0.7"),
+    ("--aerosol", "calibrated:june2011", "--rh", "0.5"),  # explicit reference too
+    ("--aerosol", "none", "--rh", "0.7"),
+    ("--aerosol", "opac", "--aod550", "0", "--rh", "0.7"),
+    ("--aerosol", "opac", "--rh", "0.49"),
+    ("--aerosol", "opac", "--rh", "1.0"),
+    ("--aerosol", "opac", "--rh", "nan"),
+])
+def test_cli_rh_illegal_combinations_exit_loud(tmp_path, argv):
+    from eclipse.cli import main
+    with pytest.raises(SystemExit):
+        main(["simulate", "--out", str(tmp_path/"out"), "--no-plots", *argv,
+              *CLI_COMMON])
