@@ -97,14 +97,78 @@ def test_share_table_follows_preregistered_definition(product, task5):
 
 
 def test_humidity_sufficiency_recomputes(product):
-    """f_req = (a_pool + 0.013)/0.013 vs f_FT(0.99), recomputed independently."""
+    """The preregistered proxy values recompute independently; the model
+    verdict follows variant A's closure status; disagreements carry the
+    measured effectiveness ratio (r1 Major 1/4)."""
     f_top = ft_growth_factor(0.99)
-    for event, record in product["humidity_sufficiency"]["per_event"].items():
+    suff = product["humidity_sufficiency"]
+    proxy = suff["preregistered_proxy"]
+    assert "falsified" in proxy["grade"]
+    model = suff["model_verdict"]
+    for event, record in proxy["per_event"].items():
         assert record["f_ft_at_domain_top"] == f_top
         f_req = (record["a_pool"] + FT_AOD550_PUBLISHED)/FT_AOD550_PUBLISHED
         assert record["f_required"] == pytest.approx(f_req, rel=1e-15)
         expected = "humidity_sufficient" if f_req <= f_top else "humidity_insufficient"
         assert record["verdict"] == expected, event
+    for event, record in model["per_event"].items():
+        closed = product["variant_a"][event]["status"] in ("rh_inverted",
+                                                           "closed_at_reference")
+        assert record["verdict"] == ("humidity_sufficient" if closed
+                                     else "humidity_insufficient_for_closure"), event
+        assert record["basis"]["rh_star"] == product["variant_a"][event]["rh_star"]
+    for event, record in suff["proxy_vs_model"].items():
+        assert record["agree"] == (record["proxy"] == record["model"]), event
+        if not record["agree"]:
+            ratio = record["effectiveness_ratio_at_0_7_knot"]
+            assert ratio is not None and abs(ratio-1.0) > 0.1, event
+    # the effectiveness account itself: absorbed per unit extra FT AOD550
+    extra_ft = FT_AOD550_PUBLISHED*(ft_growth_factor(0.7)-1.0)
+    for event, record in suff["effectiveness"]["per_event"].items():
+        assert record["extra_ft_aod550"] == pytest.approx(extra_ft, rel=1e-15)
+        if record["ratio"] is not None:
+            residual = product["variant_b"]["ladder"]["0.7"][event]["aod550"]
+            pool = record["absorbed_increment_aod550"] + residual
+            task5 = json.loads((ROOT/"validation"/"results"/"atmosphere_inversion"/
+                                "inversion.json").read_text())
+            assert pool == task5["retrieval_spec"]["aod550_pool"][event]
+
+
+def test_variant_a_account_contrast_semantics(product):
+    """The A accounts measure what humidity changed: before == the production
+    reference baseline (equal to B(50%)'s reference accounts bitwise), after
+    == the rh* closure; the contrast is non-vacuous (r1 Major 2/3)."""
+    b50_accounts = product["variant_b"]["accounts"]["0.5"]
+    for event, account in product["variant_a"].items():
+        if account["status"] != "rh_inverted":
+            continue
+        fit = account["fit"]
+        assert fit["ln_residual_median_before"] \
+            == account["g_at_reference"], event
+        assert fit["ln_residual_median_after"] == account["g_at_root"], event
+        assert fit["ln_residual_median_before"] > 0, event
+        assert abs(fit["ln_residual_median_after"]) < 1e-6, event
+        holdout = account["holdout"]
+        if holdout is not None:
+            # 1990 has no event-internal holdout (its holdout account is the
+            # cross-event matrix row, preregistered None)
+            assert holdout["ln_rms_before"] \
+                == b50_accounts[event]["holdout"]["ln_rms_before"], event
+    # the reference-state shape baselines equal B(50%)'s bitwise, and the
+    # humidification actually moved the shape axis (factors != 1)
+    june = product["variant_a"]["june_2011"]["shape"]
+    b50_june = b50_accounts["june_2011"]["shape"]
+    assert june["median_base"] == b50_june["median_base"]
+    assert june["median_new"] != june["median_base"]
+    assert all(angle["shape_factor"] != 1.0 for angle in june["by_angle"])
+    assert june["disagreement_closed_fraction"] != 0.0
+    for ds, bands in product["variant_a"]["hst_2019"]["shape"][
+            "metrics_by_dataset"].items():
+        for band, record in bands.items():
+            reference = b50_accounts["hst_2019"]["shape"]["metrics_by_dataset"][
+                ds][band]
+            assert record["base_slope"] == reference["base_slope"], (ds, band)
+            assert record["new_slope"] != record["base_slope"], (ds, band)
 
 
 def test_variant_a_statuses_and_domain(product):

@@ -205,12 +205,13 @@ PREREGISTERED = {
     },
     "holdout_accounts": "per variant per ladder point per event: fit (g0 -> g "
                         "at the root), holdout (before/after median and RMS), "
-                        "shape ledger (committed aggregation structure); "
-                        "variant A evaluates its accounts at rh*; unclosed "
-                        "variant-A accounts evaluate the before-state at the "
-                        "reference and the after-state at the domain top; "
-                        "over-closed knots evaluate their accounts at the "
-                        "zero increment, the applied model state",
+                        "shape ledger (committed aggregation structure); the "
+                        "before-state is the production reference baseline "
+                        "(rh=0.5, bitwise the task-5 baseline) and the "
+                        "after-state is the variant's terminal state - variant "
+                        "A: rh* (or the domain top when unclosed), variant B: "
+                        "the knot's root state (over-closed knots evaluate at "
+                        "the zero increment, the applied model state)",
     "anchoring": "production-baseline anchoring gates "
                  "(atmosphere_inversion.run_anchoring_gates) plus per-table "
                  "humidified path identity (production grid bitwise, "
@@ -325,15 +326,21 @@ def invert_event_rh(kernel, fit_kernel) -> dict:
                 "preds_root": event_predictions_at(kernel, RH_MIN)}
     rh_star = float(brentq(lambda rh: _g_rh(fit_kernel, rh),
                            RH_MIN, RH_MAX, xtol=ai.BRENTQ_XTOL))
-    p0 = event_predictions_at(kernel, rh_star)
-    g_root = ai.fit_median(kernel, p0)
+    # The three accounts measure what humidity CHANGED: the before-state is the
+    # production reference baseline (rh=0.5, bitwise the task-5 baseline), the
+    # after-state is the rh* closure. Binding both ends to the closure state
+    # would make the fit/holdout/shape contrasts vacuous (code-review r1
+    # Major 2/3).
+    p0 = event_predictions_at(kernel, RH_MIN)
+    preds_root = event_predictions_at(kernel, rh_star)
+    g_root = ai.fit_median(kernel, preds_root)
     if abs(g_root) > 1e-9:
         raise RuntimeError(f"{kernel.event}: variant A root g(rh*)={g_root!r} "
                            f"not closed (|g| > 1e-9) - monotonicity or bracket "
                            f"assumption violated")
     return {"status": STATUS_RH_INVERTED, "rh_star": rh_star,
             "g_at_reference": g_reference, "g_at_domain_top": g_top,
-            "p0": p0, "preds_root": p0, "g_at_root": g_root}
+            "p0": p0, "preds_root": preds_root, "g_at_root": g_root}
 
 
 # --- Variant B: ladder over the pinned knots --------------------------------------
@@ -424,24 +431,93 @@ def share_account(knot_results: dict, pool: dict) -> dict:
     return shares
 
 
-def humidity_sufficiency_account(pool: dict) -> dict:
-    """Per-event f_req vs f_FT(0.99) (preregistered criterion)."""
-    f_top = ft_growth_factor(RH_MAX)
+def effectiveness_account(ladder: dict, pool: dict) -> dict:
+    """Measured per-event absorption effectiveness of the FT humidification
+    against the antarctic-form increment, at the 0.7 knot (machine-derived).
+
+    A ratio far from 1 falsifies the 1:1 AOD interchangeability premise of the
+    preregistered budget proxy - the root cause of the proxy's closure-status
+    disagreement with the machine results (code-review r1 Major 1/4).
+    """
+    extra_ft = FT_AOD550_PUBLISHED*(ft_growth_factor(0.7)-1.0)
     per_event = {}
+    for event in EVENT_ORDER:
+        result = ladder["0.7"][event]
+        if result["status"] == ai.STATUS_INVERTED:
+            absorbed = pool[event]-result["aod550"]
+            per_event[event] = {"absorbed_increment_aod550": absorbed,
+                                "extra_ft_aod550": extra_ft,
+                                "ratio": absorbed/extra_ft}
+        else:
+            per_event[event] = {"status": result["status"], "ratio": None}
+    return {"definition": "absorbed increment AOD550 (a_pool - residual at the "
+                          "0.7 knot) per unit extra FT AOD550 (0.013*(f(0.7)-1)); "
+                          "measured on this product's own machine results",
+            "per_event": per_event}
+
+
+def humidity_sufficiency_account(pool: dict, variant_a_summary: dict,
+                                 effectiveness: dict) -> dict:
+    """The preregistered linear-AOD-budget proxy (retained for audit, graded)
+    plus the model-level sufficiency verdict from variant A's machine results.
+
+    Code-review r1 Major 1/4: the preregistered criterion assumes the
+    antarctic-form increment and the FT humidification are interchangeable
+    1:1 in AOD550 - a premise this product's own results falsified (the
+    measured effectiveness ratios differ per event), so the proxy values must
+    not be published as the sufficiency verdict. The model-level verdict uses
+    variant A's closure status and domain-endpoint residuals; the preregistered
+    formula and its values stay untouched for audit.
+    """
+    f_top = ft_growth_factor(RH_MAX)
+    proxy_per_event = {}
+    model_per_event = {}
+    comparison = {}
     for event in EVENT_ORDER:
         a_pool = pool[event]
         if a_pool is None:
-            per_event[event] = {"a_pool": None, "f_required": None,
-                                "f_ft_at_domain_top": f_top,
-                                "verdict": "not_applicable"}
-            continue
-        f_req = (a_pool + FT_AOD550_PUBLISHED)/FT_AOD550_PUBLISHED
-        per_event[event] = {"a_pool": a_pool, "f_required": f_req,
-                            "f_ft_at_domain_top": f_top,
-                            "verdict": "humidity_sufficient" if f_req <= f_top
-                            else "humidity_insufficient"}
-    return {"criterion": PREREGISTERED["humidity_sufficiency"]["criterion"],
-            "per_event": per_event}
+            proxy_per_event[event] = {"a_pool": None, "f_required": None,
+                                      "f_ft_at_domain_top": f_top,
+                                      "verdict": "not_applicable"}
+        else:
+            f_req = (a_pool + FT_AOD550_PUBLISHED)/FT_AOD550_PUBLISHED
+            proxy_per_event[event] = {"a_pool": a_pool, "f_required": f_req,
+                                      "f_ft_at_domain_top": f_top,
+                                      "verdict": "humidity_sufficient" if f_req <= f_top
+                                      else "humidity_insufficient"}
+        summary = variant_a_summary[event]
+        closed_in_domain = summary["status"] in (STATUS_RH_INVERTED,
+                                                 STATUS_CLOSED_AT_REFERENCE)
+        model_per_event[event] = {
+            "verdict": "humidity_sufficient" if closed_in_domain
+            else "humidity_insufficient_for_closure",
+            "basis": {"status": summary["status"], "rh_star": summary["rh_star"],
+                      "g_at_reference": summary["g_at_reference"],
+                      "g_at_domain_top": summary["g_at_domain_top"]}}
+        proxy_verdict = proxy_per_event[event]["verdict"]
+        model_verdict = model_per_event[event]["verdict"]
+        comparison[event] = {"proxy": proxy_verdict, "model": model_verdict,
+                             "agree": proxy_verdict == model_verdict,
+                             "effectiveness_ratio_at_0_7_knot":
+                                 effectiveness["per_event"][event]["ratio"]}
+    return {
+        "preregistered_proxy": {
+            "grade": "linear_aod_budget_proxy: assumes the antarctic-form "
+                     "increment and the FT humidification are interchangeable "
+                     "1:1 in AOD550; this product's own machine results "
+                     "falsified that premise (see effectiveness and "
+                     "proxy_vs_model), so these values are retained for audit "
+                     "only and are NOT the sufficiency verdict",
+            "criterion": PREREGISTERED["humidity_sufficiency"]["criterion"],
+            "per_event": proxy_per_event},
+        "model_verdict": {
+            "basis": "variant A machine results: the humidified baseline alone "
+                     "closes the fit subset within the pinned domain (rh*), or "
+                     "the domain-top residual stays positive (unclosed)",
+            "per_event": model_per_event},
+        "proxy_vs_model": comparison,
+        "effectiveness": effectiveness,
+    }
 
 
 def b50_reproduction_gate(b50: dict) -> dict:
@@ -702,7 +778,15 @@ def build_product() -> tuple:
                                        f"({account['n_participating']}); no band "
                                        f"verdict (preregistered branch)"})
     shares = {label: share_account(knot, pool) for label, knot in ladder.items()}
-    sufficiency = humidity_sufficiency_account(pool)
+    effectiveness = effectiveness_account(ladder, pool)
+    sufficiency = humidity_sufficiency_account(
+        pool,
+        {event: {"status": a_raw[event]["status"],
+                 "rh_star": a_raw[event]["rh_star"],
+                 "g_at_reference": a_raw[event]["g_at_reference"],
+                 "g_at_domain_top": a_raw[event]["g_at_domain_top"]}
+         for event in EVENT_ORDER},
+        effectiveness)
     appendix = sensitivity_appendix(a_raw, kernels, fit_kernels)
 
     identity_rhs = list(LADDER_RH) + [a_raw[event]["rh_star"]
@@ -752,8 +836,12 @@ def write_products(out: Path) -> dict:
         "r_rh": {label: {"R_RH": account["R_RH"], "verdict": account["verdict"],
                          "n_participating": account["n_participating"]}
                  for label, account in product["r_rh"].items()},
-        "sufficiency": {event: record["verdict"] for event, record
-                        in product["humidity_sufficiency"]["per_event"].items()},
+        "sufficiency_model": {event: record["verdict"] for event, record
+                              in product["humidity_sufficiency"]["model_verdict"][
+                                  "per_event"].items()},
+        "sufficiency_proxy_audit": {event: record["verdict"] for event, record
+                                    in product["humidity_sufficiency"][
+                                        "preregistered_proxy"]["per_event"].items()},
         "findings": product["findings"],
         "ledger_rows": len(ledger),
     }
