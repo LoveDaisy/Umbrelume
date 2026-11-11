@@ -6,7 +6,6 @@ gates stay in the gate too (measured cost ~10 s, budget 60 s).
 """
 import json
 import math
-import re
 from pathlib import Path
 
 import numpy as np
@@ -18,6 +17,7 @@ from eclipse.rays import RayTable, build_ray_table
 from eclipse.transport import Geometry, transmission_profile
 
 from validation import extinction_gap_diagnosis as egd
+from docs_references import resolve_product_fields
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIOR_PATH = ROOT/"validation/results/extinction_gap_diagnosis/prior_parameters.json"
@@ -227,41 +227,16 @@ def test_discrimination_product_schema_and_signs():
 
 
 def test_docs_field_paths_resolve_into_products():
-    """Every docs-cited product field path must exist (plan Step 6).
-
-    Spans of the form ``file.json:dot.path[bracket]`` in the three docs are
-    resolved against the products; ``*`` fans out over dict keys and every
-    branch must carry the remaining path. Numbers without a resolvable path
-    fail this gate. The file is located by name under validation/results/**
-    (shared docs may cite other products; ambiguous or missing locations
-    fail loud instead of silently resolving into this task's directory).
-    """
-    results_root = ROOT/"validation/results"
-    pattern = re.compile(r"`([a-z_0-9]+\.json:[^`]+)`")
+    """Existing and mainline citations share one offline field resolver."""
     paths = []
     for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md",
-                 "ROUND2.md", "ROADMAP.md"]:
-        paths += pattern.findall((ROOT/"docs"/name).read_text())
+                 "ROUND2.md", "ROADMAP.md", "MAINLINE.zh.md"]:
+        found = resolve_product_fields((ROOT/"docs"/name).read_text(),
+                                       ROOT/"validation/results")
+        if name == "MAINLINE.zh.md":
+            assert found, "mainline field coverage must not be empty"
+        paths += found
     assert len(paths) >= 12
-    for path in paths:
-        file_name, _, pointer = path.partition(":")
-        hits = sorted(results_root.rglob(file_name))
-        assert len(hits) == 1, f"{path}: expected exactly one {file_name} under " \
-                               f"validation/results, found {[str(h) for h in hits]}"
-        normalized = re.sub(r"\[([^\]]+)\]", r".\1", pointer)
-        keys = [key for key in normalized.split(".") if key]
-        assert keys, path
-        branches = [json.loads(hits[0].read_text())]
-        for key in keys:
-            expanded = []
-            for branch in branches:
-                if key == "*":
-                    assert isinstance(branch, dict) and branch, path
-                    expanded.extend(branch.values())
-                else:
-                    expanded.append(branch[int(key)] if key.isdigit() else branch[key])
-            branches = expanded
-        assert branches, f"docs field path resolved to nothing: {path}"
 
 
 def test_hst_slope_baseline_matches_committed():
