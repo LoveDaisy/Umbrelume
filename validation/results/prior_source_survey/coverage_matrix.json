@@ -69,7 +69,7 @@
         {
           "source": "dubovik2002_aeronet_types",
           "verdict": "partial",
-          "basis": "Reported maxima exceed the envelope top after conversion (African Savanna biomass tau440 up to 3.5; desert rows tau1020 up to 2.0), but no reported minimum reaches the envelope floor 0.00259: the cleanest reported row (Lanai tau1020 min 0.01) has a marginal conversion span over oceanic alpha [0, 1.55] starting at 0.010 at 550 nm (worked example lanai_low), ~4x above the envelope floor.",
+          "basis": "Reported maxima exceed the envelope top after conversion (Boreal Forest biomass tau440 up to 3.5; African Savanna up to 1.5; desert rows tau1020 up to 2.0), but no reported minimum reaches the envelope floor 0.00259: the cleanest reported row (Lanai tau1020 min 0.01) has a marginal conversion span over oceanic alpha [0, 1.55] starting at 0.010 at 550 nm (worked example lanai_low), ~4x above the envelope floor.",
           "location": "sources.json dubovik2002_aeronet_types -> Table 1; worked examples in derived_comparisons[1]"
         },
         {
@@ -109,7 +109,7 @@
         {
           "source": "dubovik2002_aeronet_types",
           "verdict": "partial",
-          "basis": "Per-site alpha ranges (440-870 pair), Urban/Industrial & Mixed group: GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0 - group span [0.4, 2.5]; biomass 1.0-2.3 (African Savanna 0.5-2.3 per-site variant), desert dust -0.1-1.6, oceanic 0-1.55. The dust, oceanic and mixed rows bracket both envelopes. Pair mismatch remains the limiting caveat (0.35-0.5 um vs 440-870 nm).",
+          "basis": "Per-site alpha ranges (440-870 pair), as transcribed from Table 1: Urban/Industrial & Mixed - GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0, group span [0.4, 2.5]; biomass - Amazonian 1.2-2.1, Cerrado 1.2-2.1, African Savanna 1.4-2.2, Boreal Forest 1.0-2.3, group span [1.0, 2.3]; Desert Dust & Oceanic - Bahrain 0-1.6, Solar Village 0.1-0.9, Cape Verde -0.1-0.7, Lanai 0-1.55, group span [-0.1, 1.6]. Only the dust and oceanic rows' reported ranges bracket both envelopes; the Urban/Industrial & Mixed and biomass group spans only partially overlap (their lower bounds 0.4 / 1.0 do not reach the envelope floors 0.2 / 0.17). Pair mismatch remains the limiting caveat (0.35-0.5 um vs 440-870 nm).",
           "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
         },
         {
@@ -148,7 +148,7 @@
         {
           "source": "dubovik2002_aeronet_types",
           "verdict": "partial",
-          "basis": "Per-site alpha ranges (440-870 pair), Urban/Industrial & Mixed group: GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0 - group span [0.4, 2.5]; biomass 1.0-2.3 (African Savanna 0.5-2.3 per-site variant), desert dust -0.1-1.6, oceanic 0-1.55. The dust, oceanic and mixed rows bracket both envelopes. Pair mismatch remains the limiting caveat (0.5-0.8 um vs 440-870 nm).",
+          "basis": "Per-site alpha ranges (440-870 pair), as transcribed from Table 1: Urban/Industrial & Mixed - GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0, group span [0.4, 2.5]; biomass - Amazonian 1.2-2.1, Cerrado 1.2-2.1, African Savanna 1.4-2.2, Boreal Forest 1.0-2.3, group span [1.0, 2.3]; Desert Dust & Oceanic - Bahrain 0-1.6, Solar Village 0.1-0.9, Cape Verde -0.1-0.7, Lanai 0-1.55, group span [-0.1, 1.6]. Only the dust and oceanic rows' reported ranges bracket both envelopes; the Urban/Industrial & Mixed and biomass group spans only partially overlap (their lower bounds 0.4 / 1.0 do not reach the envelope floors 0.2 / 0.17). Pair mismatch remains the limiting caveat (0.5-0.8 um vs 440-870 nm).",
           "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
         },
         {
