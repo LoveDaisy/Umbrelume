@@ -1,0 +1,147 @@
+{
+  "presets": {
+    "june2011": {
+      "event": "june_2011",
+      "baseline": "production_default_two_layer (AerosolColumn.opac_default())",
+      "increment_layer": {
+        "aod550": 0.025865877276886398,
+        "bottom_m": 0.0,
+        "top_m": 10000.0,
+        "scale_height_m": 8000.0,
+        "angstrom_visible": 0.73,
+        "angstrom_blue": 0.34,
+        "break_nm": 500.0
+      },
+      "provenance": {
+        "kind": "calibrated",
+        "calibrated_not_physical_prior": true,
+        "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
+        "sha256": "77b4b95986c5bedc84af13454bfc513581b31073388022b3be4f720d913aefcb",
+        "fit_holdout_split": {
+          "fit": {
+            "wavelength_nm": 677.0,
+            "readout_count": 10
+          },
+          "holdout": {
+            "wavelength_nm": 503.0,
+            "readout_count": 8
+          },
+          "source": "ROUND2 calibration split reuse (677 fit / 503 withheld)"
+        },
+        "created_utc": "2026-11-11T03:20:42+00:00",
+        "note": "Calibration lane: fitted to this event's brightness residual on the production two-layer default; not a physical prior and never a default. Name-to-event mapping lives only in the 'event' field."
+      }
+    },
+    "dec2011": {
+      "event": "dec_2011",
+      "baseline": "production_default_two_layer (AerosolColumn.opac_default())",
+      "increment_layer": {
+        "aod550": 0.18391557805870665,
+        "bottom_m": 0.0,
+        "top_m": 10000.0,
+        "scale_height_m": 8000.0,
+        "angstrom_visible": 0.73,
+        "angstrom_blue": 0.34,
+        "break_nm": 500.0
+      },
+      "provenance": {
+        "kind": "calibrated",
+        "calibrated_not_physical_prior": true,
+        "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
+        "sha256": "77b4b95986c5bedc84af13454bfc513581b31073388022b3be4f720d913aefcb",
+        "fit_holdout_split": {
+          "fit": {
+            "wavelength_nm": [
+              550.0,
+              600.0,
+              650.0,
+              700.0,
+              750.0
+            ],
+            "readout_count": 5
+          },
+          "holdout": {
+            "wavelength_nm": [
+              450.0,
+              500.0
+            ],
+            "readout_count": 2
+          }
+        },
+        "created_utc": "2026-11-11T03:20:42+00:00",
+        "note": "Calibration lane: fitted to this event's brightness residual on the production two-layer default; not a physical prior and never a default. Name-to-event mapping lives only in the 'event' field."
+      }
+    },
+    "hst2019": {
+      "event": "hst_2019",
+      "baseline": "production_default_two_layer (AerosolColumn.opac_default())",
+      "increment_layer": {
+        "aod550": 0.12036025043776977,
+        "bottom_m": 0.0,
+        "top_m": 10000.0,
+        "scale_height_m": 8000.0,
+        "angstrom_visible": 0.73,
+        "angstrom_blue": 0.34,
+        "break_nm": 500.0
+      },
+      "provenance": {
+        "kind": "calibrated",
+        "calibrated_not_physical_prior": true,
+        "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
+        "sha256": "77b4b95986c5bedc84af13454bfc513581b31073388022b3be4f720d913aefcb",
+        "fit_holdout_split": {
+          "fit": {
+            "window_nm": [
+              500.0,
+              570.0
+            ],
+            "window_row_count": 255
+          },
+          "holdout": {
+            "window_nm": [
+              430.0,
+              500.0
+            ],
+            "upper_exclusive": true,
+            "window_row_count": 255
+          },
+          "pool": {
+            "datasets": "grouping.umbral_in_eclipse (committed)",
+            "umbral_dataset_count": 2,
+            "row_pools_jointly": true
+          }
+        },
+        "created_utc": "2026-11-11T03:20:42+00:00",
+        "note": "Calibration lane: fitted to this event's brightness residual on the production two-layer default; not a physical prior and never a default. Name-to-event mapping lives only in the 'event' field."
+      }
+    },
+    "feb1990": {
+      "event": "event_1990_02_09",
+      "baseline": "production_default_two_layer (AerosolColumn.opac_default())",
+      "increment_layer": {
+        "aod550": 0.07278811248646479,
+        "bottom_m": 0.0,
+        "top_m": 10000.0,
+        "scale_height_m": 8000.0,
+        "angstrom_visible": 0.73,
+        "angstrom_blue": 0.34,
+        "break_nm": 500.0
+      },
+      "provenance": {
+        "kind": "calibrated",
+        "calibrated_not_physical_prior": true,
+        "inversion_product": "validation/results/atmosphere_inversion/inversion.json",
+        "sha256": "77b4b95986c5bedc84af13454bfc513581b31073388022b3be4f720d913aefcb",
+        "fit_holdout_split": {
+          "fit": {
+            "readout_count": 1,
+            "definition": "single whole-disk broadband readout"
+          },
+          "holdout": "cross-event prediction matrix rows are its holdout account (no event-internal holdout)"
+        },
+        "created_utc": "2026-11-11T03:20:42+00:00",
+        "note": "Calibration lane: fitted to this event's brightness residual on the production two-layer default; not a physical prior and never a default. Name-to-event mapping lives only in the 'event' field."
+      }
+    }
+  }
+}

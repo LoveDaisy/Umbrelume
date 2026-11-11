@@ -142,12 +142,15 @@ class AerosolProfile:
 class AerosolColumn:
     """Ordered composition of finite exponential aerosol layers.
 
-    A column's extinction is the sum of its layers' coefficients; layer
-    supports may overlap only on measure-zero boundaries, so the vertical
-    AOD of a column is exactly the sum of its layers' AOD550 (documented
-    invariant, asserted in tests). Each layer carries its own geometry, AOD
-    and broken-power-law spectral exponents; no merged spectral factor exists,
-    the only legal expansion is the per-layer (tau, profile) pair.
+    A column's extinction is the sum of its layers' coefficients, for
+    arbitrary support layouts: overlapping supports add their optical depths,
+    and the vertical AOD of a column is exactly the sum of its layers' AOD550
+    (documented invariant, asserted in tests including an overlapping-support
+    case). The production default's layers are disjoint; the calibration-lane
+    presets stack a third increment layer that may overlap the default bands.
+    Each layer carries its own geometry, AOD and broken-power-law spectral
+    exponents; no merged spectral factor exists, the only legal expansion is
+    the per-layer (tau, profile) pair.
     """
 
     layers: tuple[AerosolProfile, ...]

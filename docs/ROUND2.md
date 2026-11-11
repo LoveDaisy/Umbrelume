@@ -109,3 +109,9 @@ uv run python -m validation.check_convergence --out outputs/validation/convergen
 
 本轮未新增另一场观测：现有曲线已足以区分本次候选，更多资料的收益在下一步独立预测检验中更大。
 后续方向、进入条件和验证绿松石带仍缺少的证据，统一见 [ROADMAP.md](ROADMAP.md)。
+
+后续把「闭合亮度残差所需」从候选菜单升级为逐事件连续反演（校准车道：预注册划分与
+判别准则、按事件命名的 calibrated preset、永不进默认），见
+[OBSERVATIONAL_VALIDATION.md](OBSERVATIONAL_VALIDATION.md) 的「跨事件所需大气反演」节；
+本文件的 677/503 划分是该反演 June 事件沿用的先例，目标函数不同（最小二乘 vs 中位闭零），
+committed 值只作对照引用、不构成第二权威实现。

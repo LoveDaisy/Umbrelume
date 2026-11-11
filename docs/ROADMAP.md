@@ -25,6 +25,7 @@
 | M3：自由对流层气溶胶消光 | 增加固定 OPAC 先验：2–12 km、尺度高度 8 km、AOD550=0.013，分段光谱指数 1.58/1.21 | 完成；验证结果与改进幅度见 [ROUND2.md](ROUND2.md)。该先验不是 2011 年的实测廓线 |
 | M4：扩大独立观测范围 | 整理 1990/2007 年发表测光表、2011 年 12 月观测谱和 2019 年 GF-4 来源条件；完成视场及曝光时间积分 | 已完成 1990 年亮度、2011 年 12 月连续谱的固定模型比较，后者包含独立星历、图示核对与位置敏感性；2007 年最低值仅为外推背景；仍非完整颜色验证 |
 | M5：平流层背景气溶胶组件 | 判别表（12 候选 × 四口径）唯一改善形状轴的 `stratosphere_background` 先验（12–35 km、AOD550=0.005、α=0.74/1.14，OPAC 同源）经 `AerosolColumn` 进入生产默认；判别表数值作为预注册预测逐项核对（`validation/results/stratosphere_background/preregistered_check.json`，8 行 within_tolerance） | 完成。亮度轴闭合 +0.19~+0.44 仍在张力带——亮度残差不被本组件关闭（预注册预期，standing gap 见 [physics/AEROSOL.md](physics/AEROSOL.md)）；宽低层增量（antarctic 代理）判定不进默认 |
+| M6：跨事件所需大气反演（校准车道） | 四口径逐事件低层增量连续反演 + 预注册划分/判别/检索规格 + 按事件命名 `calibrated:` preset 注册表（`eclipse/data/calibrated_presets.json`）；证据见 `validation/results/atmosphere_inversion/` 与 [OBSERVATIONAL_VALIDATION.md](OBSERVATIONAL_VALIDATION.md) | 完成。R（`inversion.json:cross_event.R`）落张力带（partially_consistent，预注册机械判定）；一切值相对生产默认基线、永不进默认，默认输出逐位不变；June 反演值低于钉定 BL 谱系下界已记 finding |
 
 第一版图片保留在 [figures/baseline](../figures/baseline)，第一轮观测对照保留在
 [figures/observations2011](../figures/observations2011)。这些是有固定条件的历史快照，
