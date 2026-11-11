@@ -47,8 +47,8 @@
         {
           "source": "opac1998_bams_paper_mpg_copy",
           "verdict": "partial",
-          "basis": "The incumbent source (pinned in prior_parameters.json): Table 3 boundary-layer types tau(0.55um) at 80% RH span [0.038, 0.625] including FT+stratosphere per its header note. Covers the pool top (0.184) but NOT the June floor (0.0259 < 0.038 - the standing physical_range_exceeded finding). Recorded as incumbent baseline, not independent support.",
-          "location": "prior_parameters.json source_convention + tau rows; opac1998.pdf Table 3, printed page 840"
+          "basis": "The incumbent source (pinned in prior_parameters.json). The paper's own Table 3 quantity is the ten BL types' TOTAL-COLUMN tau(0.55um) at 80% RH, which spans [0.056, 0.643] (pinned rows tau_0.55um_type_total, n=10; Table 3 header notes these include FT and stratosphere). The repo separately derives a boundary-layer-only series by subtracting the FT part and the stratospheric 0.005 per the contract, spanning [0.038, 0.625] (rows aod550_boundary_layer_only). Either span covers the pool top (0.184) but NOT the June floor (0.0259 < both floors; the standing physical_range_exceeded finding was recorded against the derived BL-only series). Recorded as incumbent baseline, not independent support.",
+          "location": "prior_parameters.json tau_0.55um_type_total + aod550_boundary_layer_only rows; opac1998.pdf Table 3, printed page 840"
         }
       ],
       "note": "Pool ratio R=7.110 (= 0.1839/0.0259) is the variability measure; see humidity_growth.json for the humidity-axis magnitude comparison and derived_comparisons[0] for the site-distribution dynamic-range comparison."
@@ -87,8 +87,8 @@
         {
           "source": "opac1998_bams_paper_mpg_copy",
           "verdict": "partial",
-          "basis": "Table 3 BL types tau(0.55um) [0.038, 0.625] (incl. FT+stratosphere): neither envelope end is covered (floor 0.00259 < 0.038; top 1.839 > 0.625). Incumbent source, not independent support.",
-          "location": "prior_parameters.json tau_0.55um rows; opac1998.pdf Table 3, printed page 840"
+          "basis": "Paper Table 3 total-column tau(0.55um) [0.056, 0.643] (pinned rows tau_0.55um_type_total) and the contract-derived BL-only series [0.038, 0.625] (rows aod550_boundary_layer_only): neither envelope end is covered by either span (floor 0.00259 below both; top 1.839 above both). Incumbent source, not independent support.",
+          "location": "prior_parameters.json tau_0.55um_type_total + aod550_boundary_layer_only rows; opac1998.pdf Table 3, printed page 840"
         }
       ],
       "note": "The envelope is a pre-registered retrieval search bound (one decade beyond the pool in log space), not an observed climatology; its floor is expected to sit below observed clean conditions."
@@ -109,7 +109,7 @@
         {
           "source": "dubovik2002_aeronet_types",
           "verdict": "partial",
-          "basis": "Per-site alpha ranges (440-870 pair): urban 1.0-2.5, biomass 1.0-2.3, dust -0.1-1.6, oceanic 0-1.55. The dust and oceanic ranges bracket the envelope; the urban range does not reach below 1.0. Pair mismatch as above (0.35-0.5 um vs 440-870 nm).",
+          "basis": "Per-site alpha ranges (440-870 pair), Urban/Industrial & Mixed group: GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0 - group span [0.4, 2.5]; biomass 1.0-2.3 (African Savanna 0.5-2.3 per-site variant), desert dust -0.1-1.6, oceanic 0-1.55. The dust, oceanic and mixed rows bracket both envelopes. Pair mismatch remains the limiting caveat (0.35-0.5 um vs 440-870 nm).",
           "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
         },
         {
@@ -148,7 +148,7 @@
         {
           "source": "dubovik2002_aeronet_types",
           "verdict": "partial",
-          "basis": "Per-site alpha ranges (440-870 pair): urban 1.0-2.5, biomass 1.0-2.3, dust -0.1-1.6, oceanic 0-1.55. The dust and oceanic ranges bracket the envelope; the urban range does not reach below 1.0. Pair mismatch as above (0.5-0.8 um vs 440-870 nm).",
+          "basis": "Per-site alpha ranges (440-870 pair), Urban/Industrial & Mixed group: GSFC 1.2-2.5, Creteil 1.2-2.3, Mexico City 1.0-2.3, Maldives (mixed) 0.4-2.0 - group span [0.4, 2.5]; biomass 1.0-2.3 (African Savanna 0.5-2.3 per-site variant), desert dust -0.1-1.6, oceanic 0-1.55. The dust, oceanic and mixed rows bracket both envelopes. Pair mismatch remains the limiting caveat (0.5-0.8 um vs 440-870 nm).",
           "location": "sources.json dubovik2002_aeronet_types -> Table 1 'Range of Angstrom parameter' rows"
         },
         {

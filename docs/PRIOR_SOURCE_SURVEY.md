@@ -49,7 +49,10 @@ both, following the committed retrieval spec
    Lanai-derived marginal envelope spans the June inverted value 0.0259 only
    for α up to ≈1.54 of the documented oceanic range [0, 1.55], so the value
    sits at or beyond the documented clean tail rather than clearly inside it.
-   It is below the OPAC boundary-layer family floor 0.038.
+   It is below the pinned boundary-layer-only family floor 0.038 (the
+   `aod550_boundary_layer_only` series derived per the prior_parameters
+   contract from Table 3 with FT+stratosphere subtracted; the paper's own
+   total-column floor is 0.056).
 5. **The 0–10 km exponential layer with H = 8 km is not directly documented
    by any reachable independent source.** The CALIPSO H63 climatology
    (Winker et al. 2013, figure-read) shows full-column extinction scale

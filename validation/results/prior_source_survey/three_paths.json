@@ -20,13 +20,13 @@
           "pointer": "coverage_matrix.json cells retrieval_spec.aod550_pool"
         },
         {
-          "evidence": "The incumbent OPAC family itself already contains higher members (Table 3 BL types tau(0.55um) up to 0.625 at 80% RH), i.e. a 'higher fixed prior' would be a choice among already-published type values, not a new number.",
+          "evidence": "The incumbent OPAC family itself already contains higher members: the paper's Table 3 total-column tau(0.55um) at 80% RH spans [0.056, 0.643] (pinned rows tau_0.55um_type_total), and the contract-derived boundary-layer-only series spans [0.038, 0.625] (rows aod550_boundary_layer_only) - i.e. a 'higher fixed prior' would be a choice among already-published type values, not a new number.",
           "source": "opac1998_bams_paper_mpg_copy",
           "pointer": "prior_parameters.json (incumbent contract)"
         }
       ],
       "gaps": [
-        "The cross-event inversion already showed a single fixed value cannot cover all four events (R=7.110, partially_consistent, criterion preregistered): any fixed prior misfits at least some events by construction.",
+        "The cross-event inversion did NOT CONFIRM the assumption that a single fixed value covers all four events (R=7.110 -> partially_consistent, tension band 2<R<=10, criterion preregistered before the result). This is an unconfirmed assumption, not a proof of impossibility: the event-to-event spread implies any single value will fit some events better than others, but the degree and pattern of misfit for any concrete fixed prior is not established by this survey or by the inversion.",
         "No collected source reports a value tied to the eclipse observation geometry (grazing low-layer path, 0-10 km, specific latitude/season); site climatologies are vertical-column surface observations, not low-layer-increment analogues.",
         "Every candidate value is heterogeneous in kind (urban vs marine vs clean-continental site climatology); choosing one is a judgement this survey does not make."
       ],
@@ -97,7 +97,7 @@
         }
       ],
       "gaps": [
-        "The June floor 0.0259 remains below the OPAC BL-family floor 0.038 (physical_range_exceeded finding stands); no collected source reports values at the envelope floor 0.00259.",
+        "The June floor 0.0259 remains below the pinned boundary-layer-only family floor 0.038 (the aod550_boundary_layer_only series derived per the prior_parameters contract from Table 3 with FT+stratosphere subtracted; the paper's own total-column floor is 0.056) - the physical_range_exceeded finding stands.",
         "The brightness residual stays open under the current default (that is the standing gap itself).",
         "The inverted pool values remain event-calibrated quantities with no independent-prior counterpart at the same geometry."
       ],
