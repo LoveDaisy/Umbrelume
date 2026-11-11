@@ -22,6 +22,11 @@
 历史文档中的“默认”按其当轮条件理解：早期 `fixed_opac` 是自由对流层单层，不可自动读成今天的双层默认；
 双层复算的变体身份见[生产预测定义](../validation/results/stratosphere_background/predictions.json)。
 
+新增的三态月盘、透射谱与剖面来自当前生产 CLI；三张月盘固定同一几何、尺寸和全局 +12 EV，
+没有逐态提亮。这是中性月面屏，不是实拍或亮度拟合；显示高光压缩也使像素值不能直接当照度比。
+读图约定见[图组说明](../figures/mainline/README.md)，唯一参数与来源账本见[图组 metadata](../figures/mainline/metadata.json)。
+观测图仍引用历史单层快照，逐图标明代次；不能与新图混作同一状态的验证。
+
 ## 计算对象：先保留光谱，再谈月面颜色
 
 主输出是月球距离、垂直日地轴平面上的**光谱照度**，不是望远镜收到的月面辐亮度。
@@ -55,6 +60,12 @@
 - **可解释**：折射使几何本影仍有照明，长掠过路径上的短波消光使内部偏红；臭氧的选择性吸收能改变外缘谱形，不能只用“蓝光都被散射掉”解释所有位置。
 - **边界**：计算的是未散射光。冷边机制不等于已验证观测中的绿松石带；其宽度、饱和度与绝对亮度仍需匹配波段和空间位置的观测。
 
+![L1 分子大气的共同曝光中性月面屏](../figures/mainline/l1_molecular.png)
+
+**图 1 · 分子大气下的中性月面屏，当前生产 CLI，统一 +12 EV。**
+**本章看点**：从靠影轴一侧的暖色到外侧浅冷色，图像展示同一径向照明场的空间采样。
+它不是月面照片，冷色边缘的观测身份仍受上面的边界限制；请与图 2、图 4 按同曝光比较。
+
 ### L2 — 自由对流层气溶胶：让增量命中真正送光的高度
 
 - **新增物理**：在既有气体光路上加入有独立出处的自由对流层消光，不改变气体折射几何，不加入散射进接收方向的光。
@@ -64,6 +75,18 @@
   `identification_scope`钉住选择及其证据等级；这里不复制当轮对照数值。
 - **可解释**：为什么额外消光能优先压低深本影，而不能随便拿近地边界层预设代替？关键是哪些掠过路径仍向接收口径送光，而不是地面看起来霾有多重。
 - **边界**：收益不构成唯一因果归因，也未关闭偏亮。[跨事件比较](MULTI_EVENT_OBSERVATIONS.md)扩大了考验：亮度可以改善，名义蓝/红形状却可能恶化；历史单层先验不是事件实测廓线。
+
+![L2 仅加入自由对流层气溶胶的共同曝光月面屏](../figures/mainline/l2_free_troposphere.png)
+
+**图 2 · 当前 CLI 的 FT 单层态，与图 1 同几何、同尺寸、同 +12 EV。**
+**本章看点**：靠影轴一侧在增加消光后变暗；浅色高光受共同压缩，不能仅凭显示像素衡量收益。
+这只是增量的可视化，不是某次真实月食的大气归因。
+
+![历史 v0.2 跨事件整月面与中央视场测光比较](../figures/multiple_events/comparison.png)
+
+**图 3 · 历史 v0.2 分子/FT 单层比较，不是当前双层或湿度 A/B。**
+1990 为整月面明视觉测光，2007 是中央视场的外推最低值、仅作背景；阴影为发表 ± 值的角点范围，**不是置信区间**。
+**本章看点**：左图先验点相对分子点降低、但仍在实测参考之上；右图标题明确写着 `context only`，不能算第二个独立实测最低值。
 
 ### L2.5 — 平流层背景：补齐有证据的高层消光，不宣布亮度结案
 
@@ -80,6 +103,19 @@
 - **边界**：[standing gap 的既有裁决](physics/AEROSOL.md#evidence-and-interpretation)仍有效：此组件没有闭合亮度残差。
   宽低层代理虽能压暗，却有形状代价和菜单选择效应，不能因“更暗”进入默认。
 
+![L2.5 当前双层背景先验的共同曝光月面屏](../figures/mainline/l25_stratosphere.png)
+
+**图 4 · 当前生产双层背景，与图 1、图 2 共用 +12 EV。**
+**本章看点**：仍能看到暖色内部与浅冷色外缘；与 FT 单层的可见差异有限，月盘本身不能裁定残差是否闭合。
+这里没有拟合态，也不以图像替代上面各口径的亮度和形状字段。
+
+![三态在固定接收半径的绝对透射谱对照](../figures/mainline/transmission_ladder.png)
+
+**图 5 · 同一 CLI 网格上的三态透射谱，纵轴为无量纲 E/F，横轴为波长 nm。**
+**本章看点**：影轴面板的谱形强烈向长波倾斜，外侧面板更平；同一面板内可分辨增加消光后的绝对幅度变化。
+所有分面共用对数纵轴和食外 `T=1` 参考，未逐曲线峰值归一或等 Y。
+三处半径只是显示采样；最右点按本次几何位于半影，不是本影内观测站点；数表可从图组 metadata 读回。
+
 ### 校准车道 — 先校对测量口径，再问闭合需要什么
 
 - **新增物理**：本车道本身不增加生产默认物理。带通积分属于观测量匹配；跨事件反演与 `calibrated:` preset 属拟合与显式展示。
@@ -88,10 +124,25 @@
   - **口径先行**：[滤镜增补](OBSERVATIONAL_VALIDATION.md#滤镜带通口径2026-11-增补)使用假设带型包络，而非实测响应。
     [带通产物](../validation/results/filter_response_2011/analysis.json)的 `analysis.json` 在仓库内同名不唯一，故此处只给显式文件链接，不写歧义字段引用。
     深处残差不能由所测带通效应解释，最外点只是边际改变；方向必须区分固定先验与分子变体。
+
+    ![历史 June FT 单层的单色与假设带通比较](../figures/filter_response_2011/comparison.png)
+
+    **图 6 · June 历史 FT 单层主变体的带通口径探针，不是当前双层或实测滤镜响应。**
+    图中带型是**假设响应包络**；观测为图表读数，读取裕量不是测量误差，分子等其他变体须查原产物。
+    **本章看点**：主变体的单色/带通曲线彼此接近，深处仍远离 `model / observation = 1`；不能把滤镜未知性当作已经解决。
+
   - **所需大气**：[跨事件反演](../validation/results/atmosphere_inversion/inversion.json)在双层基线上对固定增量形态求根。
     `inversion.json:preregistered`拥有拟合/留出划分与准则；`inversion.json:cross_event.verdict`保留跨事件张力，
     `inversion.json:cross_event.prediction_matrix`检查把某事件的增量用于别的事件会怎样。
     [注册表](../eclipse/data/calibrated_presets.json)把结果标成 `calibrated_not_physical_prior`，不替换默认。
+
+    ![历史 Dec2011 固定 FT 单层模型的整段曝光平均光谱比较](../figures/dec2011/comparison.png)
+
+    **图 7 · Dec2011 历史分子/FT 单层固定模型，名义 Tycho 位置的整段曝光平均。**
+    观测点来自图表连续谱读数；读取裕量不冒充测量误差，径向位置探针也不是置信区间。
+    **本章看点**：右上轨迹和右下“瞬时/曝光平均”说明为什么不能拿单个时刻代替整段曝光；
+    左下保留固定模型相对读数的残差。它不是当前双层、湿度 A/B 或反演后拟合图。
+
   - **湿度 A/B**：[来源普查](PRIOR_SOURCE_SURVEY.md)恢复的组件数据经[湿度先验转录](../validation/results/prior_source_survey/humidity_axis_priors.json)进入 FT 标量增长轴。
     `humidity_axis_priors.json:q_rest_derivation`记录非增长余项的减法约束，
     `humidity_axis_priors.json:layer_scope_rulings`限定平流层与校准增量不随这根轴湿度化。
@@ -123,6 +174,13 @@
   [ROADMAP 的月面与视觉方向](ROADMAP.md#后续方向与进入条件)及[贴图方向](ROADMAP.md#月面贴图的实现方向)区分真实反射与展示近似。
 - **可解释**：同一个照明光谱为什么可能生成不同外观？月面区域权重、反射方向、相机或观察者、曝光与显示都会介入。
 - **边界**：贴图、白点或曝光改变不构成新大气证据；校准 preset 的漂亮图片仍是校准图片。照明场必须能脱离图像单独读回。
+
+![当前双层态的本影到半影光度剖面与色度诊断](../figures/mainline/shadow_profile.png)
+
+**图 8 · 当前双层态的径向明视觉照度与生产色条；横轴为影轴距 km，纵轴为食外太阳 Y 比。**
+**本章看点**：从暗本影向半影照度快速上升；臭氧 on/off 的共同 +12 EV 色条帮助定位冷色谱形的变化。
+`ozone-off` 只改变吸收，折射与其他介质不变；最后的 **equal-Y 色条已逐半径移除亮度，只是色度诊断，不是亮度预测**。
+不能拿等 Y 色条的鲜艳程度代替上方光度曲线。
 
 ## 方法论：推动阶梯的不是画面，而是判别力
 
@@ -275,10 +333,16 @@ helper 按语义复用而非按长度迁移：当前贡献核在 `extinction_gap
 示例根目录 `outputs/mainline-rerun/`应换成尚未使用的目录，避免覆盖自己的旧实验。
 文件型 `--out`与目录型 `--out`不可混用；所有命令均不以 `validation/results/`或 `figures/`作为再生成目标。
 
-### 主线自身的轻量验收
+### 主线自身的轻量验收与图组复现
+
+新增图组的一键离线入口只编排当前生产 CLI，不重画历史观测快照。
+环境已按锁文件备妥时，使用 `--offline --no-sync` 避免依赖同步触网；输出根须尚未使用。
 
 ```bash
-uv run pytest -q tests/test_mainline_docs.py
+uv run --offline --no-sync python tools/render_mainline.py --out outputs/mainline-check-a
+uv run --offline --no-sync python tools/render_mainline.py --out outputs/mainline-check-b
+diff -qr outputs/mainline-check-a outputs/mainline-check-b
+uv run pytest -q tests/test_mainline_docs.py tests/test_mainline_figures.py
 uv run pytest -q tests/test_extinction_gap_diagnosis.py -k docs
 uv run pytest -q
 ```
@@ -287,7 +351,11 @@ uv run pytest -q
 同名 `analysis.json`/`comparison.json`用显式文件链接，不静默取第一个文件。
 本地 Markdown 链接/图片检查以文档目录定位，剥离 query/fragment 并解码路径；外链不联网，页内锚点不当作文件。
 [临时夹具负例](../tests/test_mainline_docs.py)证明坏字段、坏文件和歧义会失败。
-这些闸只证明地址存在，不证明解释正确、锚点存在或数字能承载因果归因；本文避免用数组位置表达事件结论。
+[图组读回闸](../tests/test_mainline_figures.py)另检查实际图片集合、逐图 hash、PNG 元数据剥离及三态模型/显示 provenance；
+双跑的六个生成文件应全部逐字节相等，并逐项与 committed 图组比较（README 是手写说明，不在生成集合）。
+字节契约限同源码、输入、锁定依赖与受支持运行环境；JSON 无时间/耗时、绝对输出路径，PNG 不含附加元数据。
+全量渲染是按需验收，不加入 pytest；数值表与 provenance 只在图组 metadata，不另抄参数账本。
+这些闸只证明地址和约定可读，不证明解释正确、锚点存在或数字能承载因果归因；本文避免用数组位置表达事件结论。
 
 ### 数值地基与生产输出
 
@@ -332,4 +400,5 @@ uv run python -m validation.humidity_axis_inversion --out outputs/mainline-rerun
 上方 tools 表给出实际脚本入口；联网恢复和 PDF 转录按各观测来源说明另行进行，不能无条件复制默认命令：
 多数工具默认写观测目录，PDF 工具还需额外依赖；测光表复核器没有通用 `--out`。
 HST 下载工具把 `--out`所指文件当已有哈希合同来源，改到新文件不代表自动继承旧合同。
-本任务没有下载新资料、重建观测、重跑昂贵对照或刷新快照；只核对入口及已提交证据，并运行轻量闸和全量 pytest。
+本次插图只现算生产三态说明图；没有下载新资料、重建观测、重跑观测对照或刷新历史快照。
+历史观测证据仍按其原模型代次解释，新图不能充当新增观测验证。
