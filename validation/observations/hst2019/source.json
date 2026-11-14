@@ -5,6 +5,7 @@
   "arxiv_pdf_url": "https://arxiv.org/pdf/2008.01837v1",
   "arxiv_pdf_sha256": "8e29124b65c7a411d19669b37d6837b7a884e94bd15954c816134f924a177bc1",
   "observatory": "HST/STIS CCD, G430L (2889-5696 A on chip), 52X2 slit, HST-GO/DD-15674, above-atmosphere receiver (no telluric airmass)",
+  "license": "HST/STIS products retrieved from MAST: public domain (CC0) per MAST data-use policy (archive.stsci.edu/publishing/data-use, verified 2026-11-14); STScI requests an acknowledgment as courtesy. Paper values are used as scientific facts with citation.",
   "mast_download": {
     "base_url": "https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:HST/product/{name}",
     "note": "MAST metadata API (v0.1 and v0.3 invoke) returned HTTP 404 at retrieval time; provenance is anchored to product-byte SHA256 and the FITS header observation record. Product filenames containing hexadecimal dataset suffixes are served fully lowercased (e.g. ody9040a0_flt.fits).",

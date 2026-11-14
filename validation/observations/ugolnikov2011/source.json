@@ -3,6 +3,7 @@
   "url": "https://arxiv.org/pdf/1106.6178v2",
   "source_pdf_sha256": "366b6bd302937530f52d8fc3768be26ebb75657dba5072a3bd07d0733b67c043",
   "source_pdf_bytes": 240981,
+  "license": "Digitized figure readout of the cited publication (scientific facts, not author-released data); no separate licence statement exists for figure readouts — used with full attribution; original figure copyright the publisher.",
   "figure": 2,
   "page_one_based": 4,
   "pymupdf_version": "2.1",
