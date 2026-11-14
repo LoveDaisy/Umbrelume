@@ -25,7 +25,7 @@ dev = ["pytest>=8,<10"]
 include = ["eclipse*"]
 
 [tool.setuptools.package-data]
-eclipse = ["data/*.csv", "data/*.md"]
+eclipse = ["data/*.csv", "data/*.json", "data/*.md"]
 
 [tool.setuptools.dynamic]
 version = {attr = "eclipse.__version__"}

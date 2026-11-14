@@ -43,7 +43,7 @@
     "eclipse/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
     "eclipse/aerosol.py": "354853d6c5d4b1516439c775d3573dda21169debb832d2098c5ac793cae73ffa",
     "eclipse/atmosphere.py": "cc83b191afe0584e6fbed5fdf0df54c5c30e1ffd25497e535f69c57b62d4cd7b",
-    "eclipse/cli.py": "52fc2d66adea25a9780f0d66815d8e4b593d857aab3b1d7e5d67aabfe89d3e37",
+    "eclipse/cli.py": "02d62fd90a46a3fc180b7278f2733aa7a823ee763e8800949a14657aac2b436f",
     "eclipse/color.py": "2eaa03e22090c06eb1ba1af90744bfd503cf27a7f9178dd6f8db978129d7a071",
     "eclipse/data/SOURCES.md": "5622b642dead431c0258a02c477f7d2a4040cf0f8a5fa9dae1eb05f72facf708",
     "eclipse/data/cie1931_2deg.csv": "3f8de45150219f165c9a57c20346e3a7f04e183c3a1cdd2029ca3e8d3e9bff10",

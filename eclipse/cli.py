@@ -121,7 +121,7 @@ def load_calibrated_preset(name: str) -> tuple[AerosolColumn, dict]:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description=__doc__, prog="lunar-eclipse")
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("simulate", help="Compute spectra, ray tables and eclipse figures")
     run.add_argument("--out", type=Path, default=Path("outputs/current"))
