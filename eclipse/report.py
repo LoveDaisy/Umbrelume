@@ -15,24 +15,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .color import finish_display, linear_display_rgb, relative_photopic, spectrum_to_xyz
+from .style import BASE_RC, HOUSE_STYLE
 from .transport import MOON_RADIUS_M
 
 
 _ON = "#ad502e"
 _OFF = "#2d797a"
-# Shared matplotlib base style: the single definition every figure-producing
-# script in the repo consumes (eclipse.report, tools/render_mainline,
-# validation/*). Scripts with additional display preferences layer them on
-# top of BASE_RC instead of redefining the shared keys.
-BASE_RC = {
-    "font.family": "DejaVu Sans", "font.size": 10,
-    "axes.spines.top": False, "axes.spines.right": False,
-    "figure.facecolor": "white", "axes.facecolor": "white",
-    "savefig.facecolor": "white",
-}
-HOUSE_STYLE = {**BASE_RC, "axes.labelcolor": "#30343a", "text.color": "#252a31",
-               "axes.edgecolor": "#bdc2c6", "xtick.color": "#545d66",
-               "ytick.color": "#545d66"}
 
 
 def _validate_inputs(radius_m, wavelength_nm, irradiance, reference_irradiance,

@@ -26,7 +26,7 @@ from matplotlib import font_manager, ft2font
 import numpy as np
 from PIL import Image
 
-from eclipse.report import HOUSE_STYLE
+from eclipse.style import HOUSE_STYLE
 
 ROOT = Path(__file__).resolve().parents[1]
 # One configuration expands into execution, provenance and test expectations.

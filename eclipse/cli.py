@@ -156,7 +156,8 @@ def main(argv=None):
     run.add_argument("--no-plots", action="store_true", help="Write numerical results only")
     args = parser.parse_args(argv)
     if not np.isfinite(args.exposure_stops) or abs(args.exposure_stops) > EXPOSURE_STOP_LIMIT:
-        parser.error("--exposure-stops must be finite and between -100 and 100")
+        parser.error(f"--exposure-stops must be finite and between "
+                     f"{-EXPOSURE_STOP_LIMIT:g} and {EXPOSURE_STOP_LIMIT:g}")
     if args.wavelength_step_nm > 100:
         parser.error("--wavelength-step-nm must be at most 100")
     if not args.no_plots and args.radius_max_km < args.moon_offset_km + MOON_RADIUS_M / 1000:

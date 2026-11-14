@@ -4,7 +4,7 @@ import pytest
 
 from eclipse.color import (
     display_rgb, encode_srgb, finish_display, linear_display_rgb,
-    spectrum_to_xyz, xyz_to_linear_srgb,
+    relative_photopic, spectrum_to_xyz, xyz_to_linear_srgb,
 )
 from eclipse.spectra import cie_xyz, solar_irradiance
 
@@ -79,3 +79,21 @@ def test_invalid_reference_and_exposure(source):
         display_rgb(solar, wl, np.stack([solar, solar]))
     with pytest.raises(ValueError, match="exposure"):
         display_rgb(solar, wl, solar, exposure_stops=np.nan)
+
+
+def test_relative_photopic_matches_manual_ratio_and_rejects_dead_reference(source):
+    wl, solar = source
+    values_1d = solar * 0.5
+    values_2d = np.stack([solar, 0.5 * solar])
+    for values in (values_1d, values_2d):
+        got = relative_photopic(values, wl, solar)
+        manual = (spectrum_to_xyz(values, wl)[..., 1]
+                  / spectrum_to_xyz(solar, wl)[..., 1])
+        np.testing.assert_allclose(got, manual, rtol=1e-15)
+    np.testing.assert_allclose(relative_photopic(values_2d, wl, solar), [1.0, 0.5])
+    with pytest.raises(ValueError, match="positive"):
+        relative_photopic(solar, wl, solar * 0.0)
+    # A negative reference is rejected earlier by the shared spectral-input
+    # validation, before the positive-photopic gate is reached.
+    with pytest.raises(ValueError):
+        relative_photopic(solar, wl, -solar)

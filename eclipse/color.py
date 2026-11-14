@@ -126,7 +126,8 @@ def finish_display(linear_rgb, exposure_stops: float = 0.0) -> np.ndarray:
     perceptual gamut mapping is claimed.
     """
     if not np.isfinite(exposure_stops) or abs(exposure_stops) > EXPOSURE_STOP_LIMIT:
-        raise ValueError("exposure_stops must be finite and between -100 and 100")
+        raise ValueError(f"exposure_stops must be finite and between "
+                         f"{-EXPOSURE_STOP_LIMIT:g} and {EXPOSURE_STOP_LIMIT:g}")
     values = np.asarray(linear_rgb, dtype=float)
     if values.ndim == 0 or values.shape[-1] != 3 or not np.all(np.isfinite(values)):
         raise ValueError("linear_rgb must be finite with final axis length 3")
