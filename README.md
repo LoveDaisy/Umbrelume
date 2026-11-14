@@ -19,7 +19,15 @@ turquoise band, full visible colors, or the absolute brightness of any specific
 eclipse. Work on a [multi-event reference](docs/records/MULTI_EVENT_OBSERVATIONS.md)
 has begun: fixed-model comparisons against published 1990 whole-disk photometry
 and December 2011 full-exposure-averaged spectra, with explicit usage conditions
-for every source; no further per-eclipse tuning.
+for every source; no further per-eclipse tuning. The mainline narrative (what
+each rung solves, methodology and the module map) lives in
+[docs/MAINLINE.zh.md](docs/MAINLINE.zh.md) (English translation in
+[docs/MAINLINE.en.md](docs/MAINLINE.en.md)).
+
+![Current two-layer default lunar screen](figures/mainline/l25_stratosphere.png)
+*The current production two-layer default (`opac` state) neutral screen at
++12 EV; reading conventions and generational boundaries in
+[figures/mainline/README.md](figures/mainline/README.md).*
 
 ## Running
 
@@ -40,6 +48,15 @@ precomputed once; receivers use table lookups, interpolation and finite
 solar-disk integration. A spectral run usually takes a few seconds. The Moon's
 default position is 2860 km from the shadow axis, near the umbral edge in
 mid-totality.
+
+Beyond the literature priors there are explicit optional lanes: `--aod550` /
+`--rh` adjust the free-tropospheric column and its humidity growth (the 50%
+reference state stays bit-exact); `--aerosol calibrated:<name>` loads a
+per-event named calibration preset — an inversion product for that event,
+**calibrated, not a physical prior, and never a default**. Entry points for
+the HST/STIS 2019 starborne comparison and the humidity A/B re-inversion are
+under "Observational comparison" and
+[validation/results/README.md](validation/results/README.md).
 
 ```bash
 # First molecular model without aerosol
@@ -70,9 +87,13 @@ uv run lunar-eclipse simulate --height-step-m 50 --wavelength-step-nm 2.5 --out 
 Raw spectral irradiance is saved in W m⁻² nm⁻¹; image transforms never modify
 it. The lunar images currently sample a uniform neutral screen over Earth's
 shadow cross-section — no real lunar soil, BRDF, spherical incidence shading or
-observer atmosphere yet. Recent examples live in
-[figures/round2](figures/round2); first-version historical snapshots are kept
-under [figures/baseline](figures/baseline).
+observer atmosphere yet; the aerosol is a two-layer literature prior
+(free troposphere + stratospheric background), while boundary-layer and
+event-specific profiles remain open directions. The current production gallery
+lives in [figures/mainline](figures/mainline) with a gallery index in
+[figures/README.md](figures/README.md); historical examples in
+[figures/round2](figures/round2) and first-version snapshots under
+[figures/baseline](figures/baseline).
 
 ## Observational comparison
 
@@ -115,7 +136,13 @@ comparison](docs/records/DECEMBER2011.md) implements the trajectory and time
 integration; the default model is still 41%–94% too bright — absolute-brightness
 improvement and spectral-shape improvement do not always coincide. Full data
 status, limitations and next steps: the
-[multi-event notes](docs/records/MULTI_EVENT_OBSERVATIONS.md).
+[multi-event notes](docs/records/MULTI_EVENT_OBSERVATIONS.md). A fixed-model
+comparison against the HST/STIS 2019 starborne spectra is also complete
+(blue-end slopes 0.52–0.98, over-bright direction consistent with the ground
+protocols); see [validation/results/hst2019](validation/results/hst2019) and
+the [source contract](validation/observations/hst2019/README.md). The humidity
+A/B re-inversion verdicts are under
+[validation/results/humidity_axis](validation/results/humidity_axis).
 
 ## Numerical verification and physical contract
 

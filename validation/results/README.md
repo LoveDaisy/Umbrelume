@@ -1,70 +1,43 @@
-# Numerical validation snapshot
+# Validation products index
 
-Generated from the first-version implementation, using the locked environment:
+One entry per subdirectory: what it is, how to regenerate it, and which fields
+are authoritative. Numbers live in the committed JSON products (zero hand
+copies); this index only routes. Historical snapshots are preserved with their
+original conditions — the molecular-only numerical snapshot below is
+reproducible with `validation.check_convergence --aerosol none` (the current
+convergence default is `opac`).
 
-```bash
-uv run pytest -q
-uv run python -m validation.check_physics --out validation/results/physics.json
-uv run python -m validation.check_convergence --out validation/results/convergence.json
-```
+## Top-level numerical closure (L0)
 
-The test suite at this snapshot passes 55 tests. Independent Cartesian ODE rays
-at 5, 11, 11.019, 15, 25 and 40 km agree with radial quadrature to a maximum
-relative difference of about 2.5e-8 across bending and molecular columns.
-The receiver-plane/pupil missing-energy checks close to about 1.2e-9 for
-extinction and 3.5e-9 for a transparent refracting atmosphere.
+- `physics.json` — Cartesian ODE rays, geometric and no-atmosphere limits,
+  whole-plane energy budget. Regenerate:
+  `uv run python -m validation.check_physics --out outputs/validation/physics.json`
+- `aerosol.json` — Bessel straight-line reference, independent curved-path ODE,
+  layered flux checks. Regenerate:
+  `uv run python -m validation.check_aerosol --out outputs/validation/aerosol.json`
+- `convergence.json` — height and spectral refinement errors, photopic and
+  chromatic errors kept separate. Regenerate:
+  `uv run python -m validation.check_convergence --out outputs/validation/convergence.json`
 
-Ray-table height spacing 100→50 m changes the sampled relative photopic
-irradiance by at most 0.0791%; 50→25 m changes it by 0.0233%. Spectral spacing
-5→2.5 nm changes it by 0.401%. The maximum equal-Y linear RGB channel change
-for the spectral refinement is 0.0176 (before gamut clipping). Values and
-acceptance criteria are recorded in the JSON files. Above 60 km, the height
-table uses 500 m spacing in all these runs.
+These validate the numerical implementation of the declared idealized model.
+They do not validate real eclipse brightness, the true ozone profile, aerosol
+identity, solar limb darkening, or visual adaptation.
 
-These checks validate the numerical implementation and selected resolutions
-of the declared idealized model. They do not validate real eclipse brightness,
-the true ozone profile, atmospheric aerosols, solar limb darkening, gray
-refraction, small-angle propagation, lunar reflectance or visual adaptation.
+## Observational, discrimination and calibration products
 
-## Observational reference
+| Directory | Contents | Entry | Authoritative fields |
+|---|---|---|---|
+| `observations2011/` | June 2011 digitized-curve fixed-model comparison | `validation.compare_observations` | `comparison.json` per-band ratios |
+| `round2/` | aerosol-round analysis, molecular/aerosol checks, convergence with explicit aerosol configuration | `validation.round2_analysis` | `analysis.json` selection and identification_scope |
+| `dec2011/` | December 2011 exposure-averaged spectral comparison | `validation.compare_dec2011` | `comparison.json` per-readout records |
+| `multiple_events/` | 1990 whole-disk photopic and 2007 extrapolated background comparisons | `validation.multiple_events` | `comparison.csv`/`comparison.json` per-event rows |
+| `filter_response_2011/` | assumed-bandpass probe products | `validation.filter_response_2011` | `analysis.json` band analyses |
+| `hst2019/` | HST/STIS starborne fixed-model comparison (raw-FITS extraction is the isolated exception) | `validation.compare_hst2019` | `comparison.json` |
+| `extinction_gap_diagnosis/` | four-protocol kernel-height statistics, cross-event correlation, literature candidate discrimination | `validation.extinction_gap_diagnosis` | `discrimination.json`, `height_stats.json`, `correlation.json` |
+| `stratosphere_background/` | four-aperture three-variant rerun with the production two-layer default, plus the preregistered check of the committed probe | `validation.extinction_gap_diagnosis --strat-rerun` | `predictions.json`, `preregistered_check.json` verdict |
+| `atmosphere_inversion/` | per-event low-layer increment inversion (calibration lane) | `validation.atmosphere_inversion` | `inversion.json:cross_event`, `inversion.json:preregistered` |
+| `humidity_axis/` | preregistered A/B re-inversion, R_RH verdict, share tables | `validation.humidity_axis_inversion` | `inversion_ab.json` |
+| `prior_source_survey/` | source inventory SHA ledger, coverage matrix, humidity-prior transcription | produced by the prior-source-survey task tooling (no auto-regeneration entry; see [survey record](../../docs/records/PRIOR_SOURCE_SURVEY.md)) | `sources.json`, `coverage_matrix.json`, `humidity_axis_priors.json` |
 
-The [June 2011 comparison](observations2011/comparison.json) is separate from
-the numerical pass/fail checks above. It compares the unchanged model with
-explicitly digitized published 503/677 nm observed curves, without fitting.
-It shows substantial inner-umbra overprediction. Unknown bandpasses and
-pointwise observational uncertainties preclude a formal statistical verdict.
-See [the analysis and source inventory](../../docs/records/OBSERVATIONAL_VALIDATION.md).
-
-## Round 2: aerosol extinction
-
-`round2/` contains the new analysis, molecular-ray checks, independent aerosol
-checks and convergence results with explicit aerosol configuration. The default
-uses the fixed OPAC free-tropospheric prior; same-event 677 nm AOD calibration
-and withheld 503 nm checks are reported separately. Numerical closure is not
-observational/profile validation. Read [ROUND2.md](../../docs/records/ROUND2.md) for the
-selection evidence and remaining mismatch.
-
-The original numerical snapshot above is molecular-only. Reproduce that medium
-with `validation.check_convergence --aerosol none`; current convergence defaults
-to `opac`. Historical JSON files are retained with their original conditions.
-
-## Stratospheric-background rerun
-
-`stratosphere_background/` holds the four-aperture three-variant rerun with the
-production two-layer default (`molecular` / `fixed_opac` / `fixed_opac_strat`)
-and the preregistered comparison of the committed `stratosphere_background`
-probe deltas against that rerun. Generate with:
-
-```bash
-uv run python -m validation.extinction_gap_diagnosis --strat-rerun \
-    --out validation/results/stratosphere_background
-```
-
-`predictions.json` records per-readout predictions for all three variants with
-the committed variants' moment-reproduction gaps; `preregistered_check.json`
-compares each preregistered item (probe value read from
-`extinction_gap_diagnosis/discrimination.json`, never retyped) against the
-production rerun under `max(1e-6 x |probe|, 1e-9)`. The brightness axis stays
-in the tension band by preregistered expectation — the residual is not closed
-by this component. The committed `extinction_gap_diagnosis/` products remain
-byte-identical.
+Authoritative numbers are read from these products and never retyped into
+prose; [MAINLINE](../../docs/MAINLINE.zh.md) cites fields mechanically.

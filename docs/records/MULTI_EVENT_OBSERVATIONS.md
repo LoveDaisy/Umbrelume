@@ -19,10 +19,10 @@
 | **2019-01-21 / HST** | [Youngblood et al. 2020](https://arxiv.org/html/2008.01837)：MAST/STIS 公开 FITS（G430L，星载接收者） | **已完成 300–570 nm 窗口固定模型对照**：本影/全月比值给出亮度比与蓝端斜率两个量；蓝端 300–420 nm 只是散射光上限。不宣称完整颜色/绿松石带验证 |
 
 数据、来源版本及提取方法分别位于
-[1990/2007](../validation/observations/hernitschek2008/README.md)、
-[2011-12](../validation/observations/yan2011dec/README.md)、
-[GF-4 来源合同](../validation/observations/gf4_2019/source.json)、
-[2019-01 HST](../validation/observations/hst2019/README.md)。
+[1990/2007](../../validation/observations/hernitschek2008/README.md)、
+[2011-12](../../validation/observations/yan2011dec/README.md)、
+[GF-4 来源合同](../../validation/observations/gf4_2019/source.json)、
+[2019-01 HST](../../validation/observations/hst2019/README.md)。
 图表读数是可追溯的公开观测摘要，不是原始曝光；读取裕量始终与测量误差分开。
 
 ## 1990 年：新增独立亮度比较
@@ -54,7 +54,7 @@
 | 固定 OPAC 默认值，名义 V(λ) | 2.222 × 10⁻⁴ | **1.57** |
 | 固定 OPAC，加一个瑞利气团量响应探针 | 2.238 × 10⁻⁴ | 1.58 |
 
-![新增事件亮度比较](../figures/multiple_events/comparison.png)
+![新增事件亮度比较](../../figures/multiple_events/comparison.png)
 
 一个瑞利气团量的探针仅改变太阳与视觉响应的权重，不等同于原仪器及观测站完整校正。
 它在此处影响很小，不能据此排除所有观测口径问题。模型仍将月球当作均匀中性屏，
@@ -67,7 +67,7 @@
 
 积分核通过均匀圆盘的面积及二阶矩独立解析检查；另一条以视场中心为原点的二维积分
 核对了非恒定函数与四阶矩，误差约 4 × 10⁻¹⁵。128 点／5 nm 到 256 点／2.5 nm 的实际预测变化
-最大约 0.21%，详情保存于 [analysis.json](../validation/results/multiple_events/analysis.json)；
+最大约 0.21%，详情保存于 [analysis.json](../../validation/results/multiple_events/analysis.json)；
 这些数值检查不覆盖上述观测近似。
 
 ## 2011 年 12 月：完成整段曝光的光谱比较
@@ -92,7 +92,7 @@ U1 从 14:08:25 到 14:38:25 UTC。本次采用 Tycho 中心作名义位置，�
 默认模型／观测从 450 nm 的 1.94 到 750 nm 的 1.41，气溶胶降低了全部七点的偏亮，
 但名义蓝／红透射比例残差反而增加。准确光纤坐标未知、月面方向反射及弱谱线等近似仍保留，
 它们不再阻止一个明确前提下的比较。这七个点仍不足以积分完整实测颜色，也未直接采样绿松石带。
-详见 [完整比较、几何与敏感性](DECEMBER2011.md)及[对照图](../figures/dec2011/comparison.png)。
+详见 [完整比较、几何与敏感性](DECEMBER2011.md)及[对照图](../../figures/dec2011/comparison.png)。
 
 ## 2019 年 1 月：HST/STIS 星载口径光谱对照
 
@@ -114,7 +114,7 @@ Table 1 最大差 0.013°，曝光中点与 FITS 记录差 ≤0.85 s。±150 km 
 降低偏亮。蓝端形状：430/570 斜率 model/observed 0.52–0.98（`slope_model_vs_observed` 字段），
 观测本影谱相对模型更平，模型红端偏高更多。300–420 nm 的观测是长波散射光上限（数值为零的
 模型叠加蓝端污染鼓包），与论文「本影 ≤4200 Å 未探测到光子」一致，只作上限核对本档。
-以上数字均出自 [comparison.json](../validation/results/hst2019/comparison.json) 的
+以上数字均出自 [comparison.json](../../validation/results/hst2019/comparison.json) 的
 `metrics`、`probe_cases` 与 `independent_checks` 等生成字段。
 
 边界：G430L 止于 570 nm、模型表始于 300 nm——Chappuis 谷中心（约 600 nm）与绿松石带不在此
@@ -149,7 +149,7 @@ uv run python tools/fetch_hst2019.py
 uv run python tools/fetch_hst2019_geometry.py
 ```
 
-可复现输入及 [CSV](../validation/results/multiple_events/comparison.csv)、JSON、图均保留；
+可复现输入及 [CSV](../../validation/results/multiple_events/comparison.csv)、JSON、图均保留；
 生产传播代码、默认值和既有历史图片没有改动。离线测试套件全部通过（`uv run pytest -q`）；
 物理、气溶胶及分辨率检查通过。
 1990 年亮度和 2011 年 12 月光谱现均已进入固定模型比较。
@@ -157,4 +157,4 @@ uv run python tools/fetch_hst2019_geometry.py
 四口径贡献路径高度分布与缺失消光成分的判别探针见
 [观测参照](OBSERVATIONAL_VALIDATION.md)的「跨事件消光缺口判别」一节；
 判别结论按相容性排序表述，下一个物理增量的裁定属 owner。
-绿松石带与真实月面渲染的中远期安排见 [ROADMAP](ROADMAP.md)。
+绿松石带与真实月面渲染的中远期安排见 [ROADMAP](../ROADMAP.zh.md)。

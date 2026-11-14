@@ -11,6 +11,10 @@
 现有观测仍不能验证绿松石带、完整可见颜色或某次月食的绝对亮度。
 已开始[多事件参照](docs/records/MULTI_EVENT_OBSERVATIONS.md)：新增 1990 年整月面实测亮度的固定模型比较、
 2011 年 12 月完整曝光平均的光谱比较及更多来源的使用条件，暂不继续针对单次月食调参。
+主线叙事（每级阶梯解决什么、方法论与模块地图）见 [docs/MAINLINE.zh.md](docs/MAINLINE.zh.md)。
+
+![当前双层默认的月面屏](figures/mainline/l25_stratosphere.png)
+*当前生产双层默认（`opac` 态）的月面屏示意，+12 EV；读图约定与代次边界见 [figures/mainline/README.md](figures/mainline/README.md)。*
 
 ## 运行
 
@@ -26,6 +30,11 @@ uv run lunar-eclipse simulate --out outputs/current
 它是独立文献中的背景模型，**不是 2011 年月食的实测廓线，也不是拟合后的默认值**。
 太阳侧光路只预计算一次，接收位置使用查表、插值与有限太阳圆盘积分。光谱计算通常只需几秒。
 默认月球中心距影轴 2860 km，处在接近本影边缘的全食位置。
+
+文献先验之外还有显式可选车道：`--aod550` / `--rh` 调整自由对流层柱量与湿度增长
+（50% 参考态位精确不变）；`--aerosol calibrated:<name>` 加载按事件命名的校准预设——
+它们是同事件反演产物，**校准而非物理先验，永不成为默认**。HST/STIS 2019 星载谱
+对照与湿度 A/B 重反演的入口见「观测对照」与 [validation/results/README.md](validation/results/README.md)。
 
 ```bash
 # 不含气溶胶的首版分子模型
@@ -55,7 +64,7 @@ uv run lunar-eclipse simulate --height-step-m 50 --wavelength-step-nm 2.5 --out 
 
 原始光谱照度以 W m⁻² nm⁻¹ 保存，图像变换不会修改它。月球图目前是均匀中性屏对地影截面的采样，
 尚未包含真实月壤、BRDF、球面入射角明暗和地面观察站的大气。
-新示例见 [figures/round2](figures/round2)，首版历史快照保留在 [figures/baseline](figures/baseline)。
+当前生产图组见 [figures/mainline](figures/mainline)，图组索引见 [figures/README.md](figures/README.md)；历史示例见 [figures/round2](figures/round2)，首版快照保留在 [figures/baseline](figures/baseline)。
 
 ## 观测对照
 
@@ -88,6 +97,9 @@ uv run python -m validation.compare_dec2011 --out outputs/dec2011
 尚不能把剩余偏差唯一归于真实大气。[2011 年 12 月完整对照](docs/records/DECEMBER2011.md)已落实轨迹和时间积分，
 默认模型仍偏亮约 41%–94%；它揭示了绝对亮度改善与光谱形状改善并不总是一致。
 完整资料状态、限制和下一步见[多事件说明](docs/records/MULTI_EVENT_OBSERVATIONS.md)。
+另已完成 HST/STIS 2019 星载谱的固定模型对照（蓝端斜率 0.52–0.98，偏亮方向与地面口径一致），
+见 [validation/results/hst2019](validation/results/hst2019) 与[来源合同](validation/observations/hst2019/README.md)；
+湿度 A/B 重反演的判别结论见 [validation/results/humidity_axis](validation/results/humidity_axis)。
 
 ## 数值验证与物理契约
 
@@ -102,5 +114,5 @@ uv run python -m validation.check_convergence --out outputs/validation/convergen
 它们不代替观测验证。[MODEL](docs/MODEL.md)负责物理契约，[AEROSOL](docs/physics/AEROSOL.md)
 负责新组件公式与来源，[数据来源](eclipse/data/SOURCES.md)记录光谱输入。本项目离线运行，不依赖天空项目。
 当前仍采用球对称标准大气、高斯臭氧层、均匀太阳亮度、一阶小角传播和灰折射路径；
-未加入云、边界层/平流层气溶胶组件、散射入射光、真实三维天气或视觉暗适应。
+未加入云、散射入射光、真实三维天气或视觉暗适应；气溶胶现为双层文献先验（自由对流层 + 平流层背景），边界层与事件相关廓线仍是开放方向。
 这些方向及其进入条件统一维护在 [ROADMAP](docs/ROADMAP.zh.md)。

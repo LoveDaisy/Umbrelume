@@ -7,7 +7,7 @@
 气溶胶先验降低了各波长的偏亮，但并未同时改善所有光谱形状指标。
 这组独立事件已进入比较；准确光纤位置未知等限制作为敏感性和使用条件保留。
 
-![完整曝光的独立光谱比较](../figures/dec2011/comparison.png)
+![完整曝光的独立光谱比较](../../figures/dec2011/comparison.png)
 
 ## 几何怎样重建
 
@@ -47,8 +47,8 @@ U1 起止点 `(484,420)`、`(446,420)`，月球半径约 `44 ± 1.5` 像素。
 采用月球物理半径换算，图示起止影轴距离约 3764.5、3668.8 km；
 星历对应端点与它们相差约 **0.1、31.6 km**。
 
-[图示读取核对图](../figures/dec2011/figure1_geometry_qa.png)标出了影心、轨迹端点与独立月球尺度，
-[figure1_geometry.json](../validation/observations/yan2011dec/figure1_geometry.json)保留像素坐标、掩膜、
+[图示读取核对图](../../figures/dec2011/figure1_geometry_qa.png)标出了影心、轨迹端点与独立月球尺度，
+[figure1_geometry.json](../../validation/observations/yan2011dec/figure1_geometry.json)保留像素坐标、掩膜、
 月缘拟合结果和源文件 SHA。该图明确是示意图，不把像素拟合精度当作真实测角精度。
 
 据此选择 **±150 km 径向位移**作位置敏感性探针，整条曝光轨迹统一移动，不逐波长改变位置。
@@ -116,7 +116,7 @@ uv run python tools/fetch_dec2011_geometry.py
 uv run --with pymupdf==2.1 python tools/extract_yan2011.py --geometry-qa outputs/dec2011/figure1_geometry_qa.png
 ```
 
-[比较 CSV](../validation/results/dec2011/comparison.csv)、
-[逐时刻光谱 CSV](../validation/results/dec2011/time_samples.csv)、
-[完整结果与诊断 JSON](../validation/results/dec2011/comparison.json)均已落盘。
+[比较 CSV](../../validation/results/dec2011/comparison.csv)、
+[逐时刻光谱 CSV](../../validation/results/dec2011/time_samples.csv)、
+[完整结果与诊断 JSON](../../validation/results/dec2011/comparison.json)均已落盘。
 105 项测试通过；独立物理、气溶胶守恒和分辨率检查通过。

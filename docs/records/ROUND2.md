@@ -45,7 +45,7 @@
 的自由对流层组件：2–12 km、指数尺度高度 8 km、AOD550=0.013。
 光谱采用连续的分段幂律，在 500–800 nm 用指数 1.58，在 350–500 nm 用 1.21。
 这些固定参数来自独立背景模型，不是本次月食的实测廓线；公式与来源统一见
-[physics/AEROSOL.md](physics/AEROSOL.md)。
+[physics/AEROSOL.md](../physics/AEROSOL.md)。
 
 气溶胶光深沿原有的弯曲光路积分，包含完整两侧路径，只改变消光，不改变分子密度与折射率。
 积分在气溶胶边界及气体层界分段；路径表加密截断边界附近的最低高度，避免插值跨过尖锐结构。
@@ -87,9 +87,9 @@
 
 ## 验证、产物与复现
 
-[观测对照图](../figures/round2/comparison.png)、[分析 JSON](../validation/results/round2/analysis.json)
+[观测对照图](../../figures/round2/comparison.png)、[分析 JSON](../../validation/results/round2/analysis.json)
 和 CSV 保存全部读数、参数、代码哈希、候选探针、校准划分与贡献高度。
-新默认图像在 [figures/round2/render](../figures/round2/render)，历史快照保持原样。
+新默认图像在 [figures/round2/render](../../figures/round2/render)，历史快照保持原样。
 
 独立验证包括直线指数层的精确 Bessel 光深、分段笛卡尔曲线光路 ODE、带气溶胶的全平面能量预算，
 以及零 AOD、550 nm 锚点和分子几何不变检查。本轮独立光深比较约达 1e-9 相对量级，
@@ -108,7 +108,7 @@ uv run python -m validation.check_convergence --out outputs/validation/convergen
 ```
 
 本轮未新增另一场观测：现有曲线已足以区分本次候选，更多资料的收益在下一步独立预测检验中更大。
-后续方向、进入条件和验证绿松石带仍缺少的证据，统一见 [ROADMAP.md](ROADMAP.md)。
+后续方向、进入条件和验证绿松石带仍缺少的证据，统一见 [ROADMAP.md](../ROADMAP.zh.md)。
 
 后续把「闭合亮度残差所需」从候选菜单升级为逐事件连续反演（校准车道：预注册划分与
 判别准则、按事件命名的 calibrated preset、永不进默认），见

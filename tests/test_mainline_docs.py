@@ -65,6 +65,8 @@ def test_mainline_figure_readme_links():
 BILINGUAL_PAIRS = [
     ((ROOT / "README.md"), (ROOT / "README.zh.md")),
     ((ROOT / "docs/ROADMAP.zh.md"), (ROOT / "docs/ROADMAP.en.md")),
+    ((ROOT / "docs/EXTENDING.zh.md"), (ROOT / "docs/EXTENDING.en.md")),
+    ((ROOT / "docs/MAINLINE.zh.md"), (ROOT / "docs/MAINLINE.en.md")),
 ]
 
 
@@ -81,6 +83,19 @@ def test_bilingual_pairs_exist_and_cross_link():
             assert f"]({twin.name})" in text, \
                 f"{source.name} does not link its twin {twin.name}"
             assert check_local_links(text, source.parent)
+
+
+@pytest.mark.parametrize("path", sorted(
+    p for p in (ROOT / "docs").rglob("*.md") if p.name != "MAINLINE.zh.md"
+))
+def test_docs_tree_local_links_resolve(path):
+    """docs 树（含 records/、physics/）全部本地链接可解析。
+
+    MAINLINE.zh.md 由更强的图片/字段闸单独覆盖；根目录双语 README 由
+    pairing 闸覆盖。figures/ 与 validation/ 的 README 索引暂不在本闸射程。
+    """
+    # 无本地链接的文件返回空列表也是合法的——这里只消费闸的抛错路径。
+    check_local_links(path.read_text(), path.parent)
 
 
 def test_field_resolver_nested_arrays_and_all_wildcard_branches(tmp_path):
