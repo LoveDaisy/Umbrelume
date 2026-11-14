@@ -13,8 +13,9 @@ pairing 机械闸（`tests/test_mainline_docs.py` 的 `test_bilingual_pairs_exis
 | [../README.md](../README.md) | en | 英文 canonical | 项目入口：是什么、怎么跑、结果与边界 |
 | [../README.zh.md](../README.zh.md) | zh | 与英文版互为镜像 | 同上（中文） |
 | [MODEL.md](MODEL.md) | en | 单语（物理契约不设译本：一词两译必分叉） | 物理与数值契约、限制 |
-| [MAINLINE.zh.md](MAINLINE.zh.md) | zh | 单语权威 | 主线叙事：阶梯抽象、方法论五支柱、模块地图、叙事钩子（英文译本在后续 chore 队列） |
+| [MAINLINE.zh.md](MAINLINE.zh.md)（权威）/ [MAINLINE.en.md](MAINLINE.en.md)（译本） | zh / en | zh | 主线叙事：阶梯抽象、方法论五支柱、模块地图、叙事钩子 |
 | [ROADMAP.zh.md](ROADMAP.zh.md)（权威）/ [ROADMAP.en.md](ROADMAP.en.md)（译本） | zh / en | zh | 里程碑、上一轮物理选择、后续方向与进入条件 |
+| [EXTENDING.zh.md](EXTENDING.zh.md)（权威）/ [EXTENDING.en.md](EXTENDING.en.md)（译本） | zh / en | zh | 「添加一个物理增量」上手清单、绘图风格规则、验证闸速查 |
 | [physics/AEROSOL.md](physics/AEROSOL.md) | en | 单语 | 气溶胶组件公式、来源与 standing gap |
 
 ## 内部开发记录 / Internal development records

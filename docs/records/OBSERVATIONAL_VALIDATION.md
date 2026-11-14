@@ -1,7 +1,12 @@
 # 月食观测参照与首轮对照
 
+> 节索引：[首版分子模型结论](#首版分子模型结论) · [口径与证据强度](#口径与证据强度) ·
+> [能排除与未归因](#目前能排除与尚不能归因的部分) · [滤镜带通口径](#滤镜带通口径2026-11-增补) ·
+> [跨事件缺口判别](#跨事件消光缺口判别2026-11-增补) · [跨事件大气反演（校准车道）](#跨事件所需大气反演校准车道2026-11-增补) ·
+> [其他公开参照](#其他已核实的公开参照) · [复现](#复现)
+
 本文记录 M2 的首版分子模型对照，保留当时的参数和结论。本轮气溶胶改进及新默认值见
-[ROUND2.md](ROUND2.md)，整体路线见 [ROADMAP.md](ROADMAP.md)。下列历史数字未被新结果覆盖。
+[ROUND2.md](ROUND2.md)，整体路线见 [ROADMAP.zh.md](../ROADMAP.zh.md)。下列历史数字未被新结果覆盖。
 后续资料扩充与观测口径复核见 [MULTI_EVENT_OBSERVATIONS.md](MULTI_EVENT_OBSERVATIONS.md)。
 
 ## 首版分子模型结论
@@ -20,8 +25,8 @@
 这是明确的“越往内部，偏亮越多”的结构。0.575° 是本次读出的最外侧点，
 仍在本影内，不能据此说本影边缘或绿松石带已被验证。
 
-[对照图](../figures/observations2011/comparison.png)展示原始亮度比和模型／观测比，
-[完整结果](../validation/results/observations2011/comparison.json)及 CSV 保留逐点数值。
+[对照图](../../figures/observations2011/comparison.png)展示原始亮度比和模型／观测比，
+[完整结果](../../validation/results/observations2011/comparison.json)及 CSV 保留逐点数值。
 该轮没有拟合亮度比例、位置偏移或任何物理参数，生产模型当时未改动。
 
 ## 口径与证据强度
@@ -33,7 +38,7 @@
 
 论文没有提供滤镜响应、FWHM 和逐点误差。因此当前用有效波长的单色预测作近似；
 图表读取误差不能冒充观测误差，不能据此给出统计显著性或严格验收阈值。
-细节及重建命令见[数据说明](../validation/observations/ugolnikov2011/README.md)。
+细节及重建命令见[数据说明](../../validation/observations/ugolnikov2011/README.md)。
 
 采用 JPL Horizons DE441 在 2011-06-15 19:30 UTC 的日地、地月距离，代表可见光观测时段。
 使用该事件距离而非首版平均距离，部分预测可改变约 27%，所以几何条件需要先匹配。
@@ -81,9 +86,9 @@
 `T_band(θ) = ∫R·S·T dλ / ∫R·S dλ`（T 为模型 `transmission_profile` 输出，S 为 AM0 太阳谱；
 月面反照率在窄带内按灰体处理——与单色对照同一假设等级）。「仅 R 权重」敏感变体单独落盘。
 
-逐点对照（[完整结果](../validation/results/filter_response_2011/analysis.json)、
-[CSV](../validation/results/filter_response_2011/comparison.csv)、
-[对照图](../figures/filter_response_2011/comparison.png)）：
+逐点对照（[完整结果](../../validation/results/filter_response_2011/analysis.json)、
+[CSV](../../validation/results/filter_response_2011/comparison.csv)、
+[对照图](../../figures/filter_response_2011/comparison.png)）：
 
 - 主变体（固定 OPAC 先验）带通与单色的模型/观测比之差：503 nm 全包络最大 0.108
   （在 503 弧段内端 0.400°，该点单色残差 1.99）；677 nm 最大 0.064（在内侧 0.150°，残差 2.76）。

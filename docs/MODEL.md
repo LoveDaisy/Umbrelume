@@ -4,9 +4,9 @@ Current default: the fixed OPAC two-layer aerosol column (free troposphere
 2–12 km plus stratospheric background 12–35 km). `--aerosol opac-ft` keeps the
 historical free-troposphere-only preset, and `--aerosol none` reproduces the
 molecular-only first-version medium. Historical figures and observational
-snapshots retain their original parameters. See [ROUND2.md](ROUND2.md) for the
+snapshots retain their original parameters. See [ROUND2.md](records/ROUND2.md) for the
 selected increment, [physics/AEROSOL.md](physics/AEROSOL.md) for both layers'
-priors and composition semantics, and [ROADMAP.md](ROADMAP.md) for implemented
+priors and composition semantics, and [ROADMAP.md](ROADMAP.zh.md) for implemented
 milestones and deferred physics.
 
 ## Quantity being computed
@@ -65,7 +65,10 @@ provides a counterfactual on the identical sampled ray table.
 `extinction=False` disables molecular, ozone and aerosol attenuation together.
 The CLI `--aod550` overrides only the free-troposphere layer's AOD and
 `--aod550 0` disables the whole aerosol component exactly (molecular-only);
-the stratospheric layer is not exposed as a separate knob.
+the stratospheric layer is not exposed as a separate knob. `--rh` scales the
+free-troposphere layer's pinned OPAC humidity growth within [0.5, 0.99]
+(opac/opac-ft only; the 50% reference default is bit-exact unchanged, and the
+`calibrated:` and `none` presets reject it).
 
 An opaque spherical surface blocks any ray whose turning point is below sea
 level. Thus the admitted interval starts at `b_ground = n(R) R`, rather than R.
@@ -176,9 +179,9 @@ colorimetry does not account for mesopic/scotopic vision during dark totality.
 
 The molecular baseline produces a red/brown umbra and a pale cool edge that disappears
 when ozone is removed. It does not yet establish the observed turquoise band's
-width, saturation or absolute brightness. The first [observational comparison](OBSERVATIONAL_VALIDATION.md)
+width, saturation or absolute brightness. The first [observational comparison](records/OBSERVATIONAL_VALIDATION.md)
 showed substantial inner-umbra overprediction against June 2011 published
-503/677 nm photometry. [Round 2](ROUND2.md) selected aerosol extinction after
+503/677 nm photometry. [Round 2](records/ROUND2.md) selected aerosol extinction after
 altitude attribution and source/density probes, and the four-aperture
 discrimination then promoted the stratospheric-background prior into the
 default as the only shape-axis-improving candidate, with its brightness effect
@@ -187,4 +190,4 @@ components; see [physics/AEROSOL.md](physics/AEROSOL.md)). A separate
 red-band AOD calibration is checked on withheld blue readouts and explicitly
 does not constitute independent event validation. Unknown filter responses and
 observational uncertainties remain. Future increments and their entry conditions
-are maintained in [ROADMAP.md](ROADMAP.md).
+are maintained in [ROADMAP.md](ROADMAP.zh.md).
