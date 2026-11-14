@@ -8,6 +8,7 @@
   "page_one_based": 11,
   "pymupdf_version": "2.1",
   "source_status": "Seven native-raster readouts of the observed black curve; not an author-released numerical table, not original exposures, not model samples",
+  "license": "Digitized native-raster readouts of the cited publication's Figure 15 (scientific facts, not author-released data); no separate licence statement exists for figure readouts — used with full attribution; original figure copyright the publisher.",
   "figure_image": {
     "xref": 273,
     "width_pixel": 4096,

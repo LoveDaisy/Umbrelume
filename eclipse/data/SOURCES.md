@@ -38,6 +38,46 @@ SHA-256 checksums of the copied files:
 a532555ff4d5bd8071b7aabed80aa0c167ddf6fd6e2d51c3cfe1916d265e793c  solar_am0.csv
 ```
 
+## Redistribution terms and licences
+
+Verification status is stated per entry and dated. "Partially verified"
+entries rest on the redistribution channel's licence plus the source's
+general standing, with the canonical provider site not reachable at
+verification time. Nothing here overrides the original providers' terms;
+re-verify before any commercial redistribution.
+
+- `solar_am0.csv` — ASTM G173-03 extraterrestrial reference spectrum
+  (derived from SMARTS v2.9.2), redistributed via
+  [pvlib-python](https://github.com/pvlib/pvlib-python) (BSD-3-Clause; the
+  project ships this table in `pvlib/data/`, whose CSV itself carries no
+  licence statement). Status: partially verified (2026-11-14) — the
+  tabulated data is widely redistributed in open scientific software, but
+  the full ASTM G173 standard document is copyright ASTM International;
+  check ASTM terms for commercial redistribution.
+- `cie1931_2deg.csv` — CIE 1931 2° colour matching functions from
+  [CVRL, UCL](https://cvrl.ucl.ac.uk/), the canonical open distributor of
+  CIE tables; cite CIE (1931) with the CVRL source. Status: partially
+  verified (2026-11-14) — the CVRL site did not respond at verification
+  time; these tables are redistributed broadly in open colour-science
+  software with citation.
+- `o3_cross_section.csv` — JPL 2006 evaluation (JPL Publication 06-2,
+  Evaluation No. 15, a NASA/JPL Panel for Data Evaluation work) as
+  distributed with [NCAR TUV-x](https://github.com/NCAR/tuv-x)
+  (Apache-2.0). Status: partially verified (2026-11-14) — the canonical
+  jpldataeval site did not resolve at verification time; JPL data
+  evaluations are U.S.-government-supported publications reproduced
+  broadly with the standard citation.
+- Observational products under `validation/observations/` are figure
+  readouts and table transcriptions of published work, documented per
+  directory in their `source.json` (citations, readout margins, SHA pins)
+  with a per-file `license` note. They carry no separate licence statement
+  from the original publishers and are used as scientific facts with full
+  attribution. HST/STIS data from MAST are public domain (CC0) per
+  [MAST's data-use policy](https://archive.stsci.edu/publishing/data-use)
+  (verified 2026-11-14); STScI requests an acknowledgment. The GF-4 paper
+  (Shu et al. 2024) is CC BY 4.0; its raw frames are unavailable (on
+  request only) and none are redistributed here.
+
 ## Analytic atmosphere and molecular optics
 
 - **Air density:** the [U.S. Standard Atmosphere, 1976](https://ntrs.nasa.gov/citations/19770009539)
