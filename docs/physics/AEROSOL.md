@@ -239,5 +239,5 @@ unique cause or validate full visible color and the turquoise fringe.
 An independent prior-source survey of the low-layer increment (2026-11,
 task-prior-source-survey) collected literature evidence for the three
 evaluation lanes without changing any default; see
-[docs/PRIOR_SOURCE_SURVEY.md](../PRIOR_SOURCE_SURVEY.md) and the products
+[docs/records/PRIOR_SOURCE_SURVEY.md](../records/PRIOR_SOURCE_SURVEY.md) and the products
 under `validation/results/prior_source_survey/`.

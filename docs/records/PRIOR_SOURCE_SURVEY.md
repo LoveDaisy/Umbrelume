@@ -10,7 +10,7 @@ and the user.
 ## What was surveyed
 
 The cross-event inversion (see
-`docs/OBSERVATIONAL_VALIDATION.md`, section 跨事件所需大气反演) left a
+`docs/records/OBSERVATIONAL_VALIDATION.md`, section 跨事件所需大气反演) left a
 standing question: the four events need low-layer AOD550 increments spread
 over a factor R = 7.110 (pool 0.0259–0.1839, judged `partially_consistent`
 under the preregistered criterion), and the humidity-variant axis of the

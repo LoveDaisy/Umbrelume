@@ -1,93 +1,123 @@
 # Lunar Eclipse Color
 
-从太阳光谱、大气折射与沿程消光，计算月球距离处的光谱照度，再显示月食的颜色。
-新实现从空白重建；旧实现保留在 `legacy/*` 分支，重建时未参考旧代码。
+> 中文版：[README.zh.md](README.zh.md)
 
-当前为 **v0.3：折射透射光 + 双层气溶胶消光（自由对流层 2–12 km + 平流层背景 12–35 km）**。首轮观测对照发现的内部偏亮已有改善，
-但固定文献廓线仍不能完整解释真实月食。[本轮结果](docs/ROUND2.md)区分独立先验、同事件校准和
-未解决的残差；[ROADMAP](docs/ROADMAP.md)记录已完成里程碑与从粗到精的后续方向。
-现有观测仍不能验证绿松石带、完整可见颜色或某次月食的绝对亮度。
-已开始[多事件参照](docs/MULTI_EVENT_OBSERVATIONS.md)：新增 1990 年整月面实测亮度的固定模型比较、
-2011 年 12 月完整曝光平均的光谱比较及更多来源的使用条件，暂不继续针对单次月食调参。
+Computes the spectral irradiance at the Moon's distance from the solar spectrum,
+atmospheric refraction and path extinction, then renders the colors of a lunar
+eclipse. The current implementation was rebuilt from scratch; earlier work is
+preserved on the `legacy/*` branches and was not consulted during the rebuild.
 
-## 运行
+The project is now at **v0.3: refracted transmitted light + two-layer aerosol
+extinction (free troposphere 2–12 km + stratospheric background 12–35 km)**.
+The internal over-brightness found by the first observational comparison has
+improved, but fixed literature profiles still cannot fully explain a real
+eclipse. [This round's results](docs/records/ROUND2.md) separate independent
+priors, same-event calibration and unresolved residuals; the
+[ROADMAP](docs/ROADMAP.zh.md) records completed milestones and the
+coarse-to-fine directions ahead. Existing observations still cannot verify the
+turquoise band, full visible colors, or the absolute brightness of any specific
+eclipse. Work on a [multi-event reference](docs/records/MULTI_EVENT_OBSERVATIONS.md)
+has begun: fixed-model comparisons against published 1990 whole-disk photometry
+and December 2011 full-exposure-averaged spectra, with explicit usage conditions
+for every source; no further per-eclipse tuning.
 
-需要 [uv](https://docs.astral.sh/uv/) 和 Python 3.12。依赖由 `uv.lock` 固定。
+## Running
+
+Requires [uv](https://docs.astral.sh/uv/) and Python 3.12; dependencies are
+pinned by `uv.lock`.
 
 ```bash
 uv sync --locked
 uv run lunar-eclipse simulate --out outputs/current
 ```
 
-默认计算 380–780 nm（5 nm 间隔）、距影轴 0–9000 km（20 km 间隔），采用 300 DU 臭氧、
-550 nm 参考折射路径及固定 OPAC 自由对流层组件：2–12 km、AOD550=0.013。
-它是独立文献中的背景模型，**不是 2011 年月食的实测廓线，也不是拟合后的默认值**。
-太阳侧光路只预计算一次，接收位置使用查表、插值与有限太阳圆盘积分。光谱计算通常只需几秒。
-默认月球中心距影轴 2860 km，处在接近本影边缘的全食位置。
+By default the model computes 380–780 nm (5 nm steps) at 0–9000 km from the
+shadow axis (20 km steps), with 300 DU of ozone, a 550 nm reference refracted
+path, and a fixed OPAC free-tropospheric component: 2–12 km, AOD550 = 0.013.
+It is a background model from independent literature — **not a measured profile
+of the 2011 eclipse and not a fitted default**. The sun-side light paths are
+precomputed once; receivers use table lookups, interpolation and finite
+solar-disk integration. A spectral run usually takes a few seconds. The Moon's
+default position is 2860 km from the shadow axis, near the umbral edge in
+mid-totality.
 
 ```bash
-# 不含气溶胶的首版分子模型
+# First molecular model without aerosol
 uv run lunar-eclipse simulate --aerosol none --out outputs/molecular
 
-# 明确改变自由对流层柱量，保留原有廓线形状和光谱规律
+# Explicitly change the free-tropospheric column, keeping profile shape and spectral laws
 uv run lunar-eclipse simulate --aod550 0.03 --out outputs/custom-aerosol
 
-# 更深入本影的月全食；改变月面位置和显示曝光
+# A deeper total eclipse; move the Moon and change display exposure
 uv run lunar-eclipse simulate --moon-offset-km 0 --exposure-stops 12 --out outputs/central
 
-# 提高数值分辨率
+# Higher numerical resolution
 uv run lunar-eclipse simulate --height-step-m 50 --wavelength-step-nm 2.5 --out outputs/refined
 ```
 
-## 输出
+## Outputs
 
-| 文件 | 含义 |
+| File | Meaning |
 |---|---|
-| `profile.png` / `profile.csv` | 从本影到半影的透过率、相对明视觉亮度和颜色 |
-| `spectra.png` / `spectra.npz` | 光谱照度，含正常阳光参考及臭氧关闭对照 |
-| `rays.npz` | 掠过高度、冲量参数、偏折、空气/臭氧柱量、气溶胶光深及带符号的落点 |
-| `moon.png` / `moon_exposures.png` | 共同曝光的月面屏示意及曝光对照 |
-| `ozone_comparison.png` | 相同大气与曝光下开启/关闭臭氧的对照 |
-| `moon_chromaticity.png` | **逐位置等亮度的色度诊断，不代表真实亮度** |
-| `metadata.json` / `report.json` | 模型、气溶胶来源、参数、数值网格和显示规则 |
+| `profile.png` / `profile.csv` | Transmission, relative photopic brightness and color from umbra to penumbra |
+| `spectra.png` / `spectra.npz` | Spectral irradiance with the uneclipsed solar reference and the ozone-off counterfactual |
+| `rays.npz` | Tangent altitudes, impact parameters, bending, air/ozone columns, aerosol optical depths and signed landing radii |
+| `moon.png` / `moon_exposures.png` | Common-exposure neutral-screen rendering plus an exposure comparison |
+| `ozone_comparison.png` | Ozone on/off under identical atmosphere and exposure |
+| `moon_chromaticity.png` | **Per-position equal-luminance chromaticity diagnostic, not a brightness prediction** |
+| `metadata.json` / `report.json` | Model, aerosol sources, parameters, numerical grids and display rules |
 
-原始光谱照度以 W m⁻² nm⁻¹ 保存，图像变换不会修改它。月球图目前是均匀中性屏对地影截面的采样，
-尚未包含真实月壤、BRDF、球面入射角明暗和地面观察站的大气。
-新示例见 [figures/round2](figures/round2)，首版历史快照保留在 [figures/baseline](figures/baseline)。
+Raw spectral irradiance is saved in W m⁻² nm⁻¹; image transforms never modify
+it. The lunar images currently sample a uniform neutral screen over Earth's
+shadow cross-section — no real lunar soil, BRDF, spherical incidence shading or
+observer atmosphere yet. Recent examples live in
+[figures/round2](figures/round2); first-version historical snapshots are kept
+under [figures/baseline](figures/baseline).
 
-## 观测对照
+## Observational comparison
 
-参照为 2011-06-15 西侧本影 503／677 nm 的公开观测曲线。已明确标记为论文图表数字化读数，
-没有原始数值表、滤镜响应和逐点误差，不能当成严格的带通预测检验。
-本轮只加入气溶胶消光。固定文献先验将最深 677 nm 采样点的模型／观测比从约 7.10 降到 3.76，
-最外侧采样点从 1.09 变为 0.97。另做了仅用 677 nm 校准 AOD、用 503 nm 留出检查的诊断；
-该结果不作为默认值，也不是新事件的独立验证。
+The reference is the published observed curve at 503/677 nm on the western
+umbra of the 2011-06-15 eclipse. It is explicitly marked as digitized from a
+published figure — no raw numeric table, filter response or per-point errors —
+and cannot serve as a strict bandpass prediction test. This round only added
+aerosol extinction. With the fixed literature prior, the model/observation
+ratio at the deepest 677 nm sample drops from about 7.10 to 3.76, and the
+outermost sample moves from 1.09 to 0.97. A diagnostic calibrating AOD on
+677 nm only, with 503 nm withheld as a check, also exists; it is not a default
+and not an independent validation for new events.
 
 ```bash
-# 当前增量、候选原因诊断与明确标记的校准比较
+# Current increment, candidate-cause diagnostics and explicitly labeled calibration
 uv run python -m validation.round2_analysis --out outputs/round2
 
-# 首版分子模型的历史比较口径
+# First-version molecular comparison protocol
 uv run python -m validation.compare_observations --out outputs/observations2011
 
-# 新增事件的明视觉亮度比较；2007 年外推值明确仅作背景
+# Photopic comparison for the added events; the 2007 extrapolation is background only
 uv run python -m validation.multiple_events --out outputs/multiple-events
 
-# 2011 年 12 月：独立星历、1800 秒曝光平均与位置敏感性
+# December 2011: independent ephemeris, 1800 s exposure average, position sensitivity
 uv run python -m validation.compare_dec2011 --out outputs/dec2011
 ```
 
-[本轮对照图](figures/round2/comparison.png)、[本轮分析](docs/ROUND2.md)、
-[首轮观测口径与其他公开资料](docs/OBSERVATIONAL_VALIDATION.md)、
-[数据提取说明](validation/observations/ugolnikov2011/README.md)。这组数据没有覆盖绿松石带本身。
+[This round's comparison figure](figures/round2/comparison.png),
+[analysis](docs/records/ROUND2.md), [first-round protocol and other public
+data](docs/records/OBSERVATIONAL_VALIDATION.md), and [data extraction
+notes](validation/observations/ugolnikov2011/README.md). This dataset does not
+cover the turquoise band itself.
 
-[新增事件对照图](figures/multiple_events/comparison.png)显示：1990 年整月面明视觉亮度下，
-固定默认值的预测／实测约为 1.57，分子模型约为 1.90。这是中性月面与近似观测口径下的比较，
-尚不能把剩余偏差唯一归于真实大气。[2011 年 12 月完整对照](docs/DECEMBER2011.md)已落实轨迹和时间积分，
-默认模型仍偏亮约 41%–94%；它揭示了绝对亮度改善与光谱形状改善并不总是一致。
-完整资料状态、限制和下一步见[多事件说明](docs/MULTI_EVENT_OBSERVATIONS.md)。
+The [multi-event figure](figures/multiple_events/comparison.png) shows that,
+for 1990 whole-disk photopic brightness, the fixed default predicts about 1.57
+times the observation (molecular about 1.90). This compares a neutral lunar
+screen under an approximate observational protocol; the remaining deviation
+cannot yet be uniquely attributed to real atmosphere. The [December 2011 full
+comparison](docs/records/DECEMBER2011.md) implements the trajectory and time
+integration; the default model is still 41%–94% too bright — absolute-brightness
+improvement and spectral-shape improvement do not always coincide. Full data
+status, limitations and next steps: the
+[multi-event notes](docs/records/MULTI_EVENT_OBSERVATIONS.md).
 
-## 数值验证与物理契约
+## Numerical verification and physical contract
 
 ```bash
 uv run pytest -q
@@ -96,9 +126,15 @@ uv run python -m validation.check_aerosol --out outputs/validation/aerosol.json
 uv run python -m validation.check_convergence --out outputs/validation/convergence.json
 ```
 
-独立笛卡尔 ODE、直线指数层的精确 Bessel 解、全平面能量预算和分辨率检查用于验证数值实现；
-它们不代替观测验证。[MODEL](docs/MODEL.md)负责物理契约，[AEROSOL](docs/physics/AEROSOL.md)
-负责新组件公式与来源，[数据来源](eclipse/data/SOURCES.md)记录光谱输入。本项目离线运行，不依赖天空项目。
-当前仍采用球对称标准大气、高斯臭氧层、均匀太阳亮度、一阶小角传播和灰折射路径；
-未加入云、边界层/平流层气溶胶组件、散射入射光、真实三维天气或视觉暗适应。
-这些方向及其进入条件统一维护在 [ROADMAP](docs/ROADMAP.md)。
+Independent Cartesian ODEs, exact Bessel solutions for straight exponential
+layers, whole-plane energy budgets and resolution checks verify the numerical
+implementation; they do not replace observational validation. [MODEL](docs/MODEL.md)
+owns the physical contract, [AEROSOL](docs/physics/AEROSOL.md) owns the new
+components' formulas and sources, and [data sources](eclipse/data/SOURCES.md)
+record the spectral inputs. The project runs offline and does not depend on the
+sky-colour project. The model still uses a spherically symmetric standard
+atmosphere, a Gaussian ozone layer, uniform solar radiance, first-order paraxial
+propagation and grey refraction; clouds, boundary-layer/stratospheric aerosol
+components, scattered incoming light, real 3-D weather and visual dark adaptation
+are not included. These directions and their entry conditions are maintained in
+the [ROADMAP](docs/ROADMAP.zh.md).

@@ -160,7 +160,7 @@ def build_contract(cache: Path, existing: dict | None) -> dict:
             "per_exposure_spectra": "spectra.csv",
             "comparison": "validation/results/hst2019/comparison.json",
             "geometry": "geometry.json",
-            "documentation": "docs/MULTI_EVENT_OBSERVATIONS.md",
+            "documentation": "docs/records/MULTI_EVENT_OBSERVATIONS.md",
         },
     }
     return contract

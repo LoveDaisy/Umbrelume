@@ -62,6 +62,27 @@ def test_mainline_figure_readme_links():
     assert check_local_links(readme.read_text(), readme.parent)
 
 
+BILINGUAL_PAIRS = [
+    ((ROOT / "README.md"), (ROOT / "README.zh.md")),
+    ((ROOT / "docs/ROADMAP.zh.md"), (ROOT / "docs/ROADMAP.en.md")),
+]
+
+
+def test_bilingual_pairs_exist_and_cross_link():
+    """双语集合闸：成员存在、与孪生实链互指、全部本地链接可解析。
+
+    文件名后缀只标语言，权威版本逐对声明（docs/README.md）；内容同步靠定期
+    人工检查，此闸只拦截「忘了译本存在/互链断裂」这类失效。
+    """
+    for a, b in BILINGUAL_PAIRS:
+        for source, twin in ((a, b), (b, a)):
+            assert source.exists(), f"missing bilingual file: {source}"
+            text = source.read_text()
+            assert f"]({twin.name})" in text, \
+                f"{source.name} does not link its twin {twin.name}"
+            assert check_local_links(text, source.parent)
+
+
 def test_field_resolver_nested_arrays_and_all_wildcard_branches(tmp_path):
     (tmp_path / "sample.json").write_text(json.dumps({
         "events": {"a": {"rows": [{"value": 1}]}, "b": {"rows": [{"value": 2}]}}

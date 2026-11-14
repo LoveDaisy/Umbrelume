@@ -102,7 +102,7 @@ def test_committed_cross_check_references_contain_expected_fields():
 
 
 def test_classify_outermost_thresholds_are_pinned():
-    # Audit anchor for the thresholds quoted in docs/OBSERVATIONAL_VALIDATION.md.
+    # Audit anchor for the thresholds quoted in docs/records/OBSERVATIONAL_VALIDATION.md.
     assert "materially reduces" in classify_outermost(0.5)
     assert "marginally" in classify_outermost(2.0/3.0)
     assert "marginally" in classify_outermost(1.5)

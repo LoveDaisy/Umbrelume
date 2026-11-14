@@ -26,6 +26,6 @@ uv run python -m validation.check_convergence --out outputs/validation/convergen
 ```
 
 The report files were copied unchanged from these outputs. See
-[ROUND2.md](../../../docs/ROUND2.md) for interpretation and
-[ROADMAP.md](../../../docs/ROADMAP.md) for deferred directions. Original v1
+[ROUND2.md](../../../docs/records/ROUND2.md) for interpretation and
+[ROADMAP.zh.md](../../../docs/ROADMAP.zh.md) for deferred directions. Original v1
 snapshots remain outside this folder with their original conditions.

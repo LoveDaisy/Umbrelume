@@ -229,8 +229,8 @@ def test_discrimination_product_schema_and_signs():
 def test_docs_field_paths_resolve_into_products():
     """Existing and mainline citations share one offline field resolver."""
     paths = []
-    for name in ["OBSERVATIONAL_VALIDATION.md", "MULTI_EVENT_OBSERVATIONS.md",
-                 "ROUND2.md", "ROADMAP.md", "MAINLINE.zh.md"]:
+    for name in ["records/OBSERVATIONAL_VALIDATION.md", "records/MULTI_EVENT_OBSERVATIONS.md",
+                 "records/ROUND2.md", "ROADMAP.zh.md", "MAINLINE.zh.md"]:
         found = resolve_product_fields((ROOT/"docs"/name).read_text(),
                                        ROOT/"validation/results")
         if name == "MAINLINE.zh.md":

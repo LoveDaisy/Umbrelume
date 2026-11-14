@@ -34,7 +34,7 @@ uv run python -m validation.compare_observations --out outputs/observations2011
 ```
 
 It compares the unchanged first model with digitized published observed curves,
-not another model's prediction. See [the comparison contract](../docs/OBSERVATIONAL_VALIDATION.md)
+not another model's prediction. See [the comparison contract](../docs/records/OBSERVATIONAL_VALIDATION.md)
 for missing bandpasses, unknown observational uncertainties and interpretation.
 
 ## Round 2
@@ -47,7 +47,7 @@ never the default; blue observations are withheld from its fit. Generate with
 `round2/render/` contains the new default OPAC-prior visualization, produced by
 `uv run lunar-eclipse simulate --out outputs/current`. Metadata accompanies
 the figures. Original baseline/observations2011 snapshots above are unchanged.
-See [ROUND2.md](../docs/ROUND2.md) and [ROADMAP.md](../docs/ROADMAP.md).
+See [ROUND2.md](../docs/records/ROUND2.md) and [ROADMAP.zh.md](../docs/ROADMAP.zh.md).
 
 ## Stratospheric-background default
 

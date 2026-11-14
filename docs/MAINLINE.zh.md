@@ -9,7 +9,7 @@
 
 | 要回答的问题 | 唯一权威入口 | 本文怎样使用 |
 |---|---|---|
-| 现在走到哪里，下一步何时值得做？ | [ROADMAP](ROADMAP.md) | 解释推进逻辑，不复制里程碑状态表或排时间表 |
+| 现在走到哪里，下一步何时值得做？ | [ROADMAP](ROADMAP.zh.md) | 解释推进逻辑，不复制里程碑状态表或排时间表 |
 | 算的是什么，哪些近似必须保留？ | [MODEL](MODEL.md) | 解释各层解决的问题，不重定义公式和容差 |
 | 气溶胶怎样组成，湿度作用在哪层？ | [AEROSOL](physics/AEROSOL.md) | 链接组件契约，不另抄参数或接口规则 |
 | 数据来自哪里，校准值是什么身份？ | [SOURCES](../eclipse/data/SOURCES.md) | 保留先验与拟合的来源边界 |
@@ -56,7 +56,7 @@
   光走完整双侧弯曲路径，再按有限太阳圆盘和守恒环带权重输送；色散、散入光等边界以 [MODEL](MODEL.md) 为准。
 - **判别证据**：同一光路上关闭臭氧吸收的反事实，使分子基线的浅冷色边缘消失，见
   [MODEL 的机制与范围](MODEL.md#references-and-next-discriminating-experiments)及[基线图档](../figures/baseline)。
-  但[首轮观测](OBSERVATIONAL_VALIDATION.md#首版分子模型结论)显示内部系统性偏亮。
+  但[首轮观测](records/OBSERVATIONAL_VALIDATION.md#首版分子模型结论)显示内部系统性偏亮。
 - **可解释**：折射使几何本影仍有照明，长掠过路径上的短波消光使内部偏红；臭氧的选择性吸收能改变外缘谱形，不能只用“蓝光都被散射掉”解释所有位置。
 - **边界**：计算的是未散射光。冷边机制不等于已验证观测中的绿松石带；其宽度、饱和度与绝对亮度仍需匹配波段和空间位置的观测。
 
@@ -70,11 +70,11 @@
 
 - **新增物理**：在既有气体光路上加入有独立出处的自由对流层消光，不改变气体折射几何，不加入散射进接收方向的光。
   组件和零值复原语义只在 [AEROSOL](physics/AEROSOL.md) 定义。
-- **判别证据**：[第二轮](ROUND2.md)先用贡献高度、太阳临边昏暗与密度探针区分候选，再选文献先验。
+- **判别证据**：[第二轮](records/ROUND2.md)先用贡献高度、太阳临边昏暗与密度探针区分候选，再选文献先验。
   [当轮分析](../validation/results/round2/analysis.json)的 `selected_increment` 与
   `identification_scope`钉住选择及其证据等级；这里不复制当轮对照数值。
 - **可解释**：为什么额外消光能优先压低深本影，而不能随便拿近地边界层预设代替？关键是哪些掠过路径仍向接收口径送光，而不是地面看起来霾有多重。
-- **边界**：收益不构成唯一因果归因，也未关闭偏亮。[跨事件比较](MULTI_EVENT_OBSERVATIONS.md)扩大了考验：亮度可以改善，名义蓝/红形状却可能恶化；历史单层先验不是事件实测廓线。
+- **边界**：收益不构成唯一因果归因，也未关闭偏亮。[跨事件比较](records/MULTI_EVENT_OBSERVATIONS.md)扩大了考验：亮度可以改善，名义蓝/红形状却可能恶化；历史单层先验不是事件实测廓线。
 
 ![L2 仅加入自由对流层气溶胶的共同曝光月面屏](../figures/mainline/l2_free_troposphere.png)
 
@@ -121,7 +121,7 @@
 - **新增物理**：本车道本身不增加生产默认物理。带通积分属于观测量匹配；跨事件反演与 `calibrated:` preset 属拟合与显式展示。
   湿度增长有来源、已可选作用于 FT 组件，但逐事件求根仍是校准，不因参数有物理名字而变成独立预测。
 - **判别证据**：
-  - **口径先行**：[滤镜增补](OBSERVATIONAL_VALIDATION.md#滤镜带通口径2026-11-增补)使用假设带型包络，而非实测响应。
+  - **口径先行**：[滤镜增补](records/OBSERVATIONAL_VALIDATION.md#滤镜带通口径2026-11-增补)使用假设带型包络，而非实测响应。
     [带通产物](../validation/results/filter_response_2011/analysis.json)的 `analysis.json` 在仓库内同名不唯一，故此处只给显式文件链接，不写歧义字段引用。
     深处残差不能由所测带通效应解释，最外点只是边际改变；方向必须区分固定先验与分子变体。
 
@@ -143,7 +143,7 @@
     **本章看点**：右上轨迹和右下“瞬时/曝光平均”说明为什么不能拿单个时刻代替整段曝光；
     左下保留固定模型相对读数的残差。它不是当前双层、湿度 A/B 或反演后拟合图。
 
-  - **湿度 A/B**：[来源普查](PRIOR_SOURCE_SURVEY.md)恢复的组件数据经[湿度先验转录](../validation/results/prior_source_survey/humidity_axis_priors.json)进入 FT 标量增长轴。
+  - **湿度 A/B**：[来源普查](records/PRIOR_SOURCE_SURVEY.md)恢复的组件数据经[湿度先验转录](../validation/results/prior_source_survey/humidity_axis_priors.json)进入 FT 标量增长轴。
     `humidity_axis_priors.json:q_rest_derivation`记录非增长余项的减法约束，
     `humidity_axis_priors.json:layer_scope_rulings`限定平流层与校准增量不随这根轴湿度化。
     [A/B 产物](../validation/results/humidity_axis/inversion_ab.json)的 `inversion_ab.json:b50_reproduction_gate.verdict`先钉参考档位精确复现原反演。
@@ -162,7 +162,7 @@
 ### L3+ — 事件相关廓线、云、三维结构与散射：尚未实现的方向
 
 - **新增物理**：本节没有已实现的新增组件，也不把这些方向合成一个承诺中的“大模型”。
-- **判别证据**：[ROADMAP 的进入条件](ROADMAP.md#后续方向与进入条件)拥有每个方向所要回答的缺口：
+- **判别证据**：[ROADMAP 的进入条件](ROADMAP.zh.md#后续方向与进入条件)拥有每个方向所要回答的缺口：
   位置/吸收形状残差推动实际气体廓线检查，方向不对称推动三维天气约束，透射很弱时再判别散入光，后续是否需要多次散射另验。
 - **可解释**：下一轮应由哪类残差和可得观测选择，而不是按名词的复杂度升级？事件相关大气、光源结构和观测口径是可分辨的候选，不是互相代偿的旋钮。
 - **边界**：没有时刻与位置对应的独立资料，给每场月食更多参数只能扩大拟合空间；新增散入光也不能单独解决现有偏亮。进入条件不等于实施时间表。
@@ -171,7 +171,7 @@
 
 - **新增物理**：当前只有中性屏与色度/显示变换；真实月壤反射、BRDF 和观察者条件仍是方向，不是本次实现。
 - **判别证据**：[MODEL 的显示契约](MODEL.md#color-and-display)区分共同曝光与等亮诊断，
-  [ROADMAP 的月面与视觉方向](ROADMAP.md#后续方向与进入条件)及[贴图方向](ROADMAP.md#月面贴图的实现方向)区分真实反射与展示近似。
+  [ROADMAP 的月面与视觉方向](ROADMAP.zh.md#后续方向与进入条件)及[贴图方向](ROADMAP.zh.md#月面贴图的实现方向)区分真实反射与展示近似。
 - **可解释**：同一个照明光谱为什么可能生成不同外观？月面区域权重、反射方向、相机或观察者、曝光与显示都会介入。
 - **边界**：贴图、白点或曝光改变不构成新大气证据；校准 preset 的漂亮图片仍是校准图片。照明场必须能脱离图像单独读回。
 
@@ -187,7 +187,7 @@
 ### 探针先于物理：先确认候选碰不碰得到缺口
 
 原则：不先建设一个完整组件再找理由保留，而先用同口径反事实检查它能改变什么。
-实例：[缺口判别](OBSERVATIONAL_VALIDATION.md#判别探针与相容性排序)里，常见浅边界层类型在事件级亮度上均为排除倾向，
+实例：[缺口判别](records/OBSERVATIONAL_VALIDATION.md#判别探针与相容性排序)里，常见浅边界层类型在事件级亮度上均为排除倾向，
 但这不表示最深单点完全不受影响。对照
 `discrimination.json:candidates.continental_clean.events.*.brightness.verdict`与
 `discrimination.json:candidates.continental_clean.events.june_2011.brightness.max_readout_gap_closure_fraction`。
@@ -204,15 +204,15 @@
 ### 三种证据身份：独立先验、同事件校准、独立预测
 
 原则：参数来自哪里与结果在哪检验，是两件事。
-实例：OPAC 背景先验来自独立来源；[第二轮红波段校准与蓝波段留出](ROUND2.md#效果与仍然存在的残差)仍属同事件检查；
-[多事件固定模型对照](MULTI_EVENT_OBSERVATIONS.md)才提供不同事件的考验。
+实例：OPAC 背景先验来自独立来源；[第二轮红波段校准与蓝波段留出](records/ROUND2.md#效果与仍然存在的残差)仍属同事件检查；
+[多事件固定模型对照](records/MULTI_EVENT_OBSERVATIONS.md)才提供不同事件的考验。
 [先验普查的覆盖矩阵](../validation/results/prior_source_survey/coverage_matrix.json)只说明来源覆盖哪些维度，不授权选某个新默认值。
 湿度增长的来源独立，也不使拟合得到的逐事件 RH 自动独立。
 
 ### 两轴机制：贡献核高度分布 × 成分作用带
 
 原则：不能仅凭粒子的谱斜率猜接收端颜色变化；应先问不同波长的光从哪些路径来。
-实例：[机制分析](OBSERVATIONAL_VALIDATION.md#机制发现形状响应由高度选择性决定)中，Dec 的蓝与红贡献核在低层的质量不同。
+实例：[机制分析](records/OBSERVATIONAL_VALIDATION.md#机制发现形状响应由高度选择性决定)中，Dec 的蓝与红贡献核在低层的质量不同。
 [高度产物](../validation/results/extinction_gap_diagnosis/height_stats.json)的 `height_stats.json:kernel_identity`定义核与高度带语义，
 `height_stats.json:summary.worst_relative_gap`核对零阶矩与原预测；核的高度分布不是实测大气廓线。
 低层增量优先削弱所命中的红核，高层增量命中更多蓝核，能带来相反的蓝/红变化。
@@ -286,7 +286,7 @@ helper 按语义复用而非按长度迁移：当前贡献核在 `extinction_gap
 | [fetch_hst2019.py](../tools/fetch_hst2019.py) | MAST FITS/论文缓存、header 与哈希来源合同 | 原始产品取得不等于已经完成光谱比较 |
 | [fetch_hst2019_geometry.py](../tools/fetch_hst2019_geometry.py) | HST 成员曝光、月面指向和独立影轴重建 | 采集层复用 December 的影轴坐标函数，不另抄几何公式 |
 
-先验普查的来源、增长表与覆盖矩阵是[已提交调查产物](PRIOR_SOURCE_SURVEY.md#where-the-evidence-lives)，
+先验普查的来源、增长表与覆盖矩阵是[已提交调查产物](records/PRIOR_SOURCE_SURVEY.md#where-the-evidence-lives)，
 不假造一个并不存在的 `validation.prior_source_survey` 自动再生成入口。
 
 ## 叙事钩子：给未来文章的问题，不提前写结论
@@ -294,14 +294,14 @@ helper 按语义复用而非按长度迁移：当前贡献核在 `extinction_gap
 | 问题 | 目前能答到哪一级 | 能答与不能答的边界 / 回看证据 |
 |---|---|---|
 | 地球挡住太阳，月球为什么仍亮、还偏红？ | L1 | 折射与分子消光给机制；绝对亮度还需气溶胶及跨事件考验，见 [MODEL](MODEL.md) |
-| 绿松石带到底是什么，是模型已经验证的那圈蓝吗？ | L1 机制；观测验证仍开放 | 冷色边缘不等于带宽/饱和度复现，见 [ROADMAP](ROADMAP.md#绿松石带需要的证据) |
+| 绿松石带到底是什么，是模型已经验证的那圈蓝吗？ | L1 机制；观测验证仍开放 | 冷色边缘不等于带宽/饱和度复现，见 [ROADMAP](ROADMAP.zh.md#绿松石带需要的证据) |
 | 影子边缘为什么反而可能出现冷色？ | L1 | 同路径臭氧吸收反事实支持谱形机制，不代表完整真实月面外观，见 [MODEL](MODEL.md#references-and-next-discriminating-experiments) |
 | 光路都算对了，为什么模型还是偏亮？ | L0→L2.5 | 数值核验与现实大气是两道问题；固定先验 standing gap 未关，见 [AEROSOL](physics/AEROSOL.md#evidence-and-interpretation) |
 | 多放一点近地霾，为什么未必有用？ | L2→L2.5 判别 | 接收核对浅层的可达性而非地面 AOD 决定效应，见[判别表](../validation/results/extinction_gap_diagnosis/discrimination.json) |
-| 为什么更暗了，蓝/红谱形却更错？ | L2/L2.5 两轴机制 | 作用高度与各波长贡献核共同决定，见[机制分析](OBSERVATIONAL_VALIDATION.md#机制发现形状响应由高度选择性决定) |
+| 为什么更暗了，蓝/红谱形却更错？ | L2/L2.5 两轴机制 | 作用高度与各波长贡献核共同决定，见[机制分析](records/OBSERVATIONAL_VALIDATION.md#机制发现形状响应由高度选择性决定) |
 | 调到吻合的月食图，为什么不算独立预测？ | 校准车道 | 拟合子集、同事件留出、新事件三者证据不同，见[反演](../validation/results/atmosphere_inversion/inversion.json)与 [SOURCES](../eclipse/data/SOURCES.md#calibration-lane-preset-registry) |
 | 湿度能解释多少，求出的 RH 就是真实天气吗？ | 湿度 A/B | 能回答模型内闭合需求与残余份额，不能替代独立气象证据，见[A/B](../validation/results/humidity_axis/inversion_ab.json) |
-| 加月海贴图或换曝光，能不能把偏差修好？ | 渲染轴 | 能改变外观和月面权重，不能回头改变照明场的物理证据，见 [ROADMAP](ROADMAP.md#月面贴图的实现方向) |
+| 加月海贴图或换曝光，能不能把偏差修好？ | 渲染轴 | 能改变外观和月面权重，不能回头改变照明场的物理证据，见 [ROADMAP](ROADMAP.zh.md#月面贴图的实现方向) |
 
 清单是可编辑的写作地基，不是文章成稿，也不是“所有问题已解决”的完备性声明。
 

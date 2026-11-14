@@ -74,7 +74,7 @@ the continuous interior gradient does not include that cutoff's jump.
 
 `calibrated_presets.json` is a data-layer registry of rendering presets built
 from the cross-event atmospheric inversion (calibration lane; see
-`docs/OBSERVATIONAL_VALIDATION.md`, section 跨事件所需大气反演). Each entry is
+`docs/records/OBSERVATIONAL_VALIDATION.md`, section 跨事件所需大气反演). Each entry is
 a complete atmosphere: the production two-layer OPAC default plus one
 inverted low-layer increment whose AOD is fitted to that event's brightness
 residual. The values are mechanically anchored to the committed inversion
@@ -98,4 +98,4 @@ component data files recovered via GEISA/ESPRI Internet-Archive captures
 against the pinned Hess, Koepke and Schult paper), an AERONET Level-2.0
 site-year export, and open-access climatology papers. The survey changed
 no default; its conclusion section is
-[docs/PRIOR_SOURCE_SURVEY.md](../../docs/PRIOR_SOURCE_SURVEY.md).
+[docs/records/PRIOR_SOURCE_SURVEY.md](../../docs/records/PRIOR_SOURCE_SURVEY.md).

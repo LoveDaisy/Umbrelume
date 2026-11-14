@@ -1,5 +1,7 @@
 # 从粗到精的项目路线
 
+> English translation: [ROADMAP.en.md](ROADMAP.en.md)（译本非权威，以本文件为准）
+
 ## 目标与当前边界
 
 目标是从太阳光谱和地球大气中的传播行为，计算月球位置处的光谱照度，再模拟月食月面的颜色，
@@ -10,8 +12,8 @@
 尚未包含真实月壤和观察者。现有 2011 年两波段观测曲线没有覆盖绿松石带本身，
 不能据此宣称已经验证完整可见颜色、色带宽度或饱和度。
 
-[MODEL.md](MODEL.md)负责物理与数值契约；[OBSERVATIONAL_VALIDATION.md](OBSERVATIONAL_VALIDATION.md)
-负责首轮对照；[MULTI_EVENT_OBSERVATIONS.md](MULTI_EVENT_OBSERVATIONS.md)记录多事件资料、使用条件和新增比较。
+[MODEL.md](MODEL.md)负责物理与数值契约；[OBSERVATIONAL_VALIDATION.md](records/OBSERVATIONAL_VALIDATION.md)
+负责首轮对照；[MULTI_EVENT_OBSERVATIONS.md](records/MULTI_EVENT_OBSERVATIONS.md)记录多事件资料、使用条件和新增比较。
 本文件记录已经走到哪里，以及后续方向的进入条件。
 
 ## 已实现的里程碑
@@ -22,10 +24,10 @@
 | M1：端到端折射透射模型 | 太阳侧预计算弯曲光路、空气/臭氧柱量；有限太阳圆盘及距离；守恒的入射环带积分；光谱到颜色 | 完成。包含瑞利消光和臭氧吸收，折射路径使用 550 nm 参考；太阳亮度均匀 |
 | M1：独立数值核验 | 笛卡尔光线 ODE、全平面能量预算、无大气几何极限和分辨率检查 | 完成。证明声明模型的实现与数值闭合，不代替观测验证 |
 | M2：第一组公开观测参照 | 数字化 2011-06-15 西侧本影的 503/677 nm 观测曲线；采用事件距离，保存来源、提取与比较脚本 | 完成。首版越深入本影越偏亮；读数来自发表曲线，滤镜响应和逐点误差仍缺失 |
-| M3：自由对流层气溶胶消光 | 增加固定 OPAC 先验：2–12 km、尺度高度 8 km、AOD550=0.013，分段光谱指数 1.58/1.21 | 完成；验证结果与改进幅度见 [ROUND2.md](ROUND2.md)。该先验不是 2011 年的实测廓线 |
+| M3：自由对流层气溶胶消光 | 增加固定 OPAC 先验：2–12 km、尺度高度 8 km、AOD550=0.013，分段光谱指数 1.58/1.21 | 完成；验证结果与改进幅度见 [ROUND2.md](records/ROUND2.md)。该先验不是 2011 年的实测廓线 |
 | M4：扩大独立观测范围 | 整理 1990/2007 年发表测光表、2011 年 12 月观测谱和 2019 年 GF-4 来源条件；完成视场及曝光时间积分 | 已完成 1990 年亮度、2011 年 12 月连续谱的固定模型比较，后者包含独立星历、图示核对与位置敏感性；2007 年最低值仅为外推背景；仍非完整颜色验证 |
 | M5：平流层背景气溶胶组件 | 判别表（12 候选 × 四口径）唯一改善形状轴的 `stratosphere_background` 先验（12–35 km、AOD550=0.005、α=0.74/1.14，OPAC 同源）经 `AerosolColumn` 进入生产默认；判别表数值作为预注册预测逐项核对（`validation/results/stratosphere_background/preregistered_check.json`，8 行 within_tolerance） | 完成。亮度轴闭合 +0.19~+0.44 仍在张力带——亮度残差不被本组件关闭（预注册预期，standing gap 见 [physics/AEROSOL.md](physics/AEROSOL.md)）；宽低层增量（antarctic 代理）判定不进默认 |
-| M6：跨事件所需大气反演（校准车道） | 四口径逐事件低层增量连续反演 + 预注册划分/判别/检索规格 + 按事件命名 `calibrated:` preset 注册表（`eclipse/data/calibrated_presets.json`）；证据见 `validation/results/atmosphere_inversion/` 与 [OBSERVATIONAL_VALIDATION.md](OBSERVATIONAL_VALIDATION.md) | 完成。R（`inversion.json:cross_event.R`）落张力带（partially_consistent，预注册机械判定）；一切值相对生产默认基线、永不进默认，默认输出逐位不变；June 反演值低于钉定 BL 谱系下界已记 finding |
+| M6：跨事件所需大气反演（校准车道） | 四口径逐事件低层增量连续反演 + 预注册划分/判别/检索规格 + 按事件命名 `calibrated:` preset 注册表（`eclipse/data/calibrated_presets.json`）；证据见 `validation/results/atmosphere_inversion/` 与 [OBSERVATIONAL_VALIDATION.md](records/OBSERVATIONAL_VALIDATION.md) | 完成。R（`inversion.json:cross_event.R`）落张力带（partially_consistent，预注册机械判定）；一切值相对生产默认基线、永不进默认，默认输出逐位不变；June 反演值低于钉定 BL 谱系下界已记 finding |
 | M7：湿度轴 + A/B 预注册重反演 | 恢复的 OPAC 1998 WASO 组件湿度档值（task-prior-source-survey 产物，SHA 逐档钉定）进入 `eclipse/aerosol.py` 作 FT 层可选湿度增长（`ft_growth_factor`，f(50%)≡1.0 位精确、q_rest 减法钉死、域 [0.5,0.99] fail-loud）；CLI `--rh`（仅 opac/opac-ft）；转录产品 `validation/results/prior_source_survey/humidity_axis_priors.json`（引文+几何对照+裁定）；A/B 两变体预注册重反演（A=RH-only 求根、B=pinned RH {50,70,99}% ladder × task-5 机器逐字复用，B(50%) 位精确复现 pool 为机械闸），(B−A) 份额表 + R_RH 判别落盘 `validation/results/humidity_axis/` | 完成。默认 RH=0.5 输出逐位不变（快照 cmp 实证）；平流层与校准增量层裁定不带湿度（J4/J3，`humidity_axis_priors.json`）；湿度散布判读为份额测量而非因果宣称 |
 
 第一版图片保留在 [figures/baseline](../figures/baseline)，第一轮观测对照保留在
@@ -52,11 +54,11 @@ M3 只把**气溶胶造成的额外消光**加入传播模型。当时残差的�
 新增 1990 年整月面实测亮度下，固定 OPAC 模型约偏亮 57%，低于分子模型约 90% 的偏亮，
 但尚不能把这项残差唯一归于某种大气过程。
 
-2011 年 12 月半小时曝光的名义目标轨迹和时间平均已完成，见 [DECEMBER2011.md](DECEMBER2011.md)：
+2011 年 12 月半小时曝光的名义目标轨迹和时间平均已完成，见 [DECEMBER2011.md](records/DECEMBER2011.md)：
 默认模型仍偏亮 41%–94%，所检查的位置敏感性不能单独消除亮度残差；
 气溶胶改善绝对亮度，但名义蓝／红谱比未随之改善。后续物理细化须同时解释跨事件的亮度和形状，
 再判断事件相关廓线、臭氧及其他物理项的必要性。2007 年外推最低值不计入独立验证事件数。
-资料状态、未闭合条件及复现入口统一见 [多事件参照](MULTI_EVENT_OBSERVATIONS.md)。
+资料状态、未闭合条件及复现入口统一见 [多事件参照](records/MULTI_EVENT_OBSERVATIONS.md)。
 
 ## 后续方向与进入条件
 
