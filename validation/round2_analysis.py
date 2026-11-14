@@ -26,6 +26,7 @@ from eclipse.aerosol import AerosolProfile
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
 from eclipse.spectra import rayleigh_cross_section, ozone_cross_section
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, receiver_quadrature, transmission_profile, ring_fraction
 from .compare_observations import DATA, load_observations
 
@@ -201,7 +202,7 @@ def write_analysis(out):
     styles={"molecular":("#a7aeb4","--","Molecular v1"),
             "fixed_opac":("#ac4f31","-","Fixed OPAC prior / AOD550=0.013"),
             "red_calibrated":("#227580",":",f"AOD calibrated on677nm only / {report['calibration']['aod550']:.4f}")}
-    with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,"axes.spines.right":False}):
+    with plt.rc_context(BASE_RC):
         fig,axes=plt.subplots(2,2,figsize=(11.8,8),sharex="col",gridspec_kw={"height_ratios":[2.2,1.2],"hspace":.12})
         for j,band in enumerate(wavelengths):
             subset=[row for row in records if row["wavelength_nm"]==band]

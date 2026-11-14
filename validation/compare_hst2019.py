@@ -41,6 +41,7 @@ import eclipse
 from eclipse.aerosol import AerosolProfile
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, geometric_transmission, transmission_profile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -420,8 +421,7 @@ def write_analysis(out: Path):
     penumbral_datasets = report["grouping"]["penumbral_auxiliary"]
     umbral_colors = {dataset:PLOT_COLORS[index] for index,dataset in enumerate(umbral_datasets)}
     penumbral_colors = {dataset:PLOT_COLORS[index] for index,dataset in enumerate(penumbral_datasets)}
-    with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,
-                         "axes.spines.right":False}):
+    with plt.rc_context(BASE_RC):
         fig,axes = plt.subplots(2,2,figsize=(11,7.3),gridspec_kw={"hspace":.35})
         for dataset in umbral_datasets:
             color = umbral_colors[dataset]

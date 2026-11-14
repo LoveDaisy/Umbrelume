@@ -17,6 +17,9 @@ from .atmosphere import (
 from .spectra import refractive_index_air
 from .aerosol import AerosolPrior, AerosolProfile, active_aerosol_layers
 
+# Default tangent-height quadrature order; surfaced verbatim in CLI metadata.
+QUADRATURE_ORDER = 48
+
 
 @dataclass(frozen=True)
 class RayTable:
@@ -51,7 +54,7 @@ def build_ray_table(
     atmosphere: Atmosphere,
     *,
     height_step_m: float = 100.0,
-    quadrature_order: int = 48,
+    quadrature_order: int = QUADRATURE_ORDER,
     reference_wavelength_nm: float = 550.0,
     refraction: bool = True,
     aerosol_profile: AerosolPrior = None,

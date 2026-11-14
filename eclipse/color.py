@@ -26,6 +26,21 @@ BRADFORD = np.array([
     [0.0389, -0.0685, 1.0296],
 ])
 D65 = np.array([0.9504559270516716, 1.0, 1.0890577507598784])
+EXPOSURE_STOP_LIMIT = 100.0
+
+
+def relative_photopic(spectra, wavelength_nm, reference_spectrum) -> np.ndarray:
+    """Return CIE Y of spectra relative to the reference spectrum's CIE Y.
+
+    With spectral irradiance in W m^-2 nm^-1, this is the relative photopic
+    irradiance ratio (see spectrum_to_xyz). The reference must have positive
+    photopic irradiance; this single definition feeds the CLI metadata, the
+    report summary and the profile CSV.
+    """
+    reference_y = spectrum_to_xyz(reference_spectrum, wavelength_nm)[..., 1]
+    if np.any(reference_y <= 0):
+        raise ValueError("reference_spectrum must have positive photopic irradiance")
+    return spectrum_to_xyz(spectra, wavelength_nm)[..., 1] / reference_y
 
 
 def _spectral_inputs(spectra, wavelength_nm) -> tuple[np.ndarray, np.ndarray]:
@@ -110,7 +125,7 @@ def finish_display(linear_rgb, exposure_stops: float = 0.0) -> np.ndarray:
     channels from colors outside sRGB are clipped; no color appearance or
     perceptual gamut mapping is claimed.
     """
-    if not np.isfinite(exposure_stops) or abs(exposure_stops) > 100:
+    if not np.isfinite(exposure_stops) or abs(exposure_stops) > EXPOSURE_STOP_LIMIT:
         raise ValueError("exposure_stops must be finite and between -100 and 100")
     values = np.asarray(linear_rgb, dtype=float)
     if values.ndim == 0 or values.shape[-1] != 3 or not np.all(np.isfinite(values)):

@@ -13,13 +13,15 @@ from numpy.polynomial.legendre import leggauss
 
 from .atmosphere import Atmosphere, EARTH_RADIUS_M
 from .aerosol import AerosolColumn, AerosolPrior
-from .rays import RayTable, build_ray_table
+from .rays import QUADRATURE_ORDER, RayTable, build_ray_table
 from .spectra import ozone_cross_section, rayleigh_cross_section, solar_irradiance
 
 AU_M = 149_597_870_700.0
 SUN_RADIUS_M = 695_700_000.0
 MOON_DISTANCE_M = 384_400_000.0
 MOON_RADIUS_M = 1_737_400.0
+# Default Gauss-Legendre order for receiver-ring quadrature; surfaced verbatim in CLI metadata.
+RECEIVER_INTEGRATION_ORDER = 8
 
 
 @dataclass(frozen=True)
@@ -97,7 +99,7 @@ def signed_landing_radius(table: RayTable, geometry: Geometry) -> np.ndarray:
 
 
 def receiver_quadrature(table: RayTable, radius_m: float, geometry: Geometry,
-                        integration_order: int = 8) -> tuple[np.ndarray, np.ndarray]:
+                        integration_order: int = RECEIVER_INTEGRATION_ORDER) -> tuple[np.ndarray, np.ndarray]:
     """Return incident b samples and conserved finite-source area weights.
 
     Shared by transport and altitude-contribution diagnostics; no extinction
@@ -136,7 +138,7 @@ def transmission_profile(
     ozone: bool = True,
     aerosol: bool = True,
     extinction: bool = True,
-    integration_order: int = 8,
+    integration_order: int = RECEIVER_INTEGRATION_ORDER,
 ) -> np.ndarray:
     """E_lambda/F_lambda at the receiver, preserving absolute annular weights.
 
@@ -200,8 +202,8 @@ def simulate(
     atmosphere: Atmosphere | None = None,
     geometry: Geometry = Geometry(),
     height_step_m: float = 100.0,
-    quadrature_order: int = 48,
-    integration_order: int = 8,
+    quadrature_order: int = QUADRATURE_ORDER,
+    integration_order: int = RECEIVER_INTEGRATION_ORDER,
     aerosol_profile: AerosolPrior = AerosolColumn.opac_default(),
 ) -> EclipseResult:
     """Precompute forward rays once, then integrate ozone on/off at all receivers.

@@ -17,9 +17,10 @@ from .aerosol import (
     OPAC_PDF_SHA256, PRIOR_PARAMETERS_JSON, RH_MAX, RH_MIN, ft_growth_factor,
     ft_humidity_provenance,
 )
-from .color import spectrum_to_xyz
+from .color import EXPOSURE_STOP_LIMIT, relative_photopic
+from .rays import QUADRATURE_ORDER
 from .report import write_report
-from .transport import Geometry, simulate, signed_landing_radius
+from .transport import MOON_RADIUS_M, RECEIVER_INTEGRATION_ORDER, Geometry, simulate, signed_landing_radius
 
 
 def _positive(value):
@@ -154,11 +155,11 @@ def main(argv=None):
     run.add_argument("--wavelength-step-nm", type=_positive, default=5.0)
     run.add_argument("--no-plots", action="store_true", help="Write numerical results only")
     args = parser.parse_args(argv)
-    if not np.isfinite(args.exposure_stops) or abs(args.exposure_stops) > 100:
+    if not np.isfinite(args.exposure_stops) or abs(args.exposure_stops) > EXPOSURE_STOP_LIMIT:
         parser.error("--exposure-stops must be finite and between -100 and 100")
     if args.wavelength_step_nm > 100:
         parser.error("--wavelength-step-nm must be at most 100")
-    if not args.no_plots and args.radius_max_km < args.moon_offset_km + 1737.4:
+    if not args.no_plots and args.radius_max_km < args.moon_offset_km + MOON_RADIUS_M / 1000:
         parser.error("--radius-max-km must cover the entire lunar disk")
     calibrated_name = None
     if args.aerosol.startswith("calibrated:"):
@@ -227,8 +228,7 @@ def main(argv=None):
     result = simulate(radius, wl, atmosphere=atmosphere, geometry=geometry,
                       height_step_m=args.height_step_m, aerosol_profile=aerosol_prior)
     elapsed = time.perf_counter()-start
-    relative_y = spectrum_to_xyz(result.irradiance, wl)[:, 1] / spectrum_to_xyz(
-        result.reference_irradiance, wl)[1]
+    relative_y = relative_photopic(result.irradiance, wl, result.reference_irradiance)
     table = result.ray_table
     umbra = geometry.magnification*EARTH_RADIUS_M - geometry.solar_blur_m
     penumbra = geometry.magnification*EARTH_RADIUS_M + geometry.solar_blur_m
@@ -248,8 +248,8 @@ def main(argv=None):
                                 "OPAC literature prior" if args.aod550 is None else
                                 "User override; not an independent prior"),
         "geometry": asdict(geometry),
-        "numerics": {"height_step_m": args.height_step_m, "path_quadrature_order": 48,
-                     "receiver_integration_order": 8, "radius_count": len(radius),
+        "numerics": {"height_step_m": args.height_step_m, "path_quadrature_order": QUADRATURE_ORDER,
+                     "receiver_integration_order": RECEIVER_INTEGRATION_ORDER, "radius_count": len(radius),
                      "wavelength_count": len(wl), "ray_count": len(table.altitude_m),
                      "wavelength_range_nm": [float(wl[0]), float(wl[-1])],
                      "wavelength_step_nm": float(wl[1]-wl[0]),

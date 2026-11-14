@@ -11,15 +11,15 @@ from math import erf, sqrt
 
 import numpy as np
 
+from .spectra import BOLTZMANN_CONSTANT, REFERENCE_NUMBER_DENSITY
+
 
 EARTH_RADIUS_M = 6_371_000.0
-REFERENCE_NUMBER_DENSITY = 101325.0 / (1.380649e-23 * 288.15)
 DOBSON_UNIT = 2.687e20  # molecules per m^2
 
 # The standard uses an effective geopotential radius, distinct from the
 # physical radius of the spherical Earth used for ray geometry.
 _GEOPOTENTIAL_RADIUS_M = 6_356_766.0
-_BOLTZMANN = 1.380649e-23
 _G0 = 9.80665
 _R_AIR = 8314.32 / 28.9644  # US1976 convention [J kg^-1 K^-1]
 _H_BASE = np.array([0.0, 11000.0, 20000.0, 32000.0, 47000.0,
@@ -115,7 +115,7 @@ class Atmosphere:
         temperature, pressure, _ = _state(altitude)
         return np.where(
             altitude <= self.top_m,
-            self.density_scale * pressure / (_BOLTZMANN * temperature),
+            self.density_scale * pressure / (BOLTZMANN_CONSTANT * temperature),
             0.0,
         )
 

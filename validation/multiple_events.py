@@ -24,6 +24,7 @@ from eclipse.aerosol import AerosolProfile
 from eclipse.atmosphere import Atmosphere, LAYER_BOUNDARIES_M
 from eclipse.rays import build_ray_table
 from eclipse.spectra import cie_xyz, solar_irradiance, rayleigh_cross_section
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, MOON_RADIUS_M, ring_fraction, transmission_profile
 
 DATA = Path(__file__).resolve().parent/"observations/hernitschek2008"
@@ -153,8 +154,7 @@ def write_analysis(out):
     with (out/"comparison.csv").open("w",newline="") as stream:
         writer = csv.DictWriter(stream,fieldnames=list(records[0]),lineterminator="\n")
         writer.writeheader();writer.writerows(records)
-    with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,
-                         "axes.spines.top":False,"axes.spines.right":False}):
+    with plt.rc_context(BASE_RC):
         fig,axes = plt.subplots(1,2,figsize=(10.5,5),sharey=True)
         for ax,event in zip(axes,["1990-02-09","2007-03-03"]):
             rows = [r for r in records if r["event_date"]==event]

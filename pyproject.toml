@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lunar-eclipse-color"
-version = "0.3.0"
+dynamic = ["version"]
 description = "Spectral lunar-eclipse illumination from refracted atmospheric transmission"
 requires-python = ">=3.12"
 dependencies = [
@@ -26,6 +26,9 @@ include = ["eclipse*"]
 
 [tool.setuptools.package-data]
 eclipse = ["data/*.csv", "data/*.md"]
+
+[tool.setuptools.dynamic]
+version = {attr = "eclipse.__version__"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

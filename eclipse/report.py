@@ -14,19 +14,25 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .color import finish_display, linear_display_rgb, spectrum_to_xyz
+from .color import finish_display, linear_display_rgb, relative_photopic, spectrum_to_xyz
+from .transport import MOON_RADIUS_M
 
 
 _ON = "#ad502e"
 _OFF = "#2d797a"
-_STYLE = {
+# Shared matplotlib base style: the single definition every figure-producing
+# script in the repo consumes (eclipse.report, tools/render_mainline,
+# validation/*). Scripts with additional display preferences layer them on
+# top of BASE_RC instead of redefining the shared keys.
+BASE_RC = {
     "font.family": "DejaVu Sans", "font.size": 10,
     "axes.spines.top": False, "axes.spines.right": False,
-    "axes.labelcolor": "#30343a", "text.color": "#252a31",
-    "axes.edgecolor": "#bdc2c6", "xtick.color": "#545d66",
-    "ytick.color": "#545d66", "figure.facecolor": "white",
-    "axes.facecolor": "white", "savefig.facecolor": "white",
+    "figure.facecolor": "white", "axes.facecolor": "white",
+    "savefig.facecolor": "white",
 }
+HOUSE_STYLE = {**BASE_RC, "axes.labelcolor": "#30343a", "text.color": "#252a31",
+               "axes.edgecolor": "#bdc2c6", "xtick.color": "#545d66",
+               "ytick.color": "#545d66"}
 
 
 def _validate_inputs(radius_m, wavelength_nm, irradiance, reference_irradiance,
@@ -84,7 +90,7 @@ def _json_value(value):
 
 def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
                  irradiance_no_ozone, output_dir, *, moon_offset_m=2860000.0,
-                 moon_radius_m=1737400.0, exposure_stops=8.0, metadata=None) -> list[Path]:
+                 moon_radius_m=MOON_RADIUS_M, exposure_stops=8.0, metadata=None) -> list[Path]:
     """Write plots, common-exposure disk images, diagnostics and report.json.
 
     Input irradiance is a normal-to-axis, shadow-plane spectral irradiance in
@@ -101,8 +107,8 @@ def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
     finish_display(np.zeros(3), exposure_stops)
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    relative_y = spectrum_to_xyz(spectra, wl)[:, 1] / spectrum_to_xyz(reference, wl)[1]
-    relative_y_off = spectrum_to_xyz(no_ozone, wl)[:, 1] / spectrum_to_xyz(reference, wl)[1]
+    relative_y = relative_photopic(spectra, wl, reference)
+    relative_y_off = relative_photopic(no_ozone, wl, reference)
     rgb_linear = linear_display_rgb(spectra, wl, reference)
     off_linear = linear_display_rgb(no_ozone, wl, reference)
     diagnostic_linear = linear_display_rgb(spectra, wl, reference, normalize_luminance=True)
@@ -111,7 +117,7 @@ def write_report(radius_m, wavelength_nm, irradiance, reference_irradiance,
     moon_off = _disk_image(radius, off_linear, moon_offset_m, moon_radius_m, exposure_stops)
     files = []
 
-    with plt.rc_context(_STYLE):
+    with plt.rc_context(HOUSE_STYLE):
         fig, axes = plt.subplots(4, 1, figsize=(10.6, 7.3), sharex=True,
                                  gridspec_kw={"height_ratios": [4.5, 0.5, 0.5, 0.5], "hspace": 0.36})
         ax = axes[0]

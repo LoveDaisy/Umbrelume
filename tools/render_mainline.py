@@ -26,6 +26,8 @@ from matplotlib import font_manager, ft2font
 import numpy as np
 from PIL import Image
 
+from eclipse.report import HOUSE_STYLE
+
 ROOT = Path(__file__).resolve().parents[1]
 # One configuration expands into execution, provenance and test expectations.
 COMMON_ARGS = (
@@ -130,13 +132,7 @@ def read_spectra(path):
 
 
 def plot_transmission(tables, umbra_m, target):
-    style = {"font.family": PLOT["font"], "font.size": 10,
-             "axes.spines.top": False, "axes.spines.right": False,
-             "text.color": "#252a31", "axes.labelcolor": "#30343a",
-             "axes.edgecolor": "#bdc2c6", "xtick.color": "#545d66",
-             "ytick.color": "#545d66", "figure.facecolor": "white",
-             "axes.facecolor": "white", "savefig.facecolor": "white"}
-    with plt.rc_context(style):
+    with plt.rc_context(HOUSE_STYLE):
         fig, axes = plt.subplots(1, 3, figsize=PLOT["figsize_inches"], sharey=True)
         for panel, (ax, radius) in enumerate(zip(axes, SAMPLE_RADII_M, strict=True)):
             for state, spec in STATES.items():

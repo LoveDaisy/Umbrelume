@@ -39,22 +39,22 @@
     }
   },
   "inputs_sha256": {
-    "eclipse/__init__.py": "2e87a5510048ecd6a4fc1c0215a230018c7171b1ea255e3d19bec569221810d4",
+    "eclipse/__init__.py": "bc6a848e7899872101fdb1ddbe6f9f66c1a92a7f5cfca2d28eb35db5fdb7adba",
     "eclipse/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
     "eclipse/aerosol.py": "354853d6c5d4b1516439c775d3573dda21169debb832d2098c5ac793cae73ffa",
-    "eclipse/atmosphere.py": "2ae9748efec1f058a1e086aa96b8ad881e7aff455e30bb842dd156934535841e",
-    "eclipse/cli.py": "2402c3842bfd7e7d2c7e6adb6e8ffc180e8dc1cc48b2fb713cd911076dc5f41a",
-    "eclipse/color.py": "bf6f62009c5fc8058506c3d08e3ff8999bce4588195461f8835522c9f60287e4",
+    "eclipse/atmosphere.py": "cc83b191afe0584e6fbed5fdf0df54c5c30e1ffd25497e535f69c57b62d4cd7b",
+    "eclipse/cli.py": "f5669aa549aa97102d54143cf444e0d4716d71b776ec0fec56299635c264f2f4",
+    "eclipse/color.py": "892284acd54ea1156b194aad178ca1c04777d489bd673376062175e32653975f",
     "eclipse/data/SOURCES.md": "5622b642dead431c0258a02c477f7d2a4040cf0f8a5fa9dae1eb05f72facf708",
     "eclipse/data/cie1931_2deg.csv": "3f8de45150219f165c9a57c20346e3a7f04e183c3a1cdd2029ca3e8d3e9bff10",
     "eclipse/data/o3_cross_section.csv": "4606941959561aeeb9bb6f967661888cb7f82ba92e4009b739106ac091ac2462",
     "eclipse/data/solar_am0.csv": "a532555ff4d5bd8071b7aabed80aa0c167ddf6fd6e2d51c3cfe1916d265e793c",
-    "eclipse/rays.py": "fd688f653d8e33549e80788c5f85736f77f74b10776209d3a4ac026280ac408c",
-    "eclipse/report.py": "c91cb130531e97cc7dd9d6fccdc4948ee48ebe0ebfca152277e678e988164cd8",
-    "eclipse/spectra.py": "6b440eb353260405c7747d19de72e710ca640fabaf0e06ba3d1400198d10467e",
-    "eclipse/transport.py": "688ef98f58b33b93f1c9ae047fc102225314fd4d59d0575ef82c1108a2f1c98e",
-    "tools/render_mainline.py": "4f8b59876415f919e62abce1af6b2bf271ea7b27aa3ef3b07712454bc058ef6b",
-    "uv.lock": "8c13ee8affaf40689c12f6695e2092466d675017b1504839a8e7aa80fe392cba"
+    "eclipse/rays.py": "b03491aa976cf2bfb3910464fe70ff8451e3afca7b05ed2056df4b42c14fc602",
+    "eclipse/report.py": "12a9378b1fe6da8a8a3dd69bcdf025beb19adaa00a831717b83c2dacd9fb8f2a",
+    "eclipse/spectra.py": "1d977e31dbdc1ce34d2507296c178615df032a86ac0ef2cd91a01184a8938272",
+    "eclipse/transport.py": "b0c03afcc8ff4a4fc4f8d2f24209bf0a55bcfaf914040d27c196a226f190d584",
+    "tools/render_mainline.py": "d913a8971e68e0c4aa9393195fd3115fc18571f41f04b2d2279e6b103552604b",
+    "uv.lock": "09fe5732cecde611dda9bdd86990deeb8cf02063f2960b870853c85f92bcfcff"
   },
   "plot": {
     "dpi": 170,
@@ -186,7 +186,7 @@
           ],
           "wavelength_step_nm": 5.0
         },
-        "version": "0.2.0"
+        "version": "0.3.0"
       },
       "overrides": {
         "aod550": null,
@@ -712,7 +712,7 @@
           ],
           "wavelength_step_nm": 5.0
         },
-        "version": "0.2.0"
+        "version": "0.3.0"
       },
       "overrides": {
         "aod550": null,
@@ -1216,7 +1216,7 @@
           ],
           "wavelength_step_nm": 5.0
         },
-        "version": "0.2.0"
+        "version": "0.3.0"
       },
       "overrides": {
         "aod550": null,

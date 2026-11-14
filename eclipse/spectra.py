@@ -11,8 +11,10 @@ import numpy as np
 
 
 _DATA_DIR = Path(__file__).resolve().parent / "data"
-_BOLTZMANN = 1.380649e-23
-_REFERENCE_NUMBER_DENSITY = 101325.0 / (_BOLTZMANN * 288.15)
+BOLTZMANN_CONSTANT = 1.380649e-23
+# Molecular number density of the US1976 sea-level standard state; the single
+# definition, re-exported by eclipse.atmosphere for its own consumers.
+REFERENCE_NUMBER_DENSITY = 101325.0 / (BOLTZMANN_CONSTANT * 288.15)
 
 
 def _wavelengths(wavelength_nm):
@@ -94,7 +96,7 @@ def rayleigh_cross_section(wavelength_nm):
     depolarization = 0.0279
     king_factor = (6.0 + 3.0 * depolarization) / (6.0 - 7.0 * depolarization)
     return (
-        24.0 * np.pi**3 / (_REFERENCE_NUMBER_DENSITY**2 * (wl * 1e-9) ** 4)
+        24.0 * np.pi**3 / (REFERENCE_NUMBER_DENSITY**2 * (wl * 1e-9) ** 4)
         * ((n_squared - 1.0) / (n_squared + 2.0)) ** 2
         * king_factor
     )

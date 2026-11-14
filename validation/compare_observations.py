@@ -20,6 +20,7 @@ import numpy as np
 import eclipse
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, transmission_profile
 
 DATA = Path(__file__).resolve().parent/"observations"/"ugolnikov2011"
@@ -131,9 +132,7 @@ def write_comparison(output_dir: Path, data_dir=DATA):
         writer=csv.DictWriter(stream,fieldnames=records[0].keys(),lineterminator="\n")
         writer.writeheader(); writer.writerows(records)
     (output_dir/"comparison.json").write_text(json.dumps(report,indent=2)+"\n")
-    style={"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,
-           "axes.spines.right":False,"figure.facecolor":"white","axes.facecolor":"white"}
-    with plt.rc_context(style):
+    with plt.rc_context(BASE_RC):
         fig,axes=plt.subplots(2,2,figsize=(11.8,8.0),sharex="col",
                               gridspec_kw={"height_ratios":[2.2,1.2],"hspace":.12,"wspace":.23})
         for j,band in enumerate(wavelengths):

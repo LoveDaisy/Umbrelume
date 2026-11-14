@@ -52,6 +52,7 @@ from eclipse.aerosol import AerosolProfile
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
 from eclipse.spectra import solar_irradiance
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, transmission_profile
 from .compare_observations import DATA, load_observations
 
@@ -656,9 +657,7 @@ def write_outputs(output_dir: Path, report: dict, records: list, products: dict)
         writer.writeheader()
         writer.writerows(records)
     (output_dir/"analysis.json").write_text(json.dumps(report, indent=2)+"\n")
-    style = {"font.family": "DejaVu Sans", "font.size": 10, "axes.spines.top": False,
-             "axes.spines.right": False, "figure.facecolor": "white", "axes.facecolor": "white"}
-    with plt.rc_context(style):
+    with plt.rc_context(BASE_RC):
         fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.8), sharex=True,
                                  gridspec_kw={"wspace": .22})
         mono_ratio = products["mono"]["fixed_opac"]/products["observed"]

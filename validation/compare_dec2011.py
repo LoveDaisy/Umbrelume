@@ -23,6 +23,7 @@ import eclipse
 from eclipse.aerosol import AerosolProfile
 from eclipse.atmosphere import Atmosphere
 from eclipse.rays import build_ray_table
+from eclipse.report import BASE_RC
 from eclipse.transport import Geometry, geometric_transmission, transmission_profile
 
 DATA = Path(__file__).resolve().parent/"observations/yan2011dec"
@@ -157,7 +158,7 @@ def write_analysis(out):
                                  **{key:values[j,i] for key,values in instantaneous.items()}})
     wl = np.array([r["wavelength_nm"] for r in records])
     obs = np.array([r["observed_curve_ratio"] for r in records])
-    with plt.rc_context({"font.family":"DejaVu Sans","font.size":10,"axes.spines.top":False,"axes.spines.right":False}):
+    with plt.rc_context(BASE_RC):
         fig,axes = plt.subplots(2,2,figsize=(11,7.3),gridspec_kw={"height_ratios":[2,1.3],"hspace":.35})
         allowances = np.array([r["graph_readout_log10_halfwidth"] for r in records])
         axes[0,0].errorbar(wl,obs,yerr=[obs-obs*10**-allowances,obs*10**allowances-obs],fmt="o",color="#253d4a",ms=4,label="Observed Fig.15 / graph allowance only")

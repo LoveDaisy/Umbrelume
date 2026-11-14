@@ -316,7 +316,6 @@ wheels = [
 
 [[package]]
 name = "lunar-eclipse-color"
-version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "astropy" },
