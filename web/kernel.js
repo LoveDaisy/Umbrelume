@@ -68,19 +68,19 @@ export async function loadSite(base=new URL('./',import.meta.url)) {
      common.cie.length!==243 || common.rgbMatrix.length!==9 || common.reference.length!==81 ||
      common.referenceXYZ.length!==3 || common.referenceXYZ[1]<=0 ||
      common.radius.some((v,i)=>i && v<=common.radius[i-1])) throw new Error('Invalid common axes');
-  const packed={};
-  await Promise.all(Object.entries(manifest.families).map(async([key,d])=>{
-    packed[key]=await fetchPacked(base,d);
-  }));
-  return {manifest,common,packed,current:null};
+  const data={manifest,common,families:{}};
+  // Four byte-deduplicated families fit the explicit memory budget. Decode
+  // sequentially once; discard compressed buffers instead of repeatedly paying
+  // decompression/validation on every interactive preset switch.
+  for(const [key,descriptor] of Object.entries(manifest.families)) {
+    data.families[key]=await decode(await fetchPacked(base,descriptor),descriptor);
+    validateFamily(data,key,data.families[key]);
+  }
+  return data;
 }
 
-export async function selectFamily(data, key) {
-  if(data.current?.key===key) return data.current.arrays;
-  data.current=null;
+function validateFamily(data,key,a) {
   const descriptor=data.manifest.families[key];
-  if(!descriptor || !data.packed[key]) throw new Error('Unknown family');
-  const a=await decode(data.packed[key],descriptor);
   const nr=data.common.radius.length,nw=data.common.wave.length,nc=descriptor.fields.components.shape[1];
   const nn=a.b.length;
   if(a.offsets.length!==nr+1 || a.outer.length!==nr || a.index.length!==a.weight.length ||
@@ -91,8 +91,12 @@ export async function selectFamily(data, key) {
   for(const p of Object.values(data.manifest.presets)) {
     if(p.family===key && p.amplitudes.length!==nc) throw new Error('Preset component count mismatch');
   }
-  data.current={key,arrays:a};
-  return a;
+}
+
+export async function selectFamily(data,key) {
+  const arrays=data.families[key];
+  if(!arrays)throw new Error('Unknown family');
+  return arrays;
 }
 
 export function checkParameters(m, parameters) {
