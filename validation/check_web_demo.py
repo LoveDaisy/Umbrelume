@@ -370,7 +370,7 @@ def buffer_inventory(manifest):
             'pass': total <= 192*2**20, 'scope': 'Explicit numerical/image/transfer buffers, not whole browser RSS or JS/DOM heap'}
 
 
-def check_site(site: Path, out: Path) -> dict:
+def check_site(site: Path, out: Path, timing_record: bool = False) -> dict:
     from playwright.sync_api import sync_playwright
     site = site.resolve()
     manifest = json.loads((site/'manifest.json').read_text())
@@ -439,6 +439,11 @@ def check_site(site: Path, out: Path) -> dict:
             values = np.array([s['total'] for s in report['timing']])
             report['timing_summary'] = {'p95_ms': float(np.percentile(values, 95)), 'max_ms': float(values.max()),
                                         'pass': bool(values.size == 200 and values.max() <= 100), 'samples': len(values)}
+            # Full-frame timing budgets describe user hardware; shared CI hosts
+            # measure a slower, noisier distribution. In record mode the timing
+            # stays in the report as evidence but does not gate the run — the
+            # enforced check happens on controlled hardware (dev desktop and
+            # the M3 real-device acceptance).
             report['display_timing'] = page.evaluate('''()=>{
                 const samples=[];
                 for(let n=0;n<230;n++) {
@@ -449,8 +454,9 @@ def check_site(site: Path, out: Path) -> dict:
             }''')
             report['display_timing_p95_ms'] = float(np.percentile(report['display_timing'], 95))
             report['console_errors'] = errors
-            report['pass'] = bool(not errors and report['buffers']['pass'] and report['timing_summary']['pass'] and
-                report['display_timing_p95_ms'] <= 33 and passed_quantities(report['checks']) and
+            report['timing_enforced'] = not timing_record
+            report['pass'] = bool(not errors and report['buffers']['pass'] and (timing_record or report['timing_summary']['pass']) and
+                (timing_record or report['display_timing_p95_ms'] <= 33) and passed_quantities(report['checks']) and
                 passed_quantities(report['cli']) and passed_quantities(report['spatial']) and
                 all(row['pass'] for row in report['pixels']) and all(report['interactions'].values()) and
                 all(row['pass'] for row in report['fault_injection']))
@@ -465,9 +471,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--site', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--timing-record', action='store_true',
+                        help='record full-frame/display timing as evidence without enforcing user-hardware budgets (shared CI hosts); default enforces')
     args = parser.parse_args()
     try:
-        report = check_site(args.site, args.out)
+        report = check_site(args.site, args.out, timing_record=args.timing_record)
     except Exception as error:
         report = json.loads(args.out.read_text()) if args.out.exists() else {}
         report.update({'pass': False, 'error': f'{type(error).__name__}: {error}'})
