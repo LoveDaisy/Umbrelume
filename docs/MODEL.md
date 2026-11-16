@@ -169,6 +169,38 @@ The equal-Y image is a clearly labeled diagnostic: local brightness is removed
 to reveal spectral chromaticity. It is not a photometric rendering. Photopic
 colorimetry does not account for mesopic/scotopic vision during dark totality.
 
+## Interpretation outlets and reproducibility boundary
+
+Python is the sole authority for atmosphere, refraction, optical columns,
+receiver quadrature and spectral inputs. Interpretation computations may be
+implemented per outlet only if their structure follows this contract and an
+independent mechanical cross-check compares their output with fresh production
+results. A browser color match is not a substitute for spectral agreement.
+
+| Outlet | Implementation | Mechanical check |
+|---|---|---|
+| CLI / figures | `eclipse.cli`, `report`, `color`; `tools/render_mainline.py` | Python tests, physics/aerosol/convergence scripts, committed live-image provenance gate |
+| Browser | `tools/export_web_demo.py` → `web/app.js` / `worker.js` / `kernel.js` | `validation.check_web_demo`, executed on every PR/main push by the web workflow |
+
+The browser consumes production-derived conserved annular weights, columns
+interpolated in **impact parameter b**, each aerosol layer's own spectral law,
+the vacuum outer term, SI solar spectrum and shared-white color coefficients.
+Its order is sum optical depths → exp → finite-Sun contraction → CIE → shared
+display. Ozone changes absorption only; RH changes FT amplitude only; exact zero
+AOD disables the entire aerosol column and selects the molecular-only grid.
+Calibrated registry entries remain fitted, not physical priors, and never become
+the default. Raw T, SI spectra and relative Y are not exposure-transformed.
+
+The web gate builds fresh Python and real CLI references without interpreting
+the exported component tables as truth. It checks every supported wavelength
+and radial node, independent off-node integrations, actual canvas bytes,
+parameter semantics, fault injection and the full application frame budget.
+Source/data/lock changes regenerate both assets and references; the validated
+site artifact is deployed without rebuilding. The outlet's UI limits and
+fixed reproduction tolerances are documented in
+[WEB_DEMO](WEB_DEMO.en.md); they do not redefine the physical model's domain or
+certify its accuracy. Core semantic changes must recheck every outlet above.
+
 ## References and next discriminating experiments
 
 - Vollmer & Gedzelman (2008), [spherically symmetric lunar eclipse irradiance](https://doi.org/10.1364/AO.47.000H52).

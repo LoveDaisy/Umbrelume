@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="在月食的光谱中，看见大气留下的颜色。生产 Python 模型的交互解读出口。">
+  <title>Umbrelume 月食光照</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header><h1>月食的颜色</h1><p>穿过地球边缘，抵达月面的光。</p></header>
+  <main>
+    <section class="observation" aria-labelledby="screen-label">
+      <div class="screen">
+        <canvas id="moon" width="560" height="560" tabindex="0" aria-label="中性月面屏；拖动或使用方向键改变月心位置"></canvas>
+        <p id="status" role="status" aria-live="polite">正在加载光谱与求积表…</p>
+      </div>
+      <div class="screen-caption"><span id="screen-label">中性月面屏</span><span id="position">月心距影轴 2860 km</span></div>
+      <p class="hint">拖动月盘或影区导航器移动月心；聚焦后可用方向键，Shift 加速。</p>
+      <details class="readout"><summary>读回月心光谱</summary><p id="photometry"></p><div class="table-scroll"><table><caption>SI 光谱，不受曝光影响</caption><thead><tr><th scope="col">波长 / nm</th><th scope="col">E / W m⁻² nm⁻¹</th><th scope="col">E / F</th></tr></thead><tbody id="spectra"></tbody></table></div></details>
+    </section>
+    <aside aria-label="大气与显示参数">
+      <fieldset id="controls" disabled>
+        <legend>改变这束光</legend>
+        <label for="preset">气溶胶状态</label>
+        <select id="preset"><option value="opac">OPAC 双层文献先验</option></select>
+        <p id="identity" class="identity"></p>
+        <div class="control"><label for="du">臭氧柱量 <output id="du-value" for="du">300 DU</output></label><input id="du" type="range" min="0" max="600" step="1" value="300"></div>
+        <div class="control"><label for="aod">FT 参考 AOD₅₅₀ <output id="aod-value" for="aod">0.013</output></label><input id="aod" type="range" min="0" max="200" step="1" value="13"><p>50% RH 的垂直参考值；精确零关闭全部气溶胶。</p></div>
+        <div class="control"><label for="rh">相对湿度 <output id="rh-value" for="rh">50%</output></label><input id="rh" type="range" min="50" max="99" step="1" value="50"></div>
+        <div class="control display-control"><label for="ev">显示曝光 <output id="ev-value" for="ev">+8 EV</output></label><input id="ev" type="range" min="-4" max="20" step="0.1" value="8"><p>只改变显示，不改变光谱和照度。</p></div>
+        <button id="reset" type="button">恢复默认</button>
+      </fieldset>
+      <section class="navigation" aria-labelledby="nav-label">
+        <h2 id="nav-label">月心在影区的位置</h2>
+        <svg id="navigator" viewBox="-9500 -9500 19000 19000" tabindex="0" role="img" aria-label="影轴居中；虚线为本影和半影的几何边界；拖动月心标记，或方向键移动">
+          <circle class="guide penumbra" id="penumbra" r="8175"/><circle class="guide umbra" id="umbra" r="4600"/>
+          <path class="crosshair" d="M-400 0H400M0-400V400"/>
+          <text x="-1800" y="-450">影轴</text><text id="umbra-label" x="0" y="-4900">本影</text><text id="penumbra-label" x="0" y="-8500">半影</text>
+          <circle id="moon-marker" cx="2860" cy="0" r="1737.4"/>
+          <path class="scale" d="M-8200 7800H-3200M-8200 7500V8100M-3200 7500V8100"/><text x="-8200" y="9000">5000 km</text>
+        </svg>
+      </section>
+    </aside>
+  </main>
+  <footer>
+    <h2>这是模型的可视化，不是一次月食的预测。</h2>
+    <ul><li>浏览器为解读出口之一，核心求解以仓 CI 为准。</li><li>现象呈现，非精度认证/预测。</li><li>散射入射光等现象模型本身不含。</li></ul>
+    <p>月盘是中性接收屏，不含月壤纹理或 BRDF；颜色按明视觉 CIE 1931 计算。全场共用太阳白点和曝光，高光按共同通道压缩；显示像素不是照度计。二维位置、臭氧 0–600 DU、FT 参考 AOD 0–0.2、RH 50–99% 是本站交互域，不是核心全部合法参数域。</p>
+    <p><a href="./SOURCES.md">数据来源与逐源许可状态</a> · <a href="./LICENSE.txt">代码许可</a> · <a href="./manifest.json">资产合同与输入指纹</a></p>
+    <p id="version"></p>
+  </footer>
+</body>
+</html>

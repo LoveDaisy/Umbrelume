@@ -22,6 +22,9 @@ lunar-eclipse = "eclipse.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8,<10"]
+web = [
+    "playwright==1.65.2",
+]
 
 [tool.setuptools.packages.find]
 include = ["eclipse*"]

@@ -45,7 +45,7 @@
     "eclipse/atmosphere.py": "cc83b191afe0584e6fbed5fdf0df54c5c30e1ffd25497e535f69c57b62d4cd7b",
     "eclipse/cli.py": "02d62fd90a46a3fc180b7278f2733aa7a823ee763e8800949a14657aac2b436f",
     "eclipse/color.py": "2eaa03e22090c06eb1ba1af90744bfd503cf27a7f9178dd6f8db978129d7a071",
-    "eclipse/data/SOURCES.md": "285eb9a89650ff94a437a29750d5673bcdb7fe62c39af77e8191fa592b310c94",
+    "eclipse/data/SOURCES.md": "5879155036e6454646bd87863b382096de21cfcaa587c07e113a34a9ffc34522",
     "eclipse/data/cie1931_2deg.csv": "3f8de45150219f165c9a57c20346e3a7f04e183c3a1cdd2029ca3e8d3e9bff10",
     "eclipse/data/o3_cross_section.csv": "4606941959561aeeb9bb6f967661888cb7f82ba92e4009b739106ac091ac2462",
     "eclipse/data/solar_am0.csv": "a532555ff4d5bd8071b7aabed80aa0c167ddf6fd6e2d51c3cfe1916d265e793c",
@@ -55,7 +55,7 @@
     "eclipse/style.py": "498e9cdac57215c4930b954faaacf6454ee0423a9ef0855477396b257f76e495",
     "eclipse/transport.py": "b0c03afcc8ff4a4fc4f8d2f24209bf0a55bcfaf914040d27c196a226f190d584",
     "tools/render_mainline.py": "c2088e1ab22382ba991bb2092a3589f7d677754296d224f333f373dc2140f94c",
-    "uv.lock": "09fe5732cecde611dda9bdd86990deeb8cf02063f2960b870853c85f92bcfcff"
+    "uv.lock": "6ec0207eef2db9c7f937be82fd56f898173d578c3b8e7152ce585eb35d5cec02"
   },
   "plot": {
     "dpi": 170,
