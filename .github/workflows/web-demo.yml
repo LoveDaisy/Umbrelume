@@ -12,8 +12,11 @@ permissions:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Platform of record: every validation record in this repo (pytest fixtures,
+    # physics/aerosol/convergence outputs) was produced on macOS. Exact-float
+    # assertions drift last-ulp on glibc, so validation must run on macOS.
+    runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -26,7 +29,7 @@ jobs:
           python-version: '3.12'
       - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6 (peeled commit)
       - run: uv sync --locked --group web
-      - run: uv run --group web python -m playwright install --with-deps chromium
+      - run: uv run --group web python -m playwright install chromium
       - run: uv run pytest -q
       - run: uv run python -m validation.check_physics --out outputs/validation/physics.json
       - run: uv run python -m validation.check_aerosol --out outputs/validation/aerosol.json
