@@ -16,6 +16,7 @@ pairing 机械闸（`tests/test_mainline_docs.py` 的 `test_bilingual_pairs_exis
 | [MAINLINE.zh.md](MAINLINE.zh.md)（权威）/ [MAINLINE.en.md](MAINLINE.en.md)（译本） | zh / en | zh | 主线叙事：阶梯抽象、方法论五支柱、模块地图、叙事钩子 |
 | [ROADMAP.zh.md](ROADMAP.zh.md)（权威）/ [ROADMAP.en.md](ROADMAP.en.md)（译本） | zh / en | zh | 里程碑、上一轮物理选择、后续方向与进入条件 |
 | [EXTENDING.zh.md](EXTENDING.zh.md)（权威）/ [EXTENDING.en.md](EXTENDING.en.md)（译本） | zh / en | zh | 「添加一个物理增量」上手清单、绘图风格规则、验证闸速查 |
+| [WEB_DEMO.zh.md](WEB_DEMO.zh.md)（权威）/ [WEB_DEMO.en.md](WEB_DEMO.en.md)（译本） | zh / en | zh | 浏览器解读出口、交互、资产合同、独立交叉闸与发布 |
 | [physics/AEROSOL.md](physics/AEROSOL.md) | en | 单语 | 气溶胶组件公式、来源与 standing gap |
 
 ## 内部开发记录 / Internal development records

@@ -76,6 +76,7 @@ export async function loadSite(base=new URL('./',import.meta.url)) {
     data.families[key]=await decode(await fetchPacked(base,descriptor),descriptor);
     validateFamily(data,key,data.families[key]);
   }
+  data.workspace=new Float64Array(Math.max(...Object.values(data.families).map(a=>a.b.length))*common.wave.length);
   return data;
 }
 
@@ -126,7 +127,7 @@ export async function reconstruct(data, parameters) {
     amplitudes[2]=parameters.aod*growth;
   }
   const nw=c.wave.length,nr=c.radius.length,nc=amplitudes.length,nn=a.b.length;
-  const nodes=new Float64Array(nn*nw);
+  const nodes=data.workspace;
   for(let i=0;i<nn;i++) {
     for(let k=0;k<nw;k++) {
       let tau=a.components[i*nc]*a.factors[k]+a.components[i*nc+1]*parameters.du*a.factors[nw+k];
@@ -192,20 +193,25 @@ export function finish(rgb,ev) {
   return values.map(x=>{const v=x/scale;return v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055;});
 }
 
-export function pixelMap(radius,moonRadius,x,y,size=560) {
+export function pixelMap(radius,moonRadius,x,y,size=560,previous=null) {
   if(!Number.isFinite(x)||!Number.isFinite(y)||Math.hypot(x,y)>radius.at(-1)-moonRadius+1e-6) throw new Error('Moon center outside supported domain');
-  const index=new Int32Array(size*size).fill(-1),weight=new Float64Array(size*size);
+  const index=previous?.size===size?previous.index:new Int32Array(size*size);
+  const weight=previous?.size===size?previous.weight:new Float64Array(size*size);
+  index.fill(-1);
   for(let py=0;py<size;py++) for(let px=0;px<size;px++) {
     const dx=((px+.5)/size*2-1)*moonRadius,dy=((py+.5)/size*2-1)*moonRadius;
     if(dx*dx+dy*dy>moonRadius*moonRadius)continue;
-    const [i,w]=interval(radius,Math.hypot(dx+x,dy+y));
-    index[py*size+px]=i;weight[py*size+px]=w;
+    const r=Math.hypot(dx+x,dy+y);
+    let lo=0,hi=radius.length-1;
+    while(hi-lo>1){const mid=(lo+hi)>>1;if(radius[mid]<=r)lo=mid;else hi=mid;}
+    index[py*size+px]=lo;weight[py*size+px]=(r-radius[lo])/(radius[lo+1]-radius[lo]);
   }
-  return {index,weight,size};
+  return {index,weight,size,image:previous?.size===size?previous.image:null};
 }
 
 export function draw(ctx,rgb,map,ev) {
-  const size=map.size,image=ctx.createImageData(size,size),bytes=image.data,gain=2**ev;
+  const size=map.size,image=map.image??ctx.createImageData(size,size),bytes=image.data,gain=2**ev;
+  map.image=image;
   const encode=v=>255*(v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055);
   for(let p=0;p<map.index.length;p++) {
     const i=map.index[p]*3;if(i<0)continue;

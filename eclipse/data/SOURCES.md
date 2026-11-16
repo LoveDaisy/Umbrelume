@@ -139,3 +139,19 @@ against the pinned Hess, Koepke and Schult paper), an AERONET Level-2.0
 site-year export, and open-access climatology papers. The survey changed
 no default; its conclusion section is
 [docs/records/PRIOR_SOURCE_SURVEY.md](../../docs/records/PRIOR_SOURCE_SURVEY.md).
+
+## Browser derivative tables
+
+`tools/export_web_demo.py` serializes production numerical derivatives of the
+inputs listed above: unit optical columns and spectral factors, conserved
+receiver weights, solar/CIE samples and shared-white color coefficients. The
+site's manifest carries per-input and per-asset SHA256 hashes, units, schema,
+software version and the generation command. RH knots are exported by the
+production growth function; calibrated presets preserve the registry's event
+and fitted-not-prior provenance. The exporter performs no downloads and does
+not redistribute source papers, observational archives, or Python wheels.
+
+The site includes this source/terms ledger and the source-code MIT license as
+separate files. Numerical derivative publication does **not** relabel all
+third-party inputs as MIT or resolve the partially verified source permissions
+recorded above; those statuses and attribution boundaries continue to apply.

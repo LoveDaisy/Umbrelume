@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const canvas=$('moon'),ctx=canvas.getContext('2d',{willReadFrequently:true});
 const worker=new Worker(new URL('./worker.js',import.meta.url),{type:'module'});
 const state={preset:'opac',du:300,aod:.013,rh:.5,ev:8,x_m:2860000,y_m:0};
-let manifest,common,field,map,active=null,pending=null,sequence=0,latest=0,fatal=false;
+let manifest,common,field,map,mapDirty=false,active=null,pending=null,sequence=0,latest=0,fatal=false;
 let readyResolve,readyReject;
 const ready=new Promise((resolve,reject)=>{readyResolve=resolve;readyReject=reject;});
 // Initialization errors are displayed, not silently replaced with stale data.
@@ -33,7 +33,9 @@ function labels() {
   $('identity').classList.toggle('fitted',preset?.kind==='calibrated');
   $('identity').textContent=preset?.kind==='calibrated'?'已拟合，非物理先验。固定事件校准态，不接受 AOD / RH 覆盖。':
     state.preset==='none'?'分子大气反事实，无气溶胶。臭氧仍独立可调。':
-    state.aod===0?'精确零态：FT 与平流层气溶胶均关闭。':'固定文献先验；湿度只缩放 FT 幅度。平流层背景独立保持 0.005。';
+    state.aod===0?'精确零态：FT 与平流层气溶胶均关闭。':
+    state.preset==='opac-ft'?'固定文献先验；湿度只缩放 FT 幅度。此反事实不含平流层气溶胶。':
+    '固定文献先验；湿度只缩放 FT 幅度。平流层背景独立保持 0.005。';
   $('position').textContent=`月心距影轴 ${(Math.hypot(state.x_m,state.y_m)/1000).toFixed(0)} km`;
   $('moon-marker').setAttribute('cx',state.x_m/1000);
   $('moon-marker').setAttribute('cy',state.y_m/1000);
@@ -55,7 +57,7 @@ function readout() {
 function paint() {
   if(!field)return;
   const start=performance.now();
-  if(!map)map=pixelMap(common.radius,manifest.moon_radius_m,state.x_m,state.y_m);
+  if(!map||mapDirty){map=pixelMap(common.radius,manifest.moon_radius_m,state.x_m,state.y_m,560,map);mapDirty=false;}
   draw(ctx,field.rgb,map,state.ev);
   readout();
   return performance.now()-start;
@@ -68,21 +70,23 @@ function dispatch() {
 }
 
 function update(parameters={}) {
+  const start=performance.now();
   if(!manifest||fatal)return Promise.reject(new Error('Demo is not ready'));
+  if(Object.keys(parameters).some(key=>!['preset','du','aod','rh'].includes(key)))throw new Error('Unknown physical parameter');
   const merged={preset:state.preset,du:state.du,aod:state.aod,rh:state.rh,...parameters};
   checkParameters(manifest,merged);
   Object.assign(state,merged);labels();
   const id=++sequence;latest=id;
   // Bounded queue: one executing request and one latest pending request.
   if(pending)pending.resolve({superseded:true,id:pending.id});
-  const promise=new Promise((resolve,reject)=>{pending={id,parameters:merged,start:performance.now(),resolve,reject};});
+  const promise=new Promise((resolve,reject)=>{pending={id,parameters:merged,start,resolve,reject};});
   dispatch();return promise;
 }
 
 function display(values={}) {
   const next={...state,...values},limit=9000000-manifest.moon_radius_m;
   if(!Number.isFinite(next.ev)||next.ev<-4||next.ev>20||!Number.isFinite(next.x_m)||!Number.isFinite(next.y_m)||Math.hypot(next.x_m,next.y_m)>limit+1e-6)throw new Error('Display parameters outside supported domain');
-  if(state.x_m!==next.x_m||state.y_m!==next.y_m)map=null;
+  if(state.x_m!==next.x_m||state.y_m!==next.y_m)mapDirty=true;
   state.ev=next.ev;state.x_m=next.x_m;state.y_m=next.y_m;
   labels();return paint();
 }

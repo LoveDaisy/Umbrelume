@@ -67,6 +67,7 @@ BILINGUAL_PAIRS = [
     ((ROOT / "docs/ROADMAP.zh.md"), (ROOT / "docs/ROADMAP.en.md")),
     ((ROOT / "docs/EXTENDING.zh.md"), (ROOT / "docs/EXTENDING.en.md")),
     ((ROOT / "docs/MAINLINE.zh.md"), (ROOT / "docs/MAINLINE.en.md")),
+    ((ROOT / "docs/WEB_DEMO.zh.md"), (ROOT / "docs/WEB_DEMO.en.md")),
 ]
 
 
